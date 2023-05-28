@@ -1,0 +1,45 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.6.33723.286
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Core", "Core", "{2FF509B4-ADB6-418E-91B5-65C00C043591}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Turmerik.Core", "Turmerik.Core\Turmerik.Core.csproj", "{5CBA1F40-EC37-4FF9-9D9B-9ABDDA02E7C9}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Turmerik.LocalDevice.Core", "Turmerik.LocalDevice.Core\Turmerik.LocalDevice.Core.csproj", "{6F0B8906-E938-4316-80EC-83EDF1F1546D}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "MailClient", "MailClient", "{B8791AF9-CE52-43E7-BFF9-308D2F7F002C}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "GmailClient", "GmailClient", "{4BC2194B-5826-4E24-8EDF-9E2A9AF45290}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "OutlookMailClient", "OutlookMailClient", "{F509B477-296C-497E-9A00-7119831B655D}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{5CBA1F40-EC37-4FF9-9D9B-9ABDDA02E7C9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5CBA1F40-EC37-4FF9-9D9B-9ABDDA02E7C9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5CBA1F40-EC37-4FF9-9D9B-9ABDDA02E7C9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5CBA1F40-EC37-4FF9-9D9B-9ABDDA02E7C9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6F0B8906-E938-4316-80EC-83EDF1F1546D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6F0B8906-E938-4316-80EC-83EDF1F1546D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6F0B8906-E938-4316-80EC-83EDF1F1546D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6F0B8906-E938-4316-80EC-83EDF1F1546D}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{5CBA1F40-EC37-4FF9-9D9B-9ABDDA02E7C9} = {2FF509B4-ADB6-418E-91B5-65C00C043591}
+		{6F0B8906-E938-4316-80EC-83EDF1F1546D} = {2FF509B4-ADB6-418E-91B5-65C00C043591}
+		{4BC2194B-5826-4E24-8EDF-9E2A9AF45290} = {B8791AF9-CE52-43E7-BFF9-308D2F7F002C}
+		{F509B477-296C-497E-9A00-7119831B655D} = {B8791AF9-CE52-43E7-BFF9-308D2F7F002C}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {88969FCF-7447-4DA6-8E55-4844675FB2DC}
+	EndGlobalSection
+EndGlobal
