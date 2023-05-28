@@ -8,6 +8,8 @@ using System.Threading.Tasks;
 using Turmerik.Dependencies;
 using Turmerik.LocalDevice.Logging;
 using Turmerik.LocalDevice.Env;
+using Turmerik.DriveExplorerCore;
+using Turmerik.LocalDevice.FileExplorerCore;
 
 namespace Turmerik.LocalDevice.Dependencies
 {
@@ -15,7 +17,8 @@ namespace Turmerik.LocalDevice.Dependencies
     {
         public static ILocalDeviceServiceCollection RegisterAll(
             IServiceCollection services,
-            bool includeNetCoreAppEnv = false)
+            bool includeNetCoreAppEnv = false,
+            bool registerFsExplorerServiceEngineAsDefault = false)
         {
             LocalDeviceServiceCollectionMtbl mtbl = new();
             TrmrkCoreServiceCollectionBuilder.RegisterAll(services, mtbl);
@@ -27,6 +30,15 @@ namespace Turmerik.LocalDevice.Dependencies
             if (includeNetCoreAppEnv)
             {
                 services.AddSingleton<INetCoreAppEnv, NetCoreAppEnv>();
+            }
+
+            services.AddTransient<IFsEntriesRetriever, FsEntriesRetriever>();
+            services.AddTransient<IFsExplorerServiceEngine, FsExplorerServiceEngine>();
+
+            if (registerFsExplorerServiceEngineAsDefault)
+            {
+                services.AddTransient<IDriveItemsRetriever, FsEntriesRetriever>();
+                services.AddTransient<IDriveExplorerServiceEngine, FsExplorerServiceEngine>();
             }
 
             return mtbl;

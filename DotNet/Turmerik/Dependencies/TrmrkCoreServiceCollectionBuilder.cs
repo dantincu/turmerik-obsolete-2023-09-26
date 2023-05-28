@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Turmerik.DriveExplorerCore;
 using Turmerik.FileSystem;
 using Turmerik.Reflection;
 using Turmerik.Synchronized;
@@ -59,6 +60,7 @@ namespace Turmerik.Dependencies
 
             services.AddTransient<IThreadSafeActionComponent, ThreadSafeActionComponent>();
             services.AddTransient<IAsyncActionsQueue, AsyncActionsQueue>();
+            services.AddTransient<IDriveExplorerService, DriveExplorerService>();
 
             return immtbl;
         }
