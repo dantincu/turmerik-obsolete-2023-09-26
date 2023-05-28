@@ -15,6 +15,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Turmerik", "Turmerik\Turmer
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Turmerik.LocalDevice", "Turmerik.LocalDevice\Turmerik.LocalDevice.csproj", "{70F34831-F936-46BC-9732-ADEC25086512}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Turmerik.MauiCore", "Turmerik.MauiCore\Turmerik.MauiCore.csproj", "{F7DC4290-DDE4-47FC-9636-32022B28A44E}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Turmerik.MsGraph", "Turmerik.MsGraph\Turmerik.MsGraph.csproj", "{1482A0E6-B4AD-4A09-A51D-DBD87647F469}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -29,6 +33,14 @@ Global
 		{70F34831-F936-46BC-9732-ADEC25086512}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{70F34831-F936-46BC-9732-ADEC25086512}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{70F34831-F936-46BC-9732-ADEC25086512}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F7DC4290-DDE4-47FC-9636-32022B28A44E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F7DC4290-DDE4-47FC-9636-32022B28A44E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F7DC4290-DDE4-47FC-9636-32022B28A44E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F7DC4290-DDE4-47FC-9636-32022B28A44E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1482A0E6-B4AD-4A09-A51D-DBD87647F469}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1482A0E6-B4AD-4A09-A51D-DBD87647F469}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1482A0E6-B4AD-4A09-A51D-DBD87647F469}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1482A0E6-B4AD-4A09-A51D-DBD87647F469}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -38,6 +50,8 @@ Global
 		{F20D3FBA-8202-4A7A-BA6C-FDEB125A680D} = {D82D5BF7-0188-47AB-AECC-0890147673E1}
 		{97A8E535-23CB-4AFC-9FEE-FCC648AFF79E} = {5C63AD8C-F052-4C2F-B0B8-59F1BD1E769F}
 		{70F34831-F936-46BC-9732-ADEC25086512} = {5C63AD8C-F052-4C2F-B0B8-59F1BD1E769F}
+		{F7DC4290-DDE4-47FC-9636-32022B28A44E} = {5C63AD8C-F052-4C2F-B0B8-59F1BD1E769F}
+		{1482A0E6-B4AD-4A09-A51D-DBD87647F469} = {5C63AD8C-F052-4C2F-B0B8-59F1BD1E769F}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {E927F0FB-E68E-45B6-A22A-9598AF323E98}

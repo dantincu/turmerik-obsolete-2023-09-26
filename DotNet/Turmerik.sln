@@ -47,6 +47,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Turmerik.LocalDevice.UnitTe
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Turmerik.MsGraph", "Turmerik.MsGraph\Turmerik.MsGraph.csproj", "{9D3AEBFA-5610-45CC-A6B2-F3F0B94822FE}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Turmerik.MauiCore", "Turmerik.MauiCore\Turmerik.MauiCore.csproj", "{9A3491D4-2893-4675-9E92-9AB9E3269B7B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -77,6 +79,10 @@ Global
 		{9D3AEBFA-5610-45CC-A6B2-F3F0B94822FE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9D3AEBFA-5610-45CC-A6B2-F3F0B94822FE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9D3AEBFA-5610-45CC-A6B2-F3F0B94822FE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9A3491D4-2893-4675-9E92-9AB9E3269B7B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9A3491D4-2893-4675-9E92-9AB9E3269B7B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9A3491D4-2893-4675-9E92-9AB9E3269B7B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9A3491D4-2893-4675-9E92-9AB9E3269B7B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -97,6 +103,7 @@ Global
 		{4B748CDE-C029-4B0E-89AC-6F3CB221AC62} = {E9A3255F-0E33-4796-A489-8B4C016C573A}
 		{FD72646E-6BF2-4A39-89EC-8F336648CD01} = {D5115A7C-0835-4E11-9EE7-BB5AA80031F2}
 		{9D3AEBFA-5610-45CC-A6B2-F3F0B94822FE} = {E9A3255F-0E33-4796-A489-8B4C016C573A}
+		{9A3491D4-2893-4675-9E92-9AB9E3269B7B} = {E9A3255F-0E33-4796-A489-8B4C016C573A}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {884DC105-C0BD-4026-B220-D2D435105F94}

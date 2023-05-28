@@ -17,6 +17,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Turmerik.LocalDevice.Testin
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Turmerik.LocalDevice.UnitTests", "Turmerik.LocalDevice.UnitTests\Turmerik.LocalDevice.UnitTests.csproj", "{E218F4CA-2750-46DF-B1A0-35B9020AC829}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Turmerik.MsGraph", "Turmerik.MsGraph\Turmerik.MsGraph.csproj", "{228F79C5-F55B-4993-B9B3-DF76AE1CBCF2}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Turmerik.MauiCore", "Turmerik.MauiCore\Turmerik.MauiCore.csproj", "{D5DE0132-D55B-4784-A7BF-30CF81155B88}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -43,6 +47,14 @@ Global
 		{E218F4CA-2750-46DF-B1A0-35B9020AC829}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E218F4CA-2750-46DF-B1A0-35B9020AC829}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E218F4CA-2750-46DF-B1A0-35B9020AC829}.Release|Any CPU.Build.0 = Release|Any CPU
+		{228F79C5-F55B-4993-B9B3-DF76AE1CBCF2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{228F79C5-F55B-4993-B9B3-DF76AE1CBCF2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{228F79C5-F55B-4993-B9B3-DF76AE1CBCF2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{228F79C5-F55B-4993-B9B3-DF76AE1CBCF2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D5DE0132-D55B-4784-A7BF-30CF81155B88}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D5DE0132-D55B-4784-A7BF-30CF81155B88}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D5DE0132-D55B-4784-A7BF-30CF81155B88}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D5DE0132-D55B-4784-A7BF-30CF81155B88}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -53,6 +65,8 @@ Global
 		{72A9E37F-E979-427D-A4FA-6A35AEE7F618} = {4A6F10F8-9AFD-4583-A766-8D658607525B}
 		{7F10D627-1221-4DBB-A45A-C435C7DD20EA} = {4A6F10F8-9AFD-4583-A766-8D658607525B}
 		{E218F4CA-2750-46DF-B1A0-35B9020AC829} = {4D1F866B-C350-48D9-95F2-4D23972753E6}
+		{228F79C5-F55B-4993-B9B3-DF76AE1CBCF2} = {4A6F10F8-9AFD-4583-A766-8D658607525B}
+		{D5DE0132-D55B-4784-A7BF-30CF81155B88} = {4A6F10F8-9AFD-4583-A766-8D658607525B}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {E62220D2-AC49-4433-8595-02F6BFD2E4D5}
