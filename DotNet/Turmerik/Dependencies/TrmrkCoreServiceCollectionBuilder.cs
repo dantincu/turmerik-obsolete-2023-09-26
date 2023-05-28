@@ -15,7 +15,7 @@ namespace Turmerik.Dependencies
 {
     public static class TrmrkCoreServiceCollectionBuilder
     {
-        public static ITrmrkCoreServiceCollection RegisterAll(
+        public static TrmrkCoreServiceCollectionMtbl RegisterAll(
             IServiceCollection services,
             TrmrkCoreServiceCollectionMtbl mtbl = null)
         {
@@ -44,25 +44,23 @@ namespace Turmerik.Dependencies
                 mtbl.DisposableComponentFactory,
                 mtbl.MutexCreator);
 
-            var immtbl = new TrmrkCoreServiceCollectionImmtbl(mtbl);
-
-            services.AddSingleton(immtbl.TimeStampHelper);
-            services.AddSingleton(immtbl.FsPathNormalizer);
-            services.AddSingleton(immtbl.LambdaExprHelper);
-            services.AddSingleton(immtbl.LambdaExprHelperFactory);
-            services.AddSingleton(immtbl.BasicEqualityComparerFactory);
-            services.AddSingleton(immtbl.MutexCreator);
-            services.AddSingleton(immtbl.OnceExecutedActionFactory);
-            services.AddSingleton(immtbl.OnceExecutedAsyncActionFactory);
-            services.AddSingleton(immtbl.DisposableComponentFactory);
-            services.AddSingleton(immtbl.AsyncDisposableComponentFactory);
-            services.AddSingleton(immtbl.InterProcessConcurrentActionComponentFactory);
+            services.AddSingleton(mtbl.TimeStampHelper);
+            services.AddSingleton(mtbl.FsPathNormalizer);
+            services.AddSingleton(mtbl.LambdaExprHelper);
+            services.AddSingleton(mtbl.LambdaExprHelperFactory);
+            services.AddSingleton(mtbl.BasicEqualityComparerFactory);
+            services.AddSingleton(mtbl.MutexCreator);
+            services.AddSingleton(mtbl.OnceExecutedActionFactory);
+            services.AddSingleton(mtbl.OnceExecutedAsyncActionFactory);
+            services.AddSingleton(mtbl.DisposableComponentFactory);
+            services.AddSingleton(mtbl.AsyncDisposableComponentFactory);
+            services.AddSingleton(mtbl.InterProcessConcurrentActionComponentFactory);
 
             services.AddTransient<IThreadSafeActionComponent, ThreadSafeActionComponent>();
             services.AddTransient<IAsyncActionsQueue, AsyncActionsQueue>();
             services.AddTransient<IDriveExplorerService, DriveExplorerService>();
 
-            return immtbl;
+            return mtbl;
         }
     }
 }

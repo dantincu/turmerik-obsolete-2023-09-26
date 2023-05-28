@@ -15,7 +15,7 @@ namespace Turmerik.LocalDevice.Dependencies
 {
     public static class LocalDeviceServiceCollectionBuilder
     {
-        public static ILocalDeviceServiceCollection RegisterAll(
+        public static LocalDeviceServiceCollectionMtbl RegisterAll(
             IServiceCollection services,
             bool includeNetCoreAppEnv = false,
             bool registerFsExplorerServiceEngineAsDefault = false)
