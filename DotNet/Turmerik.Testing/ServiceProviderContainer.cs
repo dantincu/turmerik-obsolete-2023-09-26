@@ -12,7 +12,7 @@ namespace Turmerik.Testing
         public static readonly Lazy<ServiceProviderContainer> Instance = new Lazy<ServiceProviderContainer>(
             () => new ServiceProviderContainer(), LazyThreadSafetyMode.ExecutionAndPublication);
 
-        protected ServiceProviderContainer()
+        private ServiceProviderContainer()
         {
         }
     }

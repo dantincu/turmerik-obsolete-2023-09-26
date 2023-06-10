@@ -1,27 +1,25 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Turmerik.Dependencies;
-using Turmerik.LocalDevice.Logging;
-using Turmerik.LocalDevice.Env;
 using Turmerik.DriveExplorerCore;
+using Turmerik.LocalDevice.Env;
 using Turmerik.LocalDevice.FileExplorerCore;
+using Turmerik.LocalDevice.Logging;
 
 namespace Turmerik.LocalDevice.Dependencies
 {
     public static class LocalDeviceServiceCollectionBuilder
     {
-        public static LocalDeviceServiceCollectionMtbl RegisterAll(
+        public static void RegisterAll(
             IServiceCollection services,
             bool includeNetCoreAppEnv = false,
             bool registerFsExplorerServiceEngineAsDefault = false)
         {
-            LocalDeviceServiceCollectionMtbl mtbl = new();
-            TrmrkCoreServiceCollectionBuilder.RegisterAll(services, mtbl);
+            TrmrkCoreServiceCollectionBuilder.RegisterAll(services);
 
             services.AddSingleton<IAppEnv, AppEnv>();
             services.AddSingleton<IAppLoggerFactory, AppLoggerFactory>();
@@ -40,8 +38,6 @@ namespace Turmerik.LocalDevice.Dependencies
                 services.AddTransient<IDriveItemsRetriever, FsEntriesRetriever>();
                 services.AddTransient<IDriveExplorerServiceEngine, FsExplorerServiceEngine>();
             }
-
-            return mtbl;
         }
     }
 }

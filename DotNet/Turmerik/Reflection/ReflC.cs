@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -11,6 +12,7 @@ namespace Turmerik.Reflection
     {
         public static class Types
         {
+            public static readonly Type ObjectType = typeof(object);
             public static readonly Type StringType = typeof(string);
 
             public static class Primitives
@@ -85,6 +87,31 @@ namespace Turmerik.Reflection
             {
                 public static readonly string Add = nameof(Dictionary<int, int>.Add);
             }
+        }
+
+        public static class Filter
+        {
+            public static readonly MemberVisibility AllVisibilities = GetAllVisibilities();
+            public static readonly MemberScope InstanceOrStatic = GetInstanceOrStatic();
+            public static readonly FieldType InitOnlyOrLiteral = GetConstantFieldType();
+            public static readonly FieldType FieldTypeCatchAll = GetFieldTypeCatchAll();
+            public static readonly BindingFlags AllDeclaredOnlyBindingFlags = GetAllDeclaredOnlyBindingFlags();
+
+            public static MemberVisibility GetAllVisibilities()
+            {
+                var visibility = MemberVisibility.Public | MemberVisibility.Protected;
+                visibility |= MemberVisibility.Internal | MemberVisibility.ProtectedInternal;
+                visibility |= MemberVisibility.Private | MemberVisibility.PrivateProtected;
+
+                return visibility;
+            }
+
+            public static MemberScope GetInstanceOrStatic() => MemberScope.Instance | MemberScope.Static;
+            public static FieldType GetConstantFieldType() => FieldType.InitOnly | FieldType.Literal;
+            public static FieldType GetFieldTypeCatchAll() => FieldType.Editable | FieldType.InitOnly | FieldType.Literal;
+
+            public static BindingFlags GetAllDeclaredOnlyBindingFlags() => BindingFlags.Instance | (
+                BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.DeclaredOnly);
         }
     }
 }

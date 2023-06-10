@@ -10,24 +10,24 @@ namespace Turmerik.DriveExplorerCore
 {
     public interface IDriveExplorerService
     {
-        Task<TrmrkActionResult<DriveItemMtbl>> GetFolderAsync(IDriveItemIdnf idnf);
-        Task<TrmrkActionResult<DriveItemMtbl>> GetTextFileAsync(IDriveItemIdnf idnf);
-        Task<TrmrkActionResult<DriveItemMtbl>> CreateFolderAsync(IDriveItemIdnf prIdnf, string newFolderName);
-        Task<TrmrkActionResult<DriveItemMtbl>> RenameFolderAsync(IDriveItemIdnf idnf, string newFolderName);
-        Task<TrmrkActionResult<DriveItemMtbl>> CopyFolderAsync(IDriveItemIdnf idnf, IDriveItemIdnf newPrIdnf, string newFolderName);
-        Task<TrmrkActionResult<DriveItemMtbl>> MoveFolderAsync(IDriveItemIdnf idnf, IDriveItemIdnf newPrIdnf, string newFolderName);
-        Task<TrmrkActionResult<DriveItemMtbl>> DeleteFolderAsync(IDriveItemIdnf idnf);
-        Task<TrmrkActionResult<DriveItemMtbl>> CreateTextFileAsync(IDriveItemIdnf prIdnf, string newFileName, string text);
+        Task<HttpActionResult<DriveItemMtbl>> GetFolderAsync(IDriveItemIdnf idnf);
+        Task<HttpActionResult<DriveItemMtbl>> GetTextFileAsync(IDriveItemIdnf idnf);
+        Task<HttpActionResult<DriveItemMtbl>> CreateFolderAsync(IDriveItemIdnf prIdnf, string newFolderName);
+        Task<HttpActionResult<DriveItemMtbl>> RenameFolderAsync(IDriveItemIdnf idnf, string newFolderName);
+        Task<HttpActionResult<DriveItemMtbl>> CopyFolderAsync(IDriveItemIdnf idnf, IDriveItemIdnf newPrIdnf, string newFolderName);
+        Task<HttpActionResult<DriveItemMtbl>> MoveFolderAsync(IDriveItemIdnf idnf, IDriveItemIdnf newPrIdnf, string newFolderName);
+        Task<HttpActionResult<DriveItemMtbl>> DeleteFolderAsync(IDriveItemIdnf idnf);
+        Task<HttpActionResult<DriveItemMtbl>> CreateTextFileAsync(IDriveItemIdnf prIdnf, string newFileName, string text);
 
-        Task<TrmrkActionResult<DriveItemMtbl>> CreateOfficeLikeFileAsync(
+        Task<HttpActionResult<DriveItemMtbl>> CreateOfficeLikeFileAsync(
             IDriveItemIdnf prIdnf,
             string newFileName,
             OfficeLikeFileType officeLikeFileType);
 
-        Task<TrmrkActionResult<DriveItemMtbl>> RenameFileAsync(IDriveItemIdnf idnf, string newFileName);
-        Task<TrmrkActionResult<DriveItemMtbl>> CopyFileAsync(IDriveItemIdnf idnf, IDriveItemIdnf newPrIdnf, string newFileName);
-        Task<TrmrkActionResult<DriveItemMtbl>> MoveFileAsync(IDriveItemIdnf idnf, IDriveItemIdnf newPrIdnf, string newFileName);
-        Task<TrmrkActionResult<DriveItemMtbl>> DeleteFileAsync(IDriveItemIdnf idnf);
+        Task<HttpActionResult<DriveItemMtbl>> RenameFileAsync(IDriveItemIdnf idnf, string newFileName);
+        Task<HttpActionResult<DriveItemMtbl>> CopyFileAsync(IDriveItemIdnf idnf, IDriveItemIdnf newPrIdnf, string newFileName);
+        Task<HttpActionResult<DriveItemMtbl>> MoveFileAsync(IDriveItemIdnf idnf, IDriveItemIdnf newPrIdnf, string newFileName);
+        Task<HttpActionResult<DriveItemMtbl>> DeleteFileAsync(IDriveItemIdnf idnf);
     }
 
     public class DriveExplorerService : IDriveExplorerService
@@ -44,10 +44,10 @@ namespace Turmerik.DriveExplorerCore
             DriveItemsDefaultExceptionHandler = GetDefaultExceptionHandler<DriveItemMtbl[]>();
         }
 
-        protected Func<Exception, TrmrkActionResult<DriveItemMtbl>> DriveItemDefaultExceptionHandler { get; }
-        protected Func<Exception, TrmrkActionResult<DriveItemMtbl[]>> DriveItemsDefaultExceptionHandler { get; }
+        protected Func<Exception, HttpActionResult<DriveItemMtbl>> DriveItemDefaultExceptionHandler { get; }
+        protected Func<Exception, HttpActionResult<DriveItemMtbl[]>> DriveItemsDefaultExceptionHandler { get; }
 
-        public async Task<TrmrkActionResult<DriveItemMtbl>> CopyFileAsync(IDriveItemIdnf idnf, IDriveItemIdnf newPrIdnf, string newFileName)
+        public async Task<HttpActionResult<DriveItemMtbl>> CopyFileAsync(IDriveItemIdnf idnf, IDriveItemIdnf newPrIdnf, string newFileName)
         {
             var result = await ExecuteDriveItemCoreAsync(
                 async () => await driveExplorerServiceEngine.CopyFileAsync(
@@ -56,7 +56,7 @@ namespace Turmerik.DriveExplorerCore
             return result;
         }
 
-        public async Task<TrmrkActionResult<DriveItemMtbl>> CopyFolderAsync(IDriveItemIdnf idnf, IDriveItemIdnf newPrIdnf, string newFolderName)
+        public async Task<HttpActionResult<DriveItemMtbl>> CopyFolderAsync(IDriveItemIdnf idnf, IDriveItemIdnf newPrIdnf, string newFolderName)
         {
             var result = await ExecuteDriveItemCoreAsync(
                 async () => await driveExplorerServiceEngine.CopyFolderAsync(
@@ -65,7 +65,7 @@ namespace Turmerik.DriveExplorerCore
             return result;
         }
 
-        public async Task<TrmrkActionResult<DriveItemMtbl>> CreateFolderAsync(IDriveItemIdnf prIdnf, string newFolderName)
+        public async Task<HttpActionResult<DriveItemMtbl>> CreateFolderAsync(IDriveItemIdnf prIdnf, string newFolderName)
         {
             var result = await ExecuteDriveItemCoreAsync(
                 async () => await driveExplorerServiceEngine.CreateFolderAsync(
@@ -74,7 +74,7 @@ namespace Turmerik.DriveExplorerCore
             return result;
         }
 
-        public async Task<TrmrkActionResult<DriveItemMtbl>> CreateOfficeLikeFileAsync(
+        public async Task<HttpActionResult<DriveItemMtbl>> CreateOfficeLikeFileAsync(
             IDriveItemIdnf prIdnf,
             string newFileName,
             OfficeLikeFileType officeLikeFileType)
@@ -86,7 +86,7 @@ namespace Turmerik.DriveExplorerCore
             return result;
         }
 
-        public async Task<TrmrkActionResult<DriveItemMtbl>> CreateTextFileAsync(IDriveItemIdnf prIdnf, string newFileName, string text)
+        public async Task<HttpActionResult<DriveItemMtbl>> CreateTextFileAsync(IDriveItemIdnf prIdnf, string newFileName, string text)
         {
             var result = await ExecuteDriveItemCoreAsync(
                 async () => await driveExplorerServiceEngine.CreateTextFileAsync(
@@ -95,7 +95,7 @@ namespace Turmerik.DriveExplorerCore
             return result;
         }
 
-        public async Task<TrmrkActionResult<DriveItemMtbl>> DeleteFileAsync(IDriveItemIdnf idnf)
+        public async Task<HttpActionResult<DriveItemMtbl>> DeleteFileAsync(IDriveItemIdnf idnf)
         {
             var result = await ExecuteDriveItemCoreAsync(
                 async () => await driveExplorerServiceEngine.DeleteFileAsync(idnf));
@@ -103,7 +103,7 @@ namespace Turmerik.DriveExplorerCore
             return result;
         }
 
-        public async Task<TrmrkActionResult<DriveItemMtbl>> DeleteFolderAsync(IDriveItemIdnf idnf)
+        public async Task<HttpActionResult<DriveItemMtbl>> DeleteFolderAsync(IDriveItemIdnf idnf)
         {
             var result = await ExecuteDriveItemCoreAsync(
                 async () => await driveExplorerServiceEngine.DeleteFolderAsync(idnf));
@@ -111,7 +111,7 @@ namespace Turmerik.DriveExplorerCore
             return result;
         }
 
-        public async Task<TrmrkActionResult<DriveItemMtbl>> GetFolderAsync(IDriveItemIdnf idnf)
+        public async Task<HttpActionResult<DriveItemMtbl>> GetFolderAsync(IDriveItemIdnf idnf)
         {
             var result = await ExecuteDriveItemCoreAsync(
                 async () => await driveExplorerServiceEngine.GetFolderAsync(idnf));
@@ -119,7 +119,7 @@ namespace Turmerik.DriveExplorerCore
             return result;
         }
 
-        public async Task<TrmrkActionResult<DriveItemMtbl>> GetTextFileAsync(IDriveItemIdnf idnf)
+        public async Task<HttpActionResult<DriveItemMtbl>> GetTextFileAsync(IDriveItemIdnf idnf)
         {
             var result = await ExecuteDriveItemCoreAsync(
                 async () => await driveExplorerServiceEngine.GetTextFileAsync(idnf));
@@ -127,7 +127,7 @@ namespace Turmerik.DriveExplorerCore
             return result;
         }
 
-        public async Task<TrmrkActionResult<DriveItemMtbl>> MoveFileAsync(IDriveItemIdnf idnf, IDriveItemIdnf newPrIdnf, string newFileName)
+        public async Task<HttpActionResult<DriveItemMtbl>> MoveFileAsync(IDriveItemIdnf idnf, IDriveItemIdnf newPrIdnf, string newFileName)
         {
             var result = await ExecuteDriveItemCoreAsync(
                 async () => await driveExplorerServiceEngine.MoveFileAsync(
@@ -136,7 +136,7 @@ namespace Turmerik.DriveExplorerCore
             return result;
         }
 
-        public async Task<TrmrkActionResult<DriveItemMtbl>> MoveFolderAsync(IDriveItemIdnf idnf, IDriveItemIdnf newPrIdnf, string newFolderName)
+        public async Task<HttpActionResult<DriveItemMtbl>> MoveFolderAsync(IDriveItemIdnf idnf, IDriveItemIdnf newPrIdnf, string newFolderName)
         {
             var result = await ExecuteDriveItemCoreAsync(
                 async () => await driveExplorerServiceEngine.MoveFolderAsync(
@@ -145,7 +145,7 @@ namespace Turmerik.DriveExplorerCore
             return result;
         }
 
-        public async Task<TrmrkActionResult<DriveItemMtbl>> RenameFileAsync(IDriveItemIdnf idnf, string newFileName)
+        public async Task<HttpActionResult<DriveItemMtbl>> RenameFileAsync(IDriveItemIdnf idnf, string newFileName)
         {
             var result = await ExecuteDriveItemCoreAsync(
                 async () => await driveExplorerServiceEngine.RenameFileAsync(
@@ -154,7 +154,7 @@ namespace Turmerik.DriveExplorerCore
             return result;
         }
 
-        public async Task<TrmrkActionResult<DriveItemMtbl>> RenameFolderAsync(IDriveItemIdnf idnf, string newFolderName)
+        public async Task<HttpActionResult<DriveItemMtbl>> RenameFolderAsync(IDriveItemIdnf idnf, string newFolderName)
         {
             var result = await ExecuteDriveItemCoreAsync(
                 async () => await driveExplorerServiceEngine.RenameFolderAsync(
@@ -163,9 +163,9 @@ namespace Turmerik.DriveExplorerCore
             return result;
         }
 
-        private Func<Exception, TrmrkActionResult<TData>> GetDefaultExceptionHandler<TData>()
+        private Func<Exception, HttpActionResult<TData>> GetDefaultExceptionHandler<TData>()
         {
-            Func<Exception, TrmrkActionResult<TData>> handler = exc => HandleException<TData>(exc);
+            Func<Exception, HttpActionResult<TData>> handler = exc => HandleException<TData>(exc);
             return handler;
         }
 
@@ -181,12 +181,12 @@ namespace Turmerik.DriveExplorerCore
             return httpStatusCode;
         }
 
-        private TrmrkActionResult<TData> HandleException<TData>(Exception exc)
+        private HttpActionResult<TData> HandleException<TData>(Exception exc)
         {
             var httpStatusCode = GetHttpStatusCode(exc);
-            var errViewModel = new ErrorViewModel(null, exc);
+            var errViewModel = new TrmrkActionError(null, exc);
 
-            var result = new TrmrkActionResult<TData>(
+            var result = new HttpActionResult<TData>(
                 false, default, errViewModel, httpStatusCode);
 
             return result;
@@ -228,14 +228,14 @@ namespace Turmerik.DriveExplorerCore
             return actionResult;
         }
 
-        private async Task<TrmrkActionResult<DriveItemMtbl>> ExecuteDriveItemCoreAsync(
+        private async Task<HttpActionResult<DriveItemMtbl>> ExecuteDriveItemCoreAsync(
             Func<Task<DriveItemMtbl>> action,
-            Func<Exception, TrmrkActionResult<DriveItemMtbl>> excHandler = null)
+            Func<Exception, HttpActionResult<DriveItemMtbl>> excHandler = null)
         {
             excHandler = excHandler.FirstNotNull(DriveItemDefaultExceptionHandler);
 
             var actionResult = await ExecuteCoreAsync(
-                async () => new TrmrkActionResult<DriveItemMtbl>(
+                async () => new HttpActionResult<DriveItemMtbl>(
                     true, await action()), excHandler);
 
             return actionResult;

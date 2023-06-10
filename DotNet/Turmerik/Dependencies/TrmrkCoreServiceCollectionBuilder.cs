@@ -4,9 +4,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Turmerik.Cache;
 using Turmerik.DriveExplorerCore;
 using Turmerik.FileSystem;
 using Turmerik.Reflection;
+using Turmerik.Reflection.Cache;
 using Turmerik.Synchronized;
 using Turmerik.Text;
 using Turmerik.Utils;
@@ -15,52 +17,48 @@ namespace Turmerik.Dependencies
 {
     public static class TrmrkCoreServiceCollectionBuilder
     {
-        public static TrmrkCoreServiceCollectionMtbl RegisterAll(
-            IServiceCollection services,
-            TrmrkCoreServiceCollectionMtbl mtbl = null)
+        public static void RegisterAll(
+            IServiceCollection services)
         {
-            mtbl = mtbl ?? new TrmrkCoreServiceCollectionMtbl();
+            services.AddSingleton<ITimeStampHelper, TimeStampHelper>();
+            services.AddSingleton<IFsPathNormalizer, FsPathNormalizer>();
+            services.AddSingleton<ILambdaExprHelper, LambdaExprHelper>();
+            services.AddSingleton<ILambdaExprHelperFactory, LambdaExprHelperFactory>();
+            services.AddSingleton<IBasicEqualityComparerFactory, BasicEqualityComparerFactory>();
 
-            mtbl.TimeStampHelper ??= new TimeStampHelper();
-            mtbl.FsPathNormalizer ??= new FsPathNormalizer();
-            mtbl.LambdaExprHelper ??= new LambdaExprHelper();
+            services.AddSingleton<IMutexCreator, MutexCreator>();
+            services.AddSingleton<IOnceExecutedActionFactory, OnceExecutedActionFactory>();
+            services.AddSingleton<IOnceExecutedAsyncActionFactory, OnceExecutedAsyncActionFactory>();
+            services.AddSingleton<IDisposableComponentFactory, DisposableComponentFactory>();
+            services.AddSingleton<IAsyncDisposableComponentFactory, AsyncDisposableComponentFactory>();
 
-            mtbl.LambdaExprHelperFactory ??= new LambdaExprHelperFactory(
-                mtbl.LambdaExprHelper);
+            services.AddSingleton<IThreadSafeActionComponentFactory, ThreadSafeActionComponentFactory>();
+            services.AddSingleton<INonSynchronizedActionComponentFactory, NonSynchronizedActionComponentFactory>();
+            services.AddSingleton<IInterProcessConcurrentActionComponentFactory, InterProcessConcurrentActionComponentFactory>();
 
-            mtbl.BasicEqualityComparerFactory ??= new BasicEqualityComparerFactory();
-            mtbl.MutexCreator ??= new MutexCreator();
+            services.AddSingleton<IThreadSafeDataCacheFactory, ThreadSafeDataCacheFactory>();
+            services.AddSingleton<INonSynchronizedDataCacheFactory, NonSynchronizedDataCacheFactory>();
+            services.AddSingleton<IInterProcessConcurrentDataCacheFactory, InterProcessConcurrentDataCacheFactory>();
 
-            mtbl.OnceExecutedActionFactory ??= new OnceExecutedActionFactory();
-            mtbl.OnceExecutedAsyncActionFactory ??= new OnceExecutedAsyncActionFactory();
-
-            mtbl.DisposableComponentFactory ??= new DisposableComponentFactory(
-                mtbl.OnceExecutedActionFactory);
-
-            mtbl.AsyncDisposableComponentFactory ??= new AsyncDisposableComponentFactory(
-                mtbl.OnceExecutedAsyncActionFactory);
-
-            mtbl.InterProcessConcurrentActionComponentFactory ??= new InterProcessConcurrentActionComponentFactory(
-                mtbl.DisposableComponentFactory,
-                mtbl.MutexCreator);
-
-            services.AddSingleton(mtbl.TimeStampHelper);
-            services.AddSingleton(mtbl.FsPathNormalizer);
-            services.AddSingleton(mtbl.LambdaExprHelper);
-            services.AddSingleton(mtbl.LambdaExprHelperFactory);
-            services.AddSingleton(mtbl.BasicEqualityComparerFactory);
-            services.AddSingleton(mtbl.MutexCreator);
-            services.AddSingleton(mtbl.OnceExecutedActionFactory);
-            services.AddSingleton(mtbl.OnceExecutedAsyncActionFactory);
-            services.AddSingleton(mtbl.DisposableComponentFactory);
-            services.AddSingleton(mtbl.AsyncDisposableComponentFactory);
-            services.AddSingleton(mtbl.InterProcessConcurrentActionComponentFactory);
+            services.AddSingleton<IInterProcessConcurrentStaticDataCacheFactory, InterProcessConcurrentStaticDataCacheFactory>();
+            services.AddSingleton<IThreadSafeStaticDataCacheFactory, ThreadSafeStaticDataCacheFactory>();
+            services.AddSingleton<INonSynchronizedStaticDataCacheFactory, NonSynchronizedStaticDataCacheFactory>();
 
             services.AddTransient<IThreadSafeActionComponent, ThreadSafeActionComponent>();
-            services.AddTransient<IAsyncActionsQueue, AsyncActionsQueue>();
-            services.AddTransient<IDriveExplorerService, DriveExplorerService>();
+            services.AddTransient<INonSynchronizedActionComponent, NonSynchronizedActionComponent>();
 
-            return mtbl;
+            services.AddTransient<IAsyncActionsQueue, AsyncActionsQueue>();
+
+            services.AddSingleton<IMemberAccessibiliyFilterEqualityComparerFactory, MemberAccessibiliyFilterEqualityComparerFactory>();
+
+            services.AddSingleton<ICachedTypesMapFactory>(
+                svcProv => new CachedTypesMapFactory(
+                    svcProv.GetRequiredService<INonSynchronizedDataCacheFactory>(),
+                    new Lazy<ICachedReflectionItemsFactory>(
+                        () => svcProv.GetRequiredService<ICachedReflectionItemsFactory>())));
+
+            services.AddSingleton<ICachedReflectionItemsFactory, CachedReflectionItemsFactory>();
+            services.AddTransient<IDriveExplorerService, DriveExplorerService>();
         }
     }
 }
