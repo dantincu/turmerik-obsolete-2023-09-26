@@ -55,9 +55,10 @@ namespace Turmerik.Reflection
 
     public interface IMemberAccessibiliyFilterEqualityComparerFactory
     {
-        IMethodAccessibiliyFilterEqualityComparer Member();
+        IMethodAccessibiliyFilterEqualityComparer Method();
         IFieldAccessibiliyFilterEqualityComparer Field();
         IPropertyAccessibiliyFilterEqualityComparer Property();
+        IEventAccessibiliyFilterEqualityComparer Event();
     }
 
     public readonly struct FieldAccessibilityFilter
@@ -85,27 +86,31 @@ namespace Turmerik.Reflection
     public readonly struct PropertyAccessibilityFilter
     {
         public readonly MemberScope Scope;
+        public readonly bool CanRead;
+        public readonly bool CanWrite;
         public readonly MethodAccessibilityFilter? Getter;
         public readonly MethodAccessibilityFilter? Setter;
 
         public PropertyAccessibilityFilter(
             MemberScope scope = default,
+            bool canRead = true,
+            bool canWrite = true,
             MethodAccessibilityFilter? getter = null,
-            MethodAccessibilityFilter? setter = null,
-            bool setterOnly = false)
+            MethodAccessibilityFilter? setter = null)
         {
             Scope = scope;
+            CanRead = canRead;
+            CanWrite = canWrite;
             Getter = getter;
             Setter = setter;
-            SetterOnly = setterOnly;
         }
-
-        public readonly bool SetterOnly { get; }
 
         public override int GetHashCode() => (
             (int)Scope).BasicHashCode(
+                CanRead ? 128 : 0,
+                CanRead ? 256 : 0,
                 Setter?.GetHashCode() ?? 0,
-                SetterOnly ? 100 : 0);
+                Getter?.GetHashCode() ?? 0);
     }
 
     public readonly struct EventAccessibilityFilter
@@ -176,7 +181,8 @@ namespace Turmerik.Reflection
             PropertyAccessibilityFilter y)
         {
             bool areEqual = x.Scope == y.Scope;
-            areEqual = areEqual && x.SetterOnly == y.SetterOnly;
+            areEqual = areEqual && x.CanRead == y.CanRead;
+            areEqual = areEqual && x.CanWrite == y.CanWrite;
 
             areEqual = areEqual && (x.Getter == null) == (y.Getter == null);
             areEqual = areEqual && (x.Setter == null) == (y.Setter == null);
@@ -273,19 +279,22 @@ namespace Turmerik.Reflection
 
     public class MemberAccessibiliyFilterEqualityComparerFactory : IMemberAccessibiliyFilterEqualityComparerFactory
     {
-        private readonly MethodAccessibiliyFilterEqualityComparer member;
+        private readonly MethodAccessibiliyFilterEqualityComparer method;
         private readonly FieldAccessibilityFilterEqualityComparer field;
         private readonly PropertyAccessibiliyFilterEqualityComparer property;
+        private readonly EventAccessibiliyFilterEqualityComparer @event;
 
         public MemberAccessibiliyFilterEqualityComparerFactory()
         {
-            member = new MethodAccessibiliyFilterEqualityComparer();
+            method = new MethodAccessibiliyFilterEqualityComparer();
             field = new FieldAccessibilityFilterEqualityComparer();
-            property = new PropertyAccessibiliyFilterEqualityComparer(member);
+            property = new PropertyAccessibiliyFilterEqualityComparer(method);
+            @event = new EventAccessibiliyFilterEqualityComparer(method);
         }
 
-        public IMethodAccessibiliyFilterEqualityComparer Member() => member;
+        public IMethodAccessibiliyFilterEqualityComparer Method() => method;
         public IFieldAccessibiliyFilterEqualityComparer Field() => field;
         public IPropertyAccessibiliyFilterEqualityComparer Property() => property;
+        public IEventAccessibiliyFilterEqualityComparer Event() => @event;
     }
 }

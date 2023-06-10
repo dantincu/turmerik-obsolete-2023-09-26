@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -15,7 +16,7 @@ namespace Turmerik.Reflection.Cache
         where TItem : ICachedItem<T>
     {
         ReadOnlyCollection<TItem> Items { get; }
-        IStaticDataCache<TFilter, ReadOnlyCollection<TItem>> Filtered { get; }
+        IKeyReducerStaticDataCache<TFilter, ReadOnlyCollection<TItem>> Filtered { get; }
     }
 
     public interface ICachedFieldsCollection : ICachedItemsCollection<FieldInfo, ICachedFieldInfo, FieldAccessibilityFilter>
@@ -43,30 +44,32 @@ namespace Turmerik.Reflection.Cache
     {
         public CachedItemsCollection(
             INonSynchronizedStaticDataCacheFactory staticDataCacheFactory,
-            IMemberAccessibiliyFilterEqualityComparerFactory memberAccessibiliyFilterEqualityComparerFactory,
+            IEqualityComparer<TFilter> filterEqCompr,
             ReadOnlyCollection<TItem> items,
-            Func<TItem, TFilter, bool> filterMatchPredicate)
+            Func<TItem, TFilter, bool> filterMatchPredicate,
+            Func<TFilter, TFilter> filterReducer)
         {
             Items = items ?? throw new ArgumentNullException(nameof(items));
 
             StaticDataCacheFactory = staticDataCacheFactory ?? throw new ArgumentNullException(
                 nameof(staticDataCacheFactory));
 
-            MemberAccessibiliyFilterEqualityComparerFactory = memberAccessibiliyFilterEqualityComparerFactory ?? throw new ArgumentNullException(
-                nameof(memberAccessibiliyFilterEqualityComparerFactory));
+            FilterEqCompr = filterEqCompr ?? throw new ArgumentNullException(
+                nameof(filterEqCompr));
 
             FilterMatchPredicate = filterMatchPredicate ?? throw new ArgumentNullException(
                 nameof(filterMatchPredicate));
 
-            Filtered = StaticDataCacheFactory.Create<TFilter, ReadOnlyCollection<TItem>>(
-                filter => Items.Where(item => FilterMatchPredicate(item, filter)).RdnlC());
+            Filtered = StaticDataCacheFactory.CreateKeyReducer(
+                filter => Items.Where(item => FilterMatchPredicate(item, filter)).RdnlC(),
+                FilterEqCompr, filterReducer, filter => filter);
         }
 
         public ReadOnlyCollection<TItem> Items { get; }
-        public IStaticDataCache<TFilter, ReadOnlyCollection<TItem>> Filtered { get; }
+        public IKeyReducerStaticDataCache<TFilter, ReadOnlyCollection<TItem>> Filtered { get; }
 
         protected INonSynchronizedStaticDataCacheFactory StaticDataCacheFactory { get; }
-        protected IMemberAccessibiliyFilterEqualityComparerFactory MemberAccessibiliyFilterEqualityComparerFactory { get; }
+        protected IEqualityComparer<TFilter> FilterEqCompr { get; }
         private Func<TItem, TFilter, bool> FilterMatchPredicate { get; }
     }
 
@@ -74,13 +77,15 @@ namespace Turmerik.Reflection.Cache
     {
         public CachedFieldsCollection(
             INonSynchronizedStaticDataCacheFactory staticDataCacheFactory,
-            IMemberAccessibiliyFilterEqualityComparerFactory memberAccessibiliyFilterEqualityComparerFactory,
+            IEqualityComparer<FieldAccessibilityFilter> filterEqCompr,
             ReadOnlyCollection<ICachedFieldInfo> items,
-            Func<ICachedFieldInfo, FieldAccessibilityFilter, bool> filterMatchPredicate) : base(
+            Func<ICachedFieldInfo, FieldAccessibilityFilter, bool> filterMatchPredicate,
+            Func<FieldAccessibilityFilter, FieldAccessibilityFilter> filterReducer) : base(
                 staticDataCacheFactory,
-                memberAccessibiliyFilterEqualityComparerFactory,
+                filterEqCompr,
                 items,
-                filterMatchPredicate)
+                filterMatchPredicate,
+                filterReducer)
         {
         }
     }
@@ -89,13 +94,15 @@ namespace Turmerik.Reflection.Cache
     {
         public CachedPropertiesCollection(
             INonSynchronizedStaticDataCacheFactory staticDataCacheFactory,
-            IMemberAccessibiliyFilterEqualityComparerFactory memberAccessibiliyFilterEqualityComparerFactory,
+            IEqualityComparer<PropertyAccessibilityFilter> filterEqCompr,
             ReadOnlyCollection<ICachedPropertyInfo> items,
-            Func<ICachedPropertyInfo, PropertyAccessibilityFilter, bool> filterMatchPredicate) : base(
+            Func<ICachedPropertyInfo, PropertyAccessibilityFilter, bool> filterMatchPredicate,
+            Func<PropertyAccessibilityFilter, PropertyAccessibilityFilter> filterReducer) : base(
                 staticDataCacheFactory,
-                memberAccessibiliyFilterEqualityComparerFactory,
+                filterEqCompr,
                 items,
-                filterMatchPredicate)
+                filterMatchPredicate,
+                filterReducer)
         {
         }
     }
@@ -104,13 +111,15 @@ namespace Turmerik.Reflection.Cache
     {
         public CachedEventsCollection(
             INonSynchronizedStaticDataCacheFactory staticDataCacheFactory,
-            IMemberAccessibiliyFilterEqualityComparerFactory memberAccessibiliyFilterEqualityComparerFactory,
+            IEqualityComparer<EventAccessibilityFilter> filterEqCompr,
             ReadOnlyCollection<ICachedEventInfo> items,
-            Func<ICachedEventInfo, EventAccessibilityFilter, bool> filterMatchPredicate) : base(
+            Func<ICachedEventInfo, EventAccessibilityFilter, bool> filterMatchPredicate,
+            Func<EventAccessibilityFilter, EventAccessibilityFilter> filterReducer) : base(
                 staticDataCacheFactory,
-                memberAccessibiliyFilterEqualityComparerFactory,
+                filterEqCompr,
                 items,
-                filterMatchPredicate)
+                filterMatchPredicate,
+                filterReducer)
         {
         }
     }
@@ -119,13 +128,15 @@ namespace Turmerik.Reflection.Cache
     {
         public CachedMethodsCollection(
             INonSynchronizedStaticDataCacheFactory staticDataCacheFactory,
-            IMemberAccessibiliyFilterEqualityComparerFactory memberAccessibiliyFilterEqualityComparerFactory,
+            IEqualityComparer<MethodAccessibilityFilter> filterEqCompr,
             ReadOnlyCollection<ICachedMethodInfo> items,
-            Func<ICachedMethodInfo, MethodAccessibilityFilter, bool> filterMatchPredicate) : base(
+            Func<ICachedMethodInfo, MethodAccessibilityFilter, bool> filterMatchPredicate,
+            Func<MethodAccessibilityFilter, MethodAccessibilityFilter> filterReducer) : base(
                 staticDataCacheFactory,
-                memberAccessibiliyFilterEqualityComparerFactory,
+                filterEqCompr,
                 items,
-                filterMatchPredicate)
+                filterMatchPredicate,
+                filterReducer)
         {
         }
     }
@@ -134,13 +145,15 @@ namespace Turmerik.Reflection.Cache
     {
         public CachedConstructorsCollection(
             INonSynchronizedStaticDataCacheFactory staticDataCacheFactory,
-            IMemberAccessibiliyFilterEqualityComparerFactory memberAccessibiliyFilterEqualityComparerFactory,
+            IEqualityComparer<MemberVisibility> filterEqCompr,
             ReadOnlyCollection<ICachedConstructorInfo> items,
-            Func<ICachedConstructorInfo, MemberVisibility, bool> filterMatchPredicate) : base(
+            Func<ICachedConstructorInfo, MemberVisibility, bool> filterMatchPredicate,
+            Func<MemberVisibility, MemberVisibility> filterReducer) : base(
                 staticDataCacheFactory,
-                memberAccessibiliyFilterEqualityComparerFactory,
+                filterEqCompr,
                 items,
-                filterMatchPredicate)
+                filterMatchPredicate,
+                filterReducer)
         {
         }
     }

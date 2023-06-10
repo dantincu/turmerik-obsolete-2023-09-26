@@ -13,7 +13,9 @@ namespace Turmerik.Reflection.Cache
 {
     public interface ICachedTypeInfo : ICachedMemberInfo<Type, ICachedTypeFlags>
     {
-        Lazy<ICachedTypeInfo> BaseType { get; }
+        string? FullName { get; }
+        string? FullDisplayName { get; }
+        Lazy<ICachedTypeInfo?> BaseType { get; }
         Lazy<ReadOnlyCollection<ICachedTypeInfo>> Interfaces { get; }
         Lazy<IStaticDataCache<Type, ICachedInterfaceMapping>> InterfacesMap { get; }
         Lazy<ICachedInheritedFieldsCollection> Fields { get; }
@@ -36,7 +38,10 @@ namespace Turmerik.Reflection.Cache
                 nonSynchronizedStaticDataCacheFactory,
                 value)
         {
-            BaseType = new Lazy<ICachedTypeInfo>(
+            FullName = value.FullName;
+            FullDisplayName = ReflH.GetTypeFullDisplayName(FullName);
+
+            BaseType = new Lazy<ICachedTypeInfo?>(
                 () => Data.BaseType?.WithValue(
                     TypesMap.Value.Get));
 
@@ -68,7 +73,9 @@ namespace Turmerik.Reflection.Cache
                 () => ItemsFactory.AssemblyInfo(Data.Assembly));
         }
 
-        public Lazy<ICachedTypeInfo> BaseType { get; }
+        public string? FullName { get; }
+        public string? FullDisplayName { get; }
+        public Lazy<ICachedTypeInfo?> BaseType { get; }
         public Lazy<ReadOnlyCollection<ICachedTypeInfo>> Interfaces { get; }
         public Lazy<IStaticDataCache<Type, ICachedInterfaceMapping>> InterfacesMap { get; }
 

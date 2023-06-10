@@ -6,6 +6,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using Turmerik.Cache;
+using Turmerik.Utils;
 
 namespace Turmerik.Reflection.Cache
 {
@@ -39,19 +40,23 @@ namespace Turmerik.Reflection.Cache
 
         ICachedPropertiesCollection Properties(
             ReadOnlyCollection<ICachedPropertyInfo> items,
-            Func<ICachedPropertyInfo, PropertyAccessibilityFilter, bool> filterMatchPredicate);
+            Func<ICachedPropertyInfo, PropertyAccessibilityFilter, bool> filterMatchPredicate,
+            Func<PropertyAccessibilityFilter, PropertyAccessibilityFilter> filterReducer);
 
         ICachedFieldsCollection Fields(
             ReadOnlyCollection<ICachedFieldInfo> items,
-            Func<ICachedFieldInfo, FieldAccessibilityFilter, bool> filterMatchPredicate);
+            Func<ICachedFieldInfo, FieldAccessibilityFilter, bool> filterMatchPredicate,
+            Func<FieldAccessibilityFilter, FieldAccessibilityFilter> filterReducer);
 
         ICachedMethodsCollection Methods(
             ReadOnlyCollection<ICachedMethodInfo> items,
-            Func<ICachedMethodInfo, MethodAccessibilityFilter, bool> filterMatchPredicate);
+            Func<ICachedMethodInfo, MethodAccessibilityFilter, bool> filterMatchPredicate,
+            Func<MethodAccessibilityFilter, MethodAccessibilityFilter> filterReducer);
 
         ICachedEventsCollection Events(
             ReadOnlyCollection<ICachedEventInfo> items,
-            Func<ICachedEventInfo, EventAccessibilityFilter, bool> filterMatchPredicate);
+            Func<ICachedEventInfo, EventAccessibilityFilter, bool> filterMatchPredicate,
+            Func<EventAccessibilityFilter, EventAccessibilityFilter> filterReducer);
     }
 
     public class CachedReflectionItemsFactory : ICachedReflectionItemsFactory
@@ -146,68 +151,90 @@ namespace Turmerik.Reflection.Cache
 
         public ICachedInheritedPropertiesCollection InheritedProperties(
             ICachedTypeInfo type,
-            bool isInstancePropsCollection) => new CachedInheritedPropertiesCollection(
-                cachedTypesMap.Value,
-                this,
-                nonSynchronizedStaticDataCacheFactory,
-                memberAccessibiliyFilterEqualityComparerFactory,
-                type,
-                isInstancePropsCollection);
+            bool isInstancePropsCollection) => (isInstancePropsCollection ? MemberScope.Static : MemberScope.Instance).WithValue(
+                substractedScope => new CachedInheritedPropertiesCollection(
+                    cachedTypesMap.Value,
+                    this,
+                    nonSynchronizedStaticDataCacheFactory,
+                    type,
+                    isInstancePropsCollection,
+                    filter => filter.ReduceFilterIfReq(
+                        isInstancePropsCollection),
+                    filter => filter.ReduceFilterIfReq(
+                        isInstancePropsCollection,
+                        false, true),
+                    filter => filter.ReduceFilterIfReq(
+                        isInstancePropsCollection,
+                        true, true)));
 
         public ICachedInheritedFieldsCollection InheritedFields(
             ICachedTypeInfo type) => new CachedInheritedFieldsCollection(
                 cachedTypesMap.Value,
                 this,
                 nonSynchronizedStaticDataCacheFactory,
-                memberAccessibiliyFilterEqualityComparerFactory,
-                type);
+                type,
+                filter => filter.ReduceFilterIfReq(),
+                filter => filter.ReduceFilterIfReq(false, true),
+                filter => filter.ReduceFilterIfReq(true, true));
 
         public ICachedInheritedMethodsCollection InheritedMethods(
             ICachedTypeInfo type) => new CachedInheritedMethodsCollection(
                 cachedTypesMap.Value,
                 this,
                 nonSynchronizedStaticDataCacheFactory,
-                memberAccessibiliyFilterEqualityComparerFactory,
-                type);
+                type,
+                filter => filter.ReduceFilterIfReq(),
+                filter => filter.ReduceFilterIfReq(false, true),
+                filter => filter.ReduceFilterIfReq(true, true));
 
         public ICachedInheritedEventsCollection InheritedEvents(
             ICachedTypeInfo type) => new CachedInheritedEventsCollection(
                 cachedTypesMap.Value,
                 this,
                 nonSynchronizedStaticDataCacheFactory,
-                memberAccessibiliyFilterEqualityComparerFactory,
-                type);
+                type,
+                filter => filter.ReduceFilterIfReq(),
+                filter => filter.ReduceFilterIfReq(false, true),
+                filter => filter.ReduceFilterIfReq(true, true));
 
         public ICachedPropertiesCollection Properties(
             ReadOnlyCollection<ICachedPropertyInfo> items,
-            Func<ICachedPropertyInfo, PropertyAccessibilityFilter, bool> filterMatchPredicate) => new CachedPropertiesCollection(
+            Func<ICachedPropertyInfo, PropertyAccessibilityFilter, bool> filterMatchPredicate,
+            Func<PropertyAccessibilityFilter, PropertyAccessibilityFilter> filterReducer) => new CachedPropertiesCollection(
                 nonSynchronizedStaticDataCacheFactory,
-                memberAccessibiliyFilterEqualityComparerFactory,
+                memberAccessibiliyFilterEqualityComparerFactory.Property(),
                 items,
-                filterMatchPredicate);
+                filterMatchPredicate,
+                filterReducer);
 
         public ICachedFieldsCollection Fields(
             ReadOnlyCollection<ICachedFieldInfo> items,
-            Func<ICachedFieldInfo, FieldAccessibilityFilter, bool> filterMatchPredicate) => new CachedFieldsCollection(
+            Func<ICachedFieldInfo, FieldAccessibilityFilter, bool> filterMatchPredicate,
+            Func<FieldAccessibilityFilter, FieldAccessibilityFilter> filterReducer) => new CachedFieldsCollection(
                 nonSynchronizedStaticDataCacheFactory,
-                memberAccessibiliyFilterEqualityComparerFactory,
+                memberAccessibiliyFilterEqualityComparerFactory.Field(),
                 items,
-                filterMatchPredicate);
+                filterMatchPredicate,
+                filterReducer);
 
         public ICachedMethodsCollection Methods(
             ReadOnlyCollection<ICachedMethodInfo> items,
-            Func<ICachedMethodInfo, MethodAccessibilityFilter, bool> filterMatchPredicate) => new CachedMethodsCollection(
+            Func<ICachedMethodInfo, MethodAccessibilityFilter, bool> filterMatchPredicate,
+            Func<MethodAccessibilityFilter, MethodAccessibilityFilter> filterReducer) => new CachedMethodsCollection(
                 nonSynchronizedStaticDataCacheFactory,
-                memberAccessibiliyFilterEqualityComparerFactory,
+                memberAccessibiliyFilterEqualityComparerFactory.Method(),
                 items,
-                filterMatchPredicate);
+                filterMatchPredicate,
+                filterReducer);
 
         public ICachedEventsCollection Events(
             ReadOnlyCollection<ICachedEventInfo> items,
-            Func<ICachedEventInfo, EventAccessibilityFilter, bool> filterMatchPredicate) => new CachedEventsCollection(
+            Func<ICachedEventInfo, EventAccessibilityFilter, bool> filterMatchPredicate,
+            Func<EventAccessibilityFilter, EventAccessibilityFilter> filterReducer) => new CachedEventsCollection(
                 nonSynchronizedStaticDataCacheFactory,
-                memberAccessibiliyFilterEqualityComparerFactory,
+                memberAccessibiliyFilterEqualityComparerFactory.Event(),
                 items,
-                filterMatchPredicate);
+                filterMatchPredicate,
+                filterReducer);
     }
 }

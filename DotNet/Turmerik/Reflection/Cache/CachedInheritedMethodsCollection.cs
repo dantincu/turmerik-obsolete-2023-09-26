@@ -19,27 +19,31 @@ namespace Turmerik.Reflection.Cache
             ICachedTypesMap typesMap,
             ICachedReflectionItemsFactory itemsFactory,
             INonSynchronizedStaticDataCacheFactory staticDataCacheFactory,
-            IMemberAccessibiliyFilterEqualityComparerFactory memberAccessibiliyFilterEqualityComparerFactory,
-            ICachedTypeInfo type) : base(
+            ICachedTypeInfo type,
+            Func<MethodAccessibilityFilter, MethodAccessibilityFilter> ownFilterReducer,
+            Func<MethodAccessibilityFilter, MethodAccessibilityFilter> allVisibleFilterReducer,
+            Func<MethodAccessibilityFilter, MethodAccessibilityFilter> asmVisibleFilterReducer) : base(
                 typesMap,
                 itemsFactory,
                 staticDataCacheFactory,
-                memberAccessibiliyFilterEqualityComparerFactory,
                 type,
-                (arg, filter, isSameAssebly) => arg.Matches(
-                    filter,
-                    !isSameAssebly,
-                    true))
+                (arg, filter) => filter.Matches(arg),
+                ownFilterReducer,
+                allVisibleFilterReducer,
+                asmVisibleFilterReducer)
         {
         }
 
         protected override ICachedMethodsCollection CreateCollection(
             ReadOnlyCollection<ICachedMethodInfo> items,
-            Func<ICachedMethodInfo, MethodAccessibilityFilter, bool> filterMatchPredicate) => ItemsFactory.Methods(
-                items, filterMatchPredicate);
+            Func<MethodAccessibilityFilter, MethodAccessibilityFilter> filterReducer) => ItemsFactory.Methods(
+                items, FilterMatchPredicate, filterReducer);
 
-        protected override ICachedMethodsCollection GetBaseTypeOwnItems(
-            ICachedTypeInfo baseType) => baseType.Methods.Value.All.Value;
+        protected override ICachedMethodsCollection GetBaseTypeAsmVisibleItems(
+            ICachedTypeInfo baseType) => baseType.Methods.Value.AsmVisible.Value;
+
+        protected override ICachedMethodsCollection GetBaseTypeAllVisibleItems(
+            ICachedTypeInfo baseType) => baseType.Methods.Value.AllVisible.Value;
 
         protected override ICachedMethodInfo[] GetOwnItems(
             ICachedTypeInfo type) => type.Data.GetMethods(

@@ -20,27 +20,31 @@ namespace Turmerik.Reflection.Cache
             ICachedTypesMap typesMap,
             ICachedReflectionItemsFactory itemsFactory,
             INonSynchronizedStaticDataCacheFactory staticDataCacheFactory,
-            IMemberAccessibiliyFilterEqualityComparerFactory memberAccessibiliyFilterEqualityComparerFactory,
-            ICachedTypeInfo type) : base(
+            ICachedTypeInfo type,
+            Func<EventAccessibilityFilter, EventAccessibilityFilter> ownFilterReducer,
+            Func<EventAccessibilityFilter, EventAccessibilityFilter> allVisibleFilterReducer,
+            Func<EventAccessibilityFilter, EventAccessibilityFilter> asmVisibleFilterReducer) : base(
                 typesMap,
                 itemsFactory,
                 staticDataCacheFactory,
-                memberAccessibiliyFilterEqualityComparerFactory,
                 type,
-                (arg, filter, isSameAssebly) => arg.Matches(
-                    filter,
-                    !isSameAssebly,
-                    true))
+                (arg, filter) => filter.Matches(arg),
+                ownFilterReducer,
+                allVisibleFilterReducer,
+                asmVisibleFilterReducer)
         {
         }
 
         protected override ICachedEventsCollection CreateCollection(
             ReadOnlyCollection<ICachedEventInfo> items,
-            Func<ICachedEventInfo, EventAccessibilityFilter, bool> filterMatchPredicate) => ItemsFactory.Events(
-                items, filterMatchPredicate);
+            Func<EventAccessibilityFilter, EventAccessibilityFilter> filterReducer) => ItemsFactory.Events(
+                items, FilterMatchPredicate, filterReducer);
 
-        protected override ICachedEventsCollection GetBaseTypeOwnItems(
-            ICachedTypeInfo baseType) => baseType.Events.Value.All.Value;
+        protected override ICachedEventsCollection GetBaseTypeAsmVisibleItems(
+            ICachedTypeInfo baseType) => baseType.Events.Value.AsmVisible.Value;
+
+        protected override ICachedEventsCollection GetBaseTypeAllVisibleItems(
+            ICachedTypeInfo baseType) => baseType.Events.Value.AllVisible.Value;
 
         protected override ICachedEventInfo[] GetOwnItems(
             ICachedTypeInfo type) => type.Data.GetEvents(

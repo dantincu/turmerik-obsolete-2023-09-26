@@ -19,27 +19,31 @@ namespace Turmerik.Reflection.Cache
             ICachedTypesMap typesMap,
             ICachedReflectionItemsFactory itemsFactory,
             INonSynchronizedStaticDataCacheFactory staticDataCacheFactory,
-            IMemberAccessibiliyFilterEqualityComparerFactory memberAccessibiliyFilterEqualityComparerFactory,
-            ICachedTypeInfo type) : base(
+            ICachedTypeInfo type,
+            Func<FieldAccessibilityFilter, FieldAccessibilityFilter> ownFilterReducer,
+            Func<FieldAccessibilityFilter, FieldAccessibilityFilter> allVisibleFilterReducer,
+            Func<FieldAccessibilityFilter, FieldAccessibilityFilter> asmVisibleFilterReducer) : base(
                 typesMap,
                 itemsFactory,
                 staticDataCacheFactory,
-                memberAccessibiliyFilterEqualityComparerFactory,
                 type,
-                (arg, filter, isSameAssebly) => arg.Matches(
-                    filter,
-                    !isSameAssebly,
-                    true))
+                (arg, filter) => filter.Matches(arg),
+                ownFilterReducer,
+                allVisibleFilterReducer,
+                asmVisibleFilterReducer)
         {
         }
 
         protected override ICachedFieldsCollection CreateCollection(
             ReadOnlyCollection<ICachedFieldInfo> items,
-            Func<ICachedFieldInfo, FieldAccessibilityFilter, bool> filterMatchPredicate) => ItemsFactory.Fields(
-                items, filterMatchPredicate);
+            Func<FieldAccessibilityFilter, FieldAccessibilityFilter> filterReducer) => ItemsFactory.Fields(
+                items, FilterMatchPredicate, filterReducer);
 
-        protected override ICachedFieldsCollection GetBaseTypeOwnItems(
-            ICachedTypeInfo baseType) => baseType.Fields.Value.All.Value;
+        protected override ICachedFieldsCollection GetBaseTypeAsmVisibleItems(
+            ICachedTypeInfo baseType) => baseType.Fields.Value.AsmVisible.Value;
+
+        protected override ICachedFieldsCollection GetBaseTypeAllVisibleItems(
+            ICachedTypeInfo baseType) => baseType.Fields.Value.AllVisible.Value;
 
         protected override ICachedFieldInfo[] GetOwnItems(
             ICachedTypeInfo type) => type.Data.GetFields(

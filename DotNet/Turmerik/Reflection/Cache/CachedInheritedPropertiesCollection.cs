@@ -21,18 +21,19 @@ namespace Turmerik.Reflection.Cache
             ICachedTypesMap typesMap,
             ICachedReflectionItemsFactory itemsFactory,
             INonSynchronizedStaticDataCacheFactory staticDataCacheFactory,
-            IMemberAccessibiliyFilterEqualityComparerFactory memberAccessibiliyFilterEqualityComparerFactory,
             ICachedTypeInfo type,
-            bool isInstancePropsCollection) : base(
+            bool isInstancePropsCollection,
+            Func<PropertyAccessibilityFilter, PropertyAccessibilityFilter> ownFilterReducer,
+            Func<PropertyAccessibilityFilter, PropertyAccessibilityFilter> allVisibleFilterReducer,
+            Func<PropertyAccessibilityFilter, PropertyAccessibilityFilter> asmVisibleFilterReducer) : base(
                 typesMap,
                 itemsFactory,
                 staticDataCacheFactory,
-                memberAccessibiliyFilterEqualityComparerFactory,
                 type,
-                (arg, filter, isSameAssebly) => arg.Matches(
-                    filter,
-                    !isSameAssebly,
-                    true))
+                (arg, filter) => filter.Matches(arg),
+                ownFilterReducer,
+                allVisibleFilterReducer,
+                asmVisibleFilterReducer)
         {
             this.IsInstancePropsCollection = isInstancePropsCollection;
         }
@@ -41,13 +42,18 @@ namespace Turmerik.Reflection.Cache
 
         protected override ICachedPropertiesCollection CreateCollection(
             ReadOnlyCollection<ICachedPropertyInfo> items,
-            Func<ICachedPropertyInfo, PropertyAccessibilityFilter, bool> filterMatchPredicate) => ItemsFactory.Properties(
-                items, filterMatchPredicate);
+            Func<PropertyAccessibilityFilter, PropertyAccessibilityFilter> filterReducer) => ItemsFactory.Properties(
+                items, FilterMatchPredicate, filterReducer);
 
-        protected override ICachedPropertiesCollection GetBaseTypeOwnItems(
+        protected override ICachedPropertiesCollection GetBaseTypeAsmVisibleItems(
             ICachedTypeInfo baseType) => this.IsInstancePropsCollection.IfTrue(
-                () => baseType.InstanceProps.Value.All.Value,
-                () => baseType.StaticProps.Value.All.Value);
+                () => baseType.InstanceProps.Value.AsmVisible.Value,
+                () => baseType.StaticProps.Value.AsmVisible.Value);
+
+        protected override ICachedPropertiesCollection GetBaseTypeAllVisibleItems(
+            ICachedTypeInfo baseType) => this.IsInstancePropsCollection.IfTrue(
+                () => baseType.InstanceProps.Value.AllVisible.Value,
+                () => baseType.StaticProps.Value.AllVisible.Value);
 
         protected override ICachedPropertyInfo[] GetOwnItems(
             ICachedTypeInfo type) => type.Data.GetProperties(
