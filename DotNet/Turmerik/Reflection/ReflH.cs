@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.VisualBasic.FileIO;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -9,6 +10,7 @@ using Turmerik.MathH;
 using Turmerik.Reflection.Cache;
 using Turmerik.Text;
 using Turmerik.Utils;
+using static System.Formats.Asn1.AsnWriter;
 
 namespace Turmerik.Reflection
 {
@@ -26,6 +28,23 @@ namespace Turmerik.Reflection
         public static string? GetTypeFullDisplayName(
             string? typeFullName) => typeFullName?.SubStr(
                 (str, len) => str.FindVal((c, i) => c == '`').Key).Item1;
+
+        public static bool IsDefault(
+            this MemberScope filter) => filter == MemberScope.None;
+
+        public static bool IsDefault(
+            this MemberVisibility filter) => filter == MemberVisibility.None;
+
+        public static bool IsDefault(
+            this FieldType filter) => filter == FieldType.None;
+
+        public static bool IsDefault(
+            this FieldAccessibilityFilter filter) => filter.Visibility.IsDefault(
+                ) && filter.Scope.IsDefault() && filter.FieldType.IsDefault();
+
+        public static bool IsDefault(
+            this MethodAccessibilityFilter filter) => filter.Visibility.IsDefault(
+                ) && filter.Scope.IsDefault();
 
         public static MemberScope SubstractIfContainsFlag(
             this MemberScope memberScope,
@@ -144,7 +163,7 @@ namespace Turmerik.Reflection
 
         public static bool Matches(
             this MemberVisibility visibility,
-            ICachedMemberFlagsCore arg) => arg.IfHasAnyFlag(
+            ICachedMemberFlagsCore arg) => (arg == null && visibility.IsDefault()) || arg!.IfHasAnyFlag(
                 visibility,
                 new Dictionary<MemberVisibility, Func<ICachedMemberFlagsCore, MemberVisibility, bool>>
                 {
@@ -159,7 +178,7 @@ namespace Turmerik.Reflection
 
         public static bool Matches(
             this MemberScope scope,
-            ICachedMemberFlags fld) => fld.IfHasAnyFlag(
+            ICachedMemberFlags fld) => (fld == null && scope.IsDefault()) || fld!.IfHasAnyFlag(
                 scope,
                 new Dictionary<MemberScope, Func<ICachedMemberFlags, MemberScope, bool>>
                 {
@@ -169,8 +188,8 @@ namespace Turmerik.Reflection
                 false);
 
         public static bool Matches(
-            this FieldType fieldType,
-            ICachedFieldFlags fld) => fld.IfHasAnyFlag(
+        this FieldType fieldType,
+            ICachedFieldFlags fld) => (fld == null && fieldType.IsDefault()) || fld!.IfHasAnyFlag(
                 fieldType,
                 new Dictionary<FieldType, Func<ICachedFieldFlags, FieldType, bool>>
                 {
@@ -182,13 +201,13 @@ namespace Turmerik.Reflection
 
         public static bool Matches(
             this MethodAccessibilityFilter filter,
-            ICachedMethodInfo arg) => arg.Flags.Value.WithValue(
+            ICachedMethodInfo arg) => (arg == null && filter.IsDefault()) || arg.Flags.Value.WithValue(
                 flags => filter.Visibility.Matches(
                     flags) && filter.Scope.Matches(flags));
 
         public static bool Matches(
             this FieldAccessibilityFilter filter,
-            ICachedFieldInfo arg) => arg.Flags.Value.WithValue(
+            ICachedFieldInfo arg) => (arg == null && filter.IsDefault()) || arg.Flags.Value.WithValue(
                 flags => filter.Visibility.Matches(
                      flags) && filter.Scope.Matches(
                     flags) && filter.FieldType.Matches(flags));
