@@ -3,44 +3,18 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Turmerik.Cloneable;
 
 namespace Turmerik.AspNetCore.Infrastucture
 {
-    public interface IClientAppSettingsCore
+    public partial class ClientAppSettingsCore<TClnbl, TImmtbl, TMtbl> : ClnblCore<TClnbl, TImmtbl, TMtbl>
+        where TClnbl : ClientAppSettingsCore<TClnbl, TImmtbl, TMtbl>.IClientAppSettingsCore
+        where TImmtbl : ClientAppSettingsCore<TClnbl, TImmtbl, TMtbl>.ClientAppSettingsCoreImmtbl, TClnbl
+        where TMtbl : ClientAppSettingsCore<TClnbl, TImmtbl, TMtbl>.ClientAppSettingsCoreMtbl, TClnbl
     {
-        string TrmrkPrefix { get; }
-    }
-
-    public static class ClientAppSettingsCore
-    {
-        public static ClientAppSettingsCoreImmtbl ToImmtbl(
-            this IClientAppSettingsCore src) => new ClientAppSettingsCoreImmtbl(src);
-
-        public static ClientAppSettingsCoreMtbl ToMtbl(
-            this IClientAppSettingsCore src) => new ClientAppSettingsCoreMtbl(src);
-    }
-
-    public class ClientAppSettingsCoreImmtbl : IClientAppSettingsCore
-    {
-        public ClientAppSettingsCoreImmtbl(IClientAppSettingsCore src)
+        public interface IClientAppSettingsCore : IClnblCore
         {
-            TrmrkPrefix = src.TrmrkPrefix;
+            string TrmrkPrefix { get; }
         }
-
-        public string TrmrkPrefix { get; }
-    }
-
-    public class ClientAppSettingsCoreMtbl : IClientAppSettingsCore
-    {
-        public ClientAppSettingsCoreMtbl()
-        {
-        }
-
-        public ClientAppSettingsCoreMtbl(IClientAppSettingsCore src)
-        {
-            TrmrkPrefix = src.TrmrkPrefix;
-        }
-
-        public string TrmrkPrefix { get; set; }
     }
 }

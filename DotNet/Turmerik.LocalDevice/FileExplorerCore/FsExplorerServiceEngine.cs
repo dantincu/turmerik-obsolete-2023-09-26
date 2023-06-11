@@ -23,9 +23,9 @@ namespace Turmerik.LocalDevice.FileExplorerCore
         {
         }
 
-        public async Task<DriveItemMtbl> CopyFileAsync(
-            IDriveItemIdnf idnf,
-            IDriveItemIdnf newPrIdnf,
+        public async Task<DriveItem.Mtbl> CopyFileAsync(
+            DriveItemIdnf.IClnbl idnf,
+            DriveItemIdnf.IClnbl newPrIdnf,
             string newFileName)
         {
             string newPath = Path.Combine(
@@ -42,9 +42,9 @@ namespace Turmerik.LocalDevice.FileExplorerCore
             return item;
         }
 
-        public async Task<DriveItemMtbl> CopyFolderAsync(
-            IDriveItemIdnf idnf,
-            IDriveItemIdnf newPrIdnf,
+        public async Task<DriveItem.Mtbl> CopyFolderAsync(
+            DriveItemIdnf.IClnbl idnf,
+            DriveItemIdnf.IClnbl newPrIdnf,
             string newFolderName)
         {
             string newPath = Path.Combine(
@@ -61,8 +61,8 @@ namespace Turmerik.LocalDevice.FileExplorerCore
             return item;
         }
 
-        public async Task<DriveItemMtbl> CreateFolderAsync(
-            IDriveItemIdnf prIdnf,
+        public async Task<DriveItem.Mtbl> CreateFolderAsync(
+            DriveItemIdnf.IClnbl prIdnf,
             string newFolderName)
         {
             string newPath = Path.Combine(
@@ -77,8 +77,8 @@ namespace Turmerik.LocalDevice.FileExplorerCore
             return item;
         }
 
-        public async Task<DriveItemMtbl> CreateOfficeLikeFileAsync(
-            IDriveItemIdnf prIdnf,
+        public async Task<DriveItem.Mtbl> CreateOfficeLikeFileAsync(
+            DriveItemIdnf.IClnbl prIdnf,
             string newFileName,
             OfficeLikeFileType officeLikeFileType)
         {
@@ -90,8 +90,8 @@ namespace Turmerik.LocalDevice.FileExplorerCore
             return result;
         }
 
-        public async Task<DriveItemMtbl> CreateTextFileAsync(
-            IDriveItemIdnf prIdnf,
+        public async Task<DriveItem.Mtbl> CreateTextFileAsync(
+            DriveItemIdnf.IClnbl prIdnf,
             string newFileName,
             string text)
         {
@@ -107,7 +107,7 @@ namespace Turmerik.LocalDevice.FileExplorerCore
             return item;
         }
 
-        public async Task<DriveItemMtbl> DeleteFileAsync(IDriveItemIdnf idnf)
+        public async Task<DriveItem.Mtbl> DeleteFileAsync(DriveItemIdnf.IClnbl idnf)
         {
             var fileInfo = new FileInfo(
                 idnf.GetFullPath());
@@ -118,7 +118,7 @@ namespace Turmerik.LocalDevice.FileExplorerCore
             return driveItem;
         }
 
-        public async Task<DriveItemMtbl> DeleteFolderAsync(IDriveItemIdnf idnf)
+        public async Task<DriveItem.Mtbl> DeleteFolderAsync(DriveItemIdnf.IClnbl idnf)
         {
             var dirInfo = new DirectoryInfo(
                 idnf.GetFullPath());
@@ -129,9 +129,12 @@ namespace Turmerik.LocalDevice.FileExplorerCore
             return driveItem;
         }
 
-        public async Task<string> GetDriveFolderWebUrlAsync(IDriveItemIdnf idnf) => GetDriveItemUrl(
+        public async Task<string> GetDriveFolderWebUrlAsync(
+            DriveItemIdnf.IClnbl idnf) => GetDriveItemUrl(
                 idnf.GetFullPath());
-        public async Task<string> GetDriveFileWebUrlAsync(IDriveItemIdnf idnf) => GetDriveItemUrl(
+
+        public async Task<string> GetDriveFileWebUrlAsync(
+            DriveItemIdnf.IClnbl idnf) => GetDriveItemUrl(
                 idnf.GetFullPath());
 
         /* public async Task<DriveItemMtbl> GetRootFolderAsync()
@@ -192,7 +195,7 @@ namespace Turmerik.LocalDevice.FileExplorerCore
             return rootFolder;
         }*/
 
-        public async Task<DriveItemMtbl> GetTextFileAsync(IDriveItemIdnf idnf)
+        public async Task<DriveItem.Mtbl> GetTextFileAsync(DriveItemIdnf.IClnbl idnf)
         {
             string path = idnf.GetFullPath();
             var entry = new FileInfo(path);
@@ -203,9 +206,9 @@ namespace Turmerik.LocalDevice.FileExplorerCore
             return fileItem;
         }
 
-        public async Task<DriveItemMtbl> MoveFileAsync(
-            IDriveItemIdnf idnf,
-            IDriveItemIdnf newPrIdnf,
+        public async Task<DriveItem.Mtbl> MoveFileAsync(
+            DriveItemIdnf.IClnbl idnf,
+            DriveItemIdnf.IClnbl newPrIdnf,
             string newFileName)
         {
             string path = idnf.GetFullPath();
@@ -218,9 +221,9 @@ namespace Turmerik.LocalDevice.FileExplorerCore
             return item;
         }
 
-        public async Task<DriveItemMtbl> MoveFolderAsync(
-            IDriveItemIdnf idnf,
-            IDriveItemIdnf newPrIdnf,
+        public async Task<DriveItem.Mtbl> MoveFolderAsync(
+            DriveItemIdnf.IClnbl idnf,
+            DriveItemIdnf.IClnbl newPrIdnf,
             string newFolderName)
         {
             string path = idnf.GetFullPath();
@@ -238,8 +241,8 @@ namespace Turmerik.LocalDevice.FileExplorerCore
             return item;
         }
 
-        public async Task<DriveItemMtbl> RenameFileAsync(
-            IDriveItemIdnf idnf,
+        public async Task<DriveItem.Mtbl> RenameFileAsync(
+            DriveItemIdnf.IClnbl idnf,
             string newFileName)
         {
             var result = await MoveFileAsync(
@@ -250,8 +253,8 @@ namespace Turmerik.LocalDevice.FileExplorerCore
             return result;
         }
 
-        public async Task<DriveItemMtbl> RenameFolderAsync(
-            IDriveItemIdnf idnf,
+        public async Task<DriveItem.Mtbl> RenameFolderAsync(
+            DriveItemIdnf.IClnbl idnf,
             string newFolderName)
         {
             var result = await MoveFolderAsync(

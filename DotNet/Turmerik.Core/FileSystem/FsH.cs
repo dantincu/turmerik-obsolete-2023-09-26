@@ -149,8 +149,16 @@ namespace Turmerik.FileSystem
 
         public static string NormalizePath(string path)
         {
-            return Path.GetFullPath(new Uri(path).LocalPath)
-                .TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+            var uri = new Uri(path);
+            var localPath = uri.LocalPath;
+
+            path = Path.GetFullPath(localPath);
+
+            path = path.TrimEnd(
+                Path.DirectorySeparatorChar,
+                Path.AltDirectorySeparatorChar);
+
+            return path;
         }
     }
 }

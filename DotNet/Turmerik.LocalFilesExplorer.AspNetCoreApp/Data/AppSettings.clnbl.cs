@@ -1,29 +1,11 @@
 ﻿using Turmerik.AspNetCore.Infrastucture;
+using static Turmerik.LocalFilesExplorer.AspNetCoreApp.Data.AppSettings;
 
 namespace Turmerik.LocalFilesExplorer.AspNetCoreApp.Data
 {
-    public interface IAppSettings : IAppSettingsCore
+    public partial class AppSettings : AppSettingsCore<IClnbl, Imtbl, Mtbl>
     {
-    }
-
-    public static class AppSettings
-    {
-    }
-
-    public class AppSettingsImmtbl : AppSettingsCoreImmtbl, IAppSettings
-    {
-        public AppSettingsImmtbl(IAppSettingsCore src) : base(src)
-        {
-        }
-    }
-
-    public class AppSettingsMtbl : AppSettingsCoreMtbl, IAppSettings
-    {
-        public AppSettingsMtbl()
-        {
-        }
-
-        public AppSettingsMtbl(IAppSettingsCore src) : base(src)
+        public interface IClnbl : IAppSettingsCore
         {
         }
     }

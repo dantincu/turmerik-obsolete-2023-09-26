@@ -9,6 +9,7 @@ using Microsoft.Graph.Drives.Item.List.Drive;
 using Microsoft.Graph.Drives.Item;
 using Turmerik.DriveExplorerCore;
 using Turmerik.Text;
+using DrvItm = Turmerik.DriveExplorerCore.DriveItem;
 
 namespace Turmerik.MsGraph.OneDriveExplorerCore
 {
@@ -48,8 +49,8 @@ namespace Turmerik.MsGraph.OneDriveExplorerCore
             return myDriveRequestBuilder;
         }
 
-        public override Task<bool> FileExistsAsync(IDriveItemIdnf idnf) => DriveItemExistsAsync(idnf);
-        public override Task<bool> FolderExistsAsync(IDriveItemIdnf idnf) => DriveItemExistsAsync(idnf);
+        public override Task<bool> FileExistsAsync(DriveItemIdnf.IClnbl idnf) => DriveItemExistsAsync(idnf);
+        public override Task<bool> FolderExistsAsync(DriveItemIdnf.IClnbl idnf) => DriveItemExistsAsync(idnf);
 
         /*
          * Get item with path:
@@ -57,8 +58,8 @@ namespace Turmerik.MsGraph.OneDriveExplorerCore
          * var items = await graphClient.Me.Drive.Root.ItemWithPath("/this/is/the/path").Children.Request().GetAsync();
          */
 
-        public override async Task<DriveItemMtbl> GetFolderAsync(
-            IDriveItemIdnf idnf)
+        public override async Task<DrvItm.Mtbl> GetFolderAsync(
+            DriveItemIdnf.IClnbl idnf)
         {
             var myDriveRequestBuilder = await GetMyDriveRequestBuilderAsync();
             var graphItem = await myDriveRequestBuilder.Items[idnf.Id].GetAsync();
@@ -70,7 +71,7 @@ namespace Turmerik.MsGraph.OneDriveExplorerCore
             return driveItem;
         }
 
-        protected async Task<bool> DriveItemExistsAsync(IDriveItemIdnf idnf)
+        protected async Task<bool> DriveItemExistsAsync(DriveItemIdnf.IClnbl idnf)
         {
             var myDriveRequestBuilder = await GetMyDriveRequestBuilderAsync();
             var graphItem = await myDriveRequestBuilder.Items[idnf.Id].GetAsync();
@@ -79,9 +80,9 @@ namespace Turmerik.MsGraph.OneDriveExplorerCore
             return itemExists;
         }
 
-        protected DriveItemMtbl ConvertDriveFolder(
-            DriveItem graphItem,
-            IDriveItemIdnf prIdnf,
+        protected DrvItm.Mtbl ConvertDriveFolder(
+            Microsoft.Graph.Models.DriveItem graphItem,
+            DriveItemIdnf.IClnbl prIdnf,
             bool forList)
         {
             var driveItem = ConvertItem(
@@ -97,9 +98,9 @@ namespace Turmerik.MsGraph.OneDriveExplorerCore
             return driveItem;
         }
 
-        protected DriveItemMtbl ConvertDriveFile(
-            DriveItem graphItem,
-            IDriveItemIdnf prIdnf,
+        protected DrvItm.Mtbl ConvertDriveFile(
+            Microsoft.Graph.Models.DriveItem graphItem,
+            DriveItemIdnf.IClnbl prIdnf,
             bool forList)
         {
             var driveItem = ConvertItem(
@@ -115,14 +116,14 @@ namespace Turmerik.MsGraph.OneDriveExplorerCore
             return driveItem;
         }
 
-        protected DriveItemMtbl ConvertItem(
-            DriveItem graphItem,
+        protected DrvItm.Mtbl ConvertItem(
+            Microsoft.Graph.Models.DriveItem graphItem,
             bool isFolder,
             bool isRootFolder)
         {
-            var driveItem = new DriveItemMtbl
+            var driveItem = new DrvItm.Mtbl
             {
-                Idnf = new DriveItemIdnfMtbl
+                Idnf = new DriveItemIdnf.Mtbl
                 {
                     Id = graphItem.Id,
                     Name = graphItem.Name,
@@ -136,9 +137,9 @@ namespace Turmerik.MsGraph.OneDriveExplorerCore
             return driveItem;
         }
 
-        protected async Task<DriveItemMtbl> GetFolderCoreAsync(
-            DriveItem graphItem,
-            IDriveItemIdnf idnf)
+        protected async Task<DrvItm.Mtbl> GetFolderCoreAsync(
+            Microsoft.Graph.Models.DriveItem graphItem,
+            DriveItemIdnf.IClnbl idnf)
         {
             var myDriveRequestBuilder = await GetMyDriveRequestBuilderAsync();
             graphItem = await myDriveRequestBuilder.Items[graphItem.Id].GetAsync();
@@ -151,21 +152,23 @@ namespace Turmerik.MsGraph.OneDriveExplorerCore
             var filesArr = children.Where(item => item.FileObject != null).ToArray();
             var foldersArr = children.Where(item => item.Folder != null).ToArray();
 
-            driveItem.FolderFiles = filesArr.Select(
-                item => ConvertDriveFile(
-                    item,
-                    new DriveItemIdnfMtbl
-                    {
-                        Id = graphItem.Id
-                    }, true)).ToList();
+            driveItem.FolderFiles = new DrvItm.MtblList(
+                filesArr.Select(
+                    item => ConvertDriveFile(
+                        item,
+                        new DriveItemIdnf.Mtbl
+                        {
+                            Id = graphItem.Id
+                        }, true)));
 
-            driveItem.SubFolders = foldersArr.Select(
-                item => ConvertDriveFolder(
-                    item,
-                    new DriveItemIdnfMtbl
-                    {
-                        Id = graphItem.Id
-                    }, true)).ToList();
+            driveItem.SubFolders = new DrvItm.MtblList(
+                foldersArr.Select(
+                    item => ConvertDriveFolder(
+                        item,
+                        new DriveItemIdnf.Mtbl
+                        {
+                            Id = graphItem.Id
+                        }, true)));
 
             return driveItem;
         }

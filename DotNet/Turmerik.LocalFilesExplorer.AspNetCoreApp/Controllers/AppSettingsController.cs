@@ -12,9 +12,9 @@ namespace Turmerik.LocalFilesExplorer.AspNetCoreApp.Controllers
     public class AppSettingsController : ControllerBase
     {
         [HttpGet]
-        public IClientAppSettings Get()
+        public ClientAppSettings.IClnbl Get()
         {
-            return new ClientAppSettingsMtbl
+            return new ClientAppSettings.Mtbl
             {
                 TrmrkPrefix = TurmerikPrefixes.TRMRK
             };

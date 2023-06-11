@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Turmerik.DriveExplorerCore;
 using Turmerik.Text;
+using DrvItm = Turmerik.DriveExplorerCore.DriveItem;
 
 namespace Turmerik.MsGraph.OneDriveExplorerCore
 {
@@ -25,9 +26,9 @@ namespace Turmerik.MsGraph.OneDriveExplorerCore
         {
         }
 
-        public async Task<DriveItemMtbl> CopyFileAsync(
-            IDriveItemIdnf idnf,
-            IDriveItemIdnf newPrIdnf,
+        public async Task<DrvItm.Mtbl> CopyFileAsync(
+            DriveItemIdnf.IClnbl idnf,
+            DriveItemIdnf.IClnbl newPrIdnf,
             string newFileName)
         {
             var myDriveRequestBuilder = await GetMyDriveRequestBuilderAsync();
@@ -50,13 +51,13 @@ namespace Turmerik.MsGraph.OneDriveExplorerCore
                 Name = newFileName
             });
 
-            DriveItemMtbl driveItem = ConvertDriveFile(item, newPrIdnf, false);
+            DrvItm.Mtbl driveItem = ConvertDriveFile(item, newPrIdnf, false);
             return driveItem;
         }
 
-        public async Task<DriveItemMtbl> CopyFolderAsync(
-            IDriveItemIdnf idnf,
-            IDriveItemIdnf newPrIdnf,
+        public async Task<DrvItm.Mtbl> CopyFolderAsync(
+            DriveItemIdnf.IClnbl idnf,
+            DriveItemIdnf.IClnbl newPrIdnf,
             string newFolderName)
         {
             var myDriveRequestBuilder = await GetMyDriveRequestBuilderAsync();
@@ -76,40 +77,40 @@ namespace Turmerik.MsGraph.OneDriveExplorerCore
                 Name = newFolderName
             });
 
-            DriveItemMtbl driveItem = ConvertDriveFolder(item, newPrIdnf, false);
+            DrvItm.Mtbl driveItem = ConvertDriveFolder(item, newPrIdnf, false);
 
             return driveItem;
         }
 
-        public async Task<DriveItemMtbl> CreateFolderAsync(
-            IDriveItemIdnf prIdnf,
+        public async Task<DrvItm.Mtbl> CreateFolderAsync(
+            DriveItemIdnf.IClnbl prIdnf,
             string newFolderName)
         {
             var myDriveRequestBuilder = await GetMyDriveRequestBuilderAsync();
             var folderReqBuilder = myDriveRequestBuilder.Items[prIdnf.Id];
 
-            var newItem = new DriveItem
+            var newItem = new Microsoft.Graph.Models.DriveItem
             {
                 Name = newFolderName,
                 Folder = new Folder()
             };
 
             newItem = await folderReqBuilder.Children.PostAsync(newItem);
-            DriveItemMtbl driveItem = ConvertDriveFolder(newItem, prIdnf, false);
+            DrvItm.Mtbl driveItem = ConvertDriveFolder(newItem, prIdnf, false);
 
             return driveItem;
         }
 
-        public async Task<DriveItemMtbl> CreateOfficeLikeFileAsync(
-            IDriveItemIdnf prIdnf,
+        public async Task<DrvItm.Mtbl> CreateOfficeLikeFileAsync(
+            DriveItemIdnf.IClnbl prIdnf,
             string newFileName,
             OfficeLikeFileType officeLikeFileType)
         {
             throw new NotImplementedException();
         }
 
-        public async Task<DriveItemMtbl> CreateTextFileAsync(
-            IDriveItemIdnf prIdnf,
+        public async Task<DrvItm.Mtbl> CreateTextFileAsync(
+            DriveItemIdnf.IClnbl prIdnf,
             string newFileName,
             string text)
         {
@@ -118,7 +119,7 @@ namespace Turmerik.MsGraph.OneDriveExplorerCore
             var myDriveRequestBuilder = await GetMyDriveRequestBuilderAsync();
             var folderReqBuilder = myDriveRequestBuilder.Items[prIdnf.Id];
 
-            var newItem = new DriveItem
+            var newItem = new Microsoft.Graph.Models.DriveItem
             {
                 Name = newFileName,
                 FileObject = new FileObject(),
@@ -126,19 +127,19 @@ namespace Turmerik.MsGraph.OneDriveExplorerCore
             };
 
             newItem = await folderReqBuilder.Children.PostAsync(newItem);
-            DriveItemMtbl driveItem = ConvertDriveFile(newItem, prIdnf, false);
+            DrvItm.Mtbl driveItem = ConvertDriveFile(newItem, prIdnf, false);
 
             return driveItem;
         }
 
-        public async Task<DriveItemMtbl> DeleteFileAsync(IDriveItemIdnf idnf)
+        public async Task<DrvItm.Mtbl> DeleteFileAsync(DriveItemIdnf.IClnbl idnf)
         {
             var myDriveRequestBuilder = await GetMyDriveRequestBuilderAsync();
             var fileReqBuilder = myDriveRequestBuilder.Items[idnf.Id];
 
-            var driveItem = new DriveItemMtbl
+            var driveItem = new DrvItm.Mtbl
             {
-                Idnf = new DriveItemIdnfMtbl
+                Idnf = new DriveItemIdnf.Mtbl
                 {
                     Id = idnf.Id,
                 }
@@ -148,14 +149,14 @@ namespace Turmerik.MsGraph.OneDriveExplorerCore
             return driveItem;
         }
 
-        public async Task<DriveItemMtbl> DeleteFolderAsync(IDriveItemIdnf idnf)
+        public async Task<DrvItm.Mtbl> DeleteFolderAsync(DriveItemIdnf.IClnbl idnf)
         {
             var myDriveRequestBuilder = await GetMyDriveRequestBuilderAsync();
             var folderReqBuilder = myDriveRequestBuilder.Items[idnf.Id];
 
-            var driveItem = new DriveItemMtbl
+            var driveItem = new DrvItm.Mtbl
             {
-                Idnf = new DriveItemIdnfMtbl
+                Idnf = new DriveItemIdnf.Mtbl
                 {
                     Id = idnf.Id,
                 },
@@ -166,11 +167,11 @@ namespace Turmerik.MsGraph.OneDriveExplorerCore
             return driveItem;
         }
 
-        public async Task<string> GetDriveFolderWebUrlAsync(IDriveItemIdnf idnf) => await GetDriveItemUrlAsync(idnf);
+        public async Task<string> GetDriveFolderWebUrlAsync(DriveItemIdnf.IClnbl idnf) => await GetDriveItemUrlAsync(idnf);
 
-        public async Task<string> GetDriveFileWebUrlAsync(IDriveItemIdnf idnf) => await GetDriveItemUrlAsync(idnf);
+        public async Task<string> GetDriveFileWebUrlAsync(DriveItemIdnf.IClnbl idnf) => await GetDriveItemUrlAsync(idnf);
 
-        public async Task<DriveItemMtbl> GetTextFileAsync(IDriveItemIdnf idnf)
+        public async Task<DrvItm.Mtbl> GetTextFileAsync(DriveItemIdnf.IClnbl idnf)
         {
             var myDriveRequestBuilder = await GetMyDriveRequestBuilderAsync();
             var fileReqBuilder = myDriveRequestBuilder.Items[idnf.Id];
@@ -187,9 +188,9 @@ namespace Turmerik.MsGraph.OneDriveExplorerCore
             return file;
         }
 
-        public async Task<DriveItemMtbl> MoveFileAsync(
-            IDriveItemIdnf idnf,
-            IDriveItemIdnf newPrIdnf,
+        public async Task<DrvItm.Mtbl> MoveFileAsync(
+            DriveItemIdnf.IClnbl idnf,
+            DriveItemIdnf.IClnbl newPrIdnf,
             string newFileName)
         {
             var myDriveRequestBuilder = await GetMyDriveRequestBuilderAsync();
@@ -207,20 +208,20 @@ namespace Turmerik.MsGraph.OneDriveExplorerCore
             };
 
             var item = await fileReqBuilder.PatchAsync(
-                new DriveItem
+                new Microsoft.Graph.Models.DriveItem
                 {
                     Id = idnf.Id,
                     Name = newFileName,
                     ParentReference = itemRef
                 });
 
-            DriveItemMtbl driveItem = ConvertDriveFile(item, newPrIdnf, false);
+            DrvItm.Mtbl driveItem = ConvertDriveFile(item, newPrIdnf, false);
             return driveItem;
         }
 
-        public async Task<DriveItemMtbl> MoveFolderAsync(
-            IDriveItemIdnf idnf,
-            IDriveItemIdnf newPrIdnf,
+        public async Task<DrvItm.Mtbl> MoveFolderAsync(
+            DriveItemIdnf.IClnbl idnf,
+            DriveItemIdnf.IClnbl newPrIdnf,
             string newFolderName)
         {
             var myDriveRequestBuilder = await GetMyDriveRequestBuilderAsync();
@@ -232,7 +233,7 @@ namespace Turmerik.MsGraph.OneDriveExplorerCore
                 newFolderName = graphItem.Name;
             }
 
-            var item = new DriveItem
+            var item = new Microsoft.Graph.Models.DriveItem
             {
                 Id = idnf.Id,
                 Name = newFolderName,
@@ -243,13 +244,13 @@ namespace Turmerik.MsGraph.OneDriveExplorerCore
             };
 
             item = await fileReqBuilder.PatchAsync(item);
-            DriveItemMtbl driveItem = ConvertDriveFolder(item, newPrIdnf, false);
+            DrvItm.Mtbl driveItem = ConvertDriveFolder(item, newPrIdnf, false);
 
             return driveItem;
         }
 
-        public async Task<DriveItemMtbl> RenameFileAsync(
-            IDriveItemIdnf idnf,
+        public async Task<DrvItm.Mtbl> RenameFileAsync(
+            DriveItemIdnf.IClnbl idnf,
             string newFileName)
         {
             var myDriveRequestBuilder = await GetMyDriveRequestBuilderAsync();
@@ -257,38 +258,38 @@ namespace Turmerik.MsGraph.OneDriveExplorerCore
             var graphItem = await fileReqBuilder.GetAsync();
 
             var item = await fileReqBuilder.PatchAsync(
-                new DriveItem
+                new Microsoft.Graph.Models.DriveItem
                 {
                     Id = idnf.Id,
                     Name = newFileName
                 });
 
-            DriveItemMtbl driveItem = ConvertDriveFile(item, idnf.GetPrIdnf(), false);
+            DrvItm.Mtbl driveItem = ConvertDriveFile(item, idnf.GetPrIdnf(), false);
             return driveItem;
         }
 
-        public async Task<DriveItemMtbl> RenameFolderAsync(
-            IDriveItemIdnf idnf,
+        public async Task<DrvItm.Mtbl> RenameFolderAsync(
+            DriveItemIdnf.IClnbl idnf,
             string newFolderName)
         {
             var myDriveRequestBuilder = await GetMyDriveRequestBuilderAsync();
             var fileReqBuilder = myDriveRequestBuilder.Items[idnf.Id];
             var graphItem = await fileReqBuilder.GetAsync();
 
-            var item = new DriveItem
+            var item = new Microsoft.Graph.Models.DriveItem
             {
                 Id = idnf.Id,
                 Name = newFolderName
             };
 
             item = await fileReqBuilder.PatchAsync(item);
-            DriveItemMtbl driveItem = ConvertDriveFolder(item, idnf.GetPrIdnf(), false);
+            DrvItm.Mtbl driveItem = ConvertDriveFolder(item, idnf.GetPrIdnf(), false);
 
             return driveItem;
         }
 
         private async Task<string> GetDriveItemUrlAsync(
-            IDriveItemIdnf idnf)
+            DriveItemIdnf.IClnbl idnf)
         {
             var myDriveRequestBuilder = await GetMyDriveRequestBuilderAsync();
             var fileReqBuilder = myDriveRequestBuilder.Items[idnf.Id];

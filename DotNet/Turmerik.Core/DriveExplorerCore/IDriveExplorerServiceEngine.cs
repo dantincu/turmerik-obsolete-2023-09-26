@@ -7,24 +7,24 @@ namespace Turmerik.DriveExplorerCore
 {
     public interface IDriveExplorerServiceEngine : IDriveItemsRetriever
     {
-        Task<string> GetDriveFolderWebUrlAsync(IDriveItemIdnf idnf);
-        Task<string> GetDriveFileWebUrlAsync(IDriveItemIdnf idnf);
-        Task<DriveItemMtbl> GetTextFileAsync(IDriveItemIdnf idnf);
-        Task<DriveItemMtbl> CreateFolderAsync(IDriveItemIdnf prIdnf, string newFolderName);
-        Task<DriveItemMtbl> RenameFolderAsync(IDriveItemIdnf idnf, string newFolderName);
-        Task<DriveItemMtbl> CopyFolderAsync(IDriveItemIdnf idnf, IDriveItemIdnf newPrIdnf, string newFolderName);
-        Task<DriveItemMtbl> MoveFolderAsync(IDriveItemIdnf idnf, IDriveItemIdnf newPrIdnf, string newFolderName);
-        Task<DriveItemMtbl> DeleteFolderAsync(IDriveItemIdnf idnf);
-        Task<DriveItemMtbl> CreateTextFileAsync(IDriveItemIdnf prIdnf, string newFileName, string text);
+        Task<string> GetDriveFolderWebUrlAsync(DriveItemIdnf.IClnbl idnf);
+        Task<string> GetDriveFileWebUrlAsync(DriveItemIdnf.IClnbl idnf);
+        Task<DriveItem.Mtbl> GetTextFileAsync(DriveItemIdnf.IClnbl idnf);
+        Task<DriveItem.Mtbl> CreateFolderAsync(DriveItemIdnf.IClnbl prIdnf, string newFolderName);
+        Task<DriveItem.Mtbl> RenameFolderAsync(DriveItemIdnf.IClnbl idnf, string newFolderName);
+        Task<DriveItem.Mtbl> CopyFolderAsync(DriveItemIdnf.IClnbl idnf, DriveItemIdnf.IClnbl newPrIdnf, string newFolderName);
+        Task<DriveItem.Mtbl> MoveFolderAsync(DriveItemIdnf.IClnbl idnf, DriveItemIdnf.IClnbl newPrIdnf, string newFolderName);
+        Task<DriveItem.Mtbl> DeleteFolderAsync(DriveItemIdnf.IClnbl idnf);
+        Task<DriveItem.Mtbl> CreateTextFileAsync(DriveItemIdnf.IClnbl prIdnf, string newFileName, string text);
 
-        Task<DriveItemMtbl> CreateOfficeLikeFileAsync(
-            IDriveItemIdnf prIdnf,
+        Task<DriveItem.Mtbl> CreateOfficeLikeFileAsync(
+            DriveItemIdnf.IClnbl prIdnf,
             string newFileName,
             OfficeLikeFileType officeLikeFileType);
 
-        Task<DriveItemMtbl> RenameFileAsync(IDriveItemIdnf idnf, string newFileName);
-        Task<DriveItemMtbl> CopyFileAsync(IDriveItemIdnf idnf, IDriveItemIdnf newPrIdnf, string newFileName);
-        Task<DriveItemMtbl> MoveFileAsync(IDriveItemIdnf idnf, IDriveItemIdnf newPrIdnf, string newFileName);
-        Task<DriveItemMtbl> DeleteFileAsync(IDriveItemIdnf idnf);
+        Task<DriveItem.Mtbl> RenameFileAsync(DriveItemIdnf.IClnbl idnf, string newFileName);
+        Task<DriveItem.Mtbl> CopyFileAsync(DriveItemIdnf.IClnbl idnf, DriveItemIdnf.IClnbl newPrIdnf, string newFileName);
+        Task<DriveItem.Mtbl> MoveFileAsync(DriveItemIdnf.IClnbl idnf, DriveItemIdnf.IClnbl newPrIdnf, string newFileName);
+        Task<DriveItem.Mtbl> DeleteFileAsync(DriveItemIdnf.IClnbl idnf);
     }
 }

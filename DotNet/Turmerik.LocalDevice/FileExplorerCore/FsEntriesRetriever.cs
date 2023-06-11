@@ -21,8 +21,8 @@ namespace Turmerik.LocalDevice.FileExplorerCore
         {
         }
 
-        public override async Task<DriveItemMtbl> GetFolderAsync(
-            IDriveItemIdnf idnf)
+        public override async Task<DriveItem.Mtbl> GetFolderAsync(
+            DriveItemIdnf.IClnbl idnf)
         {
             var entry = new DirectoryInfo(idnf.GetFullPath());
             var folder = GetDriveItem(entry, true);
@@ -30,34 +30,38 @@ namespace Turmerik.LocalDevice.FileExplorerCore
             var driveItemsArr = entry.EnumerateFileSystemInfos(
                 ).Select(fi => GetDriveItem(fi, false)).ToArray();
 
-            folder.SubFolders = driveItemsArr.Where(
-                item => item.IsFolder == true).ToList();
+            folder.SubFolders = new DriveItem.MtblList(
+                driveItemsArr.Where(
+                    item => item.IsFolder == true));
 
-            folder.FolderFiles = driveItemsArr.Where(
-                item => item.IsFolder != true).ToList();
+            folder.FolderFiles = new DriveItem.MtblList(
+                driveItemsArr.Where(
+                    item => item.IsFolder != true).ToList());
 
             return folder;
         }
 
-        public override async Task<bool> FolderExistsAsync(IDriveItemIdnf idnf)
+        public override async Task<bool> FolderExistsAsync(
+            DriveItemIdnf.IClnbl idnf)
         {
             bool retVal = Directory.Exists(idnf.GetPath());
             return retVal;
         }
 
-        public override async Task<bool> FileExistsAsync(IDriveItemIdnf idnf)
+        public override async Task<bool> FileExistsAsync(
+            DriveItemIdnf.IClnbl idnf)
         {
             bool retVal = File.Exists(idnf.GetPath());
             return retVal;
         }
 
-        protected DriveItemMtbl GetDriveItem(
+        protected DriveItem.Mtbl GetDriveItem(
             FileSystemInfo fSysInfo,
             bool isChildItem)
         {
-            var fsItemMtbl = new DriveItemMtbl
+            var fsItemMtbl = new DriveItem.Mtbl
             {
-                Idnf = new DriveItemIdnfMtbl
+                Idnf = new DriveItemIdnf.Mtbl
                 {
                     Name = fSysInfo.Name,
                 },
@@ -81,7 +85,7 @@ namespace Turmerik.LocalDevice.FileExplorerCore
                         parentName = Path.GetFileName(parentPath);
                     }
 
-                    fsItemMtbl.Idnf.PrIdnf = new DriveItemIdnfMtbl
+                    fsItemMtbl.Idnf.PrIdnf = new DriveItemIdnf.Mtbl
                     {
                         Name = parentName,
                         PrPath = parentPrPath,

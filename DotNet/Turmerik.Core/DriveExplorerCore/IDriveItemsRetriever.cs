@@ -13,14 +13,14 @@ namespace Turmerik.DriveExplorerCore
 {
     public interface IDriveItemsRetriever
     {
-        Task<DriveItemMtbl> GetFolderAsync(IDriveItemIdnf idnf);
-        Task<bool> FolderExistsAsync(IDriveItemIdnf idnf);
-        Task<bool> FileExistsAsync(IDriveItemIdnf idnf);
+        Task<DriveItem.Mtbl> GetFolderAsync(DriveItemIdnf.IClnbl idnf);
+        Task<bool> FolderExistsAsync(DriveItemIdnf.IClnbl idnf);
+        Task<bool> FileExistsAsync(DriveItemIdnf.IClnbl idnf);
     }
 
     public interface IDriveItemsObjMirrorRetriever : IDriveItemsRetriever
     {
-        IDriveItem RoodDriveFolder { get; }
+        DriveItem.IClnbl RoodDriveFolder { get; }
     }
 
     public abstract class DriveItemsRetrieverBase : IDriveItemsRetriever
@@ -45,9 +45,9 @@ namespace Turmerik.DriveExplorerCore
 
         protected ITimeStampHelper TimeStampHelper { get; }
 
-        public abstract Task<bool> FileExistsAsync(IDriveItemIdnf idnf);
-        public abstract Task<bool> FolderExistsAsync(IDriveItemIdnf idnf);
-        public abstract Task<DriveItemMtbl> GetFolderAsync(IDriveItemIdnf idnf);
+        public abstract Task<bool> FileExistsAsync(DriveItemIdnf.IClnbl idnf);
+        public abstract Task<bool> FolderExistsAsync(DriveItemIdnf.IClnbl idnf);
+        public abstract Task<DriveItem.Mtbl> GetFolderAsync(DriveItemIdnf.IClnbl idnf);
 
         protected string GetTimeStampStr(DateTime? dateTime)
         {
@@ -69,9 +69,9 @@ namespace Turmerik.DriveExplorerCore
 
     public class DriveItemsObjMirrorRetriever : IDriveItemsObjMirrorRetriever
     {
-        private DriveItemImmtbl driveItem;
+        private DriveItem.Immtbl driveItem;
 
-        public IDriveItem RoodDriveFolder
+        public DriveItem.IClnbl RoodDriveFolder
         {
             get
             {
@@ -80,58 +80,58 @@ namespace Turmerik.DriveExplorerCore
 
             set
             {
-                driveItem = new DriveItemImmtbl(value);
+                driveItem = new DriveItem.Immtbl(value);
             }
         }
 
-        public async Task<DriveItemMtbl> GetFolderAsync(IDriveItemIdnf idnf)
+        public async Task<DriveItem.Mtbl> GetFolderAsync(DriveItemIdnf.IClnbl idnf)
         {
-            DriveItemMtbl retMtbl = TryGetItem(driveItem, idnf, true, true);
+            DriveItem.Mtbl retMtbl = TryGetItem(driveItem, idnf, true, true);
 
             return retMtbl;
         }
 
-        public async Task<bool> FolderExistsAsync(IDriveItemIdnf idnf)
+        public async Task<bool> FolderExistsAsync(DriveItemIdnf.IClnbl idnf)
         {
             bool retVal = TryGetItem(driveItem, idnf, true, true) != null;
             return retVal;
         }
 
-        public async Task<bool> FileExistsAsync(IDriveItemIdnf idnf)
+        public async Task<bool> FileExistsAsync(DriveItemIdnf.IClnbl idnf)
         {
             bool retVal = TryGetItem(driveItem, idnf, false, true) != null;
             return retVal;
         }
 
-        protected virtual DriveItemMtbl TryGetItem(
-            DriveItemImmtbl folder,
-            IDriveItemIdnf idnf,
+        protected virtual DriveItem.Mtbl TryGetItem(
+            DriveItem.Immtbl folder,
+            DriveItemIdnf.IClnbl idnf,
             bool isFolder,
             bool isRootFolder)
         {
-            DriveItemMtbl retMtbl = null;
+            DriveItem.Mtbl retMtbl = null;
 
             if (isFolder)
             {
-                if (isRootFolder || !isRootFolder && folder.Idnf.Equals(idnf))
+                if (isRootFolder || (!isRootFolder && folder.Idnf.Equals(idnf)))
                 {
-                    retMtbl = new DriveItemMtbl(folder);
+                    retMtbl = new DriveItem.Mtbl(folder);
                 }
             }
             else
             {
-                var immtbl = folder.FolderFiles.FirstOrDefault(
+                var immtbl = ((IEnumerable<DriveItem.Immtbl>)folder.FolderFiles).FirstOrDefault(
                     item => item.Idnf.Equals(idnf));
 
                 if (immtbl != null)
                 {
-                    retMtbl = new DriveItemMtbl(immtbl);
+                    retMtbl = new DriveItem.Mtbl(immtbl);
                 }
             }
 
             if (retMtbl == null)
             {
-                retMtbl = folder.SubFolders?.Select(
+                retMtbl = ((IEnumerable<DriveItem.Immtbl>)folder.SubFolders)?.Select(
                     item => TryGetItem(
                         item, idnf, isFolder, false)).FirstOrDefault(
                     item => item != null);
