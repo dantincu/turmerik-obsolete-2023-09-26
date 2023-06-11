@@ -26,13 +26,13 @@ namespace Turmerik.LocalDevice.UnitTests
 
         private void TestSnapToDiscreteCore(int value, int snapVal, bool addToSnap, int expectedValue)
         {
-            int actualValue = MH.SnapToDiscrete(value, snapVal, addToSnap);
+            int actualValue = MatH.SnapToDiscrete(value, snapVal, addToSnap);
             Assert.Equal(expectedValue, actualValue);
         }
 
         private void TestSnapToIntervalCore(int value, int minVal, int maxVal, int snapVal, bool addToSnap, int expectedValue)
         {
-            int actualValue = MH.SnapToInterval(value, minVal, maxVal, snapVal, addToSnap);
+            int actualValue = MatH.SnapToInterval(value, minVal, maxVal, snapVal, addToSnap);
             Assert.Equal(expectedValue, actualValue);
         }
     }

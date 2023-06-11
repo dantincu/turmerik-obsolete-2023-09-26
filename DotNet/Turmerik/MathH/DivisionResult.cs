@@ -10,8 +10,8 @@ namespace Turmerik.MathH
     public interface IDivisionResult<T>
         where T : INumber<T>
     {
-        public T Quotient { get; }
-        public T Remainder { get; }
+        T Quotient { get; }
+        T Remainder { get; }
 
         Tuple<T, T> ToTuple();
     }
