@@ -61,10 +61,7 @@ namespace Turmerik.LocalDevice.FileExplorerCore
         {
             var fsItemMtbl = new DriveItem.Mtbl
             {
-                Idnf = new DriveItemIdnf.Mtbl
-                {
-                    Name = fSysInfo.Name,
-                },
+                Name = fSysInfo.Name,
                 CreationTimeStr = GetTimeStampStr(fSysInfo.CreationTime),
                 LastAccessTimeStr = GetTimeStampStr(fSysInfo.LastAccessTime),
                 LastWriteTimeStr = GetTimeStampStr(fSysInfo.LastWriteTime)
@@ -85,7 +82,7 @@ namespace Turmerik.LocalDevice.FileExplorerCore
                         parentName = Path.GetFileName(parentPath);
                     }
 
-                    fsItemMtbl.Idnf.PrIdnf = new DriveItemIdnf.Mtbl
+                    fsItemMtbl.PrIdnf = new DriveItemIdnf.Mtbl
                     {
                         Name = parentName,
                         PrPath = parentPrPath,

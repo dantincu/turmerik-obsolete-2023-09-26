@@ -113,7 +113,7 @@ namespace Turmerik.DriveExplorerCore
 
             if (isFolder)
             {
-                if (isRootFolder || (!isRootFolder && folder.Idnf.Equals(idnf)))
+                if (isRootFolder || (!isRootFolder && folder.Equals(idnf)))
                 {
                     retMtbl = new DriveItem.Mtbl(folder);
                 }
@@ -121,7 +121,7 @@ namespace Turmerik.DriveExplorerCore
             else
             {
                 var immtbl = ((IEnumerable<DriveItem.Immtbl>)folder.FolderFiles).FirstOrDefault(
-                    item => item.Idnf.Equals(idnf));
+                    item => item.Equals(idnf));
 
                 if (immtbl != null)
                 {

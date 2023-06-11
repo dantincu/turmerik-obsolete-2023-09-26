@@ -139,10 +139,7 @@ namespace Turmerik.MsGraph.OneDriveExplorerCore
 
             var driveItem = new DrvItm.Mtbl
             {
-                Idnf = new DriveItemIdnf.Mtbl
-                {
-                    Id = idnf.Id,
-                }
+                Id = idnf.Id
             };
 
             await fileReqBuilder.DeleteAsync();
@@ -156,10 +153,7 @@ namespace Turmerik.MsGraph.OneDriveExplorerCore
 
             var driveItem = new DrvItm.Mtbl
             {
-                Idnf = new DriveItemIdnf.Mtbl
-                {
-                    Id = idnf.Id,
-                },
+                Id = idnf.Id,
                 IsFolder = true
             };
 

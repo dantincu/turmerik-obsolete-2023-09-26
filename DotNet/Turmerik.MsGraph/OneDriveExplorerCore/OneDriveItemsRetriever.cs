@@ -123,11 +123,8 @@ namespace Turmerik.MsGraph.OneDriveExplorerCore
         {
             var driveItem = new DrvItm.Mtbl
             {
-                Idnf = new DriveItemIdnf.Mtbl
-                {
-                    Id = graphItem.Id,
-                    Name = graphItem.Name,
-                },
+                Id = graphItem.Id,
+                Name = graphItem.Name,
                 IsFolder = isFolder,
                 IsRootFolder = isRootFolder,
                 CreationTimeStr = GetTimeStampStr(graphItem.CreatedDateTime?.DateTime),
