@@ -9,13 +9,14 @@ namespace Turmerik.Cache
     public interface IDataCacheCore<TKey, TValue>
     {
         void Clear();
+        bool TryRemove(TKey key);
+        bool TryRemove(TKey key, out TValue removed);
+        bool ContainsKey(TKey key);
     }
 
     public interface IDataCache<TKey, TValue> : IDataCacheCore<TKey, TValue>
     {
         TValue GetOrCreate(TKey key, Func<TKey, TValue> factory);
-        bool TryRemove(TKey key);
-        bool TryRemove(TKey key, out TValue removed);
     }
 
     public interface IDataCacheFactory
@@ -78,6 +79,9 @@ namespace Turmerik.Cache
             removed = removedVal;
             return retVal;
         }
+
+        public bool ContainsKey(TKey key) => ConcurrentActionComponent.Execute(
+            () => dictnr.ContainsKey(key));
 
         public void Clear()
         {
