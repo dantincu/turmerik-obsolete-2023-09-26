@@ -27,7 +27,7 @@ namespace Turmerik.LocalDevice.Logging
         private const string SHARED_LOG_FILE_NAME_PFX = "shared";
         private const string LOG_FILE_NAME_EXT = ".json";
 
-        public AppLogger(IAppLoggerOpts opts)
+        public AppLogger(AppLoggerOpts.IClnbl opts)
         {
             LoggerRelPath = opts.LoggerRelPath;
             AppEnv = opts.AppEnv;

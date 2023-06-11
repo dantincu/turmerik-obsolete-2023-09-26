@@ -31,7 +31,7 @@ namespace Turmerik.LocalDevice.Logging
             string loggerRelPath,
             LogLevel logEventLevel = LogLevel.Information)
         {
-            var opts = new AppLoggerOptsMtbl
+            var opts = new AppLoggerOpts.Mtbl
             {
                 AppEnv = appEnv,
                 LogLevel = logEventLevel,
@@ -76,7 +76,7 @@ namespace Turmerik.LocalDevice.Logging
                 timeStampStr,
                 bufferedLoggerDirName);
 
-            var opts = new AppLoggerOptsMtbl
+            var opts = new AppLoggerOpts.Mtbl
             {
                 AppEnv = appEnv,
                 LogLevel = logEventLevel,
@@ -105,7 +105,7 @@ namespace Turmerik.LocalDevice.Logging
             string loggerRelPath,
             LogLevel logEventLevel = LogLevel.Debug)
         {
-            var opts = new AppLoggerOptsMtbl
+            var opts = new AppLoggerOpts.Mtbl
             {
                 AppEnv = appEnv,
                 LogLevel = logEventLevel,

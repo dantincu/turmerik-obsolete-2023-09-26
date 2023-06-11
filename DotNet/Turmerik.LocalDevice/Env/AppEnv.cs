@@ -11,7 +11,7 @@ namespace Turmerik.LocalDevice.Env
 {
     public interface IAppEnv
     {
-        IAppEnvLocator Locator { get; }
+        AppEnvLocator.IClnbl Locator { get; }
         string AppSuiteEnvBasePath { get; }
         string GetPath(AppEnvDir appEnvDir, Type dirNameType, params string[] pathPartsArr);
     }
@@ -26,7 +26,7 @@ namespace Turmerik.LocalDevice.Env
             AppSuiteEnvBasePath = GetAppSuiteEnvBasePath(Locator);
         }
 
-        public IAppEnvLocator Locator { get; }
+        public AppEnvLocator.IClnbl Locator { get; }
         public string AppSuiteEnvBasePath { get; }
         protected ITimeStampHelper TimeStampHelper { get; }
 
@@ -47,9 +47,9 @@ namespace Turmerik.LocalDevice.Env
             return retPath;
         }
 
-        protected virtual AppEnvLocatorMtbl GetAppEnvLocatorMtbl()
+        protected virtual AppEnvLocator.Mtbl GetAppEnvLocatorMtbl()
         {
-            AppEnvLocatorMtbl appEnvLocator = null;
+            AppEnvLocator.Mtbl appEnvLocator = null;
             string appEnvLocatorFilePath = AppEnvLocatorFilePath;
 
             if (!string.IsNullOrWhiteSpace(
@@ -59,16 +59,16 @@ namespace Turmerik.LocalDevice.Env
                 var appEnvLocatorJson = File.ReadAllText(
                     appEnvLocatorFilePath);
 
-                appEnvLocator = JsonH.FromJson<AppEnvLocatorMtbl>(
+                appEnvLocator = JsonH.FromJson<AppEnvLocator.Mtbl>(
                     appEnvLocatorJson);
             }
 
             return appEnvLocator;
         }
 
-        protected virtual AppEnvLocatorMtbl GetDefaultAppEnvLocatorMtbl()
+        protected virtual AppEnvLocator.Mtbl GetDefaultAppEnvLocatorMtbl()
         {
-            var mtbl = new AppEnvLocatorMtbl
+            var mtbl = new AppEnvLocator.Mtbl
             {
                 AppSuiteGroupEnvBaseDirPath = GetFolderPath(SpecialFolder.ApplicationData),
                 AppSuiteGroupEnvBaseDirName = string.Empty,
@@ -91,7 +91,7 @@ namespace Turmerik.LocalDevice.Env
             return retValue;
         }
 
-        private string GetAppSuiteEnvBasePath(IAppEnvLocator appEnvLocator)
+        private string GetAppSuiteEnvBasePath(AppEnvLocator.IClnbl appEnvLocator)
         {
             string[] pathParts = new string[]
             {
@@ -105,10 +105,10 @@ namespace Turmerik.LocalDevice.Env
             return retPath;
         }
 
-        private AppEnvLocatorImmtbl GetAppEnvLocatorImmtbl()
+        private AppEnvLocator.Immtbl GetAppEnvLocatorImmtbl()
         {
             var mtbl = GetAppEnvLocatorMtbl() ?? GetDefaultAppEnvLocatorMtbl();
-            var immtbl = new AppEnvLocatorImmtbl(mtbl);
+            var immtbl = new AppEnvLocator.Immtbl(mtbl);
 
             return immtbl;
         }

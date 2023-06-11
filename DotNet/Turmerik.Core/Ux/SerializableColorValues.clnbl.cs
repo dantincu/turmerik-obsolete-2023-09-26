@@ -3,87 +3,95 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Turmerik.Cloneable;
 using Turmerik.Utils;
 
 namespace Turmerik.Ux
 {
-    public interface ISerializableColorValues
+    public partial class SerializableColorValues : ClnblCore<SerializableColorValues.IClnbl, SerializableColorValues.Immtbl, SerializableColorValues.Mtbl>
     {
-        sbyte Red { get; }
-        sbyte Green { get; }
-        sbyte Blue { get; }
-        sbyte Alpha { get; }
-    }
-    public interface ISerializableColor
-    {
-        string RgbaHexCode { get; }
-
-        ISerializableColorValues GetValues();
-    }
-
-    public class SerializableColorValuesImmtbl : ISerializableColorValues
-    {
-        public SerializableColorValuesImmtbl(ISerializableColorValues src)
+        public interface IClnbl : IClnblCore
         {
-            Red = src.Red;
-            Green = src.Green;
-            Blue = src.Blue;
-            Alpha = src.Alpha;
+            sbyte Red { get; }
+            sbyte Green { get; }
+            sbyte Blue { get; }
+            sbyte Alpha { get; }
         }
 
-        public sbyte Red { get; }
-        public sbyte Green { get; }
-        public sbyte Blue { get; }
-        public sbyte Alpha { get; }
-    }
-
-    public class SerializableColorValuesMtbl : ISerializableColorValues
-    {
-        public SerializableColorValuesMtbl()
+        public class Immtbl : ImmtblCoreBase, IClnbl
         {
+            public Immtbl(IClnbl src) : base(src)
+            {
+                Red = src.Red;
+                Green = src.Green;
+                Blue = src.Blue;
+                Alpha = src.Alpha;
+            }
+
+            public sbyte Red { get; }
+            public sbyte Green { get; }
+            public sbyte Blue { get; }
+            public sbyte Alpha { get; }
         }
 
-        public SerializableColorValuesMtbl(ISerializableColorValues src)
+        public class Mtbl : MtblCoreBase, IClnbl
         {
-            Red = src.Red;
-            Green = src.Green;
-            Blue = src.Blue;
-            Alpha = src.Alpha;
-        }
+            public Mtbl()
+            {
+            }
 
-        public sbyte Red { get; set; }
-        public sbyte Green { get; set; }
-        public sbyte Blue { get; set; }
-        public sbyte Alpha { get; }
+            public Mtbl(IClnbl src) : base(src)
+            {
+                Red = src.Red;
+                Green = src.Green;
+                Blue = src.Blue;
+                Alpha = src.Alpha;
+            }
+
+            public sbyte Red { get; set; }
+            public sbyte Green { get; set; }
+            public sbyte Blue { get; set; }
+            public sbyte Alpha { get; }
+        }
     }
 
-    public class SerializableColorImmtbl : ISerializableColor
+    public partial class SerializableColor : ClnblCore<SerializableColor.IClnbl, SerializableColor.Immtbl, SerializableColor.Mtbl>
     {
-        public SerializableColorImmtbl(ISerializableColor src)
+        public interface IClnbl : IClnblCore
         {
-            Values = src.GetValues()?.CreateInstance<SerializableColorValuesImmtbl>();
+            string RgbaHexCode { get; }
+
+            SerializableColorValues.IClnbl GetValues();
         }
 
-        public string RgbaHexCode { get; }
-        public SerializableColorValuesImmtbl Values { get; }
-
-        public ISerializableColorValues GetValues() => Values;
-    }
-
-    public class SerializableColorMtbl : ISerializableColor
-    {
-        public SerializableColorMtbl()
+        public class Immtbl : ImmtblCoreBase, IClnbl
         {
+            public Immtbl(IClnbl src) : base(src)
+            {
+                Values = src.GetValues().AsImmtbl();
+            }
+
+            public string RgbaHexCode { get; }
+            public SerializableColorValues.Immtbl Values { get; }
+
+            public SerializableColorValues.IClnbl GetValues() => Values;
         }
 
-        public SerializableColorMtbl(ISerializableColor src)
+        public class Mtbl : MtblCoreBase, IClnbl
         {
-            Values = src.GetValues()?.CreateInstance<SerializableColorValuesMtbl>();
+            public Mtbl()
+            {
+            }
+
+            public Mtbl(IClnbl src) : base(src)
+            {
+                Values = src.GetValues().AsMtbl();
+            }
+
+            public string RgbaHexCode { get; set; }
+            public SerializableColorValues.Mtbl Values { get; set; }
+
+            public SerializableColorValues.IClnbl GetValues() => Values;
         }
-
-        public string RgbaHexCode { get; set; }
-        public SerializableColorValuesMtbl Values { get; set; }
-
-        public ISerializableColorValues GetValues() => Values;
     }
 }
