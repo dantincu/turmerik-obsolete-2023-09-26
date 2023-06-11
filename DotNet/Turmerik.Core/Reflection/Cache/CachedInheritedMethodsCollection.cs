@@ -18,7 +18,7 @@ namespace Turmerik.Reflection.Cache
         public CachedInheritedMethodsCollection(
             ICachedTypesMap typesMap,
             ICachedReflectionItemsFactory itemsFactory,
-            INonSynchronizedStaticDataCacheFactory staticDataCacheFactory,
+            IStaticDataCacheFactory staticDataCacheFactory,
             ICachedTypeInfo type,
             Func<MethodAccessibilityFilter, MethodAccessibilityFilter> ownFilterReducer,
             Func<MethodAccessibilityFilter, MethodAccessibilityFilter> allVisibleFilterReducer,

@@ -50,14 +50,12 @@ namespace Turmerik.Dependencies
             services.AddTransient<IAsyncActionsQueue, AsyncActionsQueue>();
 
             services.AddSingleton<IMemberAccessibiliyFilterEqualityComparerFactory, MemberAccessibiliyFilterEqualityComparerFactory>();
+            services.AddSingleton<ICachedTypesMapFactory, NonSynchronizedCachedTypesMapFactory>();
+            services.AddSingleton<ICachedReflectionItemsFactory, NonSynchronizedCachedReflectionItemsFactory>();
 
-            services.AddSingleton<ICachedTypesMapFactory>(
-                svcProv => new CachedTypesMapFactory(
-                    svcProv.GetRequiredService<INonSynchronizedDataCacheFactory>(),
-                    new Lazy<ICachedReflectionItemsFactory>(
-                        () => svcProv.GetRequiredService<ICachedReflectionItemsFactory>())));
+            services.AddSingleton(svcProv => LazyH.Lazy(
+                    () => svcProv.GetRequiredService<ICachedReflectionItemsFactory>()));
 
-            services.AddSingleton<ICachedReflectionItemsFactory, CachedReflectionItemsFactory>();
             services.AddTransient<IDriveExplorerService, DriveExplorerService>();
         }
     }

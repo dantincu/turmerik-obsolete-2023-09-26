@@ -27,7 +27,7 @@ namespace Turmerik.Reflection.Cache
         protected CachedInheritedItemsCollectionBase(
             ICachedTypesMap typesMap,
             ICachedReflectionItemsFactory itemsFactory,
-            INonSynchronizedStaticDataCacheFactory staticDataCacheFactory,
+            IStaticDataCacheFactory staticDataCacheFactory,
             ICachedTypeInfo type,
             Func<TItem, TFilter, bool> filterMatchPredicate,
             Func<TFilter, TFilter> ownFilterReducer,
@@ -79,7 +79,7 @@ namespace Turmerik.Reflection.Cache
 
         protected ICachedTypesMap TypesMap { get; }
         protected ICachedReflectionItemsFactory ItemsFactory { get; }
-        protected INonSynchronizedStaticDataCacheFactory StaticDataCacheFactory { get; }
+        protected IStaticDataCacheFactory StaticDataCacheFactory { get; }
 
         protected Func<TItem, TFilter, bool> FilterMatchPredicate { get; }
         protected Func<TFilter, TFilter> OwnFilterReducer { get; }

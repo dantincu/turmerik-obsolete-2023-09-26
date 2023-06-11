@@ -18,7 +18,7 @@ namespace Turmerik.Reflection.Cache
         public CachedInheritedFieldsCollection(
             ICachedTypesMap typesMap,
             ICachedReflectionItemsFactory itemsFactory,
-            INonSynchronizedStaticDataCacheFactory staticDataCacheFactory,
+            IStaticDataCacheFactory staticDataCacheFactory,
             ICachedTypeInfo type,
             Func<FieldAccessibilityFilter, FieldAccessibilityFilter> ownFilterReducer,
             Func<FieldAccessibilityFilter, FieldAccessibilityFilter> allVisibleFilterReducer,

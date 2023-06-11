@@ -19,7 +19,7 @@ namespace Turmerik.Reflection.Cache
         public CachedInheritedEventsCollection(
             ICachedTypesMap typesMap,
             ICachedReflectionItemsFactory itemsFactory,
-            INonSynchronizedStaticDataCacheFactory staticDataCacheFactory,
+            IStaticDataCacheFactory staticDataCacheFactory,
             ICachedTypeInfo type,
             Func<EventAccessibilityFilter, EventAccessibilityFilter> ownFilterReducer,
             Func<EventAccessibilityFilter, EventAccessibilityFilter> allVisibleFilterReducer,

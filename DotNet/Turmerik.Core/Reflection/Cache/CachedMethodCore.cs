@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Turmerik.Cache;
 using Turmerik.Collections;
+using Turmerik.Synchronized;
 using Turmerik.Utils;
 
 namespace Turmerik.Reflection.Cache
@@ -24,11 +25,11 @@ namespace Turmerik.Reflection.Cache
         public CachedMethodBase(
             Lazy<ICachedTypesMap> cachedTypesMap,
             ICachedReflectionItemsFactory cachedReflectionItemsFactory,
-            INonSynchronizedStaticDataCacheFactory nonSynchronizedStaticDataCacheFactory,
+            IStaticDataCacheFactory staticDataCacheFactory,
             TMethodBase value) : base(
                 cachedTypesMap,
                 cachedReflectionItemsFactory,
-                nonSynchronizedStaticDataCacheFactory,
+                staticDataCacheFactory,
                 value)
         {
             Parameters = new Lazy<ReadOnlyCollection<ICachedParameterInfo>>(

@@ -6,6 +6,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using Turmerik.Cache;
+using Turmerik.Synchronized;
 using Turmerik.Utils;
 
 namespace Turmerik.Reflection.Cache
@@ -59,17 +60,18 @@ namespace Turmerik.Reflection.Cache
             Func<EventAccessibilityFilter, EventAccessibilityFilter> filterReducer);
     }
 
-    public class CachedReflectionItemsFactory : ICachedReflectionItemsFactory
+    public class CachedReflectionItemsFactory<TStaticDataCacheFactory> : ICachedReflectionItemsFactory
+        where TStaticDataCacheFactory : class, IStaticDataCacheFactory
     {
         private readonly ICachedTypesMapFactory cachedTypesMapFactory;
-        private readonly INonSynchronizedStaticDataCacheFactory nonSynchronizedStaticDataCacheFactory;
+        private readonly TStaticDataCacheFactory staticDataCacheFactory;
         private readonly IMemberAccessibiliyFilterEqualityComparerFactory memberAccessibiliyFilterEqualityComparerFactory;
 
         private readonly Lazy<ICachedTypesMap> cachedTypesMap;
 
         public CachedReflectionItemsFactory(
             ICachedTypesMapFactory cachedTypesMapFactory,
-            INonSynchronizedStaticDataCacheFactory nonSynchronizedStaticDataCacheFactory,
+            TStaticDataCacheFactory staticDataCacheFactory,
             IMemberAccessibiliyFilterEqualityComparerFactory memberAccessibiliyFilterEqualityComparerFactory)
         {
             this.cachedTypesMapFactory = cachedTypesMapFactory ?? throw new ArgumentNullException(nameof(cachedTypesMapFactory));
@@ -77,8 +79,8 @@ namespace Turmerik.Reflection.Cache
             this.cachedTypesMap = new Lazy<ICachedTypesMap>(
                 () => this.cachedTypesMapFactory.Create());
 
-            this.nonSynchronizedStaticDataCacheFactory = nonSynchronizedStaticDataCacheFactory ?? throw new ArgumentNullException(
-                nameof(nonSynchronizedStaticDataCacheFactory));
+            this.staticDataCacheFactory = staticDataCacheFactory ?? throw new ArgumentNullException(
+                nameof(staticDataCacheFactory));
 
             this.memberAccessibiliyFilterEqualityComparerFactory = memberAccessibiliyFilterEqualityComparerFactory ?? throw new ArgumentNullException(
                 nameof(memberAccessibiliyFilterEqualityComparerFactory));
@@ -88,56 +90,56 @@ namespace Turmerik.Reflection.Cache
             Type type) => new CachedTypeInfo(
                 cachedTypesMap,
                 this,
-                nonSynchronizedStaticDataCacheFactory,
+                staticDataCacheFactory,
                 type);
 
         public ICachedParameterInfo ParameterInfo(
             ParameterInfo param) => new CachedParameterInfo(
                 cachedTypesMap,
                 this,
-                nonSynchronizedStaticDataCacheFactory,
+                staticDataCacheFactory,
                 param);
 
         public ICachedFieldInfo FieldInfo(
             FieldInfo field) => new CachedFieldInfo(
                 cachedTypesMap,
                 this,
-                nonSynchronizedStaticDataCacheFactory,
+                staticDataCacheFactory,
                 field);
 
         public ICachedPropertyInfo PropertyInfo(
             PropertyInfo property) => new CachedPropertyInfo(
                 cachedTypesMap,
                 this,
-                nonSynchronizedStaticDataCacheFactory,
+                staticDataCacheFactory,
                 property);
 
         public ICachedEventInfo EventInfo(
             EventInfo @event) => new CachedEventInfo(
                 cachedTypesMap,
                 this,
-                nonSynchronizedStaticDataCacheFactory,
+                staticDataCacheFactory,
                 @event);
 
         public ICachedMethodInfo MethodInfo(
             MethodInfo method) => new CachedMethodInfo(
                 cachedTypesMap,
                 this,
-                nonSynchronizedStaticDataCacheFactory,
+                staticDataCacheFactory,
                 method);
 
         public ICachedConstructorInfo ConstructorInfo(
             ConstructorInfo constructor) => new CachedConstructorInfo(
                 cachedTypesMap,
                 this,
-                nonSynchronizedStaticDataCacheFactory,
+                staticDataCacheFactory,
                 constructor);
 
         public ICachedAssemblyInfo AssemblyInfo(
             Assembly assembly) => new CachedAssemblyInfo(
                 cachedTypesMap,
                 this,
-                nonSynchronizedStaticDataCacheFactory,
+                staticDataCacheFactory,
                 assembly);
 
         public ICachedInterfaceMapping InterfaceMapping(
@@ -145,7 +147,7 @@ namespace Turmerik.Reflection.Cache
             ICachedTypeInfo interfaceType) => new CachedInterfaceMapping(
                 cachedTypesMap,
                 this,
-                nonSynchronizedStaticDataCacheFactory,
+                staticDataCacheFactory,
                 type,
                 interfaceType);
 
@@ -155,7 +157,7 @@ namespace Turmerik.Reflection.Cache
                 substractedScope => new CachedInheritedPropertiesCollection(
                     cachedTypesMap.Value,
                     this,
-                    nonSynchronizedStaticDataCacheFactory,
+                    staticDataCacheFactory,
                     type,
                     isInstancePropsCollection,
                     filter => filter.ReduceFilterIfReq(
@@ -171,7 +173,7 @@ namespace Turmerik.Reflection.Cache
             ICachedTypeInfo type) => new CachedInheritedFieldsCollection(
                 cachedTypesMap.Value,
                 this,
-                nonSynchronizedStaticDataCacheFactory,
+                staticDataCacheFactory,
                 type,
                 filter => filter.ReduceFilterIfReq(),
                 filter => filter.ReduceFilterIfReq(false, true),
@@ -181,7 +183,7 @@ namespace Turmerik.Reflection.Cache
             ICachedTypeInfo type) => new CachedInheritedMethodsCollection(
                 cachedTypesMap.Value,
                 this,
-                nonSynchronizedStaticDataCacheFactory,
+                staticDataCacheFactory,
                 type,
                 filter => filter.ReduceFilterIfReq(),
                 filter => filter.ReduceFilterIfReq(false, true),
@@ -191,7 +193,7 @@ namespace Turmerik.Reflection.Cache
             ICachedTypeInfo type) => new CachedInheritedEventsCollection(
                 cachedTypesMap.Value,
                 this,
-                nonSynchronizedStaticDataCacheFactory,
+                staticDataCacheFactory,
                 type,
                 filter => filter.ReduceFilterIfReq(),
                 filter => filter.ReduceFilterIfReq(false, true),
@@ -201,7 +203,7 @@ namespace Turmerik.Reflection.Cache
             ReadOnlyCollection<ICachedPropertyInfo> items,
             Func<ICachedPropertyInfo, PropertyAccessibilityFilter, bool> filterMatchPredicate,
             Func<PropertyAccessibilityFilter, PropertyAccessibilityFilter> filterReducer) => new CachedPropertiesCollection(
-                nonSynchronizedStaticDataCacheFactory,
+                staticDataCacheFactory,
                 memberAccessibiliyFilterEqualityComparerFactory.Property(),
                 items,
                 filterMatchPredicate,
@@ -211,7 +213,7 @@ namespace Turmerik.Reflection.Cache
             ReadOnlyCollection<ICachedFieldInfo> items,
             Func<ICachedFieldInfo, FieldAccessibilityFilter, bool> filterMatchPredicate,
             Func<FieldAccessibilityFilter, FieldAccessibilityFilter> filterReducer) => new CachedFieldsCollection(
-                nonSynchronizedStaticDataCacheFactory,
+                staticDataCacheFactory,
                 memberAccessibiliyFilterEqualityComparerFactory.Field(),
                 items,
                 filterMatchPredicate,
@@ -221,7 +223,7 @@ namespace Turmerik.Reflection.Cache
             ReadOnlyCollection<ICachedMethodInfo> items,
             Func<ICachedMethodInfo, MethodAccessibilityFilter, bool> filterMatchPredicate,
             Func<MethodAccessibilityFilter, MethodAccessibilityFilter> filterReducer) => new CachedMethodsCollection(
-                nonSynchronizedStaticDataCacheFactory,
+                staticDataCacheFactory,
                 memberAccessibiliyFilterEqualityComparerFactory.Method(),
                 items,
                 filterMatchPredicate,
@@ -231,10 +233,36 @@ namespace Turmerik.Reflection.Cache
             ReadOnlyCollection<ICachedEventInfo> items,
             Func<ICachedEventInfo, EventAccessibilityFilter, bool> filterMatchPredicate,
             Func<EventAccessibilityFilter, EventAccessibilityFilter> filterReducer) => new CachedEventsCollection(
-                nonSynchronizedStaticDataCacheFactory,
+                staticDataCacheFactory,
                 memberAccessibiliyFilterEqualityComparerFactory.Event(),
                 items,
                 filterMatchPredicate,
                 filterReducer);
+    }
+
+    public class NonSynchronizedCachedReflectionItemsFactory : CachedReflectionItemsFactory<INonSynchronizedStaticDataCacheFactory>
+    {
+        public NonSynchronizedCachedReflectionItemsFactory(
+            ICachedTypesMapFactory cachedTypesMapFactory,
+            INonSynchronizedStaticDataCacheFactory staticDataCacheFactory,
+            IMemberAccessibiliyFilterEqualityComparerFactory memberAccessibiliyFilterEqualityComparerFactory) : base(
+                cachedTypesMapFactory,
+                staticDataCacheFactory,
+                memberAccessibiliyFilterEqualityComparerFactory)
+        {
+        }
+    }
+
+    public class ThreadSafeCachedReflectionItemsFactory : CachedReflectionItemsFactory<IThreadSafeStaticDataCacheFactory>
+    {
+        public ThreadSafeCachedReflectionItemsFactory(
+            ICachedTypesMapFactory cachedTypesMapFactory,
+            IThreadSafeStaticDataCacheFactory staticDataCacheFactory,
+            IMemberAccessibiliyFilterEqualityComparerFactory memberAccessibiliyFilterEqualityComparerFactory) : base(
+                cachedTypesMapFactory,
+                staticDataCacheFactory,
+                memberAccessibiliyFilterEqualityComparerFactory)
+        {
+        }
     }
 }

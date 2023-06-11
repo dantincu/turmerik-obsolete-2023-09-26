@@ -17,9 +17,7 @@ namespace Turmerik.Cache
     {
     }
 
-    public interface IStaticDataCacheFactory<TConcurrentActionComponent, TDataCacheFactory>
-        where TConcurrentActionComponent : IActionComponent
-        where TDataCacheFactory : IDataCacheFactory<TConcurrentActionComponent>
+    public interface IStaticDataCacheFactory
     {
         IStaticDataCache<TKey, TValue> Create<TKey, TValue>(
             Func<TKey, TValue> factory,
@@ -32,11 +30,11 @@ namespace Turmerik.Cache
             Func<TKey, TKey> removeKeyReducer = null);
     }
 
-    public interface IThreadSafeStaticDataCacheFactory : IStaticDataCacheFactory<IThreadSafeActionComponent, IThreadSafeDataCacheFactory>
+    public interface IThreadSafeStaticDataCacheFactory : IStaticDataCacheFactory
     {
     }
 
-    public interface INonSynchronizedStaticDataCacheFactory : IStaticDataCacheFactory<INonSynchronizedActionComponent, INonSynchronizedDataCacheFactory>
+    public interface INonSynchronizedStaticDataCacheFactory : IStaticDataCacheFactory
     {
     }
 
@@ -123,9 +121,9 @@ namespace Turmerik.Cache
         }
     }
 
-    public class StaticDataCacheFactory<TConcurrentActionComponent, TDataCacheFactory> : IStaticDataCacheFactory<TConcurrentActionComponent, TDataCacheFactory>
+    public class StaticDataCacheFactory<TConcurrentActionComponent, TDataCacheFactory> : IStaticDataCacheFactory
         where TConcurrentActionComponent : IActionComponent
-        where TDataCacheFactory : class, IDataCacheFactory<TConcurrentActionComponent>
+        where TDataCacheFactory : class, IDataCacheFactory
     {
         private readonly TDataCacheFactory dataCacheFactory;
 

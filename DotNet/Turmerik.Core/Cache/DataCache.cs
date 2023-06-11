@@ -18,18 +18,17 @@ namespace Turmerik.Cache
         bool TryRemove(TKey key, out TValue removed);
     }
 
-    public interface IDataCacheFactory<TConcurrentActionComponent>
-        where TConcurrentActionComponent : IActionComponent
+    public interface IDataCacheFactory
     {
         IDataCache<TKey, TValue> Create<TKey, TValue>(
             IEqualityComparer<TKey> keyEqCompr = null);
     }
 
-    public interface IThreadSafeDataCacheFactory : IDataCacheFactory<IThreadSafeActionComponent>
+    public interface IThreadSafeDataCacheFactory : IDataCacheFactory
     {
     }
 
-    public interface INonSynchronizedDataCacheFactory : IDataCacheFactory<INonSynchronizedActionComponent>
+    public interface INonSynchronizedDataCacheFactory : IDataCacheFactory
     {
     }
 
@@ -153,7 +152,7 @@ namespace Turmerik.Cache
         }
     }
 
-    public class DataCacheFactory<TConcurrentActionComponent> : IDataCacheFactory<TConcurrentActionComponent>
+    public class DataCacheFactory<TConcurrentActionComponent> : IDataCacheFactory
         where TConcurrentActionComponent : class, IActionComponent
     {
         private readonly TConcurrentActionComponent threadSafeActionComponent;

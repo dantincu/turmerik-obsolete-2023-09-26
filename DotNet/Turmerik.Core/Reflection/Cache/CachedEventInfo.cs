@@ -5,6 +5,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using Turmerik.Cache;
+using Turmerik.Synchronized;
 
 namespace Turmerik.Reflection.Cache
 {
@@ -20,11 +21,11 @@ namespace Turmerik.Reflection.Cache
         public CachedEventInfo(
             Lazy<ICachedTypesMap> cachedTypesMap,
             ICachedReflectionItemsFactory cachedReflectionItemsFactory,
-            INonSynchronizedStaticDataCacheFactory nonSynchronizedStaticDataCacheFactory,
+            IStaticDataCacheFactory staticDataCacheFactory,
             EventInfo value) : base(
                 cachedTypesMap,
                 cachedReflectionItemsFactory,
-                nonSynchronizedStaticDataCacheFactory,
+                staticDataCacheFactory,
                 value)
         {
         }

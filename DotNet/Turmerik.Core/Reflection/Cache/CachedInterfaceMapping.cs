@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Turmerik.Cache;
 using Turmerik.Collections;
+using Turmerik.Synchronized;
 
 namespace Turmerik.Reflection.Cache
 {
@@ -23,12 +24,12 @@ namespace Turmerik.Reflection.Cache
         public CachedInterfaceMapping(
             Lazy<ICachedTypesMap> cachedTypesMap,
             ICachedReflectionItemsFactory cachedReflectionItemsFactory,
-            INonSynchronizedStaticDataCacheFactory nonSynchronizedStaticDataCacheFactory,
+            IStaticDataCacheFactory staticDataCacheFactory,
             ICachedTypeInfo type,
             ICachedTypeInfo interfaceType) : base(
                 cachedTypesMap,
                 cachedReflectionItemsFactory,
-                nonSynchronizedStaticDataCacheFactory,
+                staticDataCacheFactory,
                 type.Data.GetInterfaceMap(
                     interfaceType.Data))
         {

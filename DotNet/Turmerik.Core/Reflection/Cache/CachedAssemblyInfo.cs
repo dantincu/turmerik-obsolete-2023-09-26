@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Turmerik.Cache;
 using Turmerik.Collections;
+using Turmerik.Synchronized;
 using Turmerik.Utils;
 
 namespace Turmerik.Reflection.Cache
@@ -22,11 +23,11 @@ namespace Turmerik.Reflection.Cache
         public CachedAssemblyInfo(
             Lazy<ICachedTypesMap> cachedTypesMap,
             ICachedReflectionItemsFactory cachedReflectionItemsFactory,
-            INonSynchronizedStaticDataCacheFactory nonSynchronizedStaticDataCacheFactory,
+            IStaticDataCacheFactory staticDataCacheFactory,
             Assembly value) : base(
                 cachedTypesMap,
                 cachedReflectionItemsFactory,
-                nonSynchronizedStaticDataCacheFactory,
+                staticDataCacheFactory,
                 value)
         {
             AllTypes = new Lazy<ReadOnlyCollection<ICachedTypeInfo>>(
@@ -34,7 +35,7 @@ namespace Turmerik.Reflection.Cache
                     type => TypesMap.Value.Get(
                         type)).RdnlC());
 
-            AssemblyTypesMap = nonSynchronizedStaticDataCacheFactory.Create<string, ICachedTypeInfo>(
+            AssemblyTypesMap = staticDataCacheFactory.Create<string, ICachedTypeInfo>(
                 typeName => Data.GetType(typeName)?.WithValue(
                     type => TypesMap.Value.Get(
                         type)));

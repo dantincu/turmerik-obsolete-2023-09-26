@@ -20,7 +20,7 @@ namespace Turmerik.Reflection.Cache
         public CachedInheritedPropertiesCollection(
             ICachedTypesMap typesMap,
             ICachedReflectionItemsFactory itemsFactory,
-            INonSynchronizedStaticDataCacheFactory staticDataCacheFactory,
+            IStaticDataCacheFactory staticDataCacheFactory,
             ICachedTypeInfo type,
             bool isInstancePropsCollection,
             Func<PropertyAccessibilityFilter, PropertyAccessibilityFilter> ownFilterReducer,

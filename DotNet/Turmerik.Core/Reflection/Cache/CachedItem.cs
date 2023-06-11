@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Turmerik.Cache;
+using Turmerik.Synchronized;
 
 namespace Turmerik.Reflection.Cache
 {
@@ -22,7 +23,7 @@ namespace Turmerik.Reflection.Cache
         public CachedItemBase(
             Lazy<ICachedTypesMap> cachedTypesMap,
             ICachedReflectionItemsFactory cachedReflectionItemsFactory,
-            INonSynchronizedStaticDataCacheFactory nonSynchronizedStaticDataCacheFactory,
+            IStaticDataCacheFactory staticDataCacheFactory,
             T value)
         {
             this.TypesMap = cachedTypesMap ?? throw new ArgumentNullException(
@@ -31,8 +32,8 @@ namespace Turmerik.Reflection.Cache
             this.ItemsFactory = cachedReflectionItemsFactory ?? throw new ArgumentNullException(
                 nameof(cachedReflectionItemsFactory));
 
-            this.StaticDataCacheFactory = nonSynchronizedStaticDataCacheFactory ?? throw new ArgumentNullException(
-                nameof(nonSynchronizedStaticDataCacheFactory));
+            this.StaticDataCacheFactory = staticDataCacheFactory ?? throw new ArgumentNullException(
+                nameof(staticDataCacheFactory));
 
             Data = value;
         }
@@ -41,7 +42,7 @@ namespace Turmerik.Reflection.Cache
 
         protected Lazy<ICachedTypesMap> TypesMap { get; }
         protected ICachedReflectionItemsFactory ItemsFactory { get; }
-        protected INonSynchronizedStaticDataCacheFactory StaticDataCacheFactory { get; }
+        protected IStaticDataCacheFactory StaticDataCacheFactory { get; }
     }
 
     public abstract class CachedItemBase<T, TFlags> : CachedItemBase<T>, ICachedItem<T, TFlags>
@@ -49,11 +50,11 @@ namespace Turmerik.Reflection.Cache
         public CachedItemBase(
             Lazy<ICachedTypesMap> cachedTypesMap,
             ICachedReflectionItemsFactory cachedReflectionItemsFactory,
-            INonSynchronizedStaticDataCacheFactory nonSynchronizedStaticDataCacheFactory,
+            IStaticDataCacheFactory staticDataCacheFactory,
             T value) : base(
                 cachedTypesMap,
                 cachedReflectionItemsFactory,
-                nonSynchronizedStaticDataCacheFactory,
+                staticDataCacheFactory,
                 value)
         {
             Flags = new Lazy<TFlags>(GetFlags);
