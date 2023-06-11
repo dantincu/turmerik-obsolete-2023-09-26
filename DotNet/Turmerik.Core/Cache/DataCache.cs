@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using Turmerik.Synchronized;
 
@@ -12,6 +13,7 @@ namespace Turmerik.Cache
         bool TryRemove(TKey key);
         bool TryRemove(TKey key, out TValue removed);
         bool ContainsKey(TKey key);
+        TKey[] GetKeys();
     }
 
     public interface IDataCache<TKey, TValue> : IDataCacheCore<TKey, TValue>
@@ -82,6 +84,9 @@ namespace Turmerik.Cache
 
         public bool ContainsKey(TKey key) => ConcurrentActionComponent.Execute(
             () => dictnr.ContainsKey(key));
+
+        public TKey[] GetKeys() => ConcurrentActionComponent.Execute(
+            () => dictnr.Keys.ToArray());
 
         public void Clear()
         {

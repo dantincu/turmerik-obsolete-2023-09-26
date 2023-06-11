@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using Turmerik.Collections;
 using Turmerik.Synchronized;
 using Turmerik.Utils;
 
@@ -70,6 +71,8 @@ namespace Turmerik.Cache
                 out removed);
 
         public virtual bool ContainsKey(TKey key) => innerCache.ContainsKey(key);
+
+        public virtual TKey[] GetKeys() => innerCache.GetKeys();
 
         public void Clear()
         {
