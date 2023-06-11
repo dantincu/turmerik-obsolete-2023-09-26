@@ -11,7 +11,7 @@ using Turmerik.Synchronized;
 
 namespace Turmerik.Reflection.Cache
 {
-    public interface ICachedParameterInfo : ICachedItem<ParameterInfo, ICachedParameterFlags>
+    public interface ICachedParameterInfo : ICachedItem<ParameterInfo, CachedParameterFlags.IClnbl>
     {
         string Name { get; }
         int Position { get; }
@@ -19,7 +19,7 @@ namespace Turmerik.Reflection.Cache
         Lazy<ReadOnlyCollection<Attribute>> CustomAttributes { get; }
     }
 
-    public class CachedParameterInfo : CachedItemBase<ParameterInfo, ICachedParameterFlags>, ICachedParameterInfo
+    public class CachedParameterInfo : CachedItemBase<ParameterInfo, CachedParameterFlags.IClnbl>, ICachedParameterInfo
     {
         public CachedParameterInfo(
             Lazy<ICachedTypesMap> cachedTypesMap,
@@ -48,6 +48,6 @@ namespace Turmerik.Reflection.Cache
 
         public Lazy<ReadOnlyCollection<Attribute>> CustomAttributes { get; }
 
-        protected override ICachedParameterFlags GetFlags() => CachedParameterFlags.Create(this);
+        protected override CachedParameterFlags.IClnbl GetFlags() => CachedParameterFlags.Create(this);
     }
 }

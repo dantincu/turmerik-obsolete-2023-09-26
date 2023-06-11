@@ -252,6 +252,6 @@ namespace Turmerik.Reflection
             this Type type) => type.IsAbstract && type.IsSealed;
 
         public static bool IsInternalOrPrivateProtected(
-            this ICachedMemberFlagsCore arg) => arg.IsAssembly || arg.IsFamilyAndAssembly;
+            this CachedMemberFlagsCore.IClnbl arg) => arg.IsAssembly || arg.IsFamilyAndAssembly;
     }
 }

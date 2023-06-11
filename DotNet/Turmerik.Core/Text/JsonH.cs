@@ -8,6 +8,7 @@ using Turmerik.Collections;
 using Newtonsoft.Json.Serialization;
 using Newtonsoft.Json.Linq;
 using Turmerik.Text;
+using Newtonsoft.Json.Converters;
 
 namespace Turmerik.Text
 {
@@ -17,7 +18,8 @@ namespace Turmerik.Text
             object obj,
             bool useCamelCase = true,
             bool ignoreNullValues = true,
-            Formatting formatting = Formatting.Indented)
+            Formatting formatting = Formatting.Indented,
+            bool useStringEnumConverter = true)
         {
             var settings = new JsonSerializerSettings();
 
@@ -31,6 +33,14 @@ namespace Turmerik.Text
                 settings.ContractResolver = new CamelCasePropertyNamesContractResolver();
             }
 
+            if (useStringEnumConverter)
+            {
+                settings.Converters = settings.Converters ?? new List<JsonConverter>();
+
+                settings.Converters.Add(
+                    new StringEnumConverter());
+            }
+
             string json = JsonConvert.SerializeObject(
                 obj,
                 formatting,
@@ -39,9 +49,30 @@ namespace Turmerik.Text
             return json;
         }
 
-        public static TData FromJson<TData>(string json)
+        public static TData FromJson<TData>(
+            string json,
+            bool useCamelCase = true,
+            bool useStringEnumConverter = true)
         {
-            TData data = JsonConvert.DeserializeObject<TData>(json);
+            var settings = new JsonSerializerSettings();
+
+            if (useCamelCase)
+            {
+                settings.ContractResolver = new CamelCasePropertyNamesContractResolver();
+            }
+
+            if (useStringEnumConverter)
+            {
+                settings.Converters = settings.Converters ?? new List<JsonConverter>();
+
+                settings.Converters.Add(
+                    new StringEnumConverter());
+            }
+
+            TData data = JsonConvert.DeserializeObject<TData>(
+                json,
+                settings);
+
             return data;
         }
 

@@ -9,14 +9,14 @@ using Turmerik.Synchronized;
 
 namespace Turmerik.Reflection.Cache
 {
-    public interface ICachedEventInfo : ICachedMemberInfo<EventInfo, ICachedEventFlags>
+    public interface ICachedEventInfo : ICachedMemberInfo<EventInfo, CachedEventFlags.IClnbl>
     {
         Lazy<ICachedMethodInfo> Adder { get; }
         Lazy<ICachedMethodInfo> Remover { get; }
         Lazy<ICachedMethodInfo> Invoker { get; }
     }
 
-    public class CachedEventInfo : CachedMemberInfoBase<EventInfo, ICachedEventFlags>, ICachedEventInfo
+    public class CachedEventInfo : CachedMemberInfoBase<EventInfo, CachedEventFlags.IClnbl>, ICachedEventInfo
     {
         public CachedEventInfo(
             Lazy<ICachedTypesMap> cachedTypesMap,
@@ -30,7 +30,7 @@ namespace Turmerik.Reflection.Cache
         {
         }
 
-        protected override ICachedEventFlags GetFlags() => CachedEventFlags.Create(this);
+        protected override CachedEventFlags.IClnbl GetFlags() => CachedEventFlags.Create(this);
 
         public Lazy<ICachedMethodInfo> Adder { get; }
         public Lazy<ICachedMethodInfo> Remover { get; }

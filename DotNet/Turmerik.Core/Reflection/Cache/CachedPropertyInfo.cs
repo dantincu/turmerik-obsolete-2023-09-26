@@ -10,7 +10,7 @@ using Turmerik.Utils;
 
 namespace Turmerik.Reflection.Cache
 {
-    public interface ICachedPropertyInfo : ICachedMemberInfo<PropertyInfo, ICachedPropertyFlags>
+    public interface ICachedPropertyInfo : ICachedMemberInfo<PropertyInfo, CachedPropertyFlags.IClnbl>
     {
         bool CanRead { get; }
         bool CanWrite { get; }
@@ -18,7 +18,7 @@ namespace Turmerik.Reflection.Cache
         Lazy<ICachedMethodInfo> Setter { get; }
     }
 
-    public class CachedPropertyInfo : CachedMemberInfoBase<PropertyInfo, ICachedPropertyFlags>, ICachedPropertyInfo
+    public class CachedPropertyInfo : CachedMemberInfoBase<PropertyInfo, CachedPropertyFlags.IClnbl>, ICachedPropertyInfo
     {
         public CachedPropertyInfo(
             Lazy<ICachedTypesMap> cachedTypesMap,
@@ -47,6 +47,6 @@ namespace Turmerik.Reflection.Cache
         public Lazy<ICachedMethodInfo> Getter { get; }
         public Lazy<ICachedMethodInfo> Setter { get; }
 
-        protected override ICachedPropertyFlags GetFlags() => CachedPropertyFlags.Create(this);
+        protected override CachedPropertyFlags.IClnbl GetFlags() => CachedPropertyFlags.Create(this);
     }
 }

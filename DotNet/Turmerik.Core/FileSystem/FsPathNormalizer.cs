@@ -12,9 +12,9 @@ namespace Turmerik.FileSystem
 {
     public interface IFsPathNormalizer
     {
-        IFsPathNormalizerResult TryNormalizePath(IFsPathNormalizerOpts opts);
+        FsPathNormalizerResult.IClnbl TryNormalizePath(FsPathNormalizerOpts.IClnbl opts);
 
-        IFsPathNormalizerResult TryNormalizePath(
+        FsPathNormalizerResult.IClnbl TryNormalizePath(
             string path,
             bool? isUnixStyle = null,
             bool allowStartWithLinkToParent = false,
@@ -36,7 +36,7 @@ namespace Turmerik.FileSystem
         public static readonly Regex InvalidFileNameWsBfDotRegex = new Regex(@"\s\.");
         public static readonly Regex InvalidFileNameWsAfDotRegex = new Regex(@"\.\s");
 
-        public IFsPathNormalizerResult TryNormalizePath(IFsPathNormalizerOpts opts)
+        public FsPathNormalizerResult.IClnbl TryNormalizePath(FsPathNormalizerOpts.IClnbl opts)
         {
             var d = new TempData(opts);
             var immtbl = TryNormalizePath(d);
@@ -44,13 +44,13 @@ namespace Turmerik.FileSystem
             return immtbl;
         }
 
-        public IFsPathNormalizerResult TryNormalizePath(
+        public FsPathNormalizerResult.IClnbl TryNormalizePath(
             string path,
             bool? isUnixStyle = null,
             bool allowStartWithLinkToParent = false,
             int maxStartingSlashesAllowed = 2)
         {
-            var opts = new FsPathNormalizerOptsMtbl
+            var opts = new FsPathNormalizerOpts.Mtbl
             {
                 Path = path,
                 IsUnixStyle = isUnixStyle,
@@ -62,7 +62,7 @@ namespace Turmerik.FileSystem
             return immtbl;
         }
 
-        private IFsPathNormalizerResult TryNormalizePath(TempData d)
+        private FsPathNormalizerResult.IClnbl TryNormalizePath(TempData d)
         {
             var o = d.Opts;
             string path = o.Path;
@@ -148,7 +148,7 @@ namespace Turmerik.FileSystem
                 mtbl.Exception = exc;
             }
 
-            var immtbl = new FsPathNormalizerResultImmtbl(mtbl);
+            var immtbl = new FsPathNormalizerResult.Immtbl(mtbl);
             return immtbl;
         }
 
@@ -292,7 +292,7 @@ namespace Turmerik.FileSystem
             return retVal;
         }
 
-        private bool Validate(FsPathNormalizerResultMtbl mtbl, bool isValid, string invalidMessage)
+        private bool Validate(FsPathNormalizerResult.Mtbl mtbl, bool isValid, string invalidMessage)
         {
             if (!isValid && mtbl.IsValid)
             {
@@ -303,7 +303,7 @@ namespace Turmerik.FileSystem
             return isValid;
         }
 
-        private bool ValidateAgainstInvalidWhiteSpaces(FsPathNormalizerResultMtbl mtbl, string segment)
+        private bool ValidateAgainstInvalidWhiteSpaces(FsPathNormalizerResult.Mtbl mtbl, string segment)
         {
             bool retVal = Validate(mtbl,
                 segment.AllWhiteSpacesAre(),
@@ -312,7 +312,7 @@ namespace Turmerik.FileSystem
             return retVal;
         }
 
-        private bool ValidateAgainstSurroundingWhiteSpaces(FsPathNormalizerResultMtbl mtbl, ref string segment)
+        private bool ValidateAgainstSurroundingWhiteSpaces(FsPathNormalizerResult.Mtbl mtbl, ref string segment)
         {
             string segmentTrimmed = segment.Trim();
             bool retVal = ValidateAgainstSurroundingWhiteSpaces(mtbl, segment, segmentTrimmed);
@@ -321,7 +321,7 @@ namespace Turmerik.FileSystem
             return retVal;
         }
 
-        private bool ValidateAgainstSurroundingWhiteSpaces(FsPathNormalizerResultMtbl mtbl, string segment, string trimmedSegment = null)
+        private bool ValidateAgainstSurroundingWhiteSpaces(FsPathNormalizerResult.Mtbl mtbl, string segment, string trimmedSegment = null)
         {
             trimmedSegment = trimmedSegment ?? segment.Trim();
 
@@ -332,7 +332,7 @@ namespace Turmerik.FileSystem
             return retVal;
         }
 
-        private bool ValidateAgainstInvalidFileNameChars(FsPathNormalizerResultMtbl mtbl, string segment)
+        private bool ValidateAgainstInvalidFileNameChars(FsPathNormalizerResult.Mtbl mtbl, string segment)
         {
             bool retVal = Validate(mtbl,
                 !segment.ContainsAny(PathH.InvalidFileNameChars),
@@ -341,7 +341,7 @@ namespace Turmerik.FileSystem
             return retVal;
         }
 
-        private bool ValidateAgainstDotsNearWhiteSpaces(FsPathNormalizerResultMtbl mtbl, string segment)
+        private bool ValidateAgainstDotsNearWhiteSpaces(FsPathNormalizerResult.Mtbl mtbl, string segment)
         {
             bool retVal = Validate(mtbl,
                 !(InvalidFileNameWsBfDotRegex.IsMatch(segment) || InvalidFileNameWsAfDotRegex.IsMatch(segment)),
@@ -353,21 +353,21 @@ namespace Turmerik.FileSystem
         private class TempData
         {
             public TempData(
-                IFsPathNormalizerOpts opts) : this(
-                new FsPathNormalizerOptsImmtbl(opts))
+                FsPathNormalizerOpts.IClnbl opts) : this(
+                new FsPathNormalizerOpts.Immtbl(opts))
             {
             }
 
-            public TempData(FsPathNormalizerOptsImmtbl opts)
+            public TempData(FsPathNormalizerOpts.Immtbl opts)
             {
                 Opts = opts ?? throw new ArgumentNullException(nameof(opts));
-                Mtbl = new FsPathNormalizerResultMtbl();
+                Mtbl = new FsPathNormalizerResult.Mtbl();
                 SegmentsList = new List<string>();
             }
 
             public char[] PathDirSeparatorChars = new char[] { '\\', '/' };
-            public FsPathNormalizerOptsImmtbl Opts { get; }
-            public FsPathNormalizerResultMtbl Mtbl { get; }
+            public FsPathNormalizerOpts.Immtbl Opts { get; }
+            public FsPathNormalizerResult.Mtbl Mtbl { get; }
             public List<string> SegmentsList { get; }
             public string[] PathSegments { get; set; }
         }

@@ -12,7 +12,7 @@ using Turmerik.Utils;
 
 namespace Turmerik.Reflection.Cache
 {
-    public interface ICachedTypeInfo : ICachedMemberInfo<Type, ICachedTypeFlags>
+    public interface ICachedTypeInfo : ICachedMemberInfo<Type, CachedTypeFlags.IClnbl>
     {
         string FullName { get; }
         string FullDisplayName { get; }
@@ -27,7 +27,7 @@ namespace Turmerik.Reflection.Cache
         Lazy<ICachedAssemblyInfo> Assembly { get; }
     }
 
-    public class CachedTypeInfo : CachedMemberInfoBase<Type, ICachedTypeFlags>, ICachedTypeInfo
+    public class CachedTypeInfo : CachedMemberInfoBase<Type, CachedTypeFlags.IClnbl>, ICachedTypeInfo
     {
         public CachedTypeInfo(
             Lazy<ICachedTypesMap> cachedTypesMap,
@@ -87,6 +87,6 @@ namespace Turmerik.Reflection.Cache
         public Lazy<ICachedInheritedEventsCollection> Events { get; }
         public Lazy<ICachedAssemblyInfo> Assembly { get; }
 
-        protected override ICachedTypeFlags GetFlags() => CachedTypeFlags.Create(this);
+        protected override CachedTypeFlags.IClnbl GetFlags() => CachedTypeFlags.Create(this);
     }
 }

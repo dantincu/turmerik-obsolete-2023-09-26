@@ -9,11 +9,11 @@ using Turmerik.Synchronized;
 
 namespace Turmerik.Reflection.Cache
 {
-    public interface ICachedConstructorInfo : ICachedMethodCore<ConstructorInfo, ICachedMemberFlagsCore>
+    public interface ICachedConstructorInfo : ICachedMethodCore<ConstructorInfo, CachedMemberFlagsCore.IClnbl>
     {
     }
 
-    public class CachedConstructorInfo : CachedMethodBase<ConstructorInfo, ICachedMemberFlagsCore>, ICachedConstructorInfo
+    public class CachedConstructorInfo : CachedMethodBase<ConstructorInfo, CachedMemberFlagsCore.IClnbl>, ICachedConstructorInfo
     {
         public CachedConstructorInfo(
             Lazy<ICachedTypesMap> cachedTypesMap,
@@ -27,6 +27,6 @@ namespace Turmerik.Reflection.Cache
         {
         }
 
-        protected override ICachedMemberFlagsCore GetFlags() => CachedMemberFlagsCore.Create(this);
+        protected override CachedMemberFlagsCore.IClnbl GetFlags() => CachedMemberFlagsCore.Create(this);
     }
 }

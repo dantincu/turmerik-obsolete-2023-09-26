@@ -20,7 +20,6 @@ namespace Turmerik.Reflection.Cache
 
     public abstract class CachedMethodBase<TMethodBase, TFlags> : CachedMemberInfoBase<TMethodBase, TFlags>, ICachedMethodCore<TMethodBase, TFlags>
         where TMethodBase : MethodBase
-        where TFlags : ICachedMemberFlagsCore
     {
         public CachedMethodBase(
             Lazy<ICachedTypesMap> cachedTypesMap,
