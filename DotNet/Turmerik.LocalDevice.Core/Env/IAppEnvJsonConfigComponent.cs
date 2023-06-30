@@ -8,7 +8,7 @@ using Turmerik.Reflection;
 using Turmerik.Synchronized;
 using Turmerik.Utils;
 
-namespace Turmerik.LocalDevice.Env
+namespace Turmerik.LocalDevice.Core.Env
 {
     public interface IAppEnvJsonConfigComponent<TData>
     {

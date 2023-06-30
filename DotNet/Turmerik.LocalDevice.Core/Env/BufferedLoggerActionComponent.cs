@@ -3,10 +3,10 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
-using Turmerik.LocalDevice.Logging;
+using Turmerik.LocalDevice.Core.Logging;
 using Turmerik.Logging;
 
-namespace Turmerik.LocalDevice.Env
+namespace Turmerik.LocalDevice.Core.Env
 {
     public interface IBufferedLoggerActionComponent
     {

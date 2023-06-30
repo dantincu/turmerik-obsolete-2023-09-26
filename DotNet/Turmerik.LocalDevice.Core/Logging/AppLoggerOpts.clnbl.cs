@@ -4,9 +4,9 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using Turmerik.Cloneable;
-using Turmerik.LocalDevice.Env;
+using Turmerik.LocalDevice.Core.Env;
 
-namespace Turmerik.LocalDevice.Logging
+namespace Turmerik.LocalDevice.Core.Logging
 {
     public partial class AppLoggerOpts : ClnblCore<AppLoggerOpts.IClnbl, AppLoggerOpts.Immtbl, AppLoggerOpts.Mtbl>
     {

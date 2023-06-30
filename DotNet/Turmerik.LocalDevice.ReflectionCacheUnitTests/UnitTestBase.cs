@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Turmerik.LocalDevice.Dependencies;
+using Turmerik.LocalDevice.Core.Dependencies;
 using Turmerik.Testing;
 
 namespace Turmerik.LocalDevice.ReflectionCacheUnitTests

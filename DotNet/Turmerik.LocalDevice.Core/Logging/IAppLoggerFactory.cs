@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Text;
 using Turmerik.Logging;
 
-namespace Turmerik.LocalDevice.Logging
+namespace Turmerik.LocalDevice.Core.Logging
 {
     public interface IAppLoggerFactory
     {

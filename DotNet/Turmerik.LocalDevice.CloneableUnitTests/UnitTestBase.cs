@@ -4,11 +4,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Turmerik.Infrastucture;
 using Turmerik.LocalDevice.Core.Dependencies;
 using Turmerik.Testing;
 
-namespace Turmerik.LocalDevice.UnitTests
+namespace Turmerik.LocalDevice.CloneableUnitTests
 {
     public class UnitTestBase : UnitTestCoreBase
     {

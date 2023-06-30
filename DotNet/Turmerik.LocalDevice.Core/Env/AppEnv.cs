@@ -6,13 +6,14 @@ using System.Threading.Tasks;
 using static System.Environment;
 using Turmerik.Reflection;
 using Turmerik.Text;
+using System.IO;
 
-namespace Turmerik.LocalDevice.Env
+namespace Turmerik.LocalDevice.Core.Env
 {
     public interface IAppEnv
     {
         AppEnvLocator.IClnbl Locator { get; }
-        string AppSuiteEnvBasePath { get; }
+        string AppEnvDirBasePath { get; }
         string GetPath(AppEnvDir appEnvDir, Type dirNameType, params string[] pathPartsArr);
     }
 
@@ -23,11 +24,11 @@ namespace Turmerik.LocalDevice.Env
         {
             TimeStampHelper = timeStampHelper ?? throw new ArgumentNullException(nameof(timeStampHelper));
             Locator = GetAppEnvLocatorImmtbl();
-            AppSuiteEnvBasePath = GetAppSuiteEnvBasePath(Locator);
+            AppEnvDirBasePath = GetAppEnvDirBasePath(Locator);
         }
 
         public AppEnvLocator.IClnbl Locator { get; }
-        public string AppSuiteEnvBasePath { get; }
+        public string AppEnvDirBasePath { get; }
         protected ITimeStampHelper TimeStampHelper { get; }
 
         protected virtual string AppEnvLocatorFilePath => "app-env-locator.json";
@@ -38,7 +39,7 @@ namespace Turmerik.LocalDevice.Env
             params string[] pathPartsArr)
         {
             pathPartsArr = new string[] {
-                AppSuiteEnvBasePath,
+                AppEnvDirBasePath,
                 appEnvDir > 0 ? appEnvDir.ToString() : null,
                 dirNameType?.GetTypeFullDisplayName()
             }.Where(part => part != null).Concat(pathPartsArr).ToArray();
@@ -70,10 +71,7 @@ namespace Turmerik.LocalDevice.Env
         {
             var mtbl = new AppEnvLocator.Mtbl
             {
-                AppSuiteGroupEnvBaseDirPath = GetFolderPath(SpecialFolder.ApplicationData),
-                AppSuiteGroupEnvBaseDirName = string.Empty,
-                AppSuiteGroupName = DefaultDirNames.APP_SUITE_GROUP_NAME,
-                AppSuiteName = DefaultDirNames.APP_SUITE_NAME,
+                AppEnvDirBasePath = DefaultDirNames.APP_ENV_DIR_BASE_REL_PATH,
             };
 
             return mtbl;
@@ -91,18 +89,19 @@ namespace Turmerik.LocalDevice.Env
             return retValue;
         }
 
-        private string GetAppSuiteEnvBasePath(AppEnvLocator.IClnbl appEnvLocator)
+        private string GetAppEnvDirBasePath(AppEnvLocator.IClnbl appEnvLocator)
         {
-            string[] pathParts = new string[]
-            {
-                appEnvLocator.AppSuiteGroupEnvBaseDirPath,
-                appEnvLocator.AppSuiteGroupEnvBaseDirName,
-                appEnvLocator.AppSuiteGroupName,
-                appEnvLocator.AppSuiteName
-            }.Where(part => !string.IsNullOrWhiteSpace(part)).ToArray();
+            string appEnvDirBasePath = appEnvLocator.AppEnvDirBasePath;
 
-            string retPath = Path.Combine(pathParts);
-            return retPath;
+            if (!Path.IsPathRooted(appEnvDirBasePath))
+            {
+                appEnvDirBasePath = Path.Combine(
+                    GetFolderPath(
+                        SpecialFolder.ApplicationData),
+                    appEnvDirBasePath);
+            }
+
+            return appEnvDirBasePath;
         }
 
         private AppEnvLocator.Immtbl GetAppEnvLocatorImmtbl()
@@ -115,8 +114,7 @@ namespace Turmerik.LocalDevice.Env
 
         public static class DefaultDirNames
         {
-            public const string APP_SUITE_GROUP_NAME = "Turmerik";
-            public const string APP_SUITE_NAME = "UtilityApps";
+            public const string APP_ENV_DIR_BASE_REL_PATH = "Turmerik/App";
         }
     }
 }

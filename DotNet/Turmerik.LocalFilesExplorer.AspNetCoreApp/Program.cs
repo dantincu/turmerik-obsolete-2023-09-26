@@ -1,5 +1,5 @@
 using Microsoft.AspNetCore.Authentication.Negotiate;
-using Turmerik.LocalDevice.Dependencies;
+using Turmerik.LocalDevice.Core.Dependencies;
 
 var builder = WebApplication.CreateBuilder(args);
 

@@ -10,7 +10,7 @@ using Turmerik.FileSystem;
 using Turmerik.Text;
 using static System.Environment;
 
-namespace Turmerik.LocalDevice.FileExplorerCore
+namespace Turmerik.LocalDevice.Core.FileExplorerCore
 {
     public interface IFsExplorerServiceEngine : IFsEntriesRetriever, IDriveExplorerServiceEngine
     {

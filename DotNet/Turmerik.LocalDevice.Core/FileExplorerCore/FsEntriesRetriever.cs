@@ -9,7 +9,7 @@ using Turmerik.DriveExplorerCore;
 using Turmerik.FileSystem;
 using Turmerik.Text;
 
-namespace Turmerik.LocalDevice.FileExplorerCore
+namespace Turmerik.LocalDevice.Core.FileExplorerCore
 {
     public interface IFsEntriesRetriever : IDriveItemsRetriever
     {

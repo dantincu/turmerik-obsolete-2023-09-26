@@ -5,7 +5,7 @@ using System.Text;
 using Turmerik.Reflection;
 using Turmerik.Text;
 
-namespace Turmerik.LocalDevice.Env
+namespace Turmerik.LocalDevice.Core.Env
 {
     public interface INetCoreAppEnvFactoryCore
     {

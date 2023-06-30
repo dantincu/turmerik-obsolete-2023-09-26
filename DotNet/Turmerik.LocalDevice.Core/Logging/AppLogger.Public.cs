@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Turmerik.LocalDevice.Logging
+namespace Turmerik.LocalDevice.Core.Logging
 {
     public partial class AppLogger
     {

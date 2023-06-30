@@ -6,11 +6,11 @@ using System.Text;
 using System.Threading.Tasks;
 using Turmerik.Dependencies;
 using Turmerik.DriveExplorerCore;
-using Turmerik.LocalDevice.Env;
-using Turmerik.LocalDevice.FileExplorerCore;
-using Turmerik.LocalDevice.Logging;
+using Turmerik.LocalDevice.Core.Env;
+using Turmerik.LocalDevice.Core.FileExplorerCore;
+using Turmerik.LocalDevice.Core.Logging;
 
-namespace Turmerik.LocalDevice.Dependencies
+namespace Turmerik.LocalDevice.Core.Dependencies
 {
     public static class LocalDeviceServiceCollectionBuilder
     {

@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Turmerik.Text;
 
-namespace Turmerik.LocalDevice.Env
+namespace Turmerik.LocalDevice.Core.Env
 {
     public interface INetCoreAppEnv : IAppEnv
     {

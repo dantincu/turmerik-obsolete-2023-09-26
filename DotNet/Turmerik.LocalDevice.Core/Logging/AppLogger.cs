@@ -12,11 +12,11 @@ using System.Globalization;
 using System.Text;
 using Turmerik.Reflection;
 using Turmerik.LocalDevice;
-using Turmerik.LocalDevice.Env;
-using Turmerik.LocalDevice.Logging;
+using Turmerik.LocalDevice.Core.Logging;
 using Turmerik.Logging;
+using Turmerik.LocalDevice.Core.Env;
 
-namespace Turmerik.LocalDevice.Logging
+namespace Turmerik.LocalDevice.Core.Logging
 {
     public partial class AppLogger : IAppLogger
     {

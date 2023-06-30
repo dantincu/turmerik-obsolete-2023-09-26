@@ -6,10 +6,10 @@ using System.Text;
 using System.Threading;
 using Turmerik.Reflection;
 using Turmerik.Text;
-using Turmerik.LocalDevice.Env;
 using Turmerik.Logging;
+using Turmerik.LocalDevice.Core.Env;
 
-namespace Turmerik.LocalDevice.Logging
+namespace Turmerik.LocalDevice.Core.Logging
 {
     public class AppLoggerFactory : IAppLoggerFactory
     {
