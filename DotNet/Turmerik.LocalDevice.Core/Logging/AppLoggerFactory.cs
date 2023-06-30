@@ -8,6 +8,8 @@ using Turmerik.Reflection;
 using Turmerik.Text;
 using Turmerik.Logging;
 using Turmerik.LocalDevice.Core.Env;
+using Turmerik.Infrastucture;
+using Turmerik.Utils;
 
 namespace Turmerik.LocalDevice.Core.Logging
 {
@@ -16,26 +18,43 @@ namespace Turmerik.LocalDevice.Core.Logging
         public const string BUFFERED_LOGGER_DIR_NAME_TPL = "{0:D4}";
 
         private readonly IAppEnv appEnv;
+        private readonly IAppProcessIdentifier appProcessIdentifier;
         private readonly ITimeStampHelper timeStampHelper;
+        private readonly ITrmrkJsonFormatterFactory trmrkJsonFormatterFactory;
+        private readonly IStringTemplateParser stringTemplateParser;
         private volatile int bufferedLoggerDirNameIdx;
 
         public AppLoggerFactory(
             IAppEnv appEnv,
-            ITimeStampHelper timeStampHelper)
+            ITimeStampHelper timeStampHelper,
+            IAppProcessIdentifier appProcessIdentifier,
+            ITrmrkJsonFormatterFactory trmrkJsonFormatterFactory,
+            IStringTemplateParser stringTemplateParser)
         {
             this.appEnv = appEnv ?? throw new ArgumentNullException(nameof(appEnv));
+            this.appProcessIdentifier = appProcessIdentifier ?? throw new ArgumentNullException(nameof(appProcessIdentifier));
             this.timeStampHelper = timeStampHelper ?? throw new ArgumentNullException(nameof(timeStampHelper));
+            this.trmrkJsonFormatterFactory = trmrkJsonFormatterFactory ?? throw new ArgumentNullException(nameof(trmrkJsonFormatterFactory));
+            this.stringTemplateParser = stringTemplateParser ?? throw new ArgumentNullException(nameof(stringTemplateParser));
+
+            this.UseAppProcessIdnfByDefault = true;
         }
+
+        public bool UseAppProcessIdnfByDefault { get; set; }
 
         public IAppLogger GetAppLogger(
             string loggerRelPath,
-            LogLevel logEventLevel = LogLevel.Information)
+            LogLevel logEventLevel = LogLevel.Information,
+            bool? useAppProcessIdnf = null)
         {
             var opts = new AppLoggerOpts.Mtbl
             {
                 AppEnv = appEnv,
                 LogLevel = logEventLevel,
-                LoggerRelPath = loggerRelPath
+                LogDirRelPath = loggerRelPath,
+                AppProcessIdentifier = GetIAppProcessIdentifier(useAppProcessIdnf),
+                TextFormatter = trmrkJsonFormatterFactory.CreateFormatter(),
+                StringTemplateParser = stringTemplateParser
             };
 
             var logger = new AppLogger(opts);
@@ -44,11 +63,13 @@ namespace Turmerik.LocalDevice.Core.Logging
 
         public IAppLogger GetAppLogger(
             Type loggerNameType,
-            LogLevel logEventLevel = LogLevel.Information)
+            LogLevel logEventLevel = LogLevel.Information,
+            bool? useAppProcessIdnf = null)
         {
             var appLogger = GetAppLogger(
                 loggerNameType.GetTypeFullDisplayName(),
-                logEventLevel);
+                logEventLevel,
+                useAppProcessIdnf);
 
             return appLogger;
         }
@@ -56,7 +77,8 @@ namespace Turmerik.LocalDevice.Core.Logging
         public IAppLogger GetBufferedAppLogger(
             string loggerRelPath,
             out int bufferedLoggerDirNameIdx,
-            LogLevel logEventLevel = LogLevel.Information)
+            LogLevel logEventLevel = LogLevel.Information,
+            bool? useAppProcessIdnf = null)
         {
             bufferedLoggerDirNameIdx = Interlocked.Increment(ref this.bufferedLoggerDirNameIdx);
 
@@ -80,8 +102,11 @@ namespace Turmerik.LocalDevice.Core.Logging
             {
                 AppEnv = appEnv,
                 LogLevel = logEventLevel,
-                LoggerRelPath = loggerRelPath,
-                IsLoggerBuffered = true
+                LogDirRelPath = loggerRelPath,
+                IsLoggerBuffered = true,
+                AppProcessIdentifier = GetIAppProcessIdentifier(useAppProcessIdnf),
+                TextFormatter = trmrkJsonFormatterFactory.CreateFormatter(),
+                StringTemplateParser = stringTemplateParser
             };
 
             var logger = new AppLogger(opts);
@@ -91,26 +116,32 @@ namespace Turmerik.LocalDevice.Core.Logging
         public IAppLogger GetBufferedAppLogger(
             Type loggerNameType,
             out int bufferedLoggerDirNameIdx,
-            LogLevel logEventLevel = LogLevel.Information)
+            LogLevel logEventLevel = LogLevel.Information,
+            bool? useAppProcessIdnf = null)
         {
             var appLogger = GetBufferedAppLogger(
                 loggerNameType.GetTypeFullDisplayName(),
                 out bufferedLoggerDirNameIdx,
-                logEventLevel);
+                logEventLevel,
+                useAppProcessIdnf);
 
             return appLogger;
         }
 
         public IAppLogger GetSharedAppLogger(
             string loggerRelPath,
-            LogLevel logEventLevel = LogLevel.Debug)
+            LogLevel logEventLevel = LogLevel.Debug,
+            bool? useAppProcessIdnf = null)
         {
             var opts = new AppLoggerOpts.Mtbl
             {
                 AppEnv = appEnv,
                 LogLevel = logEventLevel,
-                LoggerRelPath = loggerRelPath,
-                IsLoggerShared = true
+                LogDirRelPath = loggerRelPath,
+                IsLoggerShared = true,
+                AppProcessIdentifier = GetIAppProcessIdentifier(useAppProcessIdnf),
+                TextFormatter = trmrkJsonFormatterFactory.CreateFormatter(),
+                StringTemplateParser = stringTemplateParser
             };
 
             var logger = new AppLogger(opts);
@@ -119,13 +150,19 @@ namespace Turmerik.LocalDevice.Core.Logging
 
         public IAppLogger GetSharedAppLogger(
             Type loggerNameType,
-            LogLevel logEventLevel = LogLevel.Debug)
+            LogLevel logEventLevel = LogLevel.Debug,
+            bool? useAppProcessIdnf = null)
         {
             var appLogger = GetSharedAppLogger(
                 loggerNameType.GetTypeFullDisplayName(),
-                logEventLevel);
+                logEventLevel,
+                useAppProcessIdnf);
 
             return appLogger;
         }
+
+        private IAppProcessIdentifier GetIAppProcessIdentifier(
+            bool? useAppProcessIdnf) => (
+            useAppProcessIdnf ?? UseAppProcessIdnfByDefault) ? appProcessIdentifier : null;
     }
 }

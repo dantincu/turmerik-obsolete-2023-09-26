@@ -17,12 +17,23 @@ namespace Turmerik.LocalDevice.Core.Dependencies
         public static void RegisterAll(
             IServiceCollection services,
             bool includeNetCoreAppEnv = false,
-            bool registerFsExplorerServiceEngineAsDefault = false)
+            bool registerFsExplorerServiceEngineAsDefault = false,
+            Action<IServiceCollection> registerAppLoggerFactoryFunc = null)
         {
             TrmrkCoreServiceCollectionBuilder.RegisterAll(services);
 
             services.AddSingleton<IAppEnv, AppEnv>();
-            services.AddSingleton<IAppLoggerFactory, AppLoggerFactory>();
+            services.AddSingleton<ITrmrkJsonFormatterFactory, TrmrkJsonFormatterFactory>();
+
+            if (registerAppLoggerFactoryFunc != null)
+            {
+                registerAppLoggerFactoryFunc(services);
+            }
+            else
+            {
+                services.AddSingleton<IAppLoggerFactory, AppLoggerFactory>();
+            }
+
             services.AddSingleton<IBufferedLoggerActionComponent, BufferedLoggerActionComponent>();
 
             if (includeNetCoreAppEnv)

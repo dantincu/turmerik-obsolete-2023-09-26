@@ -51,7 +51,7 @@ namespace Turmerik.LocalDevice.Core.Env
             int bufferedLoggerDirNameIdx;
 
             using (var bufferedLogger = appLoggerFactory.GetBufferedAppLogger(
-                parentLogger.LoggerRelPath,
+                parentLogger.LogDirRelPath,
                 out bufferedLoggerDirNameIdx,
                 logLevel))
             {
@@ -83,7 +83,7 @@ namespace Turmerik.LocalDevice.Core.Env
             int bufferedLoggerDirNameIdx;
 
             using (var bufferedLogger = appLoggerFactory.GetBufferedAppLogger(
-                parentLogger.LoggerRelPath,
+                parentLogger.LogDirRelPath,
                 out bufferedLoggerDirNameIdx,
                 logLevel))
             {

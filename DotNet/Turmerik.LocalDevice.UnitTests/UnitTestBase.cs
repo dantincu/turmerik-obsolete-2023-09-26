@@ -17,13 +17,6 @@ namespace Turmerik.LocalDevice.UnitTests
             RegisterAllServices();
         }
 
-        public UnitTestBase()
-        {
-            Services = ServiceProviderContainer.Instance.Value.Services;
-        }
-
-        protected IServiceProvider Services { get; }
-
         private static void RegisterAllServices()
         {
             var services = new ServiceCollection();

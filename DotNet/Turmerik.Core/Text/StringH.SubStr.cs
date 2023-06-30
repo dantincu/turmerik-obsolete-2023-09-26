@@ -53,7 +53,7 @@ namespace Turmerik.Text
                 }
                 else
                 {
-                    length = inputStr.Length + count - startIdx + 1;
+                    length = inputStr.Length + count - startIdx;
                 }
             }
             else
@@ -66,7 +66,7 @@ namespace Turmerik.Text
                 else
                 {
                     length = -1 * count;
-                    startIdxVal = inputStr.Length + startIdx - length + 1;
+                    startIdxVal = inputStr.Length + startIdx - length;
                 }
             }
 

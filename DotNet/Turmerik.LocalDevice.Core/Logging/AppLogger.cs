@@ -15,6 +15,10 @@ using Turmerik.LocalDevice;
 using Turmerik.LocalDevice.Core.Logging;
 using Turmerik.Logging;
 using Turmerik.LocalDevice.Core.Env;
+using Turmerik.Infrastucture;
+using System.IO;
+using Turmerik.Utils;
+using Turmerik.Text;
 
 namespace Turmerik.LocalDevice.Core.Logging
 {
@@ -29,19 +33,32 @@ namespace Turmerik.LocalDevice.Core.Logging
 
         public AppLogger(AppLoggerOpts.IClnbl opts)
         {
-            LoggerRelPath = opts.LoggerRelPath;
             AppEnv = opts.AppEnv;
+            AppProcessIdentifier = opts.AppProcessIdentifier;
+            TextFormatter = opts.TextFormatter;
+            StringTemplateParser = opts.StringTemplateParser;
             LogEventLevel = opts.LogLevel.GetLogLevel();
             IsLoggerBuffered = opts.IsLoggerBuffered;
             IsLoggerShared = opts.IsLoggerShared;
 
+            LogDirRelPath = GetLogDirRelPath(
+                opts.LogDirRelPath);
+
+            LogFileName = GetLogFileName();
+            LogFilePath = GetLogFilePath();
+
             Logger = GetLogger();
         }
 
-        public string LoggerRelPath { get; }
+        public string LogDirRelPath { get; private set; }
+        public string LogFileName { get; private set; }
+        public string LogFilePath { get; private set; }
 
         private Serilog.ILogger Logger { get; }
         private IAppEnv AppEnv { get; }
+        private IAppProcessIdentifier AppProcessIdentifier { get; }
+        private ITextFormatter TextFormatter { get; }
+        private IStringTemplateParser StringTemplateParser { get; }
         private LogEventLevel LogEventLevel { get; }
         private bool IsLoggerBuffered { get; }
         private bool IsLoggerShared { get; }
@@ -72,10 +89,19 @@ namespace Turmerik.LocalDevice.Core.Logging
             return logFile;
         }
 
-        private string GetLogDirName()
+        private string GetLogDirRelPath(
+            string logDirRelPath)
         {
-            return LoggerRelPath;
+            string appProcessDirName = GetAppProcessDirName();
+
+            logDirRelPath = Path.Combine(
+                appProcessDirName,
+                logDirRelPath);
+
+            return logDirRelPath;
         }
+
+        private string GetAppProcessDirName() => AppProcessIdentifier?.ProcessDirName;
 
         private int GetFileSizeLimitBytes()
         {
@@ -93,19 +119,11 @@ namespace Turmerik.LocalDevice.Core.Logging
             return logger;
         }
 
-        private string GetLogFilePath()
-        {
-            string logDirName = GetLogDirName();
-            string logFileName = GetLogFileName();
-
-            string logFilePath = AppEnv.GetPath(
-                AppEnvDir.Logs,
-                null,
-                logDirName,
-                logFileName);
-
-            return logFilePath;
-        }
+        private string GetLogFilePath() => AppEnv.GetPath(
+            AppEnvDir.Logs,
+            null,
+            LogDirRelPath,
+            LogFileName);
 
         private LoggerConfiguration GetLoggerConfiguration()
         {
@@ -122,7 +140,8 @@ namespace Turmerik.LocalDevice.Core.Logging
             return loggerSinkConfiguration;
         }
 
-        private LoggerConfiguration GetFileLoggerConfiguration(LoggerSinkConfiguration loggerSinkConfiguration)
+        private LoggerConfiguration GetFileLoggerConfiguration(
+            LoggerSinkConfiguration loggerSinkConfiguration)
         {
             /*
              * string path,
@@ -142,7 +161,7 @@ namespace Turmerik.LocalDevice.Core.Logging
 
             LoggerConfiguration loggerConfiguration = loggerSinkConfiguration.File(
                 GetTextFormatter(),
-                GetLogFilePath(),
+                LogFilePath,
                 restrictedToMinimumLevel: LogEventLevel,
                 fileSizeLimitBytes: GetFileSizeLimitBytes(),
                 levelSwitch: new LoggingLevelSwitch(LogEventLevel),
@@ -158,10 +177,7 @@ namespace Turmerik.LocalDevice.Core.Logging
             return loggerConfiguration;
         }
 
-        private ITextFormatter GetTextFormatter()
-        {
-            return GetJsonFormatter();
-        }
+        private ITextFormatter GetTextFormatter() => TextFormatter ?? GetJsonFormatter();
 
         private ITextFormatter GetJsonFormatter()
         {
@@ -169,6 +185,7 @@ namespace Turmerik.LocalDevice.Core.Logging
                 closingDelimiter: $",{Environment.NewLine}",
                 renderMessage: true,
                 formatProvider: CultureInfo.InvariantCulture);
+
             return formatter;
         }
     }

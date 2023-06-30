@@ -10,28 +10,34 @@ namespace Turmerik.LocalDevice.Core.Logging
     {
         IAppLogger GetAppLogger(
             string loggerRelPath,
-            LogLevel logEventLevel = LogLevel.Information);
+            LogLevel logEventLevel = LogLevel.Information,
+            bool? useAppProcessIdnf = null);
 
         IAppLogger GetAppLogger(
             Type loggerNameType,
-            LogLevel logEventLevel = LogLevel.Information);
+            LogLevel logEventLevel = LogLevel.Information,
+            bool? useAppProcessIdnf = null);
 
         IAppLogger GetSharedAppLogger(
             string loggerRelPath,
-            LogLevel logEventLevel = LogLevel.Information);
+            LogLevel logEventLevel = LogLevel.Information,
+            bool? useAppProcessIdnf = null);
 
         IAppLogger GetSharedAppLogger(
             Type loggerNameType,
-            LogLevel logEventLevel = LogLevel.Information);
+            LogLevel logEventLevel = LogLevel.Information,
+            bool? useAppProcessIdnf = null);
 
         IAppLogger GetBufferedAppLogger(
             string loggerRelPath,
             out int bufferedLoggerDirNameIdx,
-            LogLevel logEventLevel = LogLevel.Debug);
+            LogLevel logEventLevel = LogLevel.Debug,
+            bool? useAppProcessIdnf = null);
 
         IAppLogger GetBufferedAppLogger(
             Type loggerNameType,
             out int bufferedLoggerDirNameIdx,
-            LogLevel logEventLevel = LogLevel.Debug);
+            LogLevel logEventLevel = LogLevel.Debug,
+            bool? useAppProcessIdnf = null);
     }
 }

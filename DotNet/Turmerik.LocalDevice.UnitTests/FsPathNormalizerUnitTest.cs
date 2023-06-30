@@ -69,7 +69,7 @@ namespace Turmerik.LocalDevice.UnitTests
         [Fact]
         public void MainTest()
         {
-            var component = ServiceProviderContainer.Instance.Value.Services.GetRequiredService<IFsPathNormalizer>();
+            var component = ServiceProvider.GetRequiredService<IFsPathNormalizer>();
             int i = 0;
 
             for (i = 0; i < invalidPaths.Length; i++)

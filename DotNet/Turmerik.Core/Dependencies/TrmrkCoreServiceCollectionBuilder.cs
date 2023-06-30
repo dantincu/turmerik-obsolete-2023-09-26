@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Turmerik.Cache;
 using Turmerik.DriveExplorerCore;
 using Turmerik.FileSystem;
+using Turmerik.Infrastucture;
 using Turmerik.Reflection;
 using Turmerik.Reflection.Cache;
 using Turmerik.Synchronized;
@@ -20,6 +21,9 @@ namespace Turmerik.Dependencies
         public static void RegisterAll(
             IServiceCollection services)
         {
+            services.AddSingleton<IAppProcessIdentifier, AppProcessIdentifier>();
+            services.AddSingleton<IExceptionSerializer, ExceptionSerializer>();
+            services.AddSingleton<IStringTemplateParser, StringTemplateParser>();
             services.AddSingleton<ITimeStampHelper, TimeStampHelper>();
             services.AddSingleton<IFsPathNormalizer, FsPathNormalizer>();
             services.AddSingleton<ILambdaExprHelper, LambdaExprHelper>();

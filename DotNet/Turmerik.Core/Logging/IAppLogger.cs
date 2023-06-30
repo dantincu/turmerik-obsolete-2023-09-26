@@ -9,7 +9,7 @@ namespace Turmerik.Logging
 {
     public interface IAppLogger : IDisposable
     {
-        string LoggerRelPath { get; }
+        string LogDirRelPath { get; }
         void Write(LogLevel logLevel, string messageTemplate, params object[] propertyValues);
         void Write(LogLevel logLevel, Exception ex, string messageTemplate, params object[] propertyValues);
         void Verbose(string messageTemplate, params object[] propertyValues);
@@ -24,5 +24,20 @@ namespace Turmerik.Logging
         void Error(Exception exception, string messageTemplate, params object[] propertyValues);
         void Fatal(string messageTemplate, params object[] propertyValues);
         void Fatal(Exception exception, string messageTemplate, params object[] propertyValues);
+
+        void WriteData(LogLevel logLevel, object data, string messageTemplate, params object[] propertyValues);
+        void WriteData(LogLevel logLevel, object data, Exception ex, string messageTemplate, params object[] propertyValues);
+        void VerboseData(object data, string messageTemplate, params object[] propertyValues);
+        void VerboseData(object data, Exception exception, string messageTemplate, params object[] propertyValues);
+        void DebugData(object data, string messageTemplate, params object[] propertyValues);
+        void DebugData(object data, Exception exception, string messageTemplate, params object[] propertyValues);
+        void InformationData(object data, string messageTemplate, params object[] propertyValues);
+        void InformationData(object data, Exception exception, string messageTemplate, params object[] propertyValues);
+        void WarningData(object data, string messageTemplate, params object[] propertyValues);
+        void WarningData(object data, Exception exception, string messageTemplate, params object[] propertyValues);
+        void ErrorData(object data, string messageTemplate, params object[] propertyValues);
+        void ErrorData(object data, Exception exception, string messageTemplate, params object[] propertyValues);
+        void FatalData(object data, string messageTemplate, params object[] propertyValues);
+        void FatalData(object data, Exception exception, string messageTemplate, params object[] propertyValues);
     }
 }
