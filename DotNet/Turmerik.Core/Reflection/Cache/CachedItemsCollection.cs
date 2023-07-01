@@ -62,7 +62,7 @@ namespace Turmerik.Reflection.Cache
 
             Filtered = StaticDataCacheFactory.CreateKeyReducer(
                 filter => Items.Where(item => FilterMatchPredicate(item, filter)).RdnlC(),
-                FilterEqCompr, filterReducer, filter => filter);
+                FilterEqCompr, filterReducer);
         }
 
         public ReadOnlyCollection<TItem> Items { get; }

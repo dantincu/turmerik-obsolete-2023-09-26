@@ -9,7 +9,12 @@ namespace Turmerik.Utils
 {
     public delegate void RefAction<T>(ref T t);
 
-    public delegate bool TryParse<TInput, TOutput>(
+    public delegate bool TryRetrieve<TInput, TOutput>(
+        TInput input,
+        out TOutput output);
+
+    public delegate bool TryRetrieve<TObj, TInput, TOutput>(
+        TObj @obj,
         TInput input,
         out TOutput output);
 }

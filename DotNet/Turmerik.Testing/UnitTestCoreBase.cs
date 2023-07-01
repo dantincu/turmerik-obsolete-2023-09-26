@@ -91,8 +91,8 @@ namespace Turmerik.Testing
             Func<T, int> hashCodeFunc = null)
             where T : struct
         {
-            var comparer = comparerFactory.GetValueEqualityComparer(
-                equalsFunc, hashCodeFunc);
+            var comparer = comparerFactory.GetEqualityComparer(
+                equalsFunc, false, hashCodeFunc);
 
             AssertSequenceEqual(
                 expectedSequence,
@@ -108,8 +108,8 @@ namespace Turmerik.Testing
             Func<T, int> hashCodeFunc = null)
             where T : class
         {
-            var comparer = comparerFactory.GetObjectEqualityComparer(
-                equalsFunc, hashCodeFunc);
+            var comparer = comparerFactory.GetEqualityComparer(
+                equalsFunc, true, hashCodeFunc);
 
             AssertSequenceEqual(
                 expectedSequence,

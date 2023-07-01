@@ -8,6 +8,7 @@ using Turmerik.Cache;
 using Turmerik.DriveExplorerCore;
 using Turmerik.FileSystem;
 using Turmerik.Infrastucture;
+using Turmerik.MathH;
 using Turmerik.Reflection;
 using Turmerik.Reflection.Cache;
 using Turmerik.Synchronized;
@@ -29,6 +30,8 @@ namespace Turmerik.Dependencies
             services.AddSingleton<ILambdaExprHelper, LambdaExprHelper>();
             services.AddSingleton<ILambdaExprHelperFactory, LambdaExprHelperFactory>();
             services.AddSingleton<IBasicEqualityComparerFactory, BasicEqualityComparerFactory>();
+
+            services.AddSingleton<IMatrixBuilderFactory, MatrixBuilderFactory>();
 
             services.AddSingleton<IMutexCreator, MutexCreator>();
             services.AddSingleton<IOnceExecutedActionFactory, OnceExecutedActionFactory>();
@@ -58,8 +61,9 @@ namespace Turmerik.Dependencies
             services.AddSingleton<ICachedReflectionItemsFactory, NonSynchronizedCachedReflectionItemsFactory>();
 
             services.AddSingleton(svcProv => LazyH.Lazy(
-                    () => svcProv.GetRequiredService<ICachedReflectionItemsFactory>()));
+                () => svcProv.GetRequiredService<ICachedReflectionItemsFactory>()));
 
+            services.AddSingleton(svcProv => svcProv.GetRequiredService<ICachedTypesMapFactory>().Create());
             services.AddTransient<IDriveExplorerService, DriveExplorerService>();
         }
     }

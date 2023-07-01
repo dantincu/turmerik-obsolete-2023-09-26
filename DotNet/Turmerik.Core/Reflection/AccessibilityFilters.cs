@@ -53,6 +53,10 @@ namespace Turmerik.Reflection
     {
     }
 
+    public interface IMemberVisibilityFilterEqualityComparer : IEqualityComparer<MemberVisibility>
+    {
+    }
+
     public interface IMemberAccessibiliyFilterEqualityComparerFactory
     {
         IMethodAccessibiliyFilterEqualityComparer Method();

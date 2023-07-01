@@ -39,6 +39,9 @@ namespace Turmerik.Reflection.Cache
         ICachedInheritedEventsCollection InheritedEvents(
             ICachedTypeInfo type);
 
+        ICachedInheritedConstructorsCollection InheritedConstructors(
+            ICachedTypeInfo type);
+
         ICachedPropertiesCollection Properties(
             ReadOnlyCollection<ICachedPropertyInfo> items,
             Func<ICachedPropertyInfo, PropertyAccessibilityFilter, bool> filterMatchPredicate,
@@ -58,6 +61,11 @@ namespace Turmerik.Reflection.Cache
             ReadOnlyCollection<ICachedEventInfo> items,
             Func<ICachedEventInfo, EventAccessibilityFilter, bool> filterMatchPredicate,
             Func<EventAccessibilityFilter, EventAccessibilityFilter> filterReducer);
+
+        ICachedConstructorsCollection Constructors(
+            ReadOnlyCollection<ICachedConstructorInfo> items,
+            Func<ICachedConstructorInfo, MemberVisibility, bool> filterMatchPrediate,
+            Func<MemberVisibility, MemberVisibility> filterReducer);
     }
 
     public class CachedReflectionItemsFactory<TStaticDataCacheFactory> : ICachedReflectionItemsFactory
@@ -199,6 +207,16 @@ namespace Turmerik.Reflection.Cache
                 filter => filter.ReduceFilterIfReq(false, true),
                 filter => filter.ReduceFilterIfReq(true, true));
 
+        public ICachedInheritedConstructorsCollection InheritedConstructors(
+            ICachedTypeInfo type) => new CachedInheritedConstructorsCollection(
+                cachedTypesMap.Value,
+                this,
+                staticDataCacheFactory,
+                type,
+                filter => filter.ReduceIfReq(),
+                filter => filter.ReduceIfReq(false, true),
+                filter => filter.ReduceIfReq(true, true));
+
         public ICachedPropertiesCollection Properties(
             ReadOnlyCollection<ICachedPropertyInfo> items,
             Func<ICachedPropertyInfo, PropertyAccessibilityFilter, bool> filterMatchPredicate,
@@ -235,6 +253,16 @@ namespace Turmerik.Reflection.Cache
             Func<EventAccessibilityFilter, EventAccessibilityFilter> filterReducer) => new CachedEventsCollection(
                 staticDataCacheFactory,
                 memberAccessibiliyFilterEqualityComparerFactory.Event(),
+                items,
+                filterMatchPredicate,
+                filterReducer);
+
+        public ICachedConstructorsCollection Constructors(
+            ReadOnlyCollection<ICachedConstructorInfo> items,
+            Func<ICachedConstructorInfo, MemberVisibility, bool> filterMatchPredicate,
+            Func<MemberVisibility, MemberVisibility> filterReducer) => new CachedConstructorsCollection(
+                staticDataCacheFactory,
+                EqualityComparer<MemberVisibility>.Default,
                 items,
                 filterMatchPredicate,
                 filterReducer);

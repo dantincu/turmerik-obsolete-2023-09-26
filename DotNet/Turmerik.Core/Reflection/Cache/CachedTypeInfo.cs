@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json.Linq;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -24,6 +25,7 @@ namespace Turmerik.Reflection.Cache
         Lazy<ICachedInheritedPropertiesCollection> InstanceProps { get; }
         Lazy<ICachedInheritedPropertiesCollection> StaticProps { get; }
         Lazy<ICachedInheritedEventsCollection> Events { get; }
+        Lazy<ICachedInheritedConstructorsCollection> Constructors { get; }
         Lazy<ICachedAssemblyInfo> Assembly { get; }
     }
 
@@ -67,6 +69,9 @@ namespace Turmerik.Reflection.Cache
             StaticProps = new Lazy<ICachedInheritedPropertiesCollection>(
                 () => ItemsFactory.InheritedProperties(this, false));
 
+            Constructors = new Lazy<ICachedInheritedConstructorsCollection>(
+                () => ItemsFactory.InheritedConstructors(this));
+
             Events = new Lazy<ICachedInheritedEventsCollection>(
                 () => ItemsFactory.InheritedEvents(this));
 
@@ -84,6 +89,7 @@ namespace Turmerik.Reflection.Cache
         public Lazy<ICachedInheritedMethodsCollection> Methods { get; }
         public Lazy<ICachedInheritedPropertiesCollection> InstanceProps { get; }
         public Lazy<ICachedInheritedPropertiesCollection> StaticProps { get; }
+        public Lazy<ICachedInheritedConstructorsCollection> Constructors { get; }
         public Lazy<ICachedInheritedEventsCollection> Events { get; }
         public Lazy<ICachedAssemblyInfo> Assembly { get; }
 

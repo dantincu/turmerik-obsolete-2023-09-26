@@ -97,10 +97,10 @@ namespace Turmerik.Cache
                 key => key);
 
             this.removeKeyReducer = removeKeyReducer.FirstNotNull(
-                this.createKeyReducer);
+                key => key);
 
-            this.createKeyReducer = containsKeyReducer.FirstNotNull(
-                this.removeKeyReducer);
+            this.containsKeyReducer = containsKeyReducer.FirstNotNull(
+                this.createKeyReducer);
         }
 
         public override TValue Get(TKey key)

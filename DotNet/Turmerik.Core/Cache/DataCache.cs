@@ -101,6 +101,7 @@ namespace Turmerik.Cache
             if (!dictnr.TryGetValue(key, out value))
             {
                 value = factory(key);
+                dictnr.Add(key, value);
             }
 
             return value;

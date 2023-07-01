@@ -244,6 +244,10 @@ namespace Turmerik.Reflection
             return retVal;
         }
 
+        public static bool Matches(
+            this MemberVisibility filter,
+            ICachedConstructorInfo arg) => filter.Matches(arg.Flags.Value);
+
         public static bool IsEditable(
             this FieldInfo fieldInfo) => !(
             fieldInfo.IsInitOnly || fieldInfo.IsLiteral);
