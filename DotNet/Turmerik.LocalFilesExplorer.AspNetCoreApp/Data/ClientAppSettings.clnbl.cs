@@ -5,18 +5,18 @@ namespace Turmerik.LocalFilesExplorer.AspNetCoreApp.Data
 {
     public partial class ClientAppSettings : ClientAppSettingsCore<IClnbl, Immtbl, Mtbl>
     {
-        public interface IClnbl : ICoreClnbl
+        public interface IClnbl : IClnblCore
         {
         }
 
-        public class Immtbl : CoreImmtbl, IClnbl
+        public class Immtbl : ImmtblCore, IClnbl
         {
             public Immtbl(IClnbl src) : base(src)
             {
             }
         }
 
-        public class Mtbl : CoreMtbl, IClnbl
+        public class Mtbl : MtblCore, IClnbl
         {
             public Mtbl()
             {

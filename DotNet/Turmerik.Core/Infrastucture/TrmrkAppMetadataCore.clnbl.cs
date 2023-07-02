@@ -9,19 +9,26 @@ using Turmerik.Utils;
 
 namespace Turmerik.Infrastucture
 {
-    public partial class TrmrkAppMetadataCore<TClnbl, TImmtbl, TMtbl> : ClnblCore<TClnbl, TImmtbl, TMtbl>
-        where TClnbl : TrmrkAppMetadataCore<TClnbl, TImmtbl, TMtbl>.ICoreClnbl
-        where TImmtbl : TrmrkAppMetadataCore<TClnbl, TImmtbl, TMtbl>.CoreImmtbl, TClnbl
-        where TMtbl : TrmrkAppMetadataCore<TClnbl, TImmtbl, TMtbl>.CoreMtbl, TClnbl
+    public class TrmrkAppMetadataCore<TClnbl> : ClnblCore
     {
-        public interface ICoreClnbl : IClnblCore
+        public new interface IClnblCore : ClnblCore.IClnblCore
         {
             string TrmrkBase64LongUuid { get; }
         }
+    }
 
-        public class CoreImmtbl : ImmtblCoreBase, ICoreClnbl
+    public class TrmrkAppMetadataCore<TClnbl, TImmtbl, TMtbl> : ClnblCore<TClnbl, TImmtbl, TMtbl>
+        where TClnbl : TrmrkAppMetadataCore<TClnbl, TImmtbl, TMtbl>.IClnblCore
+        where TImmtbl : TrmrkAppMetadataCore<TClnbl, TImmtbl, TMtbl>.ImmtblCore, TClnbl
+        where TMtbl : TrmrkAppMetadataCore<TClnbl, TImmtbl, TMtbl>.MtblCore, TClnbl
+    {
+        public new interface IClnblCore : TrmrkAppMetadataCore<TClnbl>.IClnblCore, ClnblCore<TClnbl, TImmtbl, TMtbl>.IClnblCore
         {
-            public CoreImmtbl(TClnbl src) : base(src)
+        }
+
+        public class ImmtblCore : ImmtblCoreBase, IClnblCore
+        {
+            public ImmtblCore(TClnbl src) : base(src)
             {
                 TrmrkBase64LongUuid = src.TrmrkBase64LongUuid;
             }
@@ -29,13 +36,13 @@ namespace Turmerik.Infrastucture
             public string TrmrkBase64LongUuid { get; }
         }
 
-        public class CoreMtbl : MtblCoreBase, ICoreClnbl
+        public class MtblCore : MtblCoreBase, IClnblCore
         {
-            public CoreMtbl()
+            public MtblCore()
             {
             }
 
-            public CoreMtbl(TClnbl src) : base(src)
+            public MtblCore(TClnbl src) : base(src)
             {
                 TrmrkBase64LongUuid = src.TrmrkBase64LongUuid;
             }
@@ -44,7 +51,7 @@ namespace Turmerik.Infrastucture
         }
 
         public static bool TrmrkAppMetadataIsValid(
-            ICoreClnbl trmrkAppMetadataCore,
+            IClnblCore trmrkAppMetadataCore,
             bool throwIfInvalid = false)
         {
             bool isValid = trmrkAppMetadataCore.TrmrkBase64LongUuid == TrmrkAppsSuite.BASE_64_LONG_UUID;

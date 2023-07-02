@@ -17,12 +17,9 @@ namespace Turmerik.DriveExplorerCore
         Slides
     }
 
-    public partial class DriveItemIdnf<TClnbl, TImmtbl, TMtbl> : ClnblCore<TClnbl, TImmtbl, TMtbl>
-        where TClnbl : DriveItemIdnf<TClnbl, TImmtbl, TMtbl>.ICoreClnbl, DriveItemIdnf<TClnbl, TImmtbl, TMtbl>.IClnblCore
-        where TImmtbl : DriveItemIdnf<TClnbl, TImmtbl, TMtbl>.CoreImmtbl, TClnbl
-        where TMtbl : DriveItemIdnf<TClnbl, TImmtbl, TMtbl>.CoreMtbl, TClnbl
+    public class DriveItemIdnf<TClnbl> : ClnblCore
     {
-        public interface ICoreClnbl : IClnblCore
+        public new interface IClnblCore : ClnblCore.IClnblCore
         {
             string Id { get; }
             string Name { get; }
@@ -35,10 +32,20 @@ namespace Turmerik.DriveExplorerCore
 
             bool Equals(TClnbl other);
         }
+    }
 
-        public class CoreImmtbl : ImmtblCoreBase, ICoreClnbl
+    public class DriveItemIdnf<TClnbl, TImmtbl, TMtbl> : ClnblCore<TClnbl, TImmtbl, TMtbl>
+        where TClnbl : DriveItemIdnf<TClnbl, TImmtbl, TMtbl>.IClnblCore
+        where TImmtbl : DriveItemIdnf<TClnbl, TImmtbl, TMtbl>.ImmtblCore, TClnbl
+        where TMtbl : DriveItemIdnf<TClnbl, TImmtbl, TMtbl>.MtblCore, TClnbl
+    {
+        public new interface IClnblCore : DriveItemIdnf<TClnbl>.IClnblCore, ClnblCore<TClnbl, TImmtbl, TMtbl>.IClnblCore
         {
-            public CoreImmtbl(TClnbl src) : base(src)
+        }
+
+        public class ImmtblCore : ImmtblCoreBase, IClnblCore
+        {
+            public ImmtblCore(TClnbl src) : base(src)
             {
                 Id = src.Id;
                 Name = src.Name;
@@ -71,9 +78,9 @@ namespace Turmerik.DriveExplorerCore
                 object obj) => obj is TClnbl other && Equals(other);
         }
 
-        public class CoreMtbl : MtblCoreBase, ICoreClnbl
+        public class MtblCore : MtblCoreBase, IClnblCore
         {
-            public CoreMtbl(TClnbl src) : base(src)
+            public MtblCore(TClnbl src) : base(src)
             {
                 Id = src.Id;
                 Name = src.Name;
@@ -84,7 +91,7 @@ namespace Turmerik.DriveExplorerCore
                 PrBaseIdnf = src.GetPrBaseIdnf().AsMtbl();
             }
 
-            public CoreMtbl()
+            public MtblCore()
             {
             }
 
@@ -111,20 +118,20 @@ namespace Turmerik.DriveExplorerCore
         }
     }
 
-    public partial class DriveItemIdnf : DriveItemIdnf<DriveItemIdnf.IClnbl, DriveItemIdnf.Immtbl, DriveItemIdnf.Mtbl>
+    public class DriveItemIdnf : DriveItemIdnf<DriveItemIdnf.IClnbl, DriveItemIdnf.Immtbl, DriveItemIdnf.Mtbl>
     {
-        public interface IClnbl : ICoreClnbl
+        public interface IClnbl : IClnblCore
         {
         }
 
-        public class Immtbl : CoreImmtbl, IClnbl
+        public class Immtbl : ImmtblCore, IClnbl
         {
             public Immtbl(IClnbl src) : base(src)
             {
             }
         }
 
-        public class Mtbl : CoreMtbl, IClnbl
+        public class Mtbl : MtblCore, IClnbl
         {
             public Mtbl()
             {
@@ -136,9 +143,9 @@ namespace Turmerik.DriveExplorerCore
         }
     }
 
-    public partial class DriveItem : DriveItemIdnf<DriveItem.IClnbl, DriveItem.Immtbl, DriveItem.Mtbl>
+    public class DriveItem : DriveItemIdnf<DriveItem.IClnbl, DriveItem.Immtbl, DriveItem.Mtbl>
     {
-        public interface IClnbl : ICoreClnbl
+        public interface IClnbl : IClnblCore
         {
             string DisplayName { get; }
             bool? IsFolder { get; }
@@ -164,7 +171,7 @@ namespace Turmerik.DriveExplorerCore
             IClnblCollection GetFolderFiles();
         }
 
-        public class Immtbl : CoreImmtbl, IClnbl
+        public class Immtbl : ImmtblCore, IClnbl
         {
             public Immtbl(IClnbl src) : base(src)
             {
@@ -219,7 +226,7 @@ namespace Turmerik.DriveExplorerCore
             public IClnblCollection GetSubFolders() => SubFolders;
         }
 
-        public class Mtbl : CoreMtbl, IClnbl
+        public class Mtbl : MtblCore, IClnbl
         {
             public Mtbl()
             {

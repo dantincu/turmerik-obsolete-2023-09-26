@@ -7,19 +7,26 @@ using Turmerik.Cloneable;
 
 namespace Turmerik.AspNetCore.Infrastucture
 {
-    public partial class ClientAppSettingsCore<TClnbl, TImmtbl, TMtbl> : ClnblCore<TClnbl, TImmtbl, TMtbl>
-        where TClnbl : ClientAppSettingsCore<TClnbl, TImmtbl, TMtbl>.ICoreClnbl
-        where TImmtbl : ClientAppSettingsCore<TClnbl, TImmtbl, TMtbl>.CoreImmtbl, TClnbl
-        where TMtbl : ClientAppSettingsCore<TClnbl, TImmtbl, TMtbl>.CoreMtbl, TClnbl
+    public class ClientAppSettingsCore<TClnbl> : ClnblCore
     {
-        public interface ICoreClnbl : IClnblCore
+        public new interface IClnblCore : ClnblCore.IClnblCore
         {
             string TrmrkPrefix { get; }
         }
+    }
 
-        public class CoreImmtbl : ImmtblCoreBase, ICoreClnbl
+    public class ClientAppSettingsCore<TClnbl, TImmtbl, TMtbl> : ClnblCore<TClnbl, TImmtbl, TMtbl>
+        where TClnbl : ClientAppSettingsCore<TClnbl, TImmtbl, TMtbl>.IClnblCore
+        where TImmtbl : ClientAppSettingsCore<TClnbl, TImmtbl, TMtbl>.ImmtblCore, TClnbl
+        where TMtbl : ClientAppSettingsCore<TClnbl, TImmtbl, TMtbl>.MtblCore, TClnbl
+    {
+        public new interface IClnblCore : ClientAppSettingsCore<TClnbl>.IClnblCore, ClnblCore<TClnbl, TImmtbl, TMtbl>.IClnblCore
         {
-            public CoreImmtbl(TClnbl src) : base(src)
+        }
+
+        public class ImmtblCore : ImmtblCoreBase, IClnblCore
+        {
+            public ImmtblCore(TClnbl src) : base(src)
             {
                 TrmrkPrefix = src.TrmrkPrefix;
             }
@@ -27,13 +34,13 @@ namespace Turmerik.AspNetCore.Infrastucture
             public string TrmrkPrefix { get; }
         }
 
-        public class CoreMtbl : MtblCoreBase, ICoreClnbl
+        public class MtblCore : MtblCoreBase, IClnblCore
         {
-            public CoreMtbl()
+            public MtblCore()
             {
             }
 
-            public CoreMtbl(TClnbl src) : base(src)
+            public MtblCore(TClnbl src) : base(src)
             {
                 TrmrkPrefix = src.TrmrkPrefix;
             }

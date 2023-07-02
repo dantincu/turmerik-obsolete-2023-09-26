@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Runtime.Serialization;
@@ -250,5 +251,15 @@ namespace Turmerik.Cloneable
             public IEnumerable<KeyValuePair<TKey, TClnbl>> AsNmrbl() => this;
             public Dictionary<TKey, TMtbl> AsDictnr() => this;
         }
+    }
+
+    [AttributeUsage(AttributeTargets.Method)]
+    public class ClnblIgnoreMethodAttribute : Attribute
+    {
+    }
+
+    [AttributeUsage(AttributeTargets.Property)]
+    public class ClnblIgnorePropertyAttribute : Attribute
+    {
     }
 }

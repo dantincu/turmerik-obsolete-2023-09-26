@@ -7,20 +7,27 @@ using Turmerik.Cloneable;
 
 namespace Turmerik.AspNetCore.Infrastucture
 {
-    public partial class AppSettingsCore<TClnbl, TImmtbl, TMtbl> : ClnblCore<TClnbl, TImmtbl, TMtbl>
-        where TClnbl : AppSettingsCore<TClnbl, TImmtbl, TMtbl>.ICoreClnbl
-        where TImmtbl : AppSettingsCore<TClnbl, TImmtbl, TMtbl>.CoreImmtbl, TClnbl
-        where TMtbl : AppSettingsCore<TClnbl, TImmtbl, TMtbl>.CoreMtbl, TClnbl
+    public class AppSettingsCore<TClnbl> : ClnblCore
     {
-        public interface ICoreClnbl : IClnblCore
+        public new interface IClnblCore : ClnblCore.IClnblCore
         {
             string TrmrkPrefix { get; }
             string ClientAppHost { get; }
         }
+    }
 
-        public class CoreImmtbl : ImmtblCoreBase, ICoreClnbl
+    public class AppSettingsCore<TClnbl, TImmtbl, TMtbl> : ClnblCore<TClnbl, TImmtbl, TMtbl>
+        where TClnbl : AppSettingsCore<TClnbl, TImmtbl, TMtbl>.IClnblCore
+        where TImmtbl : AppSettingsCore<TClnbl, TImmtbl, TMtbl>.ImmtblCore, TClnbl
+        where TMtbl : AppSettingsCore<TClnbl, TImmtbl, TMtbl>.MtblCore, TClnbl
+    {
+        public new interface IClnblCore : AppSettingsCore<TClnbl>.IClnblCore, ClnblCore<TClnbl, TImmtbl, TMtbl>.IClnblCore
         {
-            public CoreImmtbl(TClnbl src) : base(src)
+        }
+
+        public class ImmtblCore : ImmtblCoreBase, IClnblCore
+        {
+            public ImmtblCore(TClnbl src) : base(src)
             {
                 TrmrkPrefix = src.TrmrkPrefix;
                 ClientAppHost = src.ClientAppHost;
@@ -30,13 +37,13 @@ namespace Turmerik.AspNetCore.Infrastucture
             public string ClientAppHost { get; }
         }
 
-        public class CoreMtbl : MtblCoreBase, ICoreClnbl
+        public class MtblCore : MtblCoreBase, IClnblCore
         {
-            public CoreMtbl()
+            public MtblCore()
             {
             }
 
-            public CoreMtbl(TClnbl src) : base(src)
+            public MtblCore(TClnbl src) : base(src)
             {
                 TrmrkPrefix = src.TrmrkPrefix;
                 ClientAppHost = src.ClientAppHost;

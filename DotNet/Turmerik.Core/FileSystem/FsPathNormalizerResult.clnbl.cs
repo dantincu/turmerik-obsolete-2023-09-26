@@ -11,7 +11,7 @@ using Turmerik.Text;
 
 namespace Turmerik.FileSystem
 {
-    public partial class FsPathNormalizerResult : ClnblCore<FsPathNormalizerResult.IClnbl, FsPathNormalizerResult.Immtbl, FsPathNormalizerResult.Mtbl>
+    public class FsPathNormalizerResult : ClnblCore<FsPathNormalizerResult.IClnbl, FsPathNormalizerResult.Immtbl, FsPathNormalizerResult.Mtbl>
     {
         public interface IClnbl : IClnblCore
         {
@@ -107,7 +107,7 @@ namespace Turmerik.FileSystem
         }
     }
 
-    public partial class FsPathNormalizerOpts : ClnblCore<FsPathNormalizerOpts.IClnbl, FsPathNormalizerOpts.Immtbl, FsPathNormalizerOpts.Mtbl>
+    public class FsPathNormalizerOpts : ClnblCore<FsPathNormalizerOpts.IClnbl, FsPathNormalizerOpts.Immtbl, FsPathNormalizerOpts.Mtbl>
     {
         public interface IClnbl : IClnblCore
         {

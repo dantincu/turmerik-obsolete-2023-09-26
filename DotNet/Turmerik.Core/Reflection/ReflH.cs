@@ -161,9 +161,9 @@ namespace Turmerik.Reflection
 
         public static bool Matches(
             this MemberVisibility visibility,
-            ICachedMemberFlagsCore arg) => (arg == null && visibility.IsDefault()) || arg.IfHasAnyFlag(
+            CachedMemberFlagsCoreBase.IClnblCore arg) => (arg == null && visibility.IsDefault()) || arg.IfHasAnyFlag(
                 visibility,
-                new Dictionary<MemberVisibility, Func<ICachedMemberFlagsCore, MemberVisibility, bool>>
+                new Dictionary<MemberVisibility, Func<CachedMemberFlagsCoreBase.IClnblCore, MemberVisibility, bool>>
                 {
                     { MemberVisibility.Public, (mmb, flag) => mmb.IsPublic },
                     { MemberVisibility.Protected, (mmb, flag) => mmb.IsFamily },
@@ -176,9 +176,9 @@ namespace Turmerik.Reflection
 
         public static bool Matches(
             this MemberScope scope,
-            ICachedMemberFlags fld) => (fld == null && scope.IsDefault()) || fld.IfHasAnyFlag(
+            CachedMemberFlagsBase.IClnblCore fld) => (fld == null && scope.IsDefault()) || fld.IfHasAnyFlag(
                 scope,
-                new Dictionary<MemberScope, Func<ICachedMemberFlags, MemberScope, bool>>
+                new Dictionary<MemberScope, Func<CachedMemberFlagsBase.IClnblCore, MemberScope, bool>>
                 {
                     { MemberScope.Static, (mmb, flag) => mmb.IsStatic },
                     { MemberScope.Instance, (mmb, flag) => !mmb.IsStatic }
@@ -187,9 +187,9 @@ namespace Turmerik.Reflection
 
         public static bool Matches(
         this FieldType fieldType,
-            ICachedFieldFlags fld) => (fld == null && fieldType.IsDefault()) || fld.IfHasAnyFlag(
+            CachedFieldFlags.IClnbl fld) => (fld == null && fieldType.IsDefault()) || fld.IfHasAnyFlag(
                 fieldType,
-                new Dictionary<FieldType, Func<ICachedFieldFlags, FieldType, bool>>
+                new Dictionary<FieldType, Func<CachedFieldFlags.IClnbl, FieldType, bool>>
                 {
                     { FieldType.Editable, (mmb, flag) => mmb.IsEditable },
                     { FieldType.InitOnly, (mmb, flag) => !mmb.IsInitOnly },
