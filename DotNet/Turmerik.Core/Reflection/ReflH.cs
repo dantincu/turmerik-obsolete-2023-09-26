@@ -237,6 +237,13 @@ namespace Turmerik.Reflection
                     publicOnly,
                     excludeInheritables));
 
+        /// <summary>
+        /// According to https://stackoverflow.com/questions/14885325/eventinfo-getraisemethod-always-null <br /> <br />
+        /// The <see cref="System.Reflection.EventInfo.RaiseMethod"/> and <see cref="System.Reflection.EventInfo.GetRaiseMethod"/>
+        /// will always return <c>null</c> value in the C# language (as opposed to VB.NET, F# and C++/CLI). <br /> <br />
+        /// But let's leave just it here for now (the <see cref="EventAccessibilityFilter" /> will always be reduced to an equivallent filter
+        /// that has <see cref="MemberVisibility.None"/> for the <see cref="RaiserVisibility"/> property).
+        /// </summary>
         public static EventAccessibilityFilter ReduceFilterIfReq(
             this EventAccessibilityFilter filter,
             bool excludeInternal,
@@ -250,10 +257,11 @@ namespace Turmerik.Reflection
                     excludeInternal,
                     excludePrivate,
                     publicOnly),
-                filter.RaiserVisibility.ReduceIfReq(
+                MemberVisibility.None
+                /* filter.RaiserVisibility.ReduceIfReq(
                     excludeInternal,
                     excludePrivate,
-                    publicOnly));
+                    publicOnly*/);
 
         public static bool Matches(
             this MemberVisibility visibility,

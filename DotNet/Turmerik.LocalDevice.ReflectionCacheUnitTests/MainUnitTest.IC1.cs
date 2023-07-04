@@ -31,9 +31,9 @@ namespace Turmerik.LocalDevice.ReflectionCacheUnitTests
                         },
                         {
                             new EventAccessibilityFilter(
+                                MemberVisibility.None,
                                 MemberVisibility.Public,
-                                MemberVisibility.Public,
-                                MemberVisibility.Public),
+                                MemberVisibility.None),
                             new string[0]
                         }
                     },
@@ -41,20 +41,26 @@ namespace Turmerik.LocalDevice.ReflectionCacheUnitTests
                     {
                         {
                             new EventAccessibilityFilter(
-                                MemberVisibility.Public | MemberVisibility.Private,
-                                MemberVisibility.Public | MemberVisibility.Private,
-                                MemberVisibility.None),
+                                MemberVisibility.Public,
+                                MemberVisibility.Public,
+                                MemberVisibility.Public),
                             nameof(IC1<int, string>.C1Event).Arr()
                         },
                         {
                             new EventAccessibilityFilter(
-                                MemberVisibility.Public | MemberVisibility.Private,
+                                MemberVisibility.Private,
                                 MemberVisibility.Public | MemberVisibility.Private,
                                 MemberVisibility.Public | MemberVisibility.Private),
                             new string[0]
                         }
                     }
                 ));
+
+            Assert.Null(cachedType.InstanceFields.Value);
+            Assert.Null(cachedType.StaticFields.Value);
+            Assert.Null(cachedType.Constructors.Value);
+            Assert.Null(cachedType.StaticProps.Value);
+            Assert.Null(cachedType.StaticMethods.Value);
         }
     }
 }

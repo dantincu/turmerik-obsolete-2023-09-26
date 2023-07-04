@@ -290,6 +290,8 @@ namespace Turmerik.LocalDevice.ReflectionCacheUnitTests.Components
         private protected long C3PrvProtLongVal = 23;
         private long C3PrvLongVal = 24;
 
+        private Action<short> c3Event;
+
         public C3(string pubStrVal)
         {
         }
@@ -320,7 +322,12 @@ namespace Turmerik.LocalDevice.ReflectionCacheUnitTests.Components
         [Attr3]
         public virtual int C3PubIntVal { get; set; }
 
-        public event Action<short> C3Event;
+        public event Action<short> C3Event
+        {
+            add => c3Event += value;
+            remove => c3Event -= value;
+        }
+
         protected event Action<short> C3ProtEvent;
         private event Action<short> C3PrvEvent;
 
@@ -340,5 +347,32 @@ namespace Turmerik.LocalDevice.ReflectionCacheUnitTests.Components
 
         [Attr3]
         public virtual int GetC3PubIntVal() => default;
+    }
+
+    public static class Sttc1
+    {
+        public const long C3_PUB_CONST_LONG_VAL = 1;
+        internal const long C3_INTERNAL_CONST_LONG_VAL = 2;
+        private const long C3_PRV_CONST_LONG_VAL = 6;
+
+        public static readonly long C3PubStaticReadonlyLongVal = 7;
+        internal static readonly long C3InternalStaticReadonlyLongVal = 8;
+        private static readonly long C3PrvStaticReadonlyLongVal = 12;
+
+        public static long C3PubStaticLongVal = 13;
+        internal static long C3InternalStaticLongVal = 14;
+        private static long C3PrvStaticLongVal = 18;
+
+        static Sttc1()
+        {
+        }
+
+        public static string C3PubStaticStrVal { get; set; }
+        internal static string C3InternalStaticStrVal { get; set; }
+        private static string C3PrvStaticStrVal { get; set; }
+
+        public static string GetC3PubStaticStrVal() => default;
+        internal static string GetC3InternalStaticStrVal() => default;
+        private static string GetC3PrvStaticStrVal() => default;
     }
 }

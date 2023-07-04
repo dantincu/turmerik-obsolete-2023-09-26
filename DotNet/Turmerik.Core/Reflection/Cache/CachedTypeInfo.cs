@@ -89,7 +89,7 @@ namespace Turmerik.Reflection.Cache
                 () => IsInterface ? null : IsStaticClass ? null : ItemsFactory.InheritedConstructors(this));
 
             Events = new Lazy<ICachedInheritedEventsCollection>(
-                () => ItemsFactory.InheritedEvents(this, IsInterface));
+                () => IsStaticClass ? null : ItemsFactory.InheritedEvents(this, IsInterface));
 
             Assembly = new Lazy<ICachedAssemblyInfo>(
                 () => ItemsFactory.AssemblyInfo(Data.Assembly));
