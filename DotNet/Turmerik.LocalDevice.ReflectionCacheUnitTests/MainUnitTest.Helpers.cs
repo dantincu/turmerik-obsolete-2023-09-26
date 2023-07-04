@@ -9,6 +9,7 @@ using Turmerik.Reflection;
 using Turmerik.Reflection.Cache;
 using Turmerik.Utils;
 using Turmerik.Collections;
+using System.Collections.ObjectModel;
 
 namespace Turmerik.LocalDevice.ReflectionCacheUnitTests
 {
@@ -172,20 +173,21 @@ namespace Turmerik.LocalDevice.ReflectionCacheUnitTests
         private void AssertHasAttrs<TMemberInfo, TFlags>(
             ICachedMemberInfo<TMemberInfo, TFlags> cachedItem,
             Attribute[] expectedAttrsArr,
+            bool includeInherited = true,
             Func<Attribute, Attribute, int, bool> equalsPredicate = null)
             where TMemberInfo : MemberInfo
         {
-            var attrsCllctn = cachedItem.Attributes.Value.Where(
+            var attrsArr = cachedItem.GetAttributes(includeInherited).Value.Where(
                 attr => !attrNamesToIgnore.Contains(attr.GetType().Name)).ToArray();
 
             Assert.Equal(
                 expectedAttrsArr.Length,
-                attrsCllctn.Length);
+                attrsArr.Length);
 
-            for (int i =  0; i < attrsCllctn.Length; i++)
+            for (int i =  0; i < attrsArr.Length; i++)
             {
                 var expectedAttr = expectedAttrsArr[i];
-                var actualAttr = attrsCllctn[i];
+                var actualAttr = attrsArr[i];
 
                 Assert.Equal(
                     expectedAttr.GetType(),

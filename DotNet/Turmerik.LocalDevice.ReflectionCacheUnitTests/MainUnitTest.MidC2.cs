@@ -18,6 +18,11 @@ namespace Turmerik.LocalDevice.ReflectionCacheUnitTests
 
             AssertHasAttrs(
                 cachedType,
+                new Attribute[] { new MidCAttr2() },
+                false);
+
+            AssertHasAttrs(
+                cachedType,
                 new Attribute[] { new MidCAttr2(), new BaseCAttr1()});
 
             AssertHasAttrs(

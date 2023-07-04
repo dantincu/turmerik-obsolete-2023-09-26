@@ -19,8 +19,11 @@ namespace Turmerik.Reflection.Cache
         MemberTypes MemberType { get; }
         Lazy<ICachedTypeInfo> DeclaringType { get; }
         Lazy<ICachedTypeInfo> ReflectedType { get; }
-        Lazy<ReadOnlyCollection<Attribute>> Attributes { get; }
+        Lazy<ReadOnlyCollection<Attribute>> OwnAttributes { get; }
+        Lazy<ReadOnlyCollection<Attribute>> AllAttributes { get; }
         Lazy<ReadOnlyCollection<ICachedCustomAttributeData>> AttributesData { get; }
+
+        Lazy<ReadOnlyCollection<Attribute>> GetAttributes(bool includeInherited);
     }
 
     public abstract class CachedMemberInfoBase<TMemberInfo, TFlags> : CachedItemBase<TMemberInfo, TFlags>, ICachedMemberInfo<TMemberInfo, TFlags>
@@ -47,8 +50,11 @@ namespace Turmerik.Reflection.Cache
                 () => TypesMap.Value.Get(
                     Data.ReflectedType));
 
-            Attributes = LazyH.Lazy(
-                () => Data.GetCustomAttributes().RdnlC());
+            OwnAttributes = LazyH.Lazy(
+                () => Data.GetCustomAttributes(false).Cast<Attribute>().RdnlC());
+
+            AllAttributes = LazyH.Lazy(
+                () => Data.GetCustomAttributes(true).Cast<Attribute>().RdnlC());
 
             AttributesData = LazyH.Lazy(
                 () => Data.GetCustomAttributesData().Select(
@@ -61,7 +67,11 @@ namespace Turmerik.Reflection.Cache
         public Lazy<ICachedTypeInfo> DeclaringType { get; }
         public Lazy<ICachedTypeInfo> ReflectedType { get; }
 
-        public Lazy<ReadOnlyCollection<Attribute>> Attributes { get; }
+        public Lazy<ReadOnlyCollection<Attribute>> OwnAttributes { get; }
+        public Lazy<ReadOnlyCollection<Attribute>> AllAttributes { get; }
         public Lazy<ReadOnlyCollection<ICachedCustomAttributeData>> AttributesData { get; }
+
+        public Lazy<ReadOnlyCollection<Attribute>> GetAttributes(
+            bool includeInherited) => includeInherited ? AllAttributes : OwnAttributes;
     }
 }
