@@ -19,7 +19,8 @@ namespace Turmerik.Reflection.Cache
         MemberTypes MemberType { get; }
         Lazy<ICachedTypeInfo> DeclaringType { get; }
         Lazy<ICachedTypeInfo> ReflectedType { get; }
-        Lazy<ReadOnlyCollection<Attribute>> CustomAttributes { get; }
+        Lazy<ReadOnlyCollection<Attribute>> Attributes { get; }
+        Lazy<ReadOnlyCollection<ICachedCustomAttributeData>> AttributesData { get; }
     }
 
     public abstract class CachedMemberInfoBase<TMemberInfo, TFlags> : CachedItemBase<TMemberInfo, TFlags>, ICachedMemberInfo<TMemberInfo, TFlags>
@@ -46,8 +47,12 @@ namespace Turmerik.Reflection.Cache
                 () => TypesMap.Value.Get(
                     Data.ReflectedType));
 
-            CustomAttributes = new Lazy<ReadOnlyCollection<Attribute>>(
+            Attributes = LazyH.Lazy(
                 () => Data.GetCustomAttributes().RdnlC());
+
+            AttributesData = LazyH.Lazy(
+                () => Data.GetCustomAttributesData().Select(
+                    data => ItemsFactory.AttributeData(data)).RdnlC());
         }
 
         public string Name { get; }
@@ -56,6 +61,7 @@ namespace Turmerik.Reflection.Cache
         public Lazy<ICachedTypeInfo> DeclaringType { get; }
         public Lazy<ICachedTypeInfo> ReflectedType { get; }
 
-        public Lazy<ReadOnlyCollection<Attribute>> CustomAttributes { get; }
+        public Lazy<ReadOnlyCollection<Attribute>> Attributes { get; }
+        public Lazy<ReadOnlyCollection<ICachedCustomAttributeData>> AttributesData { get; }
     }
 }

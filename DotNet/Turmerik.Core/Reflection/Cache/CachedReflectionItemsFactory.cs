@@ -21,6 +21,9 @@ namespace Turmerik.Reflection.Cache
         ICachedMethodInfo MethodInfo(MethodInfo method);
         ICachedConstructorInfo ConstructorInfo(ConstructorInfo constructor);
         ICachedAssemblyInfo AssemblyInfo(Assembly assembly);
+        ICachedCustomAttributeData AttributeData(CustomAttributeData attributeData);
+        ICachedCustomAttributeTypedArgument AttributeTypedArgument(CustomAttributeTypedArgument argument);
+        ICachedCustomAttributeNamedArgument AttributeNamedArgument(CustomAttributeNamedArgument argument);
 
         ICachedInterfaceMapping InterfaceMapping(
             ICachedTypeInfo type,
@@ -158,6 +161,27 @@ namespace Turmerik.Reflection.Cache
                 this,
                 staticDataCacheFactory,
                 assembly);
+
+        public ICachedCustomAttributeData AttributeData(
+            CustomAttributeData attributeData) => new CachedCustomAttributeData(
+                cachedTypesMap,
+                this,
+                staticDataCacheFactory,
+                attributeData);
+
+        public ICachedCustomAttributeTypedArgument AttributeTypedArgument(
+            CustomAttributeTypedArgument argument) => new CachedCustomAttributeTypedArgument(
+                cachedTypesMap,
+                this,
+                staticDataCacheFactory,
+                argument);
+
+        public ICachedCustomAttributeNamedArgument AttributeNamedArgument(
+            CustomAttributeNamedArgument argument) => new CachedCustomAttributeNamedArgument(
+                cachedTypesMap,
+                this,
+                staticDataCacheFactory,
+                argument);
 
         public ICachedInterfaceMapping InterfaceMapping(
             ICachedTypeInfo type,

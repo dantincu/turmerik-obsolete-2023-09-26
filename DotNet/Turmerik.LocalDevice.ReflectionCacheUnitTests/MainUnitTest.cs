@@ -1,5 +1,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json.Linq;
+using System.Collections.ObjectModel;
+using Turmerik.Collections;
 using Turmerik.LocalDevice.ReflectionCacheUnitTests.Components;
 using Turmerik.Reflection;
 using Turmerik.Reflection.Cache;
@@ -9,6 +11,12 @@ namespace Turmerik.LocalDevice.ReflectionCacheUnitTests
 {
     public partial class MainUnitTest : UnitTestBase
     {
+        private static readonly ReadOnlyCollection<string> attrNamesToIgnore = new string[]
+        {
+            "NullableContextAttribute",
+            "NullableAttribute"
+        }.RdnlC();
+
         private readonly IEqualityComparer<IDictionary<string, Type>> methodParamsDictnrEqCompr;
         private readonly IEqualityComparer<IDictionary<string, Type>[]> methodParamsDictnrArrEqCompr;
         private readonly IEqualityComparer<IDictionary<MemberVisibility, IDictionary<string, Type>[]>> constructorsDictnrArrEqCompr;

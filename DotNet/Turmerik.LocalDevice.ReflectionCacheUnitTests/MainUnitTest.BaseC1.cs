@@ -16,6 +16,25 @@ namespace Turmerik.LocalDevice.ReflectionCacheUnitTests
         {
             var cachedType = CachedTypesMap.Get(typeof(BaseC1<int, string>));
             Assert.True(cachedType.Data.IsGenericType);
+
+            AssertHasAttrs(
+                cachedType,
+                new Attribute[] { new BaseCAttr1() });
+
+            AssertHasAttrs(
+                cachedType.InstanceProps.Value.Own.Value.Items.Single(
+                    prop => prop.Name == nameof(BaseC1<int, string>.C1PubIntVal)),
+                new Attribute[] { new BaseAttr1() });
+
+            AssertHasAttrs(
+                cachedType.InstanceMethods.Value.Own.Value.Items.Single(
+                    prop => prop.Name == nameof(BaseC1<int, string>.GetC1PubIntVal)),
+                new Attribute[] { new BaseAttr1() });
+
+            AssertHasAttrs(
+                cachedType.Constructors.Value.Own.Value.Items.Single(
+                    ctr => ctr.Flags.Value.IsFamily && ctr.Parameters.Value.None()),
+                new Attribute[] { new BaseAttr1() });
         }
     }
 }

@@ -175,8 +175,8 @@ namespace Turmerik.LocalDevice.ReflectionCacheUnitTests
             Func<Attribute, Attribute, int, bool> equalsPredicate = null)
             where TMemberInfo : MemberInfo
         {
-            var attrsCllctn = cachedItem.CustomAttributes.Value.Where(
-                attr => attr.GetType().Name != "NullableContextAttribute").ToArray();
+            var attrsCllctn = cachedItem.Attributes.Value.Where(
+                attr => !attrNamesToIgnore.Contains(attr.GetType().Name)).ToArray();
 
             Assert.Equal(
                 expectedAttrsArr.Length,
