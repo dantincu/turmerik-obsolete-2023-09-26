@@ -34,6 +34,7 @@ namespace Turmerik.Reflection.Cache
 
         ICachedInheritedFieldsCollection InheritedFields(
             ICachedTypeInfo type,
+            bool isInstanceFieldsCollection,
             bool excludeInheritables = false);
 
         ICachedInheritedMethodsCollection InheritedMethods(
@@ -193,11 +194,13 @@ namespace Turmerik.Reflection.Cache
 
         public ICachedInheritedFieldsCollection InheritedFields(
             ICachedTypeInfo type,
+            bool isInstanceFieldsCollection,
             bool excludeInheritables = false) => new CachedInheritedFieldsCollection(
                 cachedTypesMap.Value,
                 this,
                 staticDataCacheFactory,
                 type,
+                isInstanceFieldsCollection,
                 filter => filter.ReduceFilterIfReq(false, false, excludeInheritables),
                 filter => filter.ReduceFilterIfReq(false, true, excludeInheritables),
                 filter => filter.ReduceFilterIfReq(true, true, excludeInheritables));
@@ -211,6 +214,7 @@ namespace Turmerik.Reflection.Cache
                 this,
                 staticDataCacheFactory,
                 type,
+                isInstanceMethodsCollection,
                 filter => filter.ReduceFilterIfReq(
                     isInstanceMethodsCollection,
                     false, false, publicOnly,

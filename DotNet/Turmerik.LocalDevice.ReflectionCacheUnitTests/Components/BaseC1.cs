@@ -50,6 +50,9 @@ namespace Turmerik.LocalDevice.ReflectionCacheUnitTests.Components
         T1 C1PubIntVal { get; }
 
         event Action<short> C1Event;
+
+        T2 GetC1PubStrVal();
+        T1 GetC1PubIntVal();
     }
 
     [MidIAttr2]
@@ -60,6 +63,9 @@ namespace Turmerik.LocalDevice.ReflectionCacheUnitTests.Components
         int C2PubIntVal { get; }
 
         event Action<short> C2Event;
+
+        string GetC2PubStrVal();
+        T GetC2PubIntVal();
     }
 
     [IAttr3]
@@ -70,6 +76,9 @@ namespace Turmerik.LocalDevice.ReflectionCacheUnitTests.Components
         int C3PubIntVal { get; }
 
         event Action<short> C3Event;
+
+        string GetC3PubStrVal();
+        int GetC3PubIntVal();
     }
 
     [BaseCAttr1]
@@ -151,7 +160,7 @@ namespace Turmerik.LocalDevice.ReflectionCacheUnitTests.Components
         private protected static string GetC1PrvProtStaticStrVal() => default;
         private static string GetC1PrvStaticStrVal() => default;
 
-        public virtual string GetC1PubStrVal() => default;
+        public virtual T2 GetC1PubStrVal() => default;
         internal virtual string GetC1InternalStrVal() => default;
         protected internal virtual string GetC1ProtInternalStrVal() => default;
         protected virtual string GetC1ProtStrVal() => default;
@@ -159,7 +168,7 @@ namespace Turmerik.LocalDevice.ReflectionCacheUnitTests.Components
         private string GetC1PrvStrVal() => default;
 
         [BaseAttr1]
-        public virtual int GetC1PubIntVal() => default;
+        public virtual T1 GetC1PubIntVal() => default;
     }
 
     [MidCAttr2]
@@ -249,7 +258,7 @@ namespace Turmerik.LocalDevice.ReflectionCacheUnitTests.Components
         private string GetC2PrvStrVal() => default;
 
         [MidAttr2]
-        public virtual int GetC2PubIntVal() => default;
+        public virtual T GetC2PubIntVal() => default;
     }
 
     [CAttr3]

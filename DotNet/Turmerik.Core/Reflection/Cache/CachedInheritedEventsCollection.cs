@@ -46,6 +46,9 @@ namespace Turmerik.Reflection.Cache
         protected override ICachedEventsCollection GetBaseTypeAllVisibleItems(
             ICachedTypeInfo baseType) => baseType.Events.Value.AllVisible.Value;
 
+        protected override ICachedEventsCollection GetBaseTypeOwnItems(
+            ICachedTypeInfo baseType) => baseType.Events.Value.Own.Value;
+
         protected override ICachedEventInfo[] GetOwnItems(
             ICachedTypeInfo type) => type.Data.GetEvents(
                 ReflC.Filter.BindingFlag.DeclaredOnly).Select(

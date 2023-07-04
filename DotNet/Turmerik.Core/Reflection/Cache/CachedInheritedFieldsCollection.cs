@@ -6,11 +6,13 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using Turmerik.Cache;
+using Turmerik.Utils;
 
 namespace Turmerik.Reflection.Cache
 {
     public interface ICachedInheritedFieldsCollection : ICachedInheritedItemsCollection<FieldInfo, ICachedFieldInfo, FieldAccessibilityFilter, ICachedFieldsCollection>
     {
+        bool IsInstanceFieldsCollection { get; }
     }
 
     public class CachedInheritedFieldsCollection : CachedInheritedItemsCollectionBase<FieldInfo, ICachedFieldInfo, FieldAccessibilityFilter, ICachedFieldsCollection>, ICachedInheritedFieldsCollection
@@ -20,6 +22,7 @@ namespace Turmerik.Reflection.Cache
             ICachedReflectionItemsFactory itemsFactory,
             IStaticDataCacheFactory staticDataCacheFactory,
             ICachedTypeInfo type,
+            bool isInstanceFieldsCollection,
             Func<FieldAccessibilityFilter, FieldAccessibilityFilter> ownFilterReducer,
             Func<FieldAccessibilityFilter, FieldAccessibilityFilter> allVisibleFilterReducer,
             Func<FieldAccessibilityFilter, FieldAccessibilityFilter> asmVisibleFilterReducer) : base(
@@ -32,7 +35,10 @@ namespace Turmerik.Reflection.Cache
                 allVisibleFilterReducer,
                 asmVisibleFilterReducer)
         {
+            IsInstanceFieldsCollection = isInstanceFieldsCollection;
         }
+
+        public bool IsInstanceFieldsCollection { get; }
 
         protected override ICachedFieldsCollection CreateCollection(
             ReadOnlyCollection<ICachedFieldInfo> items,
@@ -40,10 +46,19 @@ namespace Turmerik.Reflection.Cache
                 items, FilterMatchPredicate, filterReducer);
 
         protected override ICachedFieldsCollection GetBaseTypeAsmVisibleItems(
-            ICachedTypeInfo baseType) => baseType.InstanceFields.Value.AsmVisible.Value;
+            ICachedTypeInfo baseType) => this.IsInstanceFieldsCollection.IfTrue(
+                () => baseType.InstanceFields.Value.AsmVisible.Value,
+                () => baseType.StaticFields.Value.AsmVisible.Value);
 
         protected override ICachedFieldsCollection GetBaseTypeAllVisibleItems(
-            ICachedTypeInfo baseType) => baseType.InstanceFields.Value.AllVisible.Value;
+            ICachedTypeInfo baseType) => this.IsInstanceFieldsCollection.IfTrue(
+                () => baseType.InstanceFields.Value.AsmVisible.Value,
+                () => baseType.StaticFields.Value.AsmVisible.Value);
+
+        protected override ICachedFieldsCollection GetBaseTypeOwnItems(
+            ICachedTypeInfo baseType) => this.IsInstanceFieldsCollection.IfTrue(
+                () => baseType.InstanceFields.Value.AsmVisible.Value,
+                () => baseType.StaticFields.Value.AsmVisible.Value);
 
         protected override ICachedFieldInfo[] GetOwnItems(
             ICachedTypeInfo type) => type.Data.GetFields(

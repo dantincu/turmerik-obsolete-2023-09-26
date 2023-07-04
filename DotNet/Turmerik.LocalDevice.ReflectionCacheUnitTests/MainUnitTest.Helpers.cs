@@ -18,7 +18,7 @@ namespace Turmerik.LocalDevice.ReflectionCacheUnitTests
             ICachedItemsCollection<T, TItem, TFilter> itemsCllctn,
             ExpectedContents<TExpected> expectedContents,
             Action<ICachedItemsCollection<T, TItem, TFilter>, ExpectedContents<TExpected>> beforeAssertAction,
-            Func<ExpectedContents<TExpected>, Dictionary<TFilter, TItem[]>, bool> assertionValidPredicate)
+            Func<ExpectedContents<TExpected>, IDictionary<TFilter, TItem[]>, bool> assertionValidPredicate)
             where TFilter : notnull
             where TItem : ICachedItem<T>
         {
@@ -28,7 +28,7 @@ namespace Turmerik.LocalDevice.ReflectionCacheUnitTests
 
             var itemsMap = itemsCllctn.Filtered.GetKeys().ToDictionary(
                 key => key,
-                key => itemsCllctn.Filtered.Get(key).ToArray());
+                key => itemsCllctn.Filtered.Get(key)?.ToArray());
 
             bool assertionIsValid = assertionValidPredicate(
                 expectedContents,
@@ -39,9 +39,9 @@ namespace Turmerik.LocalDevice.ReflectionCacheUnitTests
 
         private void AssertContains<TMemberInfo, TItem, TFlags, TFilter>(
             ICachedItemsCollection<TMemberInfo, TItem, TFilter> itemsCllctn,
-            ExpectedContents<Dictionary<TFilter, string[]>> expectedContents,
-            IEqualityComparer<Dictionary<TFilter, string[]>> eqCompr,
-            Func<ExpectedContents<Dictionary<TFilter, string[]>>, Dictionary<TFilter, TItem[]>, bool> assertionValidPredicate = null)
+            ExpectedContents<IDictionary<TFilter, string[]>> expectedContents,
+            IEqualityComparer<IDictionary<TFilter, string[]>> eqCompr,
+            Func<ExpectedContents<IDictionary<TFilter, string[]>>, IDictionary<TFilter, TItem[]>, bool> assertionValidPredicate = null)
             where TFilter : notnull
             where TItem : ICachedMemberInfo<TMemberInfo, TFlags>
             where TMemberInfo : MemberInfo => AssertContains(
@@ -67,7 +67,7 @@ namespace Turmerik.LocalDevice.ReflectionCacheUnitTests
                 {
                     var actualNamesMap = itemsMap.ToDictionary(
                         kvp => kvp.Key,
-                        kvp => kvp.Value.Select(
+                        kvp => kvp.Value?.Select(
                             item => item.Name).ToArray());
 
                     bool retVal = eqCompr.Equals(
@@ -86,8 +86,8 @@ namespace Turmerik.LocalDevice.ReflectionCacheUnitTests
 
         private void AssertContains(
             ICachedConstructorsCollection cllctn,
-            ExpectedContents<Dictionary<MemberVisibility, Dictionary<string, Type>[]>> expectedContents,
-            Func<ExpectedContents<Dictionary<MemberVisibility, Dictionary<string, Type>[]>>, Dictionary<MemberVisibility, ICachedConstructorInfo[]>, bool> assertionValidPredicate = null) => AssertContains<Dictionary<MemberVisibility, Dictionary<string, Type>[]>, ConstructorInfo, ICachedConstructorInfo, MemberVisibility>(
+            ExpectedContents<IDictionary<MemberVisibility, IDictionary<string, Type>[]>> expectedContents,
+            Func<ExpectedContents<IDictionary<MemberVisibility, IDictionary<string, Type>[]>>, IDictionary<MemberVisibility, ICachedConstructorInfo[]>, bool> assertionValidPredicate = null) => AssertContains<IDictionary<MemberVisibility, IDictionary<string, Type>[]>, ConstructorInfo, ICachedConstructorInfo, MemberVisibility>(
                 cllctn,
                 expectedContents,
                 beforeAssertAction: (cllctn, expected) =>
@@ -100,7 +100,7 @@ namespace Turmerik.LocalDevice.ReflectionCacheUnitTests
                             var namesMap = cllctn.Filtered.Get(kvp.Key).Select(
                                 item => item.Parameters.Value.ToDictionary(
                                     @param => param.Name,
-                                    @param => param.Type.Value.Data)).ToArray();
+                                    @param => param.Type.Value.Data) as IDictionary<string, Type>).ToArray();
 
                             bool isValid = methodParamsDictnrArrEqCompr.Equals(
                                 kvp.Value,
@@ -110,14 +110,14 @@ namespace Turmerik.LocalDevice.ReflectionCacheUnitTests
                         }
                     }
                 },
-                (expected, constructorsMap) =>
+                (ExpectedContents<IDictionary<MemberVisibility, IDictionary<string, Type>[]>> expected, IDictionary<MemberVisibility, ICachedConstructorInfo[]> constructorsMap) =>
                 {
                     var actualConstrMap = constructorsMap.ToDictionary(
                         kvp => kvp.Key,
                         kvp => kvp.Value.Select(
                             constr => constr.Parameters.Value.ToDictionary(
                                 @param => param.Name,
-                                @param => param.Type.Value.Data)).ToArray());
+                                @param => param.Type.Value.Data) as IDictionary<string, Type>).ToArray()) as IDictionary<MemberVisibility, IDictionary<string, Type>[]>;
 
                     bool retVal = constructorsDictnrArrEqCompr.Equals(
                         expected.Included,
@@ -135,8 +135,8 @@ namespace Turmerik.LocalDevice.ReflectionCacheUnitTests
 
         private void AssertContains(
             ICachedEventsCollection cllctn,
-            ExpectedContents<Dictionary<EventAccessibilityFilter, string[]>> expectedContents,
-            Func<ExpectedContents<Dictionary<EventAccessibilityFilter, string[]>>, Dictionary<EventAccessibilityFilter, ICachedEventInfo[]>, bool> assertionValidPredicate = null) => AssertContains<EventInfo, ICachedEventInfo, CachedEventFlags.IClnbl, EventAccessibilityFilter>(
+            ExpectedContents<IDictionary<EventAccessibilityFilter, string[]>> expectedContents,
+            Func<ExpectedContents<IDictionary<EventAccessibilityFilter, string[]>>, IDictionary<EventAccessibilityFilter, ICachedEventInfo[]>, bool> assertionValidPredicate = null) => AssertContains<EventInfo, ICachedEventInfo, CachedEventFlags.IClnbl, EventAccessibilityFilter>(
                 cllctn,
                 expectedContents,
                 eventNamesDictnrEqCompr,
@@ -144,8 +144,8 @@ namespace Turmerik.LocalDevice.ReflectionCacheUnitTests
 
         private void AssertContains(
             ICachedFieldsCollection cllctn,
-            ExpectedContents<Dictionary<FieldAccessibilityFilter, string[]>> expectedContents,
-            Func<ExpectedContents<Dictionary<FieldAccessibilityFilter, string[]>>, Dictionary<FieldAccessibilityFilter, ICachedFieldInfo[]>, bool> assertionValidPredicate = null) => AssertContains<FieldInfo, ICachedFieldInfo, CachedFieldFlags.IClnbl, FieldAccessibilityFilter>(
+            ExpectedContents<IDictionary<FieldAccessibilityFilter, string[]>> expectedContents,
+            Func<ExpectedContents<IDictionary<FieldAccessibilityFilter, string[]>>, IDictionary<FieldAccessibilityFilter, ICachedFieldInfo[]>, bool> assertionValidPredicate = null) => AssertContains<FieldInfo, ICachedFieldInfo, CachedFieldFlags.IClnbl, FieldAccessibilityFilter>(
                 cllctn,
                 expectedContents,
                 fieldNamesDictnrEqCompr,
@@ -153,8 +153,8 @@ namespace Turmerik.LocalDevice.ReflectionCacheUnitTests
 
         private void AssertContains(
             ICachedMethodsCollection cllctn,
-            ExpectedContents<Dictionary<MethodAccessibilityFilter, string[]>> expectedContents,
-            Func<ExpectedContents<Dictionary<MethodAccessibilityFilter, string[]>>, Dictionary<MethodAccessibilityFilter, ICachedMethodInfo[]>, bool> assertionValidPredicate = null) => AssertContains<MethodInfo, ICachedMethodInfo, CachedMemberFlags.IClnbl, MethodAccessibilityFilter>(
+            ExpectedContents<IDictionary<MethodAccessibilityFilter, string[]>> expectedContents,
+            Func<ExpectedContents<IDictionary<MethodAccessibilityFilter, string[]>>, IDictionary<MethodAccessibilityFilter, ICachedMethodInfo[]>, bool> assertionValidPredicate = null) => AssertContains<MethodInfo, ICachedMethodInfo, CachedMemberFlags.IClnbl, MethodAccessibilityFilter>(
                 cllctn,
                 expectedContents,
                 methodNamesDictnrEqCompr,
@@ -162,12 +162,68 @@ namespace Turmerik.LocalDevice.ReflectionCacheUnitTests
 
         private void AssertContains(
             ICachedPropertiesCollection cllctn,
-            ExpectedContents<Dictionary<PropertyAccessibilityFilter, string[]>> expectedContents,
-            Func<ExpectedContents<Dictionary<PropertyAccessibilityFilter, string[]>>, Dictionary<PropertyAccessibilityFilter, ICachedPropertyInfo[]>, bool> assertionValidPredicate = null) => AssertContains<PropertyInfo, ICachedPropertyInfo, CachedPropertyFlags.IClnbl, PropertyAccessibilityFilter>(
+            ExpectedContents<IDictionary<PropertyAccessibilityFilter, string[]>> expectedContents,
+            Func<ExpectedContents<IDictionary<PropertyAccessibilityFilter, string[]>>, IDictionary<PropertyAccessibilityFilter, ICachedPropertyInfo[]>, bool> assertionValidPredicate = null) => AssertContains<PropertyInfo, ICachedPropertyInfo, CachedPropertyFlags.IClnbl, PropertyAccessibilityFilter>(
                 cllctn,
                 expectedContents,
                 propNamesDictnrEqCompr,
                 assertionValidPredicate);
+
+        private static ExpectedContents<IDictionary<EventAccessibilityFilter, string[]>> MergeData(
+            ExpectedContents<IDictionary<EventAccessibilityFilter, string[]>>[] contentsArr) => MergeData(
+                contentsArr,
+                (left, right) => left.ToDictionary(
+                    kvp => kvp.Key,
+                    kvp => kvp.Value?.Concat(
+                        right[kvp.Key] ?? new string[0]).ToArray() ?? right[kvp.Key]));
+
+        private static ExpectedContents<IDictionary<PropertyAccessibilityFilter, string[]>> MergeData(
+            ExpectedContents<IDictionary<PropertyAccessibilityFilter, string[]>>[] contentsArr) => MergeData(
+                contentsArr,
+                (left, right) => left.ToDictionary(
+                    kvp => kvp.Key,
+                    kvp => kvp.Value?.Concat(
+                        right[kvp.Key] ?? new string[0]).ToArray() ?? right[kvp.Key]));
+
+        private static ExpectedContents<IDictionary<MethodAccessibilityFilter, string[]>> MergeData(
+            ExpectedContents<IDictionary<MethodAccessibilityFilter, string[]>>[] contentsArr) => MergeData(
+                contentsArr,
+                (left, right) => left.ToDictionary(
+                    kvp => kvp.Key,
+                    kvp => kvp.Value?.Concat(
+                        right[kvp.Key] ?? new string[0]).ToArray() ?? right[kvp.Key]));
+
+        private static ExpectedContents<IDictionary<FieldAccessibilityFilter, string[]>> MergeData(
+            ExpectedContents<IDictionary<FieldAccessibilityFilter, string[]>>[] contentsArr) => MergeData(
+                contentsArr,
+                (left, right) => left.ToDictionary(
+                    kvp => kvp.Key,
+                    kvp => kvp.Value?.Concat(
+                        right[kvp.Key] ?? new string[0]).ToArray() ?? right[kvp.Key]));
+
+        private static ExpectedContents<IDictionary<MemberVisibility, IDictionary<string, Type>[]>> MergeData(
+            ExpectedContents<IDictionary<MemberVisibility, IDictionary<string, Type>[]>>[] contentsArr) => MergeData(
+                contentsArr,
+                (left, right) => left.ToDictionary(
+                    kvp => kvp.Key,
+                    kvp => kvp.Value?.Concat(
+                        right[kvp.Key] ?? new IDictionary<string, Type>[0]).ToArray() ?? right[kvp.Key]));
+
+        private static ExpectedContents<TContent> MergeData<TContent>(
+            ExpectedContents<TContent> leftContent,
+            ExpectedContents<TContent> rightContent,
+            Func<TContent, TContent, TContent> aggregator) => new ExpectedContents<TContent>(
+                aggregator(
+                    leftContent.Included,
+                    rightContent.Included),
+                aggregator(
+                    leftContent.ReducedIncluded,
+                    rightContent.ReducedIncluded));
+
+        private static ExpectedContents<TContent> MergeData<TContent>(
+            ExpectedContents<TContent>[] contentsArr,
+            Func<TContent, TContent, TContent> aggregator) => contentsArr.Aggregate(
+                (left, right) => MergeData(left, right, aggregator));
 
         private readonly struct ExpectedContents<TContent>
         {

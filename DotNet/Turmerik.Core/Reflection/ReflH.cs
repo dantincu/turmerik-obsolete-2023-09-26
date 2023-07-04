@@ -312,10 +312,10 @@ namespace Turmerik.Reflection
                 false);
 
             retVal = retVal && (filter.CanRead?.WithValue(
-                canRead => argument.Flags.Value.CanRead) ?? true);
+                canRead => canRead == argument.Flags.Value.CanRead) ?? true);
 
             retVal = retVal && (filter.CanWrite?.WithValue(
-                canRead => argument.Flags.Value.CanWrite) ?? true);
+                canWrite => canWrite == argument.Flags.Value.CanWrite) ?? true);
 
             retVal = retVal && filter.GetterVisibility.IfMatchesNone(
                 () => argument.Getter.Value == null,

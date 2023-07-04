@@ -54,9 +54,6 @@ namespace Turmerik.Reflection.Cache
 
             Type = type;
 
-            BaseType = new Lazy<ICachedTypeInfo>(
-                () => Type.BaseType.Value);
-
             Own = new Lazy<TCollection>(
                 () => CreateCollection(
                     GetOwnItems(Type).RdnlC(),
@@ -87,9 +84,11 @@ namespace Turmerik.Reflection.Cache
         protected Func<TFilter, TFilter> AsmVisibleFilterReducer { get; }
 
         protected ICachedTypeInfo Type { get; }
-        protected Lazy<ICachedTypeInfo> BaseType { get; }
 
         protected abstract TItem[] GetOwnItems(ICachedTypeInfo type);
+
+        protected abstract TCollection GetBaseTypeOwnItems(
+            ICachedTypeInfo baseType);
 
         protected abstract TCollection GetBaseTypeAsmVisibleItems(
             ICachedTypeInfo baseType);
@@ -105,18 +104,46 @@ namespace Turmerik.Reflection.Cache
             ReadOnlyCollection<TItem> ownItems,
             Func<ICachedTypeInfo, TCollection> baseItemsCollectionFactory)
         {
-            var allItems = ownItems;
-            var baseType = BaseType.Value;
+            var allItems = ownItems.ToList();
 
-            if (baseType != null)
+            if (Type.IsInterface)
             {
-                var baseItems = baseItemsCollectionFactory(baseType);
-                var allBaseItems = baseItems.Items;
+                var baseTypesNmrbl = Type.Interfaces.Value;
 
-                allItems = allItems.Concat(allBaseItems).RdnlC();
+                foreach (var baseType in baseTypesNmrbl)
+                {
+                    var baseItems = GetBaseTypeOwnItems(baseType);
+                    allItems.AddRange(baseItems.Items);
+                }
+            }
+            else
+            {
+                var baseType = Type.BaseType.Value;
+
+                if (baseType != null)
+                {
+                    var baseItems = baseItemsCollectionFactory(baseType);
+                    allItems.AddRange(baseItems.Items);
+                }
             }
 
-            return allItems;
+            return allItems.RdnlC();
+        }
+
+        private IEnumerable<ICachedTypeInfo> GetBaseTypes()
+        {
+            IEnumerable<ICachedTypeInfo> baseTypesNmrbl;
+
+            if (Type.IsInterface)
+            {
+                baseTypesNmrbl = Type.Interfaces.Value;
+            }
+            else
+            {
+                baseTypesNmrbl = Type.BaseType.Value?.Arr();
+            }
+
+            return baseTypesNmrbl;
         }
 
         private ReadOnlyCollection<TItem> GetAsmVisibleItems(

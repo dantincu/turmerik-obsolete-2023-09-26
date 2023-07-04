@@ -68,10 +68,10 @@ namespace Turmerik.Reflection.Cache
                         TypesMap.Value.Get(type))));
 
             InstanceFields = new Lazy<ICachedInheritedFieldsCollection>(
-                () => IsInterface ? null : IsStaticClass ? null : ItemsFactory.InheritedFields(this));
+                () => IsInterface ? null : IsStaticClass ? null : ItemsFactory.InheritedFields(this, true));
 
             StaticFields = new Lazy<ICachedInheritedFieldsCollection>(
-                () => IsInterface ? null : ItemsFactory.InheritedFields(this, IsStaticClass));
+                () => IsInterface ? null : ItemsFactory.InheritedFields(this, false, IsStaticClass));
 
             InstanceMethods = new Lazy<ICachedInheritedMethodsCollection>(
                 () => IsStaticClass ? null : ItemsFactory.InheritedMethods(this, true, IsInterface));

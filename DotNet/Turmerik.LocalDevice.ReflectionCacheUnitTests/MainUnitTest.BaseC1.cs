@@ -12,7 +12,7 @@ namespace Turmerik.LocalDevice.ReflectionCacheUnitTests
     public partial class MainUnitTest
     {
         [Fact]
-        public void MainBaseC1Test()
+        public void BaseC1EventsTest()
         {
             var cachedType = CachedTypesMap.Get(typeof(BaseC1<int, string>));
             Assert.True(cachedType.Data.IsGenericType);

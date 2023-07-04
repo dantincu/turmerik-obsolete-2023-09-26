@@ -55,6 +55,11 @@ namespace Turmerik.Reflection.Cache
                 () => baseType.InstanceProps.Value.AllVisible.Value,
                 () => baseType.StaticProps.Value.AllVisible.Value);
 
+        protected override ICachedPropertiesCollection GetBaseTypeOwnItems(
+            ICachedTypeInfo baseType) => this.IsInstancePropsCollection.IfTrue(
+                () => baseType.InstanceProps.Value.Own.Value,
+                () => baseType.StaticProps.Value.Own.Value);
+
         protected override ICachedPropertyInfo[] GetOwnItems(
             ICachedTypeInfo type) => type.Data.GetProperties(
                 ReflC.Filter.BindingFlag.DeclaredOnly).Select(

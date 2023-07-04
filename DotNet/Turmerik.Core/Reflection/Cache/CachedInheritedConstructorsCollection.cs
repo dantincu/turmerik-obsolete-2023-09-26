@@ -46,6 +46,9 @@ namespace Turmerik.Reflection.Cache
         protected override ICachedConstructorsCollection GetBaseTypeAsmVisibleItems(
             ICachedTypeInfo baseType) => baseType.Constructors.Value.AllVisible.Value;
 
+        protected override ICachedConstructorsCollection GetBaseTypeOwnItems(
+            ICachedTypeInfo baseType) => baseType.Constructors.Value.Own.Value;
+
         protected override ICachedConstructorInfo[] GetOwnItems(
             ICachedTypeInfo type) => type.Data.GetConstructors(
                 ReflC.Filter.BindingFlag.DeclaredOnly).Select(

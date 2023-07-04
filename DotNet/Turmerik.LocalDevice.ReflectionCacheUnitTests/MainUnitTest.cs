@@ -9,42 +9,42 @@ namespace Turmerik.LocalDevice.ReflectionCacheUnitTests
 {
     public partial class MainUnitTest : UnitTestBase
     {
-        private readonly IEqualityComparer<Dictionary<string, Type>> methodParamsDictnrEqCompr;
-        private readonly IEqualityComparer<Dictionary<string, Type>[]> methodParamsDictnrArrEqCompr;
-        private readonly IEqualityComparer<Dictionary<MemberVisibility, Dictionary<string, Type>[]>> constructorsDictnrArrEqCompr;
+        private readonly IEqualityComparer<IDictionary<string, Type>> methodParamsDictnrEqCompr;
+        private readonly IEqualityComparer<IDictionary<string, Type>[]> methodParamsDictnrArrEqCompr;
+        private readonly IEqualityComparer<IDictionary<MemberVisibility, IDictionary<string, Type>[]>> constructorsDictnrArrEqCompr;
 
-        private readonly IEqualityComparer<Dictionary<MemberVisibility, string[]>> memberNamesDictnrEqCompr;
-        private readonly IEqualityComparer<Dictionary<EventAccessibilityFilter, string[]>> eventNamesDictnrEqCompr;
-        private readonly IEqualityComparer<Dictionary<MethodAccessibilityFilter, string[]>> methodNamesDictnrEqCompr;
-        private readonly IEqualityComparer<Dictionary<PropertyAccessibilityFilter, string[]>> propNamesDictnrEqCompr;
-        private readonly IEqualityComparer<Dictionary<FieldAccessibilityFilter, string[]>> fieldNamesDictnrEqCompr;
+        private readonly IEqualityComparer<IDictionary<MemberVisibility, string[]>> memberNamesDictnrEqCompr;
+        private readonly IEqualityComparer<IDictionary<EventAccessibilityFilter, string[]>> eventNamesDictnrEqCompr;
+        private readonly IEqualityComparer<IDictionary<MethodAccessibilityFilter, string[]>> methodNamesDictnrEqCompr;
+        private readonly IEqualityComparer<IDictionary<PropertyAccessibilityFilter, string[]>> propNamesDictnrEqCompr;
+        private readonly IEqualityComparer<IDictionary<FieldAccessibilityFilter, string[]>> fieldNamesDictnrEqCompr;
 
         public MainUnitTest()
         {
-            methodParamsDictnrEqCompr = BasicEqComprFactory.GetDictionaryBasicEqualityComparer<string, Type>();
+            methodParamsDictnrEqCompr = BasicEqComprFactory.GetDictionaryBasicEqualityComparerCore<string, Type>();
 
-            methodParamsDictnrArrEqCompr = BasicEqComprFactory.GetArrayBasicEqualityComparer<Dictionary<string, Type>>(
+            methodParamsDictnrArrEqCompr = BasicEqComprFactory.GetArrayBasicEqualityComparer<IDictionary<string, Type>>(
                 methodParamsDictnrEqCompr.Equals);
 
-            constructorsDictnrArrEqCompr = BasicEqComprFactory.GetDictionaryBasicEqualityComparer<MemberVisibility, Dictionary<string, Type>[]>(
+            constructorsDictnrArrEqCompr = BasicEqComprFactory.GetDictionaryBasicEqualityComparerCore<MemberVisibility, IDictionary<string, Type>[]>(
                 methodParamsDictnrArrEqCompr.Equals);
 
-            memberNamesDictnrEqCompr = BasicEqComprFactory.GetDictionaryBasicEqualityComparer<MemberVisibility, string[]>(
+            memberNamesDictnrEqCompr = BasicEqComprFactory.GetDictionaryBasicEqualityComparerCore<MemberVisibility, string[]>(
                 StringArrEqCompr.Equals);
 
-            eventNamesDictnrEqCompr = BasicEqComprFactory.GetDictionaryBasicEqualityComparer<EventAccessibilityFilter, string[]>(
+            eventNamesDictnrEqCompr = BasicEqComprFactory.GetDictionaryBasicEqualityComparerCore<EventAccessibilityFilter, string[]>(
                 StringArrEqCompr.Equals,
                 EventAccessFilterEqCompr.Equals);
 
-            methodNamesDictnrEqCompr = BasicEqComprFactory.GetDictionaryBasicEqualityComparer<MethodAccessibilityFilter, string[]>(
+            methodNamesDictnrEqCompr = BasicEqComprFactory.GetDictionaryBasicEqualityComparerCore<MethodAccessibilityFilter, string[]>(
                 StringArrEqCompr.Equals,
                 MethodAccessFilterEqCompr.Equals);
 
-            propNamesDictnrEqCompr = BasicEqComprFactory.GetDictionaryBasicEqualityComparer<PropertyAccessibilityFilter, string[]>(
+            propNamesDictnrEqCompr = BasicEqComprFactory.GetDictionaryBasicEqualityComparerCore<PropertyAccessibilityFilter, string[]>(
                 StringArrEqCompr.Equals,
                 PropAccessFilterEqCompr.Equals);
 
-            fieldNamesDictnrEqCompr = BasicEqComprFactory.GetDictionaryBasicEqualityComparer<FieldAccessibilityFilter, string[]>(
+            fieldNamesDictnrEqCompr = BasicEqComprFactory.GetDictionaryBasicEqualityComparerCore<FieldAccessibilityFilter, string[]>(
                 StringArrEqCompr.Equals,
                 FieldAccessFilterEqCompr.Equals);
         }
