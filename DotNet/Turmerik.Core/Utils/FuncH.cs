@@ -79,17 +79,29 @@ namespace Turmerik.Utils
 
         public static TVal SafeCast<TVal>(
             this object src,
-            Func<TVal> dfValFactory = null)
+            Func<TVal> dfValFactory = null,
+            Func<TVal> nullValFactory = null)
         {
             TVal retVal;
 
-            if (src != null && src is TVal val)
+            if (src != null)
             {
-                retVal = val;
+                if (src is TVal val)
+                {
+                    retVal = val;
+                }
+                else if (dfValFactory != null)
+                {
+                    retVal = dfValFactory();
+                }
+                else
+                {
+                    retVal = default;
+                }
             }
-            else if (dfValFactory != null)
+            else if (nullValFactory != null)
             {
-                retVal = dfValFactory();
+                retVal = nullValFactory();
             }
             else
             {
@@ -213,6 +225,45 @@ namespace Turmerik.Utils
             object retObj = Activator.CreateInstance(type ?? typeof(T), argsArr);
 
             return (T)retObj;
+        }
+
+        public static TRetVal IfBothNotNull<TRetVal, T1, T2>(
+            this T1 item1,
+            T2 item2,
+            Func<T1, T2, TRetVal> valueFactory,
+            Func<TRetVal> bothNullValueFactory = null,
+            Func<T1, TRetVal> item1NotNullValueFactory = null,
+            Func<T2, TRetVal> item2NotNullValueFactory = null)
+        {
+            TRetVal retVal;
+
+            bool t1IsNull = item1 == null;
+            bool t2IsNull = item2 == null;
+
+            if (t1IsNull)
+            {
+                if (t2IsNull)
+                {
+                    retVal = bothNullValueFactory.FirstNotNull(
+                        () => default).Invoke();
+                }
+                else
+                {
+                    retVal = item2NotNullValueFactory.FirstNotNull(
+                        t2 => default).Invoke(item2);
+                }
+            }
+            else if (t2IsNull)
+            {
+                retVal = item1NotNullValueFactory.FirstNotNull(
+                    t1 => default).Invoke(item1);
+            }
+            else
+            {
+                retVal = valueFactory(item1, item2);
+            }
+
+            return retVal;
         }
     }
 }

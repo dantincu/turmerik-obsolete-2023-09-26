@@ -23,8 +23,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Turmerik.LocalDevice.Testing\Turmerik.LocalDevice.Testing.csproj" />
-    <ProjectReference Include="..\Turmerik.LocalDevice\Turmerik.LocalDevice.csproj" />
+    <ProjectReference Include="..\Turmerik.LocalDevice.UnitTests\Turmerik.LocalDevice.UnitTests.csproj" />
+    <ProjectReference Include="..\Turmerik.LocalFilesExplorer.AspNetCoreApp\Turmerik.LocalFilesExplorer.AspNetCoreApp.csproj" />
   </ItemGroup>
 
 </Project>

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -14,6 +15,43 @@ namespace Turmerik.Reflection
 {
     public static class ReflH
     {
+        static ReflH()
+        {
+            MemberVisibilityMatchers = new Dictionary<MemberVisibility, Func<CachedMemberFlagsCoreBase.IClnblCore, MemberVisibility, bool>>
+                {
+                    { MemberVisibility.Public, (mmb, flag) => mmb.IsPublic },
+                    { MemberVisibility.Protected, (mmb, flag) => mmb.IsFamily },
+                    { MemberVisibility.Internal, (mmb, flag) => mmb.IsAssembly },
+                    { MemberVisibility.ProtectedInternal, (mmb, flag) => mmb.IsFamilyOrAssembly },
+                    { MemberVisibility.PrivateProtected, (mmb, flag) => mmb.IsFamilyAndAssembly },
+                    { MemberVisibility.Private, (mmb, flag) => mmb.IsPrivate }
+                }.RdnlD();
+
+            MemberScopeMatchers = new Dictionary<MemberScope, Func<CachedMemberFlagsBase.IClnblCore, MemberScope, bool>>
+                {
+                    { MemberScope.Static, (mmb, flag) => mmb.IsStatic },
+                    { MemberScope.Instance, (mmb, flag) => !mmb.IsStatic }
+                }.RdnlD();
+
+            FieldTypeMatchers = new Dictionary<FieldType, Func<CachedFieldFlags.IClnbl, FieldType, bool>>
+                {
+                    { FieldType.Editable, (mmb, flag) => mmb.IsEditable },
+                    { FieldType.InitOnly, (mmb, flag) => !mmb.IsInitOnly },
+                    { FieldType.Literal, (mmb, flag) => !mmb.IsLiteral }
+                }.RdnlD();
+
+            PropertyScopeMatchers = new Dictionary<MemberScope, Func<CachedPropertyFlags.IClnbl, MemberScope, bool>>
+                {
+                    { MemberScope.Static, (mmb, flag) => mmb.IsStatic.Value },
+                    { MemberScope.Instance, (mmb, flag) => !mmb.IsStatic.Value }
+                }.RdnlD();
+        }
+
+        public static ReadOnlyDictionary<MemberVisibility, Func<CachedMemberFlagsCoreBase.IClnblCore, MemberVisibility, bool>> MemberVisibilityMatchers { get; }
+        public static ReadOnlyDictionary<MemberScope, Func<CachedMemberFlagsBase.IClnblCore, MemberScope, bool>> MemberScopeMatchers { get; }
+        public static ReadOnlyDictionary<MemberScope, Func<CachedPropertyFlags.IClnbl, MemberScope, bool>> PropertyScopeMatchers { get; }
+        public static ReadOnlyDictionary<FieldType, Func<CachedFieldFlags.IClnbl, FieldType, bool>> FieldTypeMatchers { get; }
+
         public static bool IsReferenceType(
             this Type type) => !type.IsValueType;
 
@@ -27,23 +65,6 @@ namespace Turmerik.Reflection
             string typeFullName) => typeFullName?.SubStr(
                 (str, len) => str.FindVal((c, i) => c == '`').Key).Item1;
 
-        public static bool IsDefault(
-            this MemberScope filter) => filter == MemberScope.None;
-
-        public static bool IsDefault(
-            this MemberVisibility filter) => filter == MemberVisibility.None;
-
-        public static bool IsDefault(
-            this FieldType filter) => filter == FieldType.None;
-
-        public static bool IsDefault(
-            this FieldAccessibilityFilter filter) => filter.Visibility.IsDefault(
-                ) && filter.Scope.IsDefault() && filter.FieldType.IsDefault();
-
-        public static bool IsDefault(
-            this MethodAccessibilityFilter filter) => filter.Visibility.IsDefault(
-                ) && filter.Scope.IsDefault();
-
         public static MemberScope SubstractIfContainsFlag(
             this MemberScope memberScope,
             MemberScope flag)
@@ -54,18 +75,6 @@ namespace Turmerik.Reflection
             }
 
             return memberScope;
-        }
-
-        public static MemberVisibility SubstractIfContainsFlag(
-            this MemberVisibility memberVisibility,
-            MemberVisibility flag)
-        {
-            if (memberVisibility.HasFlag(flag))
-            {
-                memberVisibility -= flag;
-            }
-
-            return memberVisibility;
         }
 
         public static MemberVisibility SubstractContainedFlags(
@@ -83,170 +92,326 @@ namespace Turmerik.Reflection
             return memberVisibility;
         }
 
+        public static MemberScope ToFlagOrNone(
+            this MemberScope memberScope,
+            MemberScope flag)
+        {
+            if (memberScope.HasFlag(flag))
+            {
+                memberScope = flag;
+            }
+            else
+            {
+                memberScope = MemberScope.None;
+            }
+
+            return memberScope;
+        }
+
+        public static MemberVisibility ToFlagOrNone(
+            this MemberVisibility memberVisibility,
+            MemberVisibility flag)
+        {
+            if (memberVisibility.HasFlag(flag))
+            {
+                memberVisibility = flag;
+            }
+            else
+            {
+                memberVisibility = MemberVisibility.None;
+            }
+
+            return memberVisibility;
+        }
+
         public static MemberScope ToMemberScope(
             bool isInstanceType) => isInstanceType ? MemberScope.Instance : MemberScope.Static;
 
         public static MemberScope ReduceIfReq(
             this MemberScope memberScope,
             bool isInstanceType) => memberScope.SubstractIfContainsFlag(
-                ToMemberScope(isInstanceType));
+                ToMemberScope(!isInstanceType));
 
         public static MemberVisibility ReduceIfReq(
             this MemberVisibility memberVisibility,
             bool excludeInternal = false,
-            bool excludePrivate = false) => memberVisibility.SubstractContainedFlags(
-                excludeInternal ? MemberVisibility.Internal.Arr(
-                    MemberVisibility.PrivateProtected,
-                    MemberVisibility.Private) : (excludePrivate ? MemberVisibility.Private.Arr() : new MemberVisibility[0]));
+            bool excludePrivate = false,
+            bool publicOnly = false,
+            bool excludeInheritables = false)
+        {
+            if (publicOnly)
+            {
+                memberVisibility = memberVisibility.ToFlagOrNone(
+                    MemberVisibility.Public);
+            }
+            else
+            {
+                var removableFlags = new List<MemberVisibility>();
+
+                if (excludeInheritables)
+                {
+                    removableFlags.Add(MemberVisibility.Protected);
+                }
+
+                if (excludeInternal)
+                {
+                    removableFlags.AddRange(
+                        MemberVisibility.Internal,
+                        MemberVisibility.PrivateProtected);
+                }
+
+                if (excludePrivate || excludeInternal)
+                {
+                    removableFlags.Add(MemberVisibility.Private);
+                }
+
+                if (excludeInternal && excludeInheritables)
+                {
+                    removableFlags.Add(MemberVisibility.ProtectedInternal);
+                }
+
+                memberVisibility = memberVisibility.SubstractContainedFlags(
+                    removableFlags.ToArray());
+            }
+
+            return memberVisibility;
+        }
 
         public static FieldAccessibilityFilter ReduceFilterIfReq(
             this FieldAccessibilityFilter filter,
             bool excludeInternal = false,
-            bool excludePrivate = false) => new FieldAccessibilityFilter(
+            bool excludePrivate = false,
+            bool excludeInheritables = false) => new FieldAccessibilityFilter(
                 filter.Scope,
                 filter.Visibility.ReduceIfReq(
                     excludeInternal,
-                    excludePrivate),
+                    excludePrivate,
+                    excludeInheritables),
                 filter.FieldType);
 
         public static MethodAccessibilityFilter ReduceFilterIfReq(
             this MethodAccessibilityFilter filter,
-            bool excludeInternal = false,
-            bool excludePrivate = false) => new MethodAccessibilityFilter(
+            bool excludeInternal,
+            bool excludePrivate,
+            bool publicOnly = false,
+            bool excludeInheritables = false) => new MethodAccessibilityFilter(
                 filter.Scope,
                 filter.Visibility.ReduceIfReq(
                     excludeInternal,
-                    excludePrivate));
+                    excludePrivate,
+                    publicOnly,
+                    excludeInheritables));
 
         public static MethodAccessibilityFilter ReduceFilterIfReq(
             this MethodAccessibilityFilter filter,
             bool isInstanceType,
-            bool excludeInternal = false,
-            bool excludePrivate = false) => new MethodAccessibilityFilter(
+            bool excludeInternal,
+            bool excludePrivate,
+            bool publicOnly = false,
+            bool excludeInheritables = false) => new MethodAccessibilityFilter(
                 filter.Scope.ReduceIfReq(isInstanceType),
                 filter.Visibility.ReduceIfReq(
                     excludeInternal,
-                    excludePrivate));
+                    excludePrivate,
+                    publicOnly,
+                    excludeInheritables));
 
         public static PropertyAccessibilityFilter ReduceFilterIfReq(
             this PropertyAccessibilityFilter filter,
             bool isInstanceType,
-            bool excludeInternal = false,
-            bool excludePrivate = false) => new PropertyAccessibilityFilter(
+            bool excludeInternal,
+            bool excludePrivate,
+            bool publicOnly = false,
+            bool excludeInheritables = false) => new PropertyAccessibilityFilter(
                 filter.Scope.ReduceIfReq(isInstanceType),
                 filter.CanRead,
                 filter.CanWrite,
-                filter.Getter?.ReduceFilterIfReq(
-                    isInstanceType,
+                filter.GetterVisibility.ReduceIfReq(
                     excludeInternal,
-                    excludePrivate),
-                filter.Setter?.ReduceFilterIfReq(
-                    isInstanceType,
+                    excludePrivate,
+                    publicOnly,
+                    excludeInheritables),
+                filter.SetterVisibility.ReduceIfReq(
                     excludeInternal,
-                    excludePrivate));
+                    excludePrivate,
+                    publicOnly,
+                    excludeInheritables));
 
         public static EventAccessibilityFilter ReduceFilterIfReq(
             this EventAccessibilityFilter filter,
-            bool excludeInternal = false,
-            bool excludePrivate = false) => new EventAccessibilityFilter(
-                filter.Adder?.ReduceFilterIfReq(
+            bool excludeInternal,
+            bool excludePrivate,
+            bool publicOnly = false) => new EventAccessibilityFilter(
+                filter.AdderVisibility.ReduceIfReq(
                     excludeInternal,
-                    excludePrivate),
-                filter.Remover?.ReduceFilterIfReq(
+                    excludePrivate,
+                    publicOnly),
+                filter.RemoverVisibility.ReduceIfReq(
                     excludeInternal,
-                    excludePrivate),
-                filter.Invoker?.ReduceFilterIfReq(
+                    excludePrivate,
+                    publicOnly),
+                filter.RaiserVisibility.ReduceIfReq(
                     excludeInternal,
-                    excludePrivate));
+                    excludePrivate,
+                    publicOnly));
 
         public static bool Matches(
             this MemberVisibility visibility,
-            CachedMemberFlagsCoreBase.IClnblCore arg) => (arg == null && visibility.IsDefault()) || arg.IfHasAnyFlag(
+            CachedMemberFlagsCoreBase.IClnblCore flags) => flags.IfHasAnyFlag(
                 visibility,
-                new Dictionary<MemberVisibility, Func<CachedMemberFlagsCoreBase.IClnblCore, MemberVisibility, bool>>
-                {
-                    { MemberVisibility.Public, (mmb, flag) => mmb.IsPublic },
-                    { MemberVisibility.Protected, (mmb, flag) => mmb.IsFamily },
-                    { MemberVisibility.Internal, (mmb, flag) => mmb.IsAssembly },
-                    { MemberVisibility.ProtectedInternal, (mmb, flag) => mmb.IsFamilyOrAssembly },
-                    { MemberVisibility.PrivateProtected, (mmb, flag) => mmb.IsFamilyAndAssembly },
-                    { MemberVisibility.Private, (mmb, flag) => mmb.IsPrivate }
-                },
+                MemberVisibilityMatchers,
                 false);
 
         public static bool Matches(
             this MemberScope scope,
-            CachedMemberFlagsBase.IClnblCore fld) => (fld == null && scope.IsDefault()) || fld.IfHasAnyFlag(
+            CachedMemberFlagsBase.IClnblCore flags) => flags.IfHasAnyFlag(
                 scope,
-                new Dictionary<MemberScope, Func<CachedMemberFlagsBase.IClnblCore, MemberScope, bool>>
-                {
-                    { MemberScope.Static, (mmb, flag) => mmb.IsStatic },
-                    { MemberScope.Instance, (mmb, flag) => !mmb.IsStatic }
-                },
+                MemberScopeMatchers,
                 false);
 
         public static bool Matches(
         this FieldType fieldType,
-            CachedFieldFlags.IClnbl fld) => (fld == null && fieldType.IsDefault()) || fld.IfHasAnyFlag(
+            CachedFieldFlags.IClnbl flags) => flags.IfHasAnyFlag(
                 fieldType,
-                new Dictionary<FieldType, Func<CachedFieldFlags.IClnbl, FieldType, bool>>
-                {
-                    { FieldType.Editable, (mmb, flag) => mmb.IsEditable },
-                    { FieldType.InitOnly, (mmb, flag) => !mmb.IsInitOnly },
-                    { FieldType.Literal, (mmb, flag) => !mmb.IsLiteral }
-                },
+                FieldTypeMatchers,
                 false);
 
         public static bool Matches(
+            this ICachedMethodInfo arg,
+            MemberVisibility filter) => arg.Flags.Value.WithValue(
+                flags => filter.Matches(flags));
+
+        public static bool Matches(
+            this ICachedMethodInfo arg,
+            MethodAccessibilityFilter filter) => arg.Flags.Value.Matches(
+                filter.Visibility,
+                filter.Scope);
+
+        public static bool Matches(
+            this ICachedFieldInfo arg,
+            FieldAccessibilityFilter filter) => arg.Flags.Value.WithValue(
+                flags => flags.Matches(
+                    filter.Visibility,
+                    filter.Scope) && filter.FieldType.Matches(flags));
+
+        public static bool Matches(
+            this ICachedPropertyInfo argument,
+            PropertyAccessibilityFilter filter)
+        {
+            bool retVal = argument.Flags.Value.IfHasAnyFlag(
+                filter.Scope,
+                PropertyScopeMatchers,
+                false);
+
+            retVal = retVal && (filter.CanRead?.WithValue(
+                canRead => argument.Flags.Value.CanRead) ?? true);
+
+            retVal = retVal && (filter.CanWrite?.WithValue(
+                canRead => argument.Flags.Value.CanWrite) ?? true);
+
+            retVal = retVal && filter.GetterVisibility.IfMatchesNone(
+                () => argument.Getter.Value == null,
+                () => argument.Getter.Value?.Matches(
+                    filter.GetterVisibility) ?? false);
+
+            retVal = retVal && filter.SetterVisibility.IfMatchesNone(
+                () => argument.Setter.Value == null,
+                () => argument.Setter.Value?.Matches(
+                    filter.SetterVisibility) ?? false);
+
+            return retVal;
+        }
+
+        public static bool Matches(
+            this ICachedEventInfo argument,
+            EventAccessibilityFilter filter)
+        {
+            bool retVal = filter.AdderVisibility.IfMatchesNone(
+                () => argument.Adder.Value == null,
+                () => argument.Adder.Value?.Matches(
+                    filter.AdderVisibility) ?? false);
+
+            retVal = retVal && filter.RemoverVisibility.IfMatchesNone(
+                () => argument.Remover.Value == null,
+                () => argument.Remover.Value?.Matches(
+                    filter.RemoverVisibility) ?? false);
+
+            retVal = retVal && filter.RaiserVisibility.IfMatchesNone(
+                () => argument.Raiser.Value == null,
+                () => argument.Raiser.Value?.Matches(
+                    filter.RaiserVisibility) ?? false);
+
+            return retVal;
+        }
+
+        public static bool Matches(
+            this CachedMemberFlagsBase.IClnblCore flags,
+            MemberVisibility visibility,
+            MemberScope scope) => visibility.Matches(flags) && scope.Matches(flags);
+
+        public static bool Matches(
+            this ICachedConstructorInfo arg,
+            MemberVisibility filter) => filter.Matches(arg.Flags.Value);
+
+        public static bool MatchesNone(
+            this MemberVisibility memberVisibility) => memberVisibility == MemberVisibility.None;
+
+        public static bool MatchesNone(
+            this MemberScope memberScope) => memberScope == MemberScope.None;
+
+        public static bool MatchesNone(
+            this MemberVisibility memberVisibility,
+            MemberScope memberScope) => memberVisibility.MatchesNone() || memberScope.MatchesNone();
+
+        public static bool MatchesNone(
+            this FieldType fieldType) => fieldType == FieldType.None;
+
+        public static bool AllMatchNone(
+            this MemberVisibility[] memberVisibilities) => memberVisibilities.All(
+                visibility => visibility.MatchesNone());
+
+        public static bool IfMatchesNone(
+            this MemberVisibility memberVisibility,
+            Func<bool> ifMatchesNone,
+            Func<bool> ifCanMatch) => memberVisibility.MatchesNone().IfTrue(
+                ifMatchesNone,
+                ifCanMatch);
+
+        public static bool IfMatchesNone(
+            this MemberScope memberScope,
+            Func<bool> ifMatchesNone,
+            Func<bool> ifCanMatch) => memberScope.MatchesNone().IfTrue(
+                ifMatchesNone,
+                ifCanMatch);
+
+        public static bool IfMatchesNone(
+            this FieldType fieldType,
+            Func<bool> ifMatchesNone,
+            Func<bool> ifCanMatch) => fieldType.MatchesNone().IfTrue(
+                ifMatchesNone,
+                ifCanMatch);
+
+        public static bool MatchesNone(
+            this FieldAccessibilityFilter filter) => filter.Visibility.MatchesNone(
+                filter.Scope) || filter.FieldType.MatchesNone();
+
+        public static bool MatchesNone(
             this MethodAccessibilityFilter filter,
-            ICachedMethodInfo arg) => (arg == null && filter.IsDefault()) || arg.Flags.Value.WithValue(
-                flags => filter.Visibility.Matches(
-                    flags) && filter.Scope.Matches(flags));
+            bool? instanceOnly = null) => filter.Visibility.MatchesNone(
+                filter.Scope) || (
+                    instanceOnly.HasValue && filter.Scope.ReduceIfReq(
+                        instanceOnly.Value).MatchesNone());
 
-        public static bool Matches(
-            this FieldAccessibilityFilter filter,
-            ICachedFieldInfo arg) => (arg == null && filter.IsDefault()) || arg.Flags.Value.WithValue(
-                flags => filter.Visibility.Matches(
-                     flags) && filter.Scope.Matches(
-                    flags) && filter.FieldType.Matches(flags));
+        public static bool MatchesNone(
+            this PropertyAccessibilityFilter filter) => !(
+            (filter.CanRead ?? true) || (
+                filter.CanWrite ?? true)) || filter.GetterVisibility.Arr(
+                    filter.SetterVisibility).AllMatchNone();
 
-        public static bool Matches(
-            this PropertyAccessibilityFilter filter,
-            ICachedPropertyInfo arg)
-        {
-            bool retVal = arg.Flags.Value.IsStatic.Value.WithValue(
-                isStatic => arg.IfHasAnyFlag(
-                    filter.Scope,
-                    new Dictionary<MemberScope, Func<ICachedPropertyInfo, MemberScope, bool>>
-                    {
-                        { MemberScope.Static, (mmb, flag) => isStatic },
-                        { MemberScope.Instance, (mmb, flag) => !isStatic }
-                    },
-                    false));
-
-            if (retVal)
-            {
-                retVal = filter.Getter?.Matches(arg.Getter.Value) ?? true;
-                retVal = retVal && (filter.Setter?.Matches(arg.Setter.Value) ?? true);
-            }
-
-            return retVal;
-        }
-
-        public static bool Matches(
-            this EventAccessibilityFilter filter,
-            ICachedEventInfo arg)
-        {
-            bool retVal = filter.Adder?.Matches(arg.Adder.Value) ?? true;
-            retVal = retVal && (filter.Remover?.Matches(arg.Remover.Value) ?? true);
-            retVal = retVal && (filter.Invoker?.Matches(arg.Invoker.Value) ?? true);
-
-            return retVal;
-        }
-
-        public static bool Matches(
-            this MemberVisibility filter,
-            ICachedConstructorInfo arg) => filter.Matches(arg.Flags.Value);
+        public static bool MatchesNone(
+            this EventAccessibilityFilter filter) => filter.AdderVisibility.Arr(
+                filter.RemoverVisibility,
+                filter.RaiserVisibility).AllMatchNone();
 
         public static bool IsEditable(
             this FieldInfo fieldInfo) => !(

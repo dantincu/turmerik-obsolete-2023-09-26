@@ -26,7 +26,7 @@ namespace Turmerik.Reflection.Cache
                 itemsFactory,
                 staticDataCacheFactory,
                 type,
-                (arg, filter) => filter.Matches(arg),
+                (arg, filter) => arg.Matches(filter),
                 ownFilterReducer,
                 allVisibleFilterReducer,
                 asmVisibleFilterReducer)
@@ -48,7 +48,7 @@ namespace Turmerik.Reflection.Cache
 
         protected override ICachedConstructorInfo[] GetOwnItems(
             ICachedTypeInfo type) => type.Data.GetConstructors(
-                ReflC.Filter.AllDeclaredOnlyBindingFlags).Select(
+                ReflC.Filter.BindingFlag.DeclaredOnly).Select(
                 constructor => ItemsFactory.ConstructorInfo(constructor)).ToArray();
     }
 }

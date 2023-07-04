@@ -5,7 +5,6 @@ using System.Linq;
 using System.Runtime.Serialization;
 using Turmerik.Collections;
 using Turmerik.Utils;
-using static Turmerik.Cloneable.ClnblCore;
 
 namespace Turmerik.Cloneable
 {
@@ -59,7 +58,7 @@ namespace Turmerik.Cloneable
             new TMtbl AsMtbl();
         }
 
-        public interface IClnblCollection : IClnblCollection<TClnbl>
+        public interface IClnblCollection : ClnblCore.IClnblCollection<TClnbl>
         {
             ImmtblCollection ToImmtblCllctn();
             MtblList ToMtblList();
@@ -67,7 +66,7 @@ namespace Turmerik.Cloneable
             MtblList AsMtblList();
         }
 
-        public interface IClnblDictnr<TKey> : IClnblDictnr<TKey, TClnbl>
+        public interface IClnblDictnr<TKey> : ClnblCore.IClnblDictnr<TKey, TClnbl>
         {
             ImmtblDictionary<TKey> ToImmtblDictnr();
             MtblDictionary<TKey> ToMtblDictnr();

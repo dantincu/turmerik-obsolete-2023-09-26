@@ -8,24 +8,30 @@ using Turmerik.LocalDevice.ReflectionCacheUnitTests.Components;
 using Turmerik.Reflection;
 using Turmerik.Reflection.Cache;
 using Turmerik.Utils;
+using Turmerik.Collections;
 
 namespace Turmerik.LocalDevice.ReflectionCacheUnitTests
 {
     public partial class MainUnitTest
     {
-        private void AssertContains<TExpectd, T, TItem, TFilter>(
+        private void AssertContains<TExpected, T, TItem, TFilter>(
             ICachedItemsCollection<T, TItem, TFilter> itemsCllctn,
-            TExpectd expectdContents,
-            Func<TExpectd, Dictionary<TFilter, TItem[]>, bool> assertionValidPredicate)
+            ExpectedContents<TExpected> expectedContents,
+            Action<ICachedItemsCollection<T, TItem, TFilter>, ExpectedContents<TExpected>> beforeAssertAction,
+            Func<ExpectedContents<TExpected>, Dictionary<TFilter, TItem[]>, bool> assertionValidPredicate)
             where TFilter : notnull
             where TItem : ICachedItem<T>
         {
+            beforeAssertAction(
+                itemsCllctn,
+                expectedContents);
+
             var itemsMap = itemsCllctn.Filtered.GetKeys().ToDictionary(
                 key => key,
                 key => itemsCllctn.Filtered.Get(key).ToArray());
 
             bool assertionIsValid = assertionValidPredicate(
-                expectdContents,
+                expectedContents,
                 itemsMap);
 
             Assert.True(assertionIsValid);
@@ -33,15 +39,31 @@ namespace Turmerik.LocalDevice.ReflectionCacheUnitTests
 
         private void AssertContains<TMemberInfo, TItem, TFlags, TFilter>(
             ICachedItemsCollection<TMemberInfo, TItem, TFilter> itemsCllctn,
-            Dictionary<TFilter, string[]> expectdItemsMap,
+            ExpectedContents<Dictionary<TFilter, string[]>> expectedContents,
             IEqualityComparer<Dictionary<TFilter, string[]>> eqCompr,
-            Func<Dictionary<TFilter, string[]>, Dictionary<TFilter, TItem[]>, bool> assertionValidPredicate = null)
+            Func<ExpectedContents<Dictionary<TFilter, string[]>>, Dictionary<TFilter, TItem[]>, bool> assertionValidPredicate = null)
             where TFilter : notnull
             where TItem : ICachedMemberInfo<TMemberInfo, TFlags>
             where TMemberInfo : MemberInfo => AssertContains(
                 itemsCllctn,
-                expectdItemsMap,
-                (expectedNamesMap, itemsMap) =>
+                expectedContents,
+                beforeAssertAction: (cllctn, expected) =>
+                {
+                    foreach (var map in expected.Included.Arr(
+                        expected.ReducedIncluded))
+                    {
+                        foreach (var kvp in map)
+                        {
+                            var namesArr = cllctn.Filtered.Get(kvp.Key)?.Select(
+                                item => item.Name).ToArray();
+
+                            AssertSequenceEqual(
+                                kvp.Value,
+                                namesArr);
+                        }
+                    }
+                },
+                (expected, itemsMap) =>
                 {
                     var actualNamesMap = itemsMap.ToDictionary(
                         kvp => kvp.Key,
@@ -49,13 +71,13 @@ namespace Turmerik.LocalDevice.ReflectionCacheUnitTests
                             item => item.Name).ToArray());
 
                     bool retVal = eqCompr.Equals(
-                        expectedNamesMap,
+                        expected.Included,
                         actualNamesMap);
 
                     if (retVal && assertionValidPredicate != null)
                     {
                         retVal = assertionValidPredicate(
-                            expectedNamesMap,
+                            expected,
                             itemsMap);
                     }
 
@@ -64,9 +86,31 @@ namespace Turmerik.LocalDevice.ReflectionCacheUnitTests
 
         private void AssertContains(
             ICachedConstructorsCollection cllctn,
-            Dictionary<MemberVisibility, Dictionary<string, Type>[]> expectedConstructorsMap,
-            Func<Dictionary<MemberVisibility, Dictionary<string, Type>[]>, Dictionary<MemberVisibility, ICachedConstructorInfo[]>, bool> assertionValidPredicate = null) => AssertContains<Dictionary<MemberVisibility, Dictionary<string, Type>[]>, ConstructorInfo, ICachedConstructorInfo, MemberVisibility>(
-                cllctn, expectedConstructorsMap, (expectedConstrMap, constructorsMap) =>
+            ExpectedContents<Dictionary<MemberVisibility, Dictionary<string, Type>[]>> expectedContents,
+            Func<ExpectedContents<Dictionary<MemberVisibility, Dictionary<string, Type>[]>>, Dictionary<MemberVisibility, ICachedConstructorInfo[]>, bool> assertionValidPredicate = null) => AssertContains<Dictionary<MemberVisibility, Dictionary<string, Type>[]>, ConstructorInfo, ICachedConstructorInfo, MemberVisibility>(
+                cllctn,
+                expectedContents,
+                beforeAssertAction: (cllctn, expected) =>
+                {
+                    foreach (var map in expected.Included.Arr(
+                        expected.ReducedIncluded))
+                    {
+                        foreach (var kvp in map)
+                        {
+                            var namesMap = cllctn.Filtered.Get(kvp.Key).Select(
+                                item => item.Parameters.Value.ToDictionary(
+                                    @param => param.Name,
+                                    @param => param.Type.Value.Data)).ToArray();
+
+                            bool isValid = methodParamsDictnrArrEqCompr.Equals(
+                                kvp.Value,
+                                namesMap);
+
+                            Assert.True(isValid);
+                        }
+                    }
+                },
+                (expected, constructorsMap) =>
                 {
                     var actualConstrMap = constructorsMap.ToDictionary(
                         kvp => kvp.Key,
@@ -76,13 +120,13 @@ namespace Turmerik.LocalDevice.ReflectionCacheUnitTests
                                 @param => param.Type.Value.Data)).ToArray());
 
                     bool retVal = constructorsDictnrArrEqCompr.Equals(
-                        expectedConstrMap,
+                        expected.Included,
                         actualConstrMap);
 
                     if (retVal && assertionValidPredicate != null)
                     {
                         retVal = assertionValidPredicate(
-                            expectedConstrMap,
+                            expected,
                             constructorsMap);
                     }
 
@@ -91,38 +135,52 @@ namespace Turmerik.LocalDevice.ReflectionCacheUnitTests
 
         private void AssertContains(
             ICachedEventsCollection cllctn,
-            Dictionary<EventAccessibilityFilter, string[]> expectedNamesMap,
-            Func<Dictionary<EventAccessibilityFilter, string[]>, Dictionary<EventAccessibilityFilter, ICachedEventInfo[]>, bool> assertionValidPredicate = null) => AssertContains<EventInfo, ICachedEventInfo, CachedEventFlags.IClnbl, EventAccessibilityFilter>(
+            ExpectedContents<Dictionary<EventAccessibilityFilter, string[]>> expectedContents,
+            Func<ExpectedContents<Dictionary<EventAccessibilityFilter, string[]>>, Dictionary<EventAccessibilityFilter, ICachedEventInfo[]>, bool> assertionValidPredicate = null) => AssertContains<EventInfo, ICachedEventInfo, CachedEventFlags.IClnbl, EventAccessibilityFilter>(
                 cllctn,
-                expectedNamesMap,
+                expectedContents,
                 eventNamesDictnrEqCompr,
                 assertionValidPredicate);
 
         private void AssertContains(
             ICachedFieldsCollection cllctn,
-            Dictionary<FieldAccessibilityFilter, string[]> expectedNamesMap,
-            Func<Dictionary<FieldAccessibilityFilter, string[]>, Dictionary<FieldAccessibilityFilter, ICachedFieldInfo[]>, bool> assertionValidPredicate = null) => AssertContains<FieldInfo, ICachedFieldInfo, CachedFieldFlags.IClnbl, FieldAccessibilityFilter>(
+            ExpectedContents<Dictionary<FieldAccessibilityFilter, string[]>> expectedContents,
+            Func<ExpectedContents<Dictionary<FieldAccessibilityFilter, string[]>>, Dictionary<FieldAccessibilityFilter, ICachedFieldInfo[]>, bool> assertionValidPredicate = null) => AssertContains<FieldInfo, ICachedFieldInfo, CachedFieldFlags.IClnbl, FieldAccessibilityFilter>(
                 cllctn,
-                expectedNamesMap,
+                expectedContents,
                 fieldNamesDictnrEqCompr,
                 assertionValidPredicate);
 
         private void AssertContains(
             ICachedMethodsCollection cllctn,
-            Dictionary<MethodAccessibilityFilter, string[]> expectedNamesMap,
-            Func<Dictionary<MethodAccessibilityFilter, string[]>, Dictionary<MethodAccessibilityFilter, ICachedMethodInfo[]>, bool> assertionValidPredicate = null) => AssertContains<MethodInfo, ICachedMethodInfo, CachedMemberFlags.IClnbl, MethodAccessibilityFilter>(
+            ExpectedContents<Dictionary<MethodAccessibilityFilter, string[]>> expectedContents,
+            Func<ExpectedContents<Dictionary<MethodAccessibilityFilter, string[]>>, Dictionary<MethodAccessibilityFilter, ICachedMethodInfo[]>, bool> assertionValidPredicate = null) => AssertContains<MethodInfo, ICachedMethodInfo, CachedMemberFlags.IClnbl, MethodAccessibilityFilter>(
                 cllctn,
-                expectedNamesMap,
+                expectedContents,
                 methodNamesDictnrEqCompr,
                 assertionValidPredicate);
 
         private void AssertContains(
             ICachedPropertiesCollection cllctn,
-            Dictionary<PropertyAccessibilityFilter, string[]> expectedNamesMap,
-            Func<Dictionary<PropertyAccessibilityFilter, string[]>, Dictionary<PropertyAccessibilityFilter, ICachedPropertyInfo[]>, bool> assertionValidPredicate = null) => AssertContains<PropertyInfo, ICachedPropertyInfo, CachedPropertyFlags.IClnbl, PropertyAccessibilityFilter>(
+            ExpectedContents<Dictionary<PropertyAccessibilityFilter, string[]>> expectedContents,
+            Func<ExpectedContents<Dictionary<PropertyAccessibilityFilter, string[]>>, Dictionary<PropertyAccessibilityFilter, ICachedPropertyInfo[]>, bool> assertionValidPredicate = null) => AssertContains<PropertyInfo, ICachedPropertyInfo, CachedPropertyFlags.IClnbl, PropertyAccessibilityFilter>(
                 cllctn,
-                expectedNamesMap,
+                expectedContents,
                 propNamesDictnrEqCompr,
                 assertionValidPredicate);
+
+        private readonly struct ExpectedContents<TContent>
+        {
+            public readonly TContent Included;
+            public readonly TContent ReducedIncluded;
+
+            public ExpectedContents(
+                TContent included,
+                TContent reducedIncluded)
+            {
+                Included = included;
+                ReducedIncluded = reducedIncluded;
+            }
+        }
     }
 }

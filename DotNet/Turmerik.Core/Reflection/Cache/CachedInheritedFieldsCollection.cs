@@ -27,7 +27,7 @@ namespace Turmerik.Reflection.Cache
                 itemsFactory,
                 staticDataCacheFactory,
                 type,
-                (arg, filter) => filter.Matches(arg),
+                (arg, filter) => arg.Matches(filter),
                 ownFilterReducer,
                 allVisibleFilterReducer,
                 asmVisibleFilterReducer)
@@ -40,14 +40,14 @@ namespace Turmerik.Reflection.Cache
                 items, FilterMatchPredicate, filterReducer);
 
         protected override ICachedFieldsCollection GetBaseTypeAsmVisibleItems(
-            ICachedTypeInfo baseType) => baseType.Fields.Value.AsmVisible.Value;
+            ICachedTypeInfo baseType) => baseType.InstanceFields.Value.AsmVisible.Value;
 
         protected override ICachedFieldsCollection GetBaseTypeAllVisibleItems(
-            ICachedTypeInfo baseType) => baseType.Fields.Value.AllVisible.Value;
+            ICachedTypeInfo baseType) => baseType.InstanceFields.Value.AllVisible.Value;
 
         protected override ICachedFieldInfo[] GetOwnItems(
             ICachedTypeInfo type) => type.Data.GetFields(
-                ReflC.Filter.AllDeclaredOnlyBindingFlags).Select(
+                ReflC.Filter.BindingFlag.DeclaredOnly).Select(
                 field => ItemsFactory.FieldInfo(field)).ToArray();
     }
 }

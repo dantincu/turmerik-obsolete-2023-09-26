@@ -17,11 +17,17 @@ namespace Turmerik.Reflection.Cache
     {
         string FullName { get; }
         string FullDisplayName { get; }
+        bool IsInterface { get; }
+        bool IsAbstract { get; }
+        bool IsSealed { get; }
+        bool IsStaticClass { get; }
         Lazy<ICachedTypeInfo> BaseType { get; }
         Lazy<ReadOnlyCollection<ICachedTypeInfo>> Interfaces { get; }
         Lazy<IStaticDataCache<Type, ICachedInterfaceMapping>> InterfacesMap { get; }
-        Lazy<ICachedInheritedFieldsCollection> Fields { get; }
-        Lazy<ICachedInheritedMethodsCollection> Methods { get; }
+        Lazy<ICachedInheritedFieldsCollection> StaticFields { get; }
+        Lazy<ICachedInheritedFieldsCollection> InstanceFields { get; }
+        Lazy<ICachedInheritedMethodsCollection> InstanceMethods { get; }
+        Lazy<ICachedInheritedMethodsCollection> StaticMethods { get; }
         Lazy<ICachedInheritedPropertiesCollection> InstanceProps { get; }
         Lazy<ICachedInheritedPropertiesCollection> StaticProps { get; }
         Lazy<ICachedInheritedEventsCollection> Events { get; }
@@ -43,37 +49,47 @@ namespace Turmerik.Reflection.Cache
         {
             FullName = value.FullName;
             FullDisplayName = ReflH.GetTypeFullDisplayName(FullName);
+            IsInterface = value.IsInterface;
+            IsAbstract = value.IsAbstract;
+            IsSealed = value.IsSealed;
+            IsStaticClass = IsAbstract && IsSealed;
 
             BaseType = new Lazy<ICachedTypeInfo>(
-                () => Data.BaseType?.WithValue(
+                () => IsInterface ? null : IsStaticClass ? null : Data.BaseType?.WithValue(
                     TypesMap.Value.Get));
 
             Interfaces = new Lazy<ReadOnlyCollection<ICachedTypeInfo>>(
-                () => Data.GetInterfaces().Select(TypesMap.Value.Get).RdnlC());
+                () => IsStaticClass ? null : Data.GetInterfaces().Select(TypesMap.Value.Get).RdnlC());
 
             InterfacesMap = new Lazy<IStaticDataCache<Type, ICachedInterfaceMapping>>(
-                () => StaticDataCacheFactory.Create<Type, ICachedInterfaceMapping>(
+                () => IsStaticClass ? null : StaticDataCacheFactory.Create<Type, ICachedInterfaceMapping>(
                     type => ItemsFactory.InterfaceMapping(
                         this,
                         TypesMap.Value.Get(type))));
 
-            Fields = new Lazy<ICachedInheritedFieldsCollection>(
-                () => ItemsFactory.InheritedFields(this));
+            InstanceFields = new Lazy<ICachedInheritedFieldsCollection>(
+                () => IsInterface ? null : IsStaticClass ? null : ItemsFactory.InheritedFields(this));
 
-            Methods = new Lazy<ICachedInheritedMethodsCollection>(
-                () => ItemsFactory.InheritedMethods(this));
+            StaticFields = new Lazy<ICachedInheritedFieldsCollection>(
+                () => IsInterface ? null : ItemsFactory.InheritedFields(this, IsStaticClass));
+
+            InstanceMethods = new Lazy<ICachedInheritedMethodsCollection>(
+                () => IsStaticClass ? null : ItemsFactory.InheritedMethods(this, true, IsInterface));
+
+            StaticMethods = new Lazy<ICachedInheritedMethodsCollection>(
+                () => IsInterface ? null : ItemsFactory.InheritedMethods(this, false, false, IsStaticClass));
 
             InstanceProps = new Lazy<ICachedInheritedPropertiesCollection>(
-                () => ItemsFactory.InheritedProperties(this, true));
+                () => IsStaticClass ? null : ItemsFactory.InheritedProperties(this, true, IsInterface));
 
             StaticProps = new Lazy<ICachedInheritedPropertiesCollection>(
-                () => ItemsFactory.InheritedProperties(this, false));
+                () => IsInterface ? null : ItemsFactory.InheritedProperties(this, false, false, IsStaticClass));
 
             Constructors = new Lazy<ICachedInheritedConstructorsCollection>(
-                () => ItemsFactory.InheritedConstructors(this));
+                () => IsInterface ? null : IsStaticClass ? null : ItemsFactory.InheritedConstructors(this));
 
             Events = new Lazy<ICachedInheritedEventsCollection>(
-                () => ItemsFactory.InheritedEvents(this));
+                () => ItemsFactory.InheritedEvents(this, IsInterface));
 
             Assembly = new Lazy<ICachedAssemblyInfo>(
                 () => ItemsFactory.AssemblyInfo(Data.Assembly));
@@ -81,12 +97,18 @@ namespace Turmerik.Reflection.Cache
 
         public string FullName { get; }
         public string FullDisplayName { get; }
+        public bool IsInterface { get; }
+        public bool IsAbstract { get; }
+        public bool IsSealed { get; }
+        public bool IsStaticClass { get; }
         public Lazy<ICachedTypeInfo> BaseType { get; }
         public Lazy<ReadOnlyCollection<ICachedTypeInfo>> Interfaces { get; }
         public Lazy<IStaticDataCache<Type, ICachedInterfaceMapping>> InterfacesMap { get; }
 
-        public Lazy<ICachedInheritedFieldsCollection> Fields { get; }
-        public Lazy<ICachedInheritedMethodsCollection> Methods { get; }
+        public Lazy<ICachedInheritedFieldsCollection> InstanceFields { get; }
+        public Lazy<ICachedInheritedFieldsCollection> StaticFields { get; }
+        public Lazy<ICachedInheritedMethodsCollection> InstanceMethods { get; }
+        public Lazy<ICachedInheritedMethodsCollection> StaticMethods { get; }
         public Lazy<ICachedInheritedPropertiesCollection> InstanceProps { get; }
         public Lazy<ICachedInheritedPropertiesCollection> StaticProps { get; }
         public Lazy<ICachedInheritedConstructorsCollection> Constructors { get; }

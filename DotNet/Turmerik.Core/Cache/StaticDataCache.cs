@@ -14,6 +14,7 @@ namespace Turmerik.Cache
 
     public interface IKeyReducerStaticDataCache<TKey, TValue> : IStaticDataCache<TKey, TValue>
     {
+        bool ContainsKey(TKey key);
     }
 
     public interface IStaticDataCacheFactory
@@ -27,7 +28,7 @@ namespace Turmerik.Cache
             IEqualityComparer<TKey> keyEqCompr = null,
             Func<TKey, TKey> createKeyReducer = null,
             Func<TKey, TKey> removeKeyReducer = null,
-            Func<TKey, TKey> containsKeyReducer = null);
+            Func<TKey, TKey> hasKeyReducer = null);
     }
 
     public interface IThreadSafeStaticDataCacheFactory : IStaticDataCacheFactory
@@ -70,7 +71,7 @@ namespace Turmerik.Cache
                 key,
                 out removed);
 
-        public virtual bool ContainsKey(TKey key) => innerCache.ContainsKey(key);
+        public virtual bool HasKey(TKey key) => innerCache.HasKey(key);
 
         public virtual TKey[] GetKeys() => innerCache.GetKeys();
 
@@ -84,14 +85,14 @@ namespace Turmerik.Cache
     {
         private readonly Func<TKey, TKey> createKeyReducer;
         private readonly Func<TKey, TKey> removeKeyReducer;
-        private readonly Func<TKey, TKey> containsKeyReducer;
+        private readonly Func<TKey, TKey> hasKeyReducer;
 
         public KeyReducerStaticDataCache(
             IDataCache<TKey, TValue> innerCache,
             Func<TKey, TValue> factory,
             Func<TKey, TKey> createKeyReducer = null,
             Func<TKey, TKey> removeKeyReducer = null,
-            Func<TKey, TKey> containsKeyReducer = null) : base(innerCache, factory)
+            Func<TKey, TKey> hasKeyReducer = null) : base(innerCache, factory)
         {
             this.createKeyReducer = createKeyReducer.FirstNotNull(
                 key => key);
@@ -99,7 +100,7 @@ namespace Turmerik.Cache
             this.removeKeyReducer = removeKeyReducer.FirstNotNull(
                 key => key);
 
-            this.containsKeyReducer = containsKeyReducer.FirstNotNull(
+            this.hasKeyReducer = hasKeyReducer.FirstNotNull(
                 this.createKeyReducer);
         }
 
@@ -129,11 +130,17 @@ namespace Turmerik.Cache
             return value;
         }
 
-        public override bool ContainsKey(TKey key)
+        public override bool HasKey(TKey key)
         {
-            key = containsKeyReducer(key);
-            var value = base.ContainsKey(key);
+            key = hasKeyReducer(key);
+            var value = base.HasKey(key);
 
+            return value;
+        }
+
+        public virtual bool ContainsKey(TKey key)
+        {
+            var value = base.HasKey(key);
             return value;
         }
     }
@@ -168,7 +175,7 @@ namespace Turmerik.Cache
             IEqualityComparer<TKey> keyEqCompr = null,
             Func<TKey, TKey> createKeyReducer = null,
             Func<TKey, TKey> removeKeyReducer = null,
-            Func<TKey, TKey> containsKeyReducer = null)
+            Func<TKey, TKey> hasKeyReducer = null)
         {
             var dataCache = dataCacheFactory.Create<TKey, TValue>(
                 keyEqCompr);
@@ -178,7 +185,7 @@ namespace Turmerik.Cache
                 factory,
                 createKeyReducer,
                 removeKeyReducer,
-                containsKeyReducer);
+                hasKeyReducer);
 
             return staticDataCache;
         }

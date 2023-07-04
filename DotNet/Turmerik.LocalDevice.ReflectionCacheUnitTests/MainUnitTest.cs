@@ -48,11 +48,5 @@ namespace Turmerik.LocalDevice.ReflectionCacheUnitTests
                 StringArrEqCompr.Equals,
                 FieldAccessFilterEqCompr.Equals);
         }
-
-        [Fact]
-        public void MainTest()
-        {
-
-        }
     }
 }

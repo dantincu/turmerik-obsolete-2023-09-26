@@ -110,7 +110,7 @@ namespace Turmerik.LocalDevice.UnitTests
         {
             foreach (var key in expectedData.Keys)
             {
-                bool hasKey = keyReducer.ContainsKey(key);
+                bool hasKey = keyReducer.HasKey(key);
                 Assert.True(hasKey);
 
                 var expectedValue = expectedData[key];

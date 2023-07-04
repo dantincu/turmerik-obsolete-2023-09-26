@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Turmerik.Cache;
 using Turmerik.Synchronized;
+using Turmerik.Utils;
 
 namespace Turmerik.Reflection.Cache
 {
@@ -13,7 +14,7 @@ namespace Turmerik.Reflection.Cache
     {
         Lazy<ICachedMethodInfo> Adder { get; }
         Lazy<ICachedMethodInfo> Remover { get; }
-        Lazy<ICachedMethodInfo> Invoker { get; }
+        Lazy<ICachedMethodInfo> Raiser { get; }
     }
 
     public class CachedEventInfo : CachedMemberInfoBase<EventInfo, CachedEventFlags.IClnbl>, ICachedEventInfo
@@ -28,12 +29,20 @@ namespace Turmerik.Reflection.Cache
                 staticDataCacheFactory,
                 value)
         {
+            Adder = LazyH.Lazy(() => Data.AddMethod?.WithValue(
+                data => ItemsFactory.MethodInfo(data)));
+
+            Remover = LazyH.Lazy(() => Data.RemoveMethod?.WithValue(
+                data => ItemsFactory.MethodInfo(data)));
+
+            Raiser = LazyH.Lazy(() => Data.RaiseMethod?.WithValue(
+                data => ItemsFactory.MethodInfo(data)));
         }
 
         protected override CachedEventFlags.IClnbl GetFlags() => CachedEventFlags.Create(this);
 
         public Lazy<ICachedMethodInfo> Adder { get; }
         public Lazy<ICachedMethodInfo> Remover { get; }
-        public Lazy<ICachedMethodInfo> Invoker { get; }
+        public Lazy<ICachedMethodInfo> Raiser { get; }
     }
 }

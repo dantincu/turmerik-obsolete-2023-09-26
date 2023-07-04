@@ -30,7 +30,7 @@ namespace Turmerik.Reflection.Cache
                 itemsFactory,
                 staticDataCacheFactory,
                 type,
-                (arg, filter) => filter.Matches(arg),
+                (arg, filter) => arg.Matches(filter),
                 ownFilterReducer,
                 allVisibleFilterReducer,
                 asmVisibleFilterReducer)
@@ -57,7 +57,7 @@ namespace Turmerik.Reflection.Cache
 
         protected override ICachedPropertyInfo[] GetOwnItems(
             ICachedTypeInfo type) => type.Data.GetProperties(
-                ReflC.Filter.AllDeclaredOnlyBindingFlags).Select(
+                ReflC.Filter.BindingFlag.DeclaredOnly).Select(
                 property => ItemsFactory.PropertyInfo(property)).ToArray();
     }
 }

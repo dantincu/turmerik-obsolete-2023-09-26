@@ -91,11 +91,30 @@ namespace Turmerik.Reflection
 
         public static class Filter
         {
-            public static readonly MemberVisibility AllVisibilities = GetAllVisibilities();
-            public static readonly MemberScope InstanceOrStatic = GetInstanceOrStatic();
-            public static readonly FieldType InitOnlyOrLiteral = GetConstantFieldType();
-            public static readonly FieldType FieldTypeCatchAll = GetFieldTypeCatchAll();
-            public static readonly BindingFlags AllDeclaredOnlyBindingFlags = GetAllDeclaredOnlyBindingFlags();
+            public static class Visibility
+            {
+                public static readonly MemberVisibility All = GetAllVisibilities();
+            }
+
+            public static class Scope
+            {
+                public static readonly MemberScope All = GetInstanceOrStatic();
+            }
+
+            public static class FieldTypes
+            {
+                public static readonly FieldType RdnlOrLit = GetConstantFieldType();
+                public static readonly FieldType All = GetFieldTypeCatchAll();
+            }
+
+            public static class BindingFlag
+            {
+                public static readonly BindingFlags DeclaredOnly = GetDeclaredOnlyBindingFlags();
+            }
+
+            public static readonly MethodAccessibilityFilter AnyMethod = new MethodAccessibilityFilter(
+                Scope.All,
+                Visibility.All);
 
             public static MemberVisibility GetAllVisibilities()
             {
@@ -110,7 +129,7 @@ namespace Turmerik.Reflection
             public static FieldType GetConstantFieldType() => FieldType.InitOnly | FieldType.Literal;
             public static FieldType GetFieldTypeCatchAll() => FieldType.Editable | FieldType.InitOnly | FieldType.Literal;
 
-            public static BindingFlags GetAllDeclaredOnlyBindingFlags() => BindingFlags.Instance | (
+            public static BindingFlags GetDeclaredOnlyBindingFlags() => BindingFlags.Instance | (
                 BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.DeclaredOnly);
         }
     }

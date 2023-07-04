@@ -12,8 +12,6 @@ namespace Turmerik.Reflection.Cache
 {
     public interface ICachedPropertyInfo : ICachedMemberInfo<PropertyInfo, CachedPropertyFlags.IClnbl>
     {
-        bool CanRead { get; }
-        bool CanWrite { get; }
         Lazy<ICachedMethodInfo> Getter { get; }
         Lazy<ICachedMethodInfo> Setter { get; }
     }
@@ -30,9 +28,6 @@ namespace Turmerik.Reflection.Cache
                 staticDataCacheFactory,
                 value)
         {
-            CanRead = value.CanRead;
-            CanWrite = value.CanWrite;
-
             Getter = new Lazy<ICachedMethodInfo>(
                 () => Data.GetGetMethod()?.WithValue(
                     mth => this.ItemsFactory.MethodInfo(mth)));
@@ -42,8 +37,6 @@ namespace Turmerik.Reflection.Cache
                     mth => this.ItemsFactory.MethodInfo(mth)));
         }
 
-        public bool CanRead { get; }
-        public bool CanWrite { get; }
         public Lazy<ICachedMethodInfo> Getter { get; }
         public Lazy<ICachedMethodInfo> Setter { get; }
 

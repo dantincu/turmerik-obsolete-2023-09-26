@@ -47,7 +47,8 @@ namespace Turmerik.Reflection.Cache
             IEqualityComparer<TFilter> filterEqCompr,
             ReadOnlyCollection<TItem> items,
             Func<TItem, TFilter, bool> filterMatchPredicate,
-            Func<TFilter, TFilter> filterReducer)
+            Func<TFilter, TFilter> filterReducer,
+            Func<TFilter, bool> filterMatchesNonePredicate)
         {
             Items = items ?? throw new ArgumentNullException(nameof(items));
 
@@ -61,7 +62,8 @@ namespace Turmerik.Reflection.Cache
                 nameof(filterMatchPredicate));
 
             Filtered = StaticDataCacheFactory.CreateKeyReducer(
-                filter => Items.Where(item => FilterMatchPredicate(item, filter)).RdnlC(),
+                filter => filterMatchesNonePredicate(filter) ? null : Items.Where(
+                    item => FilterMatchPredicate(item, filter)).RdnlC(),
                 FilterEqCompr, filterReducer);
         }
 
@@ -85,7 +87,8 @@ namespace Turmerik.Reflection.Cache
                 filterEqCompr,
                 items,
                 filterMatchPredicate,
-                filterReducer)
+                filterReducer,
+                filter => filter.MatchesNone())
         {
         }
     }
@@ -102,7 +105,8 @@ namespace Turmerik.Reflection.Cache
                 filterEqCompr,
                 items,
                 filterMatchPredicate,
-                filterReducer)
+                filterReducer,
+                filter => filter.MatchesNone())
         {
         }
     }
@@ -119,7 +123,8 @@ namespace Turmerik.Reflection.Cache
                 filterEqCompr,
                 items,
                 filterMatchPredicate,
-                filterReducer)
+                filterReducer,
+                filter => filter.MatchesNone())
         {
         }
     }
@@ -136,7 +141,8 @@ namespace Turmerik.Reflection.Cache
                 filterEqCompr,
                 items,
                 filterMatchPredicate,
-                filterReducer)
+                filterReducer,
+                filter => filter.MatchesNone())
         {
         }
     }
@@ -153,7 +159,8 @@ namespace Turmerik.Reflection.Cache
                 filterEqCompr,
                 items,
                 filterMatchPredicate,
-                filterReducer)
+                filterReducer,
+                filter => false)
         {
         }
     }

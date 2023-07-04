@@ -18,14 +18,13 @@ namespace Turmerik.LocalDevice.ReflectionCacheUnitTests
         private static readonly ReadOnlyCollection<bool> boolValues;
         private static readonly ReadOnlyCollection<MemberScope> allMemberScopes;
         private static readonly ReadOnlyCollection<MemberVisibility> allMemberVisibilities;
-        private static readonly ReadOnlyCollection<MemberVisibility?> allNllblMemberVisibilities;
         private static readonly ReadOnlyCollection<FieldType> allFieldTypes;
 
         private readonly IMatrixBuilderFactory matrixBuilderFactory;
         private readonly IMatrixBuilder<MemberScope, MemberVisibility> methodAccessFilterTuplesBuilder;
         private readonly IMatrixBuilder<MemberScope, MemberVisibility, FieldType> fieldAccessFilterTuplesBuilder;
-        private readonly IMatrixBuilder<MemberScope, bool, bool, MemberVisibility?, MemberVisibility?> propertyAccessFilterTuplesBuilder;
-        private readonly IMatrixBuilder<MemberVisibility?, MemberVisibility?, MemberVisibility?> eventAccessFilterTuplesBuilder;
+        private readonly IMatrixBuilder<MemberScope, bool, bool, MemberVisibility, MemberVisibility> propertyAccessFilterTuplesBuilder;
+        private readonly IMatrixBuilder<MemberVisibility, MemberVisibility, MemberVisibility> eventAccessFilterTuplesBuilder;
 
         private readonly MethodAccessibilityFilter[] allMethodAccessFilters;
         private readonly FieldAccessibilityFilter[] allFieldAccessFilters;
@@ -37,7 +36,6 @@ namespace Turmerik.LocalDevice.ReflectionCacheUnitTests
             boolValues = false.Arr(true).RdnlC();
             allMemberScopes = Enum.GetValues<MemberScope>().RdnlC();
             allMemberVisibilities = Enum.GetValues<MemberVisibility>().RdnlC();
-            allNllblMemberVisibilities = allMemberVisibilities.Cast<MemberVisibility?>().RdnlC();
             allFieldTypes = Enum.GetValues<FieldType>().RdnlC();
         }
 
@@ -46,8 +44,8 @@ namespace Turmerik.LocalDevice.ReflectionCacheUnitTests
             matrixBuilderFactory = ServiceProvider.GetRequiredService<IMatrixBuilderFactory>();
             methodAccessFilterTuplesBuilder = matrixBuilderFactory.Create2D<MemberScope, MemberVisibility>();
             fieldAccessFilterTuplesBuilder = matrixBuilderFactory.Create3D<MemberScope, MemberVisibility, FieldType>();
-            propertyAccessFilterTuplesBuilder = matrixBuilderFactory.Create5D<MemberScope, bool, bool, MemberVisibility?, MemberVisibility?>();
-            eventAccessFilterTuplesBuilder = matrixBuilderFactory.Create3D<MemberVisibility?, MemberVisibility?, MemberVisibility?>();
+            propertyAccessFilterTuplesBuilder = matrixBuilderFactory.Create5D<MemberScope, bool, bool, MemberVisibility, MemberVisibility>();
+            eventAccessFilterTuplesBuilder = matrixBuilderFactory.Create3D<MemberVisibility, MemberVisibility, MemberVisibility>();
 
             allMethodAccessFilters = methodAccessFilterTuplesBuilder.Generate(
                 allMemberScopes,
@@ -63,9 +61,9 @@ namespace Turmerik.LocalDevice.ReflectionCacheUnitTests
                     CreateFieldAccessibilityFilter).ToArray();
 
             allEventAccessFilters = eventAccessFilterTuplesBuilder.Generate(
-                allNllblMemberVisibilities,
-                allNllblMemberVisibilities,
-                allNllblMemberVisibilities,
+                allMemberVisibilities,
+                allMemberVisibilities,
+                allMemberVisibilities,
                 tuple => true).Select(
                     CreateEventAccessibilityFilter).ToArray();
 
@@ -73,8 +71,8 @@ namespace Turmerik.LocalDevice.ReflectionCacheUnitTests
                 allMemberScopes,
                 boolValues,
                 boolValues,
-                allNllblMemberVisibilities,
-                allNllblMemberVisibilities,
+                allMemberVisibilities,
+                allMemberVisibilities,
                 tuple => true).Select(
                     CreatePropertyAccessibilityFilter).ToArray();
         }
@@ -153,21 +151,22 @@ namespace Turmerik.LocalDevice.ReflectionCacheUnitTests
                 tuple.Item3);
 
         private EventAccessibilityFilter CreateEventAccessibilityFilter(
-            Tuple<MemberVisibility?, MemberVisibility?, MemberVisibility?> tuple) => new EventAccessibilityFilter(
-                CreateMethodAccessibilityFilter(tuple.Item1),
-                CreateMethodAccessibilityFilter(tuple.Item2),
-                CreateMethodAccessibilityFilter(tuple.Item3));
+            Tuple<MemberVisibility, MemberVisibility, MemberVisibility> tuple) => new EventAccessibilityFilter(
+                tuple.Item1,
+                tuple.Item2,
+                tuple.Item3);
 
         private PropertyAccessibilityFilter CreatePropertyAccessibilityFilter(
-            Tuple<MemberScope, bool, bool, MemberVisibility?, MemberVisibility?> tuple) => new PropertyAccessibilityFilter(
+            Tuple<MemberScope, bool, bool, MemberVisibility, MemberVisibility> tuple) => new PropertyAccessibilityFilter(
                 tuple.Item1,
                 tuple.Item2,
                 tuple.Item3,
-                CreateMethodAccessibilityFilter(tuple.Item4),
-                CreateMethodAccessibilityFilter(tuple.Item5));
+                tuple.Item4,
+                tuple.Item5);
 
-        private MethodAccessibilityFilter? CreateMethodAccessibilityFilter(
-            MemberVisibility? memberVisibility) => memberVisibility?.WithValue(
-                value => new MethodAccessibilityFilter(MemberScope.Instance, value));
+        private MethodAccessibilityFilter CreateMethodAccessibilityFilter(
+            MemberVisibility memberVisibility) => new MethodAccessibilityFilter(
+                MemberScope.Instance,
+                memberVisibility);
     }
 }

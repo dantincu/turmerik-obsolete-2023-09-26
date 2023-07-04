@@ -28,19 +28,27 @@ namespace Turmerik.Reflection.Cache
 
         ICachedInheritedPropertiesCollection InheritedProperties(
             ICachedTypeInfo type,
-            bool isInstancePropsCollection);
+            bool isInstancePropsCollection,
+            bool publicOnly = false,
+            bool excludeInheritables = false);
 
         ICachedInheritedFieldsCollection InheritedFields(
-            ICachedTypeInfo type);
+            ICachedTypeInfo type,
+            bool excludeInheritables = false);
 
         ICachedInheritedMethodsCollection InheritedMethods(
-            ICachedTypeInfo type);
+            ICachedTypeInfo type,
+            bool isInstanceMethodsCollection,
+            bool publicOnly = false,
+            bool excludeInheritables = false);
 
         ICachedInheritedEventsCollection InheritedEvents(
-            ICachedTypeInfo type);
+            ICachedTypeInfo type,
+            bool publicOnly = false);
 
         ICachedInheritedConstructorsCollection InheritedConstructors(
-            ICachedTypeInfo type);
+            ICachedTypeInfo type,
+            bool publicOnly = false);
 
         ICachedPropertiesCollection Properties(
             ReadOnlyCollection<ICachedPropertyInfo> items,
@@ -161,7 +169,9 @@ namespace Turmerik.Reflection.Cache
 
         public ICachedInheritedPropertiesCollection InheritedProperties(
             ICachedTypeInfo type,
-            bool isInstancePropsCollection) => (isInstancePropsCollection ? MemberScope.Static : MemberScope.Instance).WithValue(
+            bool isInstancePropsCollection,
+            bool publicOnly = false,
+            bool excludeInheritables = false) => (isInstancePropsCollection ? MemberScope.Static : MemberScope.Instance).WithValue(
                 substractedScope => new CachedInheritedPropertiesCollection(
                     cachedTypesMap.Value,
                     this,
@@ -169,53 +179,72 @@ namespace Turmerik.Reflection.Cache
                     type,
                     isInstancePropsCollection,
                     filter => filter.ReduceFilterIfReq(
-                        isInstancePropsCollection),
+                        isInstancePropsCollection,
+                        false, false, publicOnly,
+                        excludeInheritables),
                     filter => filter.ReduceFilterIfReq(
                         isInstancePropsCollection,
-                        false, true),
+                        false, true, publicOnly,
+                        excludeInheritables),
                     filter => filter.ReduceFilterIfReq(
                         isInstancePropsCollection,
-                        true, true)));
+                        true, true, publicOnly,
+                        excludeInheritables)));
 
         public ICachedInheritedFieldsCollection InheritedFields(
-            ICachedTypeInfo type) => new CachedInheritedFieldsCollection(
+            ICachedTypeInfo type,
+            bool excludeInheritables = false) => new CachedInheritedFieldsCollection(
                 cachedTypesMap.Value,
                 this,
                 staticDataCacheFactory,
                 type,
-                filter => filter.ReduceFilterIfReq(),
-                filter => filter.ReduceFilterIfReq(false, true),
-                filter => filter.ReduceFilterIfReq(true, true));
+                filter => filter.ReduceFilterIfReq(false, false, excludeInheritables),
+                filter => filter.ReduceFilterIfReq(false, true, excludeInheritables),
+                filter => filter.ReduceFilterIfReq(true, true, excludeInheritables));
 
         public ICachedInheritedMethodsCollection InheritedMethods(
-            ICachedTypeInfo type) => new CachedInheritedMethodsCollection(
+            ICachedTypeInfo type,
+            bool isInstanceMethodsCollection,
+            bool publicOnly = false,
+            bool excludeInheritables = false) => new CachedInheritedMethodsCollection(
                 cachedTypesMap.Value,
                 this,
                 staticDataCacheFactory,
                 type,
-                filter => filter.ReduceFilterIfReq(),
-                filter => filter.ReduceFilterIfReq(false, true),
-                filter => filter.ReduceFilterIfReq(true, true));
+                filter => filter.ReduceFilterIfReq(
+                    isInstanceMethodsCollection,
+                    false, false, publicOnly,
+                    excludeInheritables),
+                filter => filter.ReduceFilterIfReq(
+                    isInstanceMethodsCollection,
+                    false, true, publicOnly,
+                    excludeInheritables),
+                filter => filter.ReduceFilterIfReq(
+                    isInstanceMethodsCollection,
+                    true, true, publicOnly,
+                    excludeInheritables));
 
         public ICachedInheritedEventsCollection InheritedEvents(
-            ICachedTypeInfo type) => new CachedInheritedEventsCollection(
+            ICachedTypeInfo type,
+            bool publicOnly = false) => new CachedInheritedEventsCollection(
                 cachedTypesMap.Value,
                 this,
                 staticDataCacheFactory,
                 type,
-                filter => filter.ReduceFilterIfReq(),
-                filter => filter.ReduceFilterIfReq(false, true),
-                filter => filter.ReduceFilterIfReq(true, true));
+                filter => filter.ReduceFilterIfReq(false, false, publicOnly),
+                filter => filter.ReduceFilterIfReq(false, true, publicOnly),
+                filter => filter.ReduceFilterIfReq(true, true, publicOnly));
 
         public ICachedInheritedConstructorsCollection InheritedConstructors(
-            ICachedTypeInfo type) => new CachedInheritedConstructorsCollection(
+            ICachedTypeInfo type,
+            bool publicOnly = false) => new CachedInheritedConstructorsCollection(
                 cachedTypesMap.Value,
                 this,
                 staticDataCacheFactory,
                 type,
-                filter => filter.ReduceIfReq(),
-                filter => filter.ReduceIfReq(false, true),
-                filter => filter.ReduceIfReq(true, true));
+                filter => filter.ReduceIfReq(false, false, publicOnly),
+                filter => filter.ReduceIfReq(false, true, publicOnly),
+                filter => filter.ReduceIfReq(true, true, publicOnly));
 
         public ICachedPropertiesCollection Properties(
             ReadOnlyCollection<ICachedPropertyInfo> items,

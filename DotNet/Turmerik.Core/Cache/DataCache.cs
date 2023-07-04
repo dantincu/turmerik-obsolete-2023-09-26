@@ -12,7 +12,7 @@ namespace Turmerik.Cache
         void Clear();
         bool TryRemove(TKey key);
         bool TryRemove(TKey key, out TValue removed);
-        bool ContainsKey(TKey key);
+        bool HasKey(TKey key);
         TKey[] GetKeys();
     }
 
@@ -82,7 +82,7 @@ namespace Turmerik.Cache
             return retVal;
         }
 
-        public bool ContainsKey(TKey key) => ConcurrentActionComponent.Execute(
+        public bool HasKey(TKey key) => ConcurrentActionComponent.Execute(
             () => dictnr.ContainsKey(key));
 
         public TKey[] GetKeys() => ConcurrentActionComponent.Execute(

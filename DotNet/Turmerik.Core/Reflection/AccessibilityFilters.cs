@@ -6,6 +6,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Turmerik.Utils;
+using Turmerik.MathH;
+using static Turmerik.Reflection.ReflC.Filter;
 
 namespace Turmerik.Reflection
 {
@@ -72,13 +74,13 @@ namespace Turmerik.Reflection
         public readonly FieldType FieldType;
 
         public FieldAccessibilityFilter(
-            MemberScope scope = default,
-            MemberVisibility visibility = default,
-            FieldType fieldType = default)
+            MemberScope? scope = null,
+            MemberVisibility? visibility = null,
+            FieldType? fieldType = null)
         {
-            Scope = scope;
-            Visibility = visibility;
-            FieldType = fieldType;
+            Scope = scope ?? ReflC.Filter.Scope.All;
+            Visibility = visibility ?? ReflC.Filter.Visibility.All;
+            FieldType = fieldType ?? ReflC.Filter.FieldTypes.All;
         }
 
         public override int GetHashCode() => (
@@ -90,48 +92,53 @@ namespace Turmerik.Reflection
     public readonly struct PropertyAccessibilityFilter
     {
         public readonly MemberScope Scope;
-        public readonly bool CanRead;
-        public readonly bool CanWrite;
-        public readonly MethodAccessibilityFilter? Getter;
-        public readonly MethodAccessibilityFilter? Setter;
+        public readonly bool? CanRead;
+        public readonly bool? CanWrite;
+        public readonly MemberVisibility GetterVisibility;
+        public readonly MemberVisibility SetterVisibility;
 
         public PropertyAccessibilityFilter(
-            MemberScope scope = default,
-            bool canRead = true,
-            bool canWrite = true,
-            MethodAccessibilityFilter? getter = null,
-            MethodAccessibilityFilter? setter = null)
+            MemberScope? scope = null,
+            bool? canRead = null,
+            bool? canWrite = null,
+            MemberVisibility? getterVisibility = null,
+            MemberVisibility? setterVisibility = null)
         {
-            Scope = scope;
+            Scope = scope ?? ReflC.Filter.Scope.All;
             CanRead = canRead;
             CanWrite = canWrite;
-            Getter = getter;
-            Setter = setter;
+            GetterVisibility = getterVisibility ?? Visibility.All;
+            SetterVisibility = setterVisibility ?? Visibility.All;
         }
 
         public override int GetHashCode() => (
             (int)Scope).BasicHashCode(
-                CanRead ? 128 : 0,
-                CanRead ? 256 : 0,
-                Setter?.GetHashCode() ?? 0,
-                Getter?.GetHashCode() ?? 0);
+                CanRead.HasValue ? CanRead.Value ? 128 : 64 : 0,
+                CanWrite.HasValue ? CanWrite.Value ? 192 : 96 : 0,
+                (int)SetterVisibility,
+                (int)GetterVisibility);
     }
 
     public readonly struct EventAccessibilityFilter
     {
-        public readonly MethodAccessibilityFilter? Adder;
-        public readonly MethodAccessibilityFilter? Remover;
-        public readonly MethodAccessibilityFilter? Invoker;
+        public readonly MemberVisibility AdderVisibility;
+        public readonly MemberVisibility RemoverVisibility;
+        public readonly MemberVisibility RaiserVisibility;
 
         public EventAccessibilityFilter(
-            MethodAccessibilityFilter? adder,
-            MethodAccessibilityFilter? remover,
-            MethodAccessibilityFilter? invoker)
+            MemberVisibility? adderVisibility,
+            MemberVisibility? removerVisibility,
+            MemberVisibility? invokerVisibility)
         {
-            Adder = adder;
-            Remover = remover;
-            Invoker = invoker;
+            AdderVisibility = adderVisibility ?? Visibility.All;
+            RemoverVisibility = removerVisibility ?? Visibility.All;
+            RaiserVisibility = invokerVisibility ?? Visibility.All;
         }
+
+        public override int GetHashCode() => (
+            (int)AdderVisibility).BasicHashCode(
+                (int)RemoverVisibility,
+                (int)RaiserVisibility);
     }
 
     public readonly struct MethodAccessibilityFilter
@@ -188,25 +195,8 @@ namespace Turmerik.Reflection
             areEqual = areEqual && x.CanRead == y.CanRead;
             areEqual = areEqual && x.CanWrite == y.CanWrite;
 
-            areEqual = areEqual && (x.Getter == null) == (y.Getter == null);
-            areEqual = areEqual && (x.Setter == null) == (y.Setter == null);
-
-            if (areEqual)
-            {
-                if (x.Setter != null)
-                {
-                    areEqual = areEqual && methodEqCompr.Equals(
-                        x.Setter.Value,
-                        y.Setter.Value);
-                }
-
-                if (x.Getter != null)
-                {
-                    areEqual = areEqual && methodEqCompr.Equals(
-                        x.Getter.Value,
-                        y.Getter.Value);
-                }
-            }
+            areEqual = areEqual && x.GetterVisibility == y.GetterVisibility;
+            areEqual = areEqual && x.SetterVisibility == y.SetterVisibility;
 
             return areEqual;
         }
@@ -230,33 +220,9 @@ namespace Turmerik.Reflection
             EventAccessibilityFilter x,
             EventAccessibilityFilter y)
         {
-            bool areEqual = (x.Adder == null) == (y.Adder == null);
-            areEqual = areEqual && (x.Remover == null) == (y.Remover == null);
-            areEqual = areEqual && (x.Invoker == null) == (y.Invoker == null);
-
-            if (areEqual)
-            {
-                if (x.Adder != null)
-                {
-                    areEqual = areEqual && memberEqCompr.Equals(
-                        x.Adder.Value,
-                        y.Adder.Value);
-                }
-
-                if (x.Remover != null)
-                {
-                    areEqual = areEqual && memberEqCompr.Equals(
-                        x.Remover.Value,
-                        y.Remover.Value);
-                }
-
-                if (x.Invoker != null)
-                {
-                    areEqual = areEqual && memberEqCompr.Equals(
-                        x.Invoker.Value,
-                        y.Invoker.Value);
-                }
-            }
+            bool areEqual = x.AdderVisibility == y.AdderVisibility;
+            areEqual = areEqual && x.RemoverVisibility == y.RemoverVisibility;
+            areEqual = areEqual && x.RaiserVisibility == y.RaiserVisibility;
 
             return areEqual;
         }

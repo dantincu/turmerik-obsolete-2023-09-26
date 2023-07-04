@@ -207,9 +207,10 @@ namespace Turmerik.Reflection.Cache
             bool IsNestedFamORAssem { get; }
             bool IsNestedFamANDAssem { get; }
             bool IsNestedPrivate { get; }
+            bool IsInterface { get; }
             bool IsAbstract { get; }
             bool IsSealed { get; }
-            bool IsStatic { get; }
+            bool IsStaticClass { get; }
             bool IsGenericType { get; }
             bool IsGenericTypeDefinition { get; }
             bool IsArray { get; }
@@ -226,9 +227,10 @@ namespace Turmerik.Reflection.Cache
                 IsNestedFamORAssem = src.IsNestedFamORAssem;
                 IsNestedFamANDAssem = src.IsNestedFamANDAssem;
                 IsNestedPrivate = src.IsNestedPrivate;
+                IsInterface = src.IsInterface;
                 IsAbstract = src.IsAbstract;
                 IsSealed = src.IsSealed;
-                IsStatic = src.IsStatic;
+                IsStaticClass = src.IsStaticClass;
                 IsGenericType = src.IsGenericType;
                 IsGenericTypeDefinition = src.IsGenericTypeDefinition;
                 IsArray = src.IsArray;
@@ -241,9 +243,10 @@ namespace Turmerik.Reflection.Cache
             public bool IsNestedFamORAssem { get; }
             public bool IsNestedFamANDAssem { get; }
             public bool IsNestedPrivate { get; }
+            public bool IsInterface { get; }
             public bool IsAbstract { get; }
             public bool IsSealed { get; }
-            public bool IsStatic { get; }
+            public bool IsStaticClass { get; }
             public bool IsGenericType { get; }
             public bool IsGenericTypeDefinition { get; }
             public bool IsArray { get; }
@@ -264,9 +267,10 @@ namespace Turmerik.Reflection.Cache
                 IsNestedFamORAssem = src.IsNestedFamORAssem;
                 IsNestedFamANDAssem = src.IsNestedFamANDAssem;
                 IsNestedPrivate = src.IsNestedPrivate;
+                IsInterface = src.IsInterface;
                 IsAbstract = src.IsAbstract;
                 IsSealed = src.IsSealed;
-                IsStatic = src.IsStatic;
+                IsStaticClass = src.IsStaticClass;
                 IsGenericType = src.IsGenericType;
                 IsGenericTypeDefinition = src.IsGenericTypeDefinition;
                 IsArray = src.IsArray;
@@ -279,9 +283,10 @@ namespace Turmerik.Reflection.Cache
             public bool IsNestedFamORAssem { get; set; }
             public bool IsNestedFamANDAssem { get; set; }
             public bool IsNestedPrivate { get; set; }
+            public bool IsInterface { get; set; }
             public bool IsAbstract { get; set; }
             public bool IsSealed { get; set; }
-            public bool IsStatic { get; set; }
+            public bool IsStaticClass { get; set; }
             public bool IsGenericType { get; set; }
             public bool IsGenericTypeDefinition { get; set; }
             public bool IsArray { get; set; }
@@ -298,9 +303,10 @@ namespace Turmerik.Reflection.Cache
                     IsNestedFamORAssem = data.IsNestedFamORAssem,
                     IsNestedFamANDAssem = data.IsNestedFamANDAssem,
                     IsNestedPrivate = data.IsNestedPrivate,
-                    IsAbstract = data.IsAbstract,
-                    IsSealed = data.IsSealed,
-                    IsStatic = data.IsStaticClass(),
+                    IsInterface = cached.IsInterface,
+                    IsAbstract = cached.IsAbstract,
+                    IsSealed = cached.IsSealed,
+                    IsStaticClass = cached.IsStaticClass,
                     IsGenericType = data.IsGenericType,
                     IsGenericTypeDefinition = data.IsGenericTypeDefinition,
                     IsArray = data.IsArray
@@ -421,8 +427,8 @@ namespace Turmerik.Reflection.Cache
             {
                 IsStatic = new Lazy<bool>(
                     () => (cached.Getter.Value ?? cached.Setter.Value).Flags.Value.IsStatic),
-                CanRead = cached.CanRead,
-                CanWrite = cached.CanWrite,
+                CanRead = cached.Data.CanRead,
+                CanWrite = cached.Data.CanWrite,
                 Getter = new Lazy<CachedMemberFlagsCore.IClnbl>(
                     () => cached.Getter.Value?.WithValue(
                     gttr => CachedMemberFlagsCore.Create(gttr))),
@@ -489,7 +495,7 @@ namespace Turmerik.Reflection.Cache
                 () => cached.Remover.Value?.WithValue(
                 adder => CachedMemberFlagsCore.Create(adder))),
                 InvokeMethod = new Lazy<CachedMemberFlagsCore.IClnbl>(
-                () => cached.Invoker.Value?.WithValue(
+                () => cached.Raiser.Value?.WithValue(
                 adder => CachedMemberFlagsCore.Create(adder)))
             }.ToImmtbl();
     }
