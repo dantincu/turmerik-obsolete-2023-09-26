@@ -169,6 +169,38 @@ namespace Turmerik.LocalDevice.ReflectionCacheUnitTests
                 propNamesDictnrEqCompr,
                 assertionValidPredicate);
 
+        private void AssertHasAttrs<TMemberInfo, TFlags>(
+            ICachedMemberInfo<TMemberInfo, TFlags> cachedItem,
+            Attribute[] expectedAttrsArr,
+            Func<Attribute, Attribute, int, bool> equalsPredicate = null)
+            where TMemberInfo : MemberInfo
+        {
+            var attrsCllctn = cachedItem.CustomAttributes.Value.Where(
+                attr => attr.GetType().Name != "NullableContextAttribute").ToArray();
+
+            Assert.Equal(
+                expectedAttrsArr.Length,
+                attrsCllctn.Length);
+
+            for (int i =  0; i < attrsCllctn.Length; i++)
+            {
+                var expectedAttr = expectedAttrsArr[i];
+                var actualAttr = attrsCllctn[i];
+
+                Assert.Equal(
+                    expectedAttr.GetType(),
+                    actualAttr.GetType());
+
+                if (equalsPredicate != null)
+                {
+                    bool areEqual = equalsPredicate(
+                        expectedAttr, actualAttr, i);
+
+                    Assert.True(areEqual);
+                }
+            }
+        }
+
         private static ExpectedContents<IDictionary<EventAccessibilityFilter, string[]>> MergeData(
             ExpectedContents<IDictionary<EventAccessibilityFilter, string[]>>[] contentsArr) => MergeData(
                 contentsArr,

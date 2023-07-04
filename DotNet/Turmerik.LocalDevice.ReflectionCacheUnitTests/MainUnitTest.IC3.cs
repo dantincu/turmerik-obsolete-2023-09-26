@@ -146,6 +146,15 @@ namespace Turmerik.LocalDevice.ReflectionCacheUnitTests
             var cachedType = CachedTypesMap.Get(typeof(IC3));
             Assert.False(cachedType.Data.IsGenericType);
 
+            AssertHasAttrs(
+                cachedType,
+                new Attribute[] { new IAttr3() });
+
+            AssertHasAttrs(
+                cachedType.InstanceProps.Value.Own.Value.Items.Single(
+                    prop => prop.Name == nameof(IC3.C3PubStrVal)),
+                new Attribute[] { new Attr3() });
+
             Assert.Null(cachedType.InstanceFields.Value);
             Assert.Null(cachedType.StaticFields.Value);
             Assert.Null(cachedType.Constructors.Value);
