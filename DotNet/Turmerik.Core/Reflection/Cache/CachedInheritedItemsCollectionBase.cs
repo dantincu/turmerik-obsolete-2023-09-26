@@ -17,7 +17,7 @@ namespace Turmerik.Reflection.Cache
     {
         Lazy<TCollection> Own { get; }
         Lazy<TCollection> AllVisible { get; }
-        Lazy<TCollection> AsmVisible { get; }
+        Lazy<TCollection> ExtAsmVisible { get; }
     }
 
     public abstract class CachedInheritedItemsCollectionBase<T, TItem, TFilter, TCollection> : ICachedInheritedItemsCollection<T, TItem, TFilter, TCollection>
@@ -64,7 +64,7 @@ namespace Turmerik.Reflection.Cache
                     GetAllVisibleItems(Own.Value.Items),
                     AllVisibleFilterReducer));
 
-            AsmVisible = new Lazy<TCollection>(
+            ExtAsmVisible = new Lazy<TCollection>(
                 () => CreateCollection(
                     GetAsmVisibleItems(Own.Value.Items),
                     AsmVisibleFilterReducer));
@@ -72,7 +72,7 @@ namespace Turmerik.Reflection.Cache
 
         public Lazy<TCollection> Own { get; }
         public Lazy<TCollection> AllVisible { get; }
-        public Lazy<TCollection> AsmVisible { get; }
+        public Lazy<TCollection> ExtAsmVisible { get; }
 
         protected ICachedTypesMap TypesMap { get; }
         protected ICachedReflectionItemsFactory ItemsFactory { get; }

@@ -41,7 +41,7 @@ namespace Turmerik.Reflection.Cache
                 items, FilterMatchPredicate, filterReducer);
 
         protected override ICachedEventsCollection GetBaseTypeAsmVisibleItems(
-            ICachedTypeInfo baseType) => baseType.Events.Value.AsmVisible.Value;
+            ICachedTypeInfo baseType) => baseType.Events.Value.ExtAsmVisible.Value;
 
         protected override ICachedEventsCollection GetBaseTypeAllVisibleItems(
             ICachedTypeInfo baseType) => baseType.Events.Value.AllVisible.Value;

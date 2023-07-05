@@ -47,18 +47,18 @@ namespace Turmerik.Reflection.Cache
 
         protected override ICachedFieldsCollection GetBaseTypeAsmVisibleItems(
             ICachedTypeInfo baseType) => this.IsInstanceFieldsCollection.IfTrue(
-                () => baseType.InstanceFields.Value.AsmVisible.Value,
-                () => baseType.StaticFields.Value.AsmVisible.Value);
+                () => baseType.InstanceFields.Value.ExtAsmVisible.Value,
+                () => baseType.StaticFields.Value.ExtAsmVisible.Value);
 
         protected override ICachedFieldsCollection GetBaseTypeAllVisibleItems(
             ICachedTypeInfo baseType) => this.IsInstanceFieldsCollection.IfTrue(
-                () => baseType.InstanceFields.Value.AsmVisible.Value,
-                () => baseType.StaticFields.Value.AsmVisible.Value);
+                () => baseType.InstanceFields.Value.ExtAsmVisible.Value,
+                () => baseType.StaticFields.Value.ExtAsmVisible.Value);
 
         protected override ICachedFieldsCollection GetBaseTypeOwnItems(
             ICachedTypeInfo baseType) => this.IsInstanceFieldsCollection.IfTrue(
-                () => baseType.InstanceFields.Value.AsmVisible.Value,
-                () => baseType.StaticFields.Value.AsmVisible.Value);
+                () => baseType.InstanceFields.Value.ExtAsmVisible.Value,
+                () => baseType.StaticFields.Value.ExtAsmVisible.Value);
 
         protected override ICachedFieldInfo[] GetOwnItems(
             ICachedTypeInfo type) => type.Data.GetFields(

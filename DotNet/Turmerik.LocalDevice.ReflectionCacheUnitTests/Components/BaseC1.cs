@@ -102,64 +102,61 @@ namespace Turmerik.LocalDevice.ReflectionCacheUnitTests.Components
                 {
                     new EventAccessibilityFilter(
                         MemberVisibility.Public | MemberVisibility.Protected,
-                        MemberVisibility.Public | MemberVisibility.Private,
-                        MemberVisibility.None),
+                        MemberVisibility.Public | MemberVisibility.Private),
                     nameof(C1Event).Arr()
                 },
                 {
                     new EventAccessibilityFilter(
                         MemberVisibility.Public | MemberVisibility.Protected,
-                        MemberVisibility.Public | MemberVisibility.Protected,
-                        MemberVisibility.None),
+                        MemberVisibility.Public | MemberVisibility.Protected),
                     nameof(C1Event).Arr(nameof(C1ProtEvent))
                 },
                 {
                     new EventAccessibilityFilter(
                         MemberVisibility.Protected,
-                        MemberVisibility.Protected,
-                        MemberVisibility.None),
+                        MemberVisibility.Protected),
                     nameof(C1ProtEvent).Arr()
                 },
                 {
                     new EventAccessibilityFilter(
-                        MemberVisibility.Protected | MemberVisibility.Private,
-                        MemberVisibility.Protected,
-                        MemberVisibility.None),
-                    nameof(C1ProtEvent).Arr()
+                        MemberVisibility.Internal,
+                        MemberVisibility.Internal),
+                    nameof(C1InternalEvent).Arr()
                 },
                 {
                     new EventAccessibilityFilter(
-                        MemberVisibility.Protected | MemberVisibility.Private,
-                        MemberVisibility.Protected | MemberVisibility.Private,
-                        MemberVisibility.None),
-                    nameof(C1ProtEvent).Arr(nameof(C1PrvEvent))
+                        MemberVisibility.ProtectedInternal,
+                        MemberVisibility.ProtectedInternal),
+                    nameof(C1ProtInternalEvent).Arr()
+                },
+                {
+                    new EventAccessibilityFilter(
+                        MemberVisibility.PrivateProtected,
+                        MemberVisibility.PrivateProtected),
+                    nameof(C1PrvProtEvent).Arr()
                 },
                 {
                     new EventAccessibilityFilter(
                         MemberVisibility.Private,
-                        MemberVisibility.Private,
-                        MemberVisibility.None),
+                        MemberVisibility.Private),
                     nameof(C1PrvEvent).Arr()
                 },
                 {
                     new EventAccessibilityFilter(
                         MemberVisibility.None,
-                        MemberVisibility.Public,
-                        MemberVisibility.None),
+                        MemberVisibility.Public),
                     new string[0]
                 },
                 {
                     new EventAccessibilityFilter(
                         MemberVisibility.Public,
-                        MemberVisibility.Public,
-                        MemberVisibility.None),
+                        MemberVisibility.Public),
                     nameof(IC1<int, string>.C1Event).Arr()
                 },
                 {
                     new EventAccessibilityFilter(
                         MemberVisibility.Private,
-                        MemberVisibility.Public | MemberVisibility.Protected,
-                        MemberVisibility.None),
+                        MemberVisibility.Public | MemberVisibility.Protected),
                     new string[0]
                 }
             }.RdnlD(),
@@ -181,8 +178,8 @@ namespace Turmerik.LocalDevice.ReflectionCacheUnitTests.Components
                 }
             }.RdnlD());
 
-        public static readonly ExpectedContents<IDictionary<EventAccessibilityFilter, string[]>> AllVisibleEventsTestData = OwnEventsTestData.ExceptPrivate();
-        public static readonly ExpectedContents<IDictionary<EventAccessibilityFilter, string[]>> AsmVisibleEventsTestData = OwnEventsTestData.ExceptPrivate();
+        public static readonly ExpectedContents<IDictionary<EventAccessibilityFilter, string[]>> AllVisibleEventsTestData = OwnEventsTestData.ExceptPrivate(false);
+        public static readonly ExpectedContents<IDictionary<EventAccessibilityFilter, string[]>> ExtAsmVisibleEventsTestData = OwnEventsTestData.ExceptPrivate(true);
 
         public static readonly long C1PubStaticReadonlyLongVal = 7;
         internal static readonly long C1InternalStaticReadonlyLongVal = 8;
@@ -243,7 +240,10 @@ namespace Turmerik.LocalDevice.ReflectionCacheUnitTests.Components
         public virtual T1 C1PubIntVal { get; set; }
 
         public event Action<short> C1Event;
+        protected internal event Action<short> C1ProtInternalEvent;
+        internal event Action<short> C1InternalEvent;
         protected event Action<short> C1ProtEvent;
+        private protected event Action<short> C1PrvProtEvent;
         private event Action<short> C1PrvEvent;
 
         public static string GetC1PubStaticStrVal() => default;

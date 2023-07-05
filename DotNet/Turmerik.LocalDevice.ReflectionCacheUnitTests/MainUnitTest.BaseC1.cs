@@ -45,8 +45,8 @@ namespace Turmerik.LocalDevice.ReflectionCacheUnitTests
                 BaseC1<int, string>.AllVisibleEventsTestData);
 
             AssertContains(
-                cachedType.Events.Value.AsmVisible.Value,
-                BaseC1<int, string>.AsmVisibleEventsTestData);
+                cachedType.Events.Value.ExtAsmVisible.Value,
+                BaseC1<int, string>.ExtAsmVisibleEventsTestData);
         }
     }
 }

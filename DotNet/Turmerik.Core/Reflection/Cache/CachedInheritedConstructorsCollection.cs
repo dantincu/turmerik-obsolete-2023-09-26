@@ -41,7 +41,7 @@ namespace Turmerik.Reflection.Cache
                 filterReducer);
 
         protected override ICachedConstructorsCollection GetBaseTypeAllVisibleItems(
-            ICachedTypeInfo baseType) => baseType.Constructors.Value.AsmVisible.Value;
+            ICachedTypeInfo baseType) => baseType.Constructors.Value.ExtAsmVisible.Value;
 
         protected override ICachedConstructorsCollection GetBaseTypeAsmVisibleItems(
             ICachedTypeInfo baseType) => baseType.Constructors.Value.AllVisible.Value;

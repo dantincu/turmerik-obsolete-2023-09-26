@@ -47,13 +47,13 @@ namespace Turmerik.Reflection.Cache
 
         protected override ICachedMethodsCollection GetBaseTypeAsmVisibleItems(
             ICachedTypeInfo baseType) => this.IsInstanceMethodsCollection.IfTrue(
-                () => baseType.InstanceMethods.Value.AsmVisible.Value,
-                () => baseType.StaticMethods.Value.AsmVisible.Value);
+                () => baseType.InstanceMethods.Value.ExtAsmVisible.Value,
+                () => baseType.StaticMethods.Value.ExtAsmVisible.Value);
 
         protected override ICachedMethodsCollection GetBaseTypeAllVisibleItems(
             ICachedTypeInfo baseType) => this.IsInstanceMethodsCollection.IfTrue(
-                () => baseType.InstanceMethods.Value.AsmVisible.Value,
-                () => baseType.StaticMethods.Value.AsmVisible.Value);
+                () => baseType.InstanceMethods.Value.ExtAsmVisible.Value,
+                () => baseType.StaticMethods.Value.ExtAsmVisible.Value);
 
         protected override ICachedMethodsCollection GetBaseTypeOwnItems(
             ICachedTypeInfo baseType) => this.IsInstanceMethodsCollection.IfTrue(

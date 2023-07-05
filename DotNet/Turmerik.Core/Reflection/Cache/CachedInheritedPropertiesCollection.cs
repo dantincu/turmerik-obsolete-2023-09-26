@@ -47,8 +47,8 @@ namespace Turmerik.Reflection.Cache
 
         protected override ICachedPropertiesCollection GetBaseTypeAsmVisibleItems(
             ICachedTypeInfo baseType) => this.IsInstancePropsCollection.IfTrue(
-                () => baseType.InstanceProps.Value.AsmVisible.Value,
-                () => baseType.StaticProps.Value.AsmVisible.Value);
+                () => baseType.InstanceProps.Value.ExtAsmVisible.Value,
+                () => baseType.StaticProps.Value.ExtAsmVisible.Value);
 
         protected override ICachedPropertiesCollection GetBaseTypeAllVisibleItems(
             ICachedTypeInfo baseType) => this.IsInstancePropsCollection.IfTrue(

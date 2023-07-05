@@ -156,7 +156,7 @@ namespace Turmerik.LocalDevice.ReflectionCacheUnitTests
 
             foreach (var cllctn in cachedType.Events.Value.Own.Value.Arr(
                 cachedType.Events.Value.AllVisible.Value,
-                cachedType.Events.Value.AsmVisible.Value))
+                cachedType.Events.Value.ExtAsmVisible.Value))
             {
                 AssertContains(
                     cllctn,
@@ -171,7 +171,7 @@ namespace Turmerik.LocalDevice.ReflectionCacheUnitTests
 
             foreach (var cllctn in cachedType.InstanceProps.Value.Own.Value.Arr(
                 cachedType.InstanceProps.Value.AllVisible.Value,
-                cachedType.InstanceProps.Value.AsmVisible.Value))
+                cachedType.InstanceProps.Value.ExtAsmVisible.Value))
             {
                 AssertContains(
                     cllctn,
@@ -186,7 +186,7 @@ namespace Turmerik.LocalDevice.ReflectionCacheUnitTests
 
             foreach (var cllctn in cachedType.InstanceMethods.Value.Own.Value.Arr(
                 cachedType.InstanceMethods.Value.AllVisible.Value,
-                cachedType.InstanceMethods.Value.AsmVisible.Value))
+                cachedType.InstanceMethods.Value.ExtAsmVisible.Value))
             {
                 AssertContains(
                     cllctn,

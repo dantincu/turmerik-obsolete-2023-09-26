@@ -59,10 +59,10 @@ namespace Turmerik.Mapping
                     var cachedSrcType = CachedTypesMap.Get(srcType);
                     var cachedDestnType = CachedTypesMap.Get(destnType);
 
-                    var destnPropsCllctn = cachedSrcType.InstanceProps.Value.AsmVisible.Value.Filtered.Get(
+                    var destnPropsCllctn = cachedSrcType.InstanceProps.Value.ExtAsmVisible.Value.Filtered.Get(
                         DestnPropsFilter);
 
-                    var srcPropsCllctn = cachedSrcType.InstanceProps.Value.AsmVisible.Value.Filtered.Get(
+                    var srcPropsCllctn = cachedSrcType.InstanceProps.Value.ExtAsmVisible.Value.Filtered.Get(
                         SrcPropsFilter);
 
                     var propsList = new List<MappingPropsPair>();

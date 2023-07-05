@@ -170,7 +170,7 @@ namespace Turmerik.LocalDevice.ReflectionCacheUnitTests
                 iC3AllEventsTestData);
 
             AssertContains(
-                cachedType.Events.Value.AsmVisible.Value,
+                cachedType.Events.Value.ExtAsmVisible.Value,
                 iC3AllEventsTestData);
         }
 
@@ -188,7 +188,7 @@ namespace Turmerik.LocalDevice.ReflectionCacheUnitTests
                 iC3AllPropertiesTestData);
 
             AssertContains(
-                cachedType.InstanceProps.Value.AsmVisible.Value,
+                cachedType.InstanceProps.Value.ExtAsmVisible.Value,
                 iC3AllPropertiesTestData);
         }
 
@@ -206,7 +206,7 @@ namespace Turmerik.LocalDevice.ReflectionCacheUnitTests
                 iC3AllMehodsTestData);
 
             AssertContains(
-                cachedType.InstanceMethods.Value.AsmVisible.Value,
+                cachedType.InstanceMethods.Value.ExtAsmVisible.Value,
                 iC3AllMehodsTestData);
         }
     }
