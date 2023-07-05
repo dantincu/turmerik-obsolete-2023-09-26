@@ -35,6 +35,18 @@ namespace Turmerik.LocalDevice.ReflectionCacheUnitTests
                 cachedType.Constructors.Value.Own.Value.Items.Single(
                     ctr => ctr.Flags.Value.IsFamily && ctr.Parameters.Value.None()),
                 new Attribute[] { new BaseAttr1() });
+
+            AssertContains(
+                cachedType.Events.Value.Own.Value,
+                BaseC1<int, string>.OwnEventsTestData);
+
+            AssertContains(
+                cachedType.Events.Value.AllVisible.Value,
+                BaseC1<int, string>.AllVisibleEventsTestData);
+
+            AssertContains(
+                cachedType.Events.Value.AsmVisible.Value,
+                BaseC1<int, string>.AsmVisibleEventsTestData);
         }
     }
 }

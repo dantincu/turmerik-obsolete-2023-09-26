@@ -7,6 +7,14 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Cloneable\ImmutableGenerator.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="Cloneable\ImmutableGenerator.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="7.0.0" />
   </ItemGroup>
 

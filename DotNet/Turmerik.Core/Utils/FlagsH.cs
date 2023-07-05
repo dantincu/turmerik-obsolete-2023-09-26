@@ -66,7 +66,10 @@ namespace Turmerik.Utils
                     matches = kvp.Value(
                         data, actualFlag);
 
-                    break;
+                    if (matches)
+                    {
+                        break;
+                    }
                 }
             }
 

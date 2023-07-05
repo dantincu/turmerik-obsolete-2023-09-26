@@ -258,19 +258,5 @@ namespace Turmerik.LocalDevice.ReflectionCacheUnitTests
             ExpectedContents<TContent>[] contentsArr,
             Func<TContent, TContent, TContent> aggregator) => contentsArr.Aggregate(
                 (left, right) => MergeData(left, right, aggregator));
-
-        private readonly struct ExpectedContents<TContent>
-        {
-            public readonly TContent Included;
-            public readonly TContent ReducedIncluded;
-
-            public ExpectedContents(
-                TContent included,
-                TContent reducedIncluded)
-            {
-                Included = included;
-                ReducedIncluded = reducedIncluded;
-            }
-        }
     }
 }

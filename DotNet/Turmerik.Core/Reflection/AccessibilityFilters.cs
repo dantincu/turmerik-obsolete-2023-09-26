@@ -128,11 +128,11 @@ namespace Turmerik.Reflection
         public EventAccessibilityFilter(
             MemberVisibility? adderVisibility,
             MemberVisibility? removerVisibility,
-            MemberVisibility? invokerVisibility)
+            MemberVisibility? raiserVisibility = null)
         {
             AdderVisibility = adderVisibility ?? Visibility.All;
             RemoverVisibility = removerVisibility ?? Visibility.All;
-            RaiserVisibility = invokerVisibility ?? Visibility.All;
+            RaiserVisibility = raiserVisibility ?? MemberVisibility.None;
         }
 
         public override int GetHashCode() => (

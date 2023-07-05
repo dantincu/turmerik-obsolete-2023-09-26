@@ -8,6 +8,7 @@ using Turmerik.Cache;
 using Turmerik.DriveExplorerCore;
 using Turmerik.FileSystem;
 using Turmerik.Infrastucture;
+using Turmerik.Mapping;
 using Turmerik.MathH;
 using Turmerik.Reflection;
 using Turmerik.Reflection.Cache;
@@ -64,6 +65,10 @@ namespace Turmerik.Dependencies
                 () => svcProv.GetRequiredService<ICachedReflectionItemsFactory>()));
 
             services.AddSingleton(svcProv => svcProv.GetRequiredService<ICachedTypesMapFactory>().Create());
+
+            services.AddSingleton<ITypesMappingCache, TypesMappingCache>();
+            services.AddSingleton<IPropsMapper, PropsMapper>();
+
             services.AddTransient<IDriveExplorerService, DriveExplorerService>();
         }
     }
