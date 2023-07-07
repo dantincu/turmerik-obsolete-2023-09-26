@@ -14,6 +14,7 @@ using Turmerik.Reflection;
 using Turmerik.Reflection.Cache;
 using Turmerik.Synchronized;
 using Turmerik.Text;
+using Turmerik.TreeTraversal;
 using Turmerik.Utils;
 
 namespace Turmerik.Dependencies
@@ -32,6 +33,7 @@ namespace Turmerik.Dependencies
             services.AddSingleton<ILambdaExprHelperFactory, LambdaExprHelperFactory>();
             services.AddSingleton<IBasicEqualityComparerFactory, BasicEqualityComparerFactory>();
 
+            services.AddSingleton<ITreeTraversalComponentFactory, TreeTraversalComponentFactory>();
             services.AddSingleton<IMatrixBuilderFactory, MatrixBuilderFactory>();
 
             services.AddSingleton<IMutexCreator, MutexCreator>();

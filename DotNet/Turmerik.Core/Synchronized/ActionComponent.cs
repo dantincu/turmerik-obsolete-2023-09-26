@@ -102,18 +102,17 @@ namespace Turmerik.Synchronized
     public abstract class ConcurrentActionComponentBase<TSynchronizer> : ActionComponentBase, IConcurrentActionComponent
         where TSynchronizer : class, IDisposable
     {
-        private readonly IDisposableComponent<TSynchronizer> synchronizerComponent;
+        private readonly Lazy<IDisposableComponent<TSynchronizer>> synchronizerComponent;
 
         protected ConcurrentActionComponentBase(
             IDisposableComponentFactory disposableComponentFactory)
         {
-            synchronizerComponent = disposableComponentFactory.Create(
-                CreateSynchronizer());
-
-            Synchronizer = synchronizerComponent.Component;
+            synchronizerComponent = new Lazy<IDisposableComponent<TSynchronizer>>(
+                () => disposableComponentFactory.Create(CreateSynchronizer()),
+                LazyThreadSafetyMode.ExecutionAndPublication);
         }
 
-        protected TSynchronizer Synchronizer { get; }
+        protected TSynchronizer Synchronizer => synchronizerComponent.Value.Component;
 
         public void Execute(Action action)
         {
@@ -154,7 +153,7 @@ namespace Turmerik.Synchronized
             Func<TData> action) => Execute(
                 () => TryExecuteCore(action));
 
-        public void Dispose() => synchronizerComponent.TryDispose();
+        public void Dispose() => synchronizerComponent.Value.TryDispose();
 
         protected abstract void WaitOne();
         protected abstract void Release();

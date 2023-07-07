@@ -33,7 +33,7 @@ namespace Turmerik.Mapping
     {
         public TypesMappingCache(
             ICachedTypesMap cachedTypesMap,
-            IStaticDataCacheFactory cacheFactory)
+            IThreadSafeStaticDataCacheFactory cacheFactory)
         {
             CachedTypesMap = cachedTypesMap ?? throw new ArgumentNullException(nameof(cachedTypesMap));
             CacheFactory = cacheFactory ?? throw new ArgumentNullException(nameof(cacheFactory));
@@ -47,7 +47,7 @@ namespace Turmerik.Mapping
         public IStaticDataCache<Type, IStaticDataCache<Type, ReadOnlyCollection<MappingPropsPair>>> PropsCache { get; }
 
         private ICachedTypesMap CachedTypesMap { get; }
-        private IStaticDataCacheFactory CacheFactory { get; }
+        private IThreadSafeStaticDataCacheFactory CacheFactory { get; }
         private PropertyAccessibilityFilter SrcPropsFilter { get; }
         private PropertyAccessibilityFilter DestnPropsFilter { get; }
 

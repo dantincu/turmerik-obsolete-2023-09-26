@@ -57,7 +57,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Turmerik.Core", "Turmerik.C
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Turmerik.LocalDevice.Core", "Turmerik.LocalDevice.Core\Turmerik.LocalDevice.Core.csproj", "{5F16EB51-0BA3-4549-B6E2-B14A83AD89B5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Turmerik.LocalFilesExplorer.AspNetCoreApp.UnitTests", "Turmerik.LocalFilesExplorer.AspNetCoreApp.UnitTests\Turmerik.LocalFilesExplorer.AspNetCoreApp.UnitTests.csproj", "{290A666D-2912-47E9-A30D-F3CA4A78C037}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Turmerik.LocalFilesExplorer.AspNetCoreApp.UnitTests", "Turmerik.LocalFilesExplorer.AspNetCoreApp.UnitTests\Turmerik.LocalFilesExplorer.AspNetCoreApp.UnitTests.csproj", "{290A666D-2912-47E9-A30D-F3CA4A78C037}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Turmerik.MsVSTextTemplating", "Turmerik.MsVSTextTemplating\Turmerik.MsVSTextTemplating.csproj", "{2468049C-90D3-46F2-B3D3-F3E4273EEB92}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Turmerik.MsVSTextTemplating.UnitTests", "Turmerik.MsVSTextTemplating.UnitTests\Turmerik.MsVSTextTemplating.UnitTests.csproj", "{BD2BBD4C-41BA-43C3-AEFF-3C139BF74640}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Turmerik.Testing.NetFx", "Turmerik.Testing.NetFx\Turmerik.Testing.NetFx.csproj", "{EF4DBDE9-E40F-4DA9-BD60-750E145FB0E5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -113,6 +119,18 @@ Global
 		{290A666D-2912-47E9-A30D-F3CA4A78C037}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{290A666D-2912-47E9-A30D-F3CA4A78C037}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{290A666D-2912-47E9-A30D-F3CA4A78C037}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2468049C-90D3-46F2-B3D3-F3E4273EEB92}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2468049C-90D3-46F2-B3D3-F3E4273EEB92}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2468049C-90D3-46F2-B3D3-F3E4273EEB92}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2468049C-90D3-46F2-B3D3-F3E4273EEB92}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BD2BBD4C-41BA-43C3-AEFF-3C139BF74640}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BD2BBD4C-41BA-43C3-AEFF-3C139BF74640}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BD2BBD4C-41BA-43C3-AEFF-3C139BF74640}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BD2BBD4C-41BA-43C3-AEFF-3C139BF74640}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EF4DBDE9-E40F-4DA9-BD60-750E145FB0E5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EF4DBDE9-E40F-4DA9-BD60-750E145FB0E5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EF4DBDE9-E40F-4DA9-BD60-750E145FB0E5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EF4DBDE9-E40F-4DA9-BD60-750E145FB0E5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -139,6 +157,9 @@ Global
 		{AC31C2CA-DB3F-470E-8200-519D0DCCB3B5} = {E9A3255F-0E33-4796-A489-8B4C016C573A}
 		{5F16EB51-0BA3-4549-B6E2-B14A83AD89B5} = {E9A3255F-0E33-4796-A489-8B4C016C573A}
 		{290A666D-2912-47E9-A30D-F3CA4A78C037} = {BE50DEF6-C9A9-40ED-8538-3496CAAD368C}
+		{2468049C-90D3-46F2-B3D3-F3E4273EEB92} = {E9A3255F-0E33-4796-A489-8B4C016C573A}
+		{BD2BBD4C-41BA-43C3-AEFF-3C139BF74640} = {D5115A7C-0835-4E11-9EE7-BB5AA80031F2}
+		{EF4DBDE9-E40F-4DA9-BD60-750E145FB0E5} = {E9A3255F-0E33-4796-A489-8B4C016C573A}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {884DC105-C0BD-4026-B220-D2D435105F94}

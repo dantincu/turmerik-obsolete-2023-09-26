@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -252,6 +253,83 @@ namespace Turmerik.Cloneable
         }
     }
 
+    public interface IDictionaryCore<TKey, TValue> : IEnumerable
+    {
+    }
+
+    public static class DictionaryCore
+    {
+        public static Dictionary<TKey, TValue> AsDictnr<TKey, TValue>(
+            this IDictionaryCore<TKey, TValue> src) => src?.Cast<KeyValuePair<TKey, TValue>>().ToDictionary(
+                kvp => kvp.Key, kvp => kvp.Value);
+
+        public static ReadOnlyDictionary<TKey, TValue> AsRdnlDictnr<TKey, TValue>(
+            this IDictionaryCore<TKey, TValue> src) => src?.Cast<KeyValuePair<TKey, TValue>>().ToDictionary(
+                kvp => kvp.Key, kvp => kvp.Value).RdnlD();
+
+        public static IDictionaryCore<TKey, TValue> AsDictnrCore<TKey, TValue>(
+            this IEnumerable<KeyValuePair<TKey, TValue>> src) => src as IDictionaryCore<TKey, TValue>;
+    }
+
+    [AttributeUsage(AttributeTargets.Class)]
+    public class ClnblNsTypeAttribute : Attribute
+    {
+        public ClnblNsTypeAttribute(Type helpersNsType = null)
+        {
+            HelpersNsType = helpersNsType;
+        }
+
+        public Type HelpersNsType { get; }
+    }
+
+    [AttributeUsage(AttributeTargets.Interface)]
+    public class ClnblTypeAttribute : Attribute
+    {
+        public ClnblTypeAttribute(
+            Type immtblType = null,
+            Type mtblType = null,
+            Type clnblTypeDecoratorType = null)
+        {
+            ImmtblType = immtblType;
+            MtblType = mtblType;
+            ClnblTypeDecoratorType = clnblTypeDecoratorType;
+        }
+
+        public Type ImmtblType { get; }
+        public Type MtblType { get; }
+        public Type ClnblTypeDecoratorType { get; }
+    }
+
+    [AttributeUsage(AttributeTargets.Class)]
+    public class ImmtblTypeAttribute : Attribute
+    {
+        public ImmtblTypeAttribute(
+            Type clnblType = null,
+            Type clnblTypeDecoratorType = null)
+        {
+            ClnblType = clnblType;
+            ClnblTypeDecoratorType = clnblTypeDecoratorType;
+        }
+
+        public Type ClnblType { get; }
+        public Type ClnblTypeDecoratorType { get; }
+    }
+
+    [AttributeUsage(AttributeTargets.Class)]
+    public class MtblTypeAttribute : Attribute
+    {
+        public MtblTypeAttribute(
+            Type clnblType = null,
+            Type clnblTypeDecoratorType = null)
+        {
+            ClnblType = clnblType;
+            ClnblTypeDecoratorType = clnblTypeDecoratorType;
+        }
+
+        public Type ClnblType { get; }
+        public Type ClnblTypeDecoratorType { get; }
+    }
+
     [AttributeUsage(AttributeTargets.Method)]
     public class ClnblIgnoreMethodAttribute : Attribute
     {
@@ -259,6 +337,10 @@ namespace Turmerik.Cloneable
 
     [AttributeUsage(AttributeTargets.Property)]
     public class ClnblIgnorePropertyAttribute : Attribute
+    {
+    }
+
+    public abstract class ClnblTypeDecoratorBase
     {
     }
 }

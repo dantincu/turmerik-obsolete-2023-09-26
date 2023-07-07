@@ -1,0 +1,11 @@
+﻿<#@ template debug="true" hostspecific="true" language="C#" #>
+<#@ assembly name="System.Core" #>
+<#@ assembly name="$(SolutionDir)\Bin\Turmerik.MsVSTextTemplating\Release\Turmerik.MsVSTextTemplating.dll" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Text" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ import namespace="System.Diagnostics" #>
+<#@ output extension=".cs" #>
+
+<# Debugger.Launch(); #>
+<#= Turmerik.MsVSTextTemplating.Components.ClnblTypesGenerator.GenerateCode(Host) #>
