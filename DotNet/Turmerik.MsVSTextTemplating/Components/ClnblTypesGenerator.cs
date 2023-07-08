@@ -25,7 +25,7 @@ namespace Turmerik.MsVSTextTemplating.Components
         /// <returns></returns>
         public static string GenerateCode(
             ITextTemplatingEngineHost host) => ServiceProviderContainer.Instance.Value.Services.GetRequiredService<IClnblTypesCodeGenerator>(
-                ).GenerateCode(new ClnblTypesCodeGeneratorOpts.Mtbl
+                ).GenerateCode(new ClnblTypesCodeGeneratorOptions.Mtbl
                 {
                     TemplateFilePath = host.TemplateFile
                 });

@@ -13,7 +13,6 @@ namespace Turmerik.TreeTraversal
             T RootNode { get; }
             Action<TreeTraversalComponent<T>.Args, T> OnDescend { get; }
             Action<TreeTraversalComponent<T>.Args, T> OnAscend { get; }
-            Action<TreeTraversalComponent<T>.Args> ArgsCreated { get; }
         }
 
         public class Immtbl<T> : IClnbl<T>
@@ -25,7 +24,6 @@ namespace Turmerik.TreeTraversal
                 RootNode = src.RootNode;
                 OnDescend = src.OnDescend;
                 OnAscend = src.OnAscend;
-                ArgsCreated = src.ArgsCreated;
             }
 
             public Func<TreeTraversalComponent<T>.Args, T, IEnumerator<T>> ChildNodesNmrtrRetriever { get; }
@@ -33,7 +31,6 @@ namespace Turmerik.TreeTraversal
             public T RootNode { get; }
             public Action<TreeTraversalComponent<T>.Args, T> OnDescend { get; }
             public Action<TreeTraversalComponent<T>.Args, T> OnAscend { get; }
-            public Action<TreeTraversalComponent<T>.Args> ArgsCreated { get; }
         }
 
         public class Mtbl<T> : IClnbl<T>
@@ -49,7 +46,6 @@ namespace Turmerik.TreeTraversal
                 RootNode = src.RootNode;
                 OnDescend = src.OnDescend;
                 OnAscend = src.OnAscend;
-                ArgsCreated = src.ArgsCreated;
             }
 
             public Func<TreeTraversalComponent<T>.Args, T, IEnumerator<T>> ChildNodesNmrtrRetriever { get; set; }
@@ -57,7 +53,6 @@ namespace Turmerik.TreeTraversal
             public T RootNode { get; set; }
             public Action<TreeTraversalComponent<T>.Args, T> OnDescend { get; set; }
             public Action<TreeTraversalComponent<T>.Args, T> OnAscend { get; set; }
-            public Action<TreeTraversalComponent<T>.Args> ArgsCreated { get; set; }
         }
 
         public static Immtbl<T> ToImmtbl<T>(

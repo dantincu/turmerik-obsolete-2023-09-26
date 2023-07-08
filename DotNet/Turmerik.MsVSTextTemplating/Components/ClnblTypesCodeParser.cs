@@ -11,15 +11,17 @@ using System.Text.RegularExpressions;
 using Turmerik.Text;
 using System.Xml.Linq;
 using Turmerik.TreeTraversal;
-using ParserArgs = Turmerik.MsVSTextTemplating.Components.ClnblTypesCodeGeneratorCodeParserArgs;
 using Turmerik.Collections;
+using Turmerik.Utils;
+using Microsoft.VisualStudio.OLE.Interop;
+using Turmerik.CodeAnalysis.Core.Dependencies;
 
 namespace Turmerik.MsVSTextTemplating.Components
 {
     public interface IClnblTypesCodeParser
     {
         ClnblTypesCodeParserOutput.Immtbl ParseCode(
-            ClnblTypesCodeGeneratorOpts.IClnbl opts);
+            ClnblTypesCodeGeneratorOptions.IClnbl opts);
 
         string GetCsFilePath(string templateFileName);
     }
@@ -34,40 +36,51 @@ namespace Turmerik.MsVSTextTemplating.Components
 
         public ClnblTypesCodeParser(
             IAppConfig appConfig,
-            TreeTraversal.ITreeTraversalComponentFactory treeTraversalComponentFactory) : base(
+            ITreeTraversalComponentFactory treeTraversalComponentFactory) : base(
                 appConfig,
                 treeTraversalComponentFactory)
         {
         }
 
         public ClnblTypesCodeParserOutput.Immtbl ParseCode(
-            ClnblTypesCodeGeneratorOpts.IClnbl opts)
+            ClnblTypesCodeGeneratorOptions.IClnbl options)
         {
-            opts = NormalizeOpts(opts.AsMtbl());
+            options = NormalizeOpts(options.AsMtbl());
 
             string csFilePath = GetCsFilePath(
-                opts.TemplateFilePath);
+                options.TemplateFilePath);
 
             string csCode = File.ReadAllText(csFilePath);
 
             SyntaxTree tree = CSharpSyntaxTree.ParseText(csCode);
             CompilationUnitSyntax root = tree.GetCompilationUnitRoot();
 
-            var args = GetArgs(
-                opts,
-                new ClnblTypesCodeParserOutput.Mtbl
+            var resultMtbl = TraverseTree(
+                new SyntaxTreeTraversalOptsCore<ClnblTypesCodeParserArgs, ClnblTypesCodeParserOutput.Mtbl>.Mtbl
                 {
-                    SyntaxTree = tree,
-                    Root = root,
-                    UsingNamespaceStatements = new List<string>(),
-                    NamespaceAliases = new Dictionary<string, string>(),
-                    StaticallyUsedNamespaces = new List<string>(),
-                    UsedNamespaces = new List<string>(),
-                });
+                    Code = csCode,
+                    OnAscend = (args, trArgs, treeNode) => OnAscend(args, trArgs, treeNode),
+                    OnDescend = (args, trArgs, treeNode) => OnDescend(args, trArgs, treeNode),
+                },
+                argsFactory: opts => new ClnblTypesCodeParserArgs(
+                    opts,
+                    tree,
+                    root,
+                    GetConfig(),
+                    options,
+                    new ClnblTypesCodeParserOutput.Mtbl
+                    {
+                        SyntaxTree = tree,
+                        Root = root,
+                        UsingNamespaceStatements = new List<string>(),
+                        NamespaceAliases = new Dictionary<string, string>(),
+                        StaticallyUsedNamespaces = new List<string>(),
+                        UsedNamespaces = new List<string>(),
+                        ClassDefinitions = new List<ParserOutputClassDefinition.Mtbl>(),
+                        InterfaceDefinitions = new List<ParserOutputInterfaceDefinition.Mtbl>()
+                    }));
 
-            ParseCode(args);
-
-            var output = args.ParserOutput.ToImmtbl();
+            var output = resultMtbl.ToImmtbl();
             return output;
         }
 
@@ -95,97 +108,277 @@ namespace Turmerik.MsVSTextTemplating.Components
             return csFilePath;
         }
 
-        protected ParserArgs GetArgs(
-            ClnblTypesCodeGeneratorOpts.IClnbl opts,
-            ClnblTypesCodeParserOutput.Mtbl output)
+        private void OnAscend(
+            ClnblTypesCodeParserArgs args,
+            TreeTraversalComponent<TreeNode>.Args trArgs,
+            TreeNode treeNode)
         {
-            var args = new ParserArgs(
-                GetConfig(),
-                NormalizeOpts(opts.AsMtbl()),
-                output,
-                TreeTraversalComponentFactory.Create<ParserArgs.TreeNode>());
+            var kind = treeNode.Node.Kind();
 
-            return args;
-        }
-
-        private void ParseCode(ParserArgs args)
-        {
-            args.TreeTraversal.Traverse(
-                new TreeTraversalComponentOpts.Mtbl<ParserArgs.TreeNode>
+            switch (kind)
             {
-                ArgsCreated = trArgs => args.TrArgs = trArgs,
-                RootNode = new ParserArgs.TreeNode(args.ParserOutput.Root),
-                ChildNodesNmrtrRetriever = (arg, treeNode) => new TransformedEnumerator<SyntaxNode, ParserArgs.TreeNode>(
-                    treeNode.Node.DescendantNodes().GetEnumerator(),
-                    node => new ParserArgs.TreeNode(node)),
-                GoNextPredicate = (trArgs, treeNode) => true,
-                OnAscend = (arg, treeNode) =>
+                case SyntaxKind.UsingDirective:
+                    HandleUsingDirective(args, trArgs);
+                    break;
+
+                case SyntaxKind.FileScopedNamespaceDeclaration:
+                    HandleFileScopedNamespaceDeclaration(args, trArgs);
+                    break;
+
+                case SyntaxKind.NamespaceDeclaration:
+                    HandleNamespaceDeclaration(args, trArgs);
+                    break;
+
+                case SyntaxKind.ClassDeclaration:
+                    HandleClassDeclarationStart(args, trArgs);
+                    break;
+
+                case SyntaxKind.InterfaceDeclaration:
+                    HandleInterfaceDeclarationStart(args, trArgs);
+                    break;
+
+                case SyntaxKind.StructDeclaration:
+                    HandleStructDeclarationStart(args, trArgs);
+                    break;
+
+                case SyntaxKind.EnumDeclaration:
+                    HandleEnumDeclarationStart(args, trArgs);
+                    break;
+
+                case SyntaxKind.PropertyDeclaration:
+                    HandlePropertyDeclarationStart(args, trArgs);
+                    break;
+
+                case SyntaxKind.MethodDeclaration:
+                    HandleMethodDeclarationStart(args, trArgs);
+                    break;
+
+                case SyntaxKind.FieldDeclaration:
+                    HandleMemberDeclarationStart(args, trArgs);
+                    break;
+
+                case SyntaxKind.EventDeclaration:
+                    HandleMemberDeclarationStart(args, trArgs);
+                    break;
+
+                case SyntaxKind.Attribute:
+                    HandleAttributeStart(args, trArgs);
+                    break;
+
+                default:
+                    break;
+            }
+        }
+
+        private void OnDescend(
+            ClnblTypesCodeParserArgs args,
+            TreeTraversalComponent<TreeNode>.Args trArgs,
+            TreeNode treeNode)
+        {
+            switch (args.TrState)
+            {
+                case ClnblTypesCodeGeneratorTreeTraversalState.File:
+                    break;
+                case ClnblTypesCodeGeneratorTreeTraversalState.TypeDef:
+                    HandleTypeDeclarationEnd(args, trArgs);
+                    break;
+                case ClnblTypesCodeGeneratorTreeTraversalState.PropertyDef:
+                    HandlePropertyDeclarationEnd(args, trArgs);
+                    break;
+                case ClnblTypesCodeGeneratorTreeTraversalState.MethodDef:
+                    HandleMethodDeclarationEnd(args, trArgs);
+                    break;
+                case ClnblTypesCodeGeneratorTreeTraversalState.MemberDef:
+                    HandleMemberDeclarationEnd(args, trArgs);
+                    break;
+                case ClnblTypesCodeGeneratorTreeTraversalState.AttrDecrt:
+                    HandleAttributeEnd(args, trArgs);
+                    break;
+                default:
+                    throw new InvalidOperationException("Invalid tree traversal state");
+            }
+        }
+
+        private void PushNode<TNode>(
+            ClnblTypesCodeParserArgs args,
+            TNode nextTypeDef,
+            TreeTraversalComponent<TreeNode>.Args trArgs)
+            where TNode : ParserOutputTypeDefinition.Mtbl
+        {
+            var currentTypeDef = args.CurrentTypeDef;
+
+            nextTypeDef.NestedParentClass = args.CurrentTypeDef.SafeCast<ParserOutputClassDefinition.Mtbl>(
+                () => throw new InvalidOperationException("Only classes can have nested types"));
+
+            nextTypeDef.Attributes = args.CurrentAttrDecrtsList;
+
+            args.CurrentAttrDecrt = null;
+            args.CurrentAttrDecrtsList = new List<ParserOutputAttributeDecoration.Mtbl>();
+
+            args.CurrentTypeDef = nextTypeDef;
+        }
+
+        private void PopNode(
+            ClnblTypesCodeParserArgs args,
+            TreeTraversalComponent<TreeNode>.Args trArgs)
+        {
+            var currentTypeDef = args.CurrentTypeDef;
+            var parentNestedClass = currentTypeDef.NestedParentClass;
+
+            bool isRootLevel = parentNestedClass == null;
+
+            if (isRootLevel)
+            {
+                if (currentTypeDef is ParserOutputClassDefinition.Mtbl classDef)
                 {
-                    var kind = treeNode.Node.Kind();
-
-                    switch (kind)
-                    {
-                        case SyntaxKind.UsingDirective:
-                            HandleUsingDirective(args);
-                            break;
-
-                        case SyntaxKind.FileScopedNamespaceDeclaration:
-                            HandleFileScopedNamespaceDeclaration(args);
-                            break;
-
-                        case SyntaxKind.NamespaceDeclaration:
-                            HandleNamespaceDeclaration(args);
-                            break;
-
-                        case SyntaxKind.ClassDeclaration:
-                            HandleClassDeclaration(args);
-                            break;
-
-                        case SyntaxKind.InterfaceDeclaration:
-                            HandleInterfaceDeclaration(args);
-                            break;
-
-                        case SyntaxKind.Attribute:
-                            HandleAttribute(args);
-                            break;
-
-                        default:
-                            break;
-                    }
-                },
-                OnDescend = (arg, treeNode) =>
-                {
-
+                    args.ParserOutput.ClassDefinitions.Add(classDef);
                 }
-            });
+                else if (currentTypeDef is ParserOutputInterfaceDefinition.Mtbl interfaceDef)
+                {
+                    args.ParserOutput.InterfaceDefinitions.Add(interfaceDef);
+                }
+            }
+            else
+            {
+                parentNestedClass.NestedTypes.Add(currentTypeDef);
+            }
+
+            args.CurrentTypeDef = args.CurrentTypeDef.NestedParentClass;
+
+            if (isRootLevel)
+            {
+                args.TrState = ClnblTypesCodeGeneratorTreeTraversalState.File;
+            }
+            else
+            {
+                args.TrState = ClnblTypesCodeGeneratorTreeTraversalState.TypeDef;
+            }
         }
 
-        private void HandleAttribute(
-            ParserArgs args)
+        private void HandleAttributeStart(
+            ClnblTypesCodeParserArgs args,
+            TreeTraversalComponent<TreeNode>.Args trArgs)
         {
-            var node = args.TrArgs.CurrentTreeNode.Data.Node as UsingDirectiveSyntax;
-            var output = args.ParserOutput;
+            var node = trArgs.CurrentTreeNode.Data.Node as AttributeSyntax;
+
+            args.CurrentAttrDecrt = new ParserOutputAttributeDecoration.Mtbl
+            {
+                Name = node.Name.ToString()
+            };
         }
 
-        private void HandleClassDeclaration(
-            ParserArgs args)
+        private void HandleAttributeEnd(
+            ClnblTypesCodeParserArgs args,
+            TreeTraversalComponent<TreeNode>.Args trArgs)
         {
-            var node = args.TrArgs.CurrentTreeNode.Data.Node as UsingDirectiveSyntax;
-            var output = args.ParserOutput;
+            args.CurrentAttrDecrtsList.Add(args.CurrentAttrDecrt);
+            args.CurrentAttrDecrt = null;
+            args.TrState = ClnblTypesCodeGeneratorTreeTraversalState.TypeDef;
         }
 
-        private void HandleInterfaceDeclaration(
-            ParserArgs args)
+        private void HandleMemberDeclarationStart(
+            ClnblTypesCodeParserArgs args,
+            TreeTraversalComponent<TreeNode>.Args trArgs)
         {
-            var node = args.TrArgs.CurrentTreeNode.Data.Node as UsingDirectiveSyntax;
-            var output = args.ParserOutput;
+            args.TrState = ClnblTypesCodeGeneratorTreeTraversalState.MemberDef;
+        }
+
+        private void HandleMemberDeclarationEnd(
+            ClnblTypesCodeParserArgs args,
+            TreeTraversalComponent<TreeNode>.Args trArgs)
+        {
+            args.TrState = ClnblTypesCodeGeneratorTreeTraversalState.TypeDef;
+        }
+
+        private void HandlePropertyDeclarationStart(
+            ClnblTypesCodeParserArgs args,
+            TreeTraversalComponent<TreeNode>.Args trArgs)
+        {
+            args.TrState = ClnblTypesCodeGeneratorTreeTraversalState.MemberDef;
+        }
+
+        private void HandlePropertyDeclarationEnd(
+            ClnblTypesCodeParserArgs args,
+            TreeTraversalComponent<TreeNode>.Args trArgs)
+        {
+            args.TrState = ClnblTypesCodeGeneratorTreeTraversalState.TypeDef;
+        }
+
+        private void HandleMethodDeclarationStart(
+            ClnblTypesCodeParserArgs args,
+            TreeTraversalComponent<TreeNode>.Args trArgs)
+        {
+            args.TrState = ClnblTypesCodeGeneratorTreeTraversalState.MemberDef;
+        }
+
+        private void HandleMethodDeclarationEnd(
+            ClnblTypesCodeParserArgs args,
+            TreeTraversalComponent<TreeNode>.Args trArgs)
+        {
+            args.TrState = ClnblTypesCodeGeneratorTreeTraversalState.TypeDef;
+        }
+
+        private void HandleClassDeclarationStart(
+            ClnblTypesCodeParserArgs args,
+            TreeTraversalComponent<TreeNode>.Args trArgs)
+        {
+            var node = trArgs.CurrentTreeNode.Data.Node as ClassDeclarationSyntax;
+
+            PushNode(args, new ParserOutputClassDefinition.Mtbl
+            {
+                Name = node.Identifier.Text
+            }, trArgs);
+        }
+
+        private void HandleInterfaceDeclarationStart(
+            ClnblTypesCodeParserArgs args,
+            TreeTraversalComponent<TreeNode>.Args trArgs)
+        {
+            var node = trArgs.CurrentTreeNode.Data.Node as InterfaceDeclarationSyntax;
+
+            PushNode(args, new ParserOutputInterfaceDefinition.Mtbl
+            {
+                Name = node.Identifier.Text
+            }, trArgs);
+        }
+
+        private void HandleStructDeclarationStart(
+            ClnblTypesCodeParserArgs args,
+            TreeTraversalComponent<TreeNode>.Args trArgs)
+        {
+            var node = trArgs.CurrentTreeNode.Data.Node as StructDeclarationSyntax;
+
+            PushNode(args, new ParserOutputTypeDefinition.Mtbl
+            {
+                Name = node.Identifier.Text
+            }, trArgs);
+        }
+
+        private void HandleEnumDeclarationStart(
+            ClnblTypesCodeParserArgs args,
+            TreeTraversalComponent<TreeNode>.Args trArgs)
+        {
+            var node = trArgs.CurrentTreeNode.Data.Node as EnumDeclarationSyntax;
+
+            PushNode(args, new ParserOutputTypeDefinition.Mtbl
+            {
+                Name = node.Identifier.Text
+            }, trArgs);
+        }
+
+        private void HandleTypeDeclarationEnd(
+            ClnblTypesCodeParserArgs args,
+            TreeTraversalComponent<TreeNode>.Args trArgs)
+        {
+            PopNode(args, trArgs);
         }
 
         private void HandleUsingDirective(
-            ParserArgs args)
+            ClnblTypesCodeParserArgs args,
+            TreeTraversalComponent<TreeNode>.Args trArgs)
         {
-            AssertNoNamespaceDeclaration(args);
-            var node = args.TrArgs.CurrentTreeNode.Data.Node as UsingDirectiveSyntax;
+            AssertNoNamespaceDeclaration(args, trArgs);
+            var node = trArgs.CurrentTreeNode.Data.Node as UsingDirectiveSyntax;
             var output = args.ParserOutput;
 
             output.UsingNamespaceStatements.Add(node.ToFullString());
@@ -207,10 +400,11 @@ namespace Turmerik.MsVSTextTemplating.Components
         }
 
         private void HandleNamespaceDeclaration(
-            ParserArgs args)
+            ClnblTypesCodeParserArgs args,
+            TreeTraversalComponent<TreeNode>.Args trArgs)
         {
-            AssertNoNamespaceDeclaration(args);
-            var nsNode = args.TrArgs.CurrentTreeNode.Data.Node as NamespaceDeclarationSyntax;
+            AssertNoNamespaceDeclaration(args, trArgs);
+            var nsNode = trArgs.CurrentTreeNode.Data.Node as NamespaceDeclarationSyntax;
             var output = args.ParserOutput;
 
             output.NamespaceDeclaration = nsNode.ToFullString();
@@ -218,10 +412,11 @@ namespace Turmerik.MsVSTextTemplating.Components
         }
 
         private void HandleFileScopedNamespaceDeclaration(
-            ParserArgs args)
+            ClnblTypesCodeParserArgs args,
+            TreeTraversalComponent<TreeNode>.Args trArgs)
         {
-            AssertNoNamespaceDeclaration(args);
-            var fsNsNode = args.TrArgs.CurrentTreeNode.Data.Node as FileScopedNamespaceDeclarationSyntax;
+            AssertNoNamespaceDeclaration(args, trArgs);
+            var fsNsNode = trArgs.CurrentTreeNode.Data.Node as FileScopedNamespaceDeclarationSyntax;
             var output = args.ParserOutput;
 
             output.FileScopedNamespaceDeclaration = fsNsNode.ToFullString();
@@ -229,7 +424,8 @@ namespace Turmerik.MsVSTextTemplating.Components
         }
 
         private void AssertNoNamespaceDeclaration(
-            ParserArgs args)
+            ClnblTypesCodeParserArgs args,
+            TreeTraversalComponent<TreeNode>.Args trArgs)
         {
             if (args.ParserOutput.Namespace != null)
             {

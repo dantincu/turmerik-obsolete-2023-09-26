@@ -97,8 +97,8 @@
     <Reference Include="System.Numerics.Vectors, Version=4.1.4.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Numerics.Vectors.4.5.0\lib\net46\System.Numerics.Vectors.dll</HintPath>
     </Reference>
-    <Reference Include="System.Reflection.Metadata, Version=7.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Reflection.Metadata.7.0.0\lib\net462\System.Reflection.Metadata.dll</HintPath>
+    <Reference Include="System.Reflection.Metadata, Version=7.0.0.2, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Reflection.Metadata.7.0.2\lib\net462\System.Reflection.Metadata.dll</HintPath>
     </Reference>
     <Reference Include="System.Runtime.CompilerServices.Unsafe, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Runtime.CompilerServices.Unsafe.6.0.0\lib\net461\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
@@ -125,7 +125,7 @@
     <Compile Include="Components\ClnblTypesCodeGeneratorConfigDefaults.cs" />
     <Compile Include="Components\ClnblTypesCodeGeneratorConfigSrlzbl.clnbl.cs" />
     <Compile Include="Components\ClnblTypesCodeGeneratorConfigCore.TypeNames.clnbl.cs" />
-    <Compile Include="Components\ClnblTypesCodeGeneratorOpts.clnbl.cs" />
+    <Compile Include="Components\ClnblTypesCodeGeneratorOptions.clnbl.cs" />
     <Compile Include="Components\ClnblTypesCodeGeneratorConfig.clnbl.cs" />
     <Compile Include="Components\ClnblTypesCodeParser.cs" />
     <Compile Include="Components\ClnblTypesCodeParserOutput.clnbl.cs" />
@@ -151,6 +151,10 @@
     <Compile Include="ServiceProviderContainer.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Turmerik.CodeAnalysis.Core\Turmerik.CodeAnalysis.Core.csproj">
+      <Project>{8d19e346-0c33-4778-bdd0-012c3a2545c0}</Project>
+      <Name>Turmerik.CodeAnalysis.Core</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Turmerik.Core\Turmerik.Core.csproj">
       <Project>{ac31c2ca-db3f-470e-8200-519d0dccb3b5}</Project>
       <Name>Turmerik.Core</Name>

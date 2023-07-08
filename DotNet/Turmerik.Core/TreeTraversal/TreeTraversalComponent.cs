@@ -18,8 +18,6 @@ namespace Turmerik.TreeTraversal
             using (var args = new Args(
                 NormalizeOpts(opts.AsMtbl())))
             {
-                args.Opts.ArgsCreated(args);
-
                 args.RootTreeNode = GetNextTreeNode(
                     args, args.Opts.RootNode);
 
@@ -60,7 +58,6 @@ namespace Turmerik.TreeTraversal
         {
             optsMtbl.OnDescend = optsMtbl.OnDescend.FirstNotNull((args, data) => { });
             optsMtbl.OnAscend = optsMtbl.OnAscend.FirstNotNull((args, data) => { });
-            optsMtbl.ArgsCreated = optsMtbl.ArgsCreated.FirstNotNull(args => { });
 
             var optsImmtbl = optsMtbl.ToImmtbl();
             return optsImmtbl;

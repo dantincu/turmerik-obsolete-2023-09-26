@@ -10,7 +10,7 @@ using Turmerik.Collections;
 
 namespace Turmerik.MsVSTextTemplating.Components
 {
-    public static class ClnblTypesCodeGeneratorOpts
+    public static class ClnblTypesCodeGeneratorOptions
     {
         public interface IClnbl
         {
@@ -19,10 +19,6 @@ namespace Turmerik.MsVSTextTemplating.Components
 
         public class Immtbl : IClnbl
         {
-            public Immtbl()
-            {
-            }
-
             public Immtbl(IClnbl src)
             {
                 TemplateFilePath = src.TemplateFilePath;

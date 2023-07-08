@@ -65,6 +65,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Turmerik.MsVSTextTemplating
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Turmerik.Testing.NetFx", "Turmerik.Testing.NetFx\Turmerik.Testing.NetFx.csproj", "{EF4DBDE9-E40F-4DA9-BD60-750E145FB0E5}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Turmerik.CodeAnalysis.Core", "Turmerik.CodeAnalysis.Core\Turmerik.CodeAnalysis.Core.csproj", "{8D19E346-0C33-4778-BDD0-012C3A2545C0}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -131,6 +133,10 @@ Global
 		{EF4DBDE9-E40F-4DA9-BD60-750E145FB0E5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EF4DBDE9-E40F-4DA9-BD60-750E145FB0E5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EF4DBDE9-E40F-4DA9-BD60-750E145FB0E5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8D19E346-0C33-4778-BDD0-012C3A2545C0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8D19E346-0C33-4778-BDD0-012C3A2545C0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8D19E346-0C33-4778-BDD0-012C3A2545C0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8D19E346-0C33-4778-BDD0-012C3A2545C0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -160,6 +166,7 @@ Global
 		{2468049C-90D3-46F2-B3D3-F3E4273EEB92} = {E9A3255F-0E33-4796-A489-8B4C016C573A}
 		{BD2BBD4C-41BA-43C3-AEFF-3C139BF74640} = {D5115A7C-0835-4E11-9EE7-BB5AA80031F2}
 		{EF4DBDE9-E40F-4DA9-BD60-750E145FB0E5} = {E9A3255F-0E33-4796-A489-8B4C016C573A}
+		{8D19E346-0C33-4778-BDD0-012C3A2545C0} = {E9A3255F-0E33-4796-A489-8B4C016C573A}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {884DC105-C0BD-4026-B220-D2D435105F94}

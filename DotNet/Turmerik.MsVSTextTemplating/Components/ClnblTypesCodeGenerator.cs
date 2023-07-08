@@ -17,89 +17,86 @@ using Turmerik.Collections;
 using Turmerik.Text;
 using Turmerik.LocalDevice.Core.Env;
 using Turmerik.TreeTraversal;
+using Turmerik.CodeAnalysis.Core.Dependencies;
 
 namespace Turmerik.MsVSTextTemplating.Components
 {
     public interface IClnblTypesCodeGenerator
     {
-        string GenerateCode(ClnblTypesCodeGeneratorOpts.IClnbl opts);
+        string GenerateCode(ClnblTypesCodeGeneratorOptions.IClnbl opts);
     }
 
-    public class ClnblTypesCodeGeneratorCodeParserArgsCore
+    public enum ClnblTypesCodeGeneratorTreeTraversalState
     {
-        public ClnblTypesCodeGeneratorCodeParserArgsCore(
+        None = 0,
+        File,
+        TypeDef,
+        PropertyDef,
+        MethodDef,
+        MemberDef,
+        AttrDecrt
+    }
+
+    public class ClnblTypesCodeParserArgs : SyntaxTreeTraversal.Args<ClnblTypesCodeParserArgs, ClnblTypesCodeParserOutput.Mtbl>
+    {
+        public ClnblTypesCodeParserArgs(
+            SyntaxTreeTraversalOptsCore<ClnblTypesCodeParserArgs, ClnblTypesCodeParserOutput.Mtbl>.Immtbl traversalOpts,
+            SyntaxTree syntaxTree,
+            CompilationUnitSyntax rootNode,
             ClnblTypesCodeGeneratorConfig.IClnbl config,
-            ClnblTypesCodeGeneratorOpts.IClnbl opts)
+            ClnblTypesCodeGeneratorOptions.IClnbl opts,
+            ClnblTypesCodeParserOutput.Mtbl output) : base(
+                traversalOpts,
+                syntaxTree,
+                rootNode)
         {
             Config = config ?? throw new ArgumentNullException(nameof(config));
-            Opts = opts ?? throw new ArgumentNullException(nameof(opts));
+            Options = opts ?? throw new ArgumentNullException(nameof(opts));
+            ParserOutput = output ?? throw new ArgumentNullException(nameof(output));
         }
 
         public ClnblTypesCodeGeneratorConfig.IClnbl Config { get; }
-        public ClnblTypesCodeGeneratorOpts.IClnbl Opts { get; }
-    }
-
-    public class ClnblTypesCodeGeneratorCodeParserArgs : ClnblTypesCodeGeneratorCodeParserArgsCore
-    {
-        public ClnblTypesCodeGeneratorCodeParserArgs(
-            ClnblTypesCodeGeneratorConfig.IClnbl config,
-            ClnblTypesCodeGeneratorOpts.IClnbl opts,
-            ClnblTypesCodeParserOutput.Mtbl output,
-            ITreeTraversalComponent<TreeNode> treeTraversal) : base(
-                config,
-                opts)
-        {
-            ParserOutput = output ?? throw new ArgumentNullException(nameof(output));
-            TreeTraversal = treeTraversal ?? throw new ArgumentNullException(nameof(treeTraversal));
-        }
-
+        public ClnblTypesCodeGeneratorOptions.IClnbl Options { get; }
+        public ClnblTypesCodeGeneratorTreeTraversalState TrState { get; set; }
         public ClnblTypesCodeParserOutput.Mtbl ParserOutput { get; }
-        public ITreeTraversalComponent<TreeNode> TreeTraversal { get; }
-        public TreeTraversalComponent<TreeNode>.Args TrArgs { get; set; }
 
-        public class TreeNode
-        {
-            public TreeNode(SyntaxNode node)
-            {
-                Node = node ?? throw new ArgumentNullException(nameof(node));
-            }
-
-            public SyntaxNode Node { get; }
-        }
+        public List<ParserOutputAttributeDecoration.Mtbl> CurrentAttrDecrtsList { get; set; }
+        public ParserOutputAttributeDecoration.Mtbl CurrentAttrDecrt { get; set; }
+        public ParserOutputTypeDefinition.Mtbl CurrentTypeDef { get; set; }
+        public ParserOutputClnblTypeMemberDeclaration.Mtbl CurrentMemberDeclr { get; set; }
     }
 
-    public class ClnblTypesCodeGeneratorCodeGeneratorArgs : ClnblTypesCodeGeneratorCodeParserArgsCore
+    public class ClnblTypesCodeGeneratorArgs
     {
-        public ClnblTypesCodeGeneratorCodeGeneratorArgs(
+        public ClnblTypesCodeGeneratorArgs(
             ClnblTypesCodeGeneratorConfig.IClnbl config,
-            ClnblTypesCodeGeneratorOpts.IClnbl opts,
-            ClnblTypesCodeParserOutput.Immtbl parserOutput) : base(
-                config,
-                opts)
+            ClnblTypesCodeGeneratorOptions.IClnbl opts,
+            ClnblTypesCodeParserOutput.Immtbl parserOutput)
         {
+            Config = config ?? throw new ArgumentNullException(nameof(config));
+            Options = opts ?? throw new ArgumentNullException(nameof(opts));
             ParserOutput = parserOutput ?? throw new ArgumentNullException(nameof(parserOutput));
         }
 
+        public ClnblTypesCodeGeneratorConfig.IClnbl Config { get; }
+        public ClnblTypesCodeGeneratorOptions.IClnbl Options { get; }
+        public ClnblTypesCodeGeneratorTreeTraversalState TrState { get; set; }
         public ClnblTypesCodeParserOutput.Immtbl ParserOutput { get; }
     }
 
-    public abstract class ClnblTypesCodeGeneratorBase
+    public abstract class ClnblTypesCodeGeneratorBase : SyntaxTreeTraversal
     {
         protected ClnblTypesCodeGeneratorBase(
             IAppConfig appConfig,
-            ITreeTraversalComponentFactory treeTraversalComponentFactory)
+            ITreeTraversalComponentFactory treeTraversalComponentFactory) : base(treeTraversalComponentFactory)
         {
             AppConfig = appConfig ?? throw new ArgumentNullException(nameof(appConfig));
-
-            TreeTraversalComponentFactory = treeTraversalComponentFactory ?? throw new ArgumentNullException(
-                nameof(treeTraversalComponentFactory));
         }
 
         protected IAppConfig AppConfig { get; }
-        protected ITreeTraversalComponentFactory TreeTraversalComponentFactory { get; }
 
-        protected virtual ClnblTypesCodeGeneratorOpts.IClnbl NormalizeOpts(
-            ClnblTypesCodeGeneratorOpts.Mtbl opts) => opts.ToImmtbl();
+        protected virtual ClnblTypesCodeGeneratorOptions.IClnbl NormalizeOpts(
+            ClnblTypesCodeGeneratorOptions.Mtbl opts) => opts.ToImmtbl();
 
         protected virtual ClnblTypesCodeGeneratorConfig.IClnbl NormalizeConfig(
             ClnblTypesCodeGeneratorConfigSrlzbl.Mtbl opts) => new ClnblTypesCodeGeneratorConfig.Immtbl(opts);
@@ -122,19 +119,21 @@ namespace Turmerik.MsVSTextTemplating.Components
         }
 
         public string GenerateCode(
-            ClnblTypesCodeGeneratorOpts.IClnbl opts)
+            ClnblTypesCodeGeneratorOptions.IClnbl options)
         {
-            var parserOutput = codeParser.ParseCode(opts);
-            var args = GetArgs(opts, parserOutput);
+            options = NormalizeOpts(options.AsMtbl());
+
+            var parserOutput = codeParser.ParseCode(options);
+            var args = GetArgs(options, parserOutput);
 
             throw new NotImplementedException();
         }
 
-        private ClnblTypesCodeGeneratorCodeGeneratorArgs GetArgs(
-            ClnblTypesCodeGeneratorOpts.IClnbl opts,
-            ClnblTypesCodeParserOutput.Immtbl parserOutput) => new ClnblTypesCodeGeneratorCodeGeneratorArgs(
-                GetConfig(),
-                opts,
+        private ClnblTypesCodeGeneratorArgs GetArgs(
+            ClnblTypesCodeGeneratorOptions.IClnbl options,
+            ClnblTypesCodeParserOutput.Immtbl parserOutput) => new ClnblTypesCodeGeneratorArgs(
+                this.GetConfig(),
+                options,
                 parserOutput);
     }
 }

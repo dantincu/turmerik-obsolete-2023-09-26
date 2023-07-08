@@ -13,6 +13,7 @@ namespace Turmerik.MsVSTextTemplating.Components
     {
         public interface IClnbl
         {
+            string Name { get; }
             ParserOutputAttributeKind Kind { get; }
         }
 
@@ -20,9 +21,11 @@ namespace Turmerik.MsVSTextTemplating.Components
         {
             public Immtbl(IClnbl src)
             {
+                Name = src.Name;
                 Kind = src.Kind;
             }
 
+            public string Name { get; }
             public ParserOutputAttributeKind Kind { get; }
         }
 
@@ -34,9 +37,11 @@ namespace Turmerik.MsVSTextTemplating.Components
 
             public Mtbl(IClnbl src)
             {
+                Name = src.Name;
                 Kind = src.Kind;
             }
 
+            public string Name { get; set; }
             public ParserOutputAttributeKind Kind { get; set; }
         }
 
