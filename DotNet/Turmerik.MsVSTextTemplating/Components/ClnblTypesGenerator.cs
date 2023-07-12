@@ -24,10 +24,17 @@ namespace Turmerik.MsVSTextTemplating.Components
         /// <param name="host"></param>
         /// <returns></returns>
         public static string GenerateCode(
-            ITextTemplatingEngineHost host) => ServiceProviderContainer.Instance.Value.Services.GetRequiredService<IClnblTypesCodeGenerator>(
+            ITextTemplatingEngineHost host)
+        {
+            ServiceProviderContainer.AssureServicesRegistered();
+
+            var code = ServiceProviderContainer.Instance.Value.Services.GetRequiredService<IClnblTypesCodeGenerator>(
                 ).GenerateCode(new ClnblTypesCodeGeneratorOptions.Mtbl
                 {
                     TemplateFilePath = host.TemplateFile
                 });
+
+            return code;
+        }
     }
 }

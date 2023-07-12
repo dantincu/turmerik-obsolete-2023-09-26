@@ -23,9 +23,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="TextTemplate-generated1.tt">
+    <None Update="TextTemplate.clnbl-impl.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
-      <LastGenOutput>TextTemplate-generated1.cs</LastGenOutput>
+      <LastGenOutput>TextTemplate.clnbl-impl.cs</LastGenOutput>
     </None>
   </ItemGroup>
 
@@ -34,10 +34,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Update="TextTemplate-generated1.cs">
+    <Compile Update="TextTemplate.clnbl-impl.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
-      <DependentUpon>TextTemplate-generated1.tt</DependentUpon>
+      <DependentUpon>TextTemplate.clnbl-impl.tt</DependentUpon>
     </Compile>
     <Compile Update="TextTemplate1.cs">
       <DesignTime>True</DesignTime>
@@ -45,5 +45,9 @@
       <DependentUpon>TextTemplate1.tt</DependentUpon>
     </Compile>
   </ItemGroup>
+
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="if '$(ConfigurationName)' == 'Debug' ( copy /y $(SolutionDir)app-env-locator.dev.json $(ProjectDir)$(OutDir)app-env-locator.json ) ELSE (copy /y $(SolutionDir)app-env-locator.json $(ProjectDir)$(OutDir)app-env-locator.json )" />
+  </Target>
 
 </Project>

@@ -4,11 +4,11 @@ using System.Text;
 
 namespace Turmerik.TreeTraversal
 {
-    public static class TreeTraversalComponentOpts
+    public static class TreeTraversalComponentNormOpts
     {
         public interface IClnbl<T> : TreeTraversalComponentOptsCore.IClnbl<T>
         {
-            bool? DisposeTreeNodes { get; }
+            bool DisposeTreeNodes { get; }
         }
 
         public class Immtbl<T> : TreeTraversalComponentOptsCore.Immtbl<T>, IClnbl<T>
@@ -18,7 +18,7 @@ namespace Turmerik.TreeTraversal
                 DisposeTreeNodes = src.DisposeTreeNodes;
             }
 
-            public bool? DisposeTreeNodes { get; }
+            public bool DisposeTreeNodes { get; }
         }
 
         public class Mtbl<T> : TreeTraversalComponentOptsCore.Mtbl<T>, IClnbl<T>
@@ -27,12 +27,16 @@ namespace Turmerik.TreeTraversal
             {
             }
 
+            public Mtbl(TreeTraversalComponentOptsCore.IClnbl<T> src) : base(src)
+            {
+            }
+
             public Mtbl(IClnbl<T> src) : base(src)
             {
                 DisposeTreeNodes = src.DisposeTreeNodes;
             }
 
-            public bool? DisposeTreeNodes { get; set; }
+            public bool DisposeTreeNodes { get; set; }
         }
 
         public static Immtbl<T> ToImmtbl<T>(

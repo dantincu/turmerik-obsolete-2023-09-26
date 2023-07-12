@@ -20,21 +20,13 @@ namespace Turmerik.MsVSTextTemplating
         {
         }
 
-        static ServiceProviderContainer()
-        {
-            RegisterAllServices();
-        }
-
-        private static void RegisterAllServices()
+        public static void AssureServicesRegistered(Action<IServiceCollection> callback = null)
         {
             var services = new ServiceCollection();
-            LocalDeviceServiceCollectionBuilder.RegisterAll(services);
+            MsVsTextTemplatingServiceCollectionBuilder.RegisterAll(services);
 
-            services.AddSingleton<IAppConfig, AppConfig>();
-            services.AddSingleton<IClnblTypesCodeParser, ClnblTypesCodeParser>();
-            services.AddSingleton<IClnblTypesCodeGenerator, ClnblTypesCodeGenerator>();
-
-            Instance.Value.RegisterServices(services);
+            callback?.Invoke(services);
+            Instance.Value.AssureServicesRegistered(services);
         }
     }
 }

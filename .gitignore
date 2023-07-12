@@ -398,3 +398,4 @@ FodyWeavers.xsd
 *.sln.iml
 
 DotNet/Turmerik.LocalDevice.Core/app-env-locator.json
+DotNet/Turmerik.LocalDevice.Core/app-env-locator.dev.json

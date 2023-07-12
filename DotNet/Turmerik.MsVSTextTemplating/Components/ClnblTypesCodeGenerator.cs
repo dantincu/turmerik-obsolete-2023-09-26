@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Windows.Forms;
 using Microsoft.VisualStudio.TextTemplating.VSHost;
 using Microsoft.VisualStudio.TextTemplating;
 using Microsoft.CodeAnalysis;
@@ -18,6 +17,7 @@ using Turmerik.Text;
 using Turmerik.LocalDevice.Core.Env;
 using Turmerik.TreeTraversal;
 using Turmerik.CodeAnalysis.Core.Dependencies;
+using static Turmerik.CodeAnalysis.Core.Dependencies.SyntaxTreeTraversal;
 
 namespace Turmerik.MsVSTextTemplating.Components
 {
@@ -37,10 +37,10 @@ namespace Turmerik.MsVSTextTemplating.Components
         AttrDecrt
     }
 
-    public class ClnblTypesCodeParserArgs : SyntaxTreeTraversal.Args<ClnblTypesCodeParserArgs, ClnblTypesCodeParserOutput.Mtbl>
+    public class ClnblTypesCodeParserArgs : Args<ClnblTypesCodeParserArgs, TreeNode, ClnblTypesCodeParserOutput.Mtbl>
     {
         public ClnblTypesCodeParserArgs(
-            SyntaxTreeTraversalOptsCore<ClnblTypesCodeParserArgs, ClnblTypesCodeParserOutput.Mtbl>.Immtbl traversalOpts,
+            SyntaxTreeTraversalOptsCore<ClnblTypesCodeParserArgs, TreeNode, ClnblTypesCodeParserOutput.Mtbl>.Immtbl traversalOpts,
             SyntaxTree syntaxTree,
             CompilationUnitSyntax rootNode,
             ClnblTypesCodeGeneratorConfig.IClnbl config,

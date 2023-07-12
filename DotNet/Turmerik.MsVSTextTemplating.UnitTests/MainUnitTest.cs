@@ -12,21 +12,17 @@ namespace Turmerik.MsVSTextTemplating.UnitTests
         [TestMethod]
         public void TemplateFileNameParseTestMethod()
         {
-            string templateFileName = "TextTemplate-generated.tt";
+            string templateFileName = "TextTemplate.clnbl-impl.tt";
 
-            string csFilePath = ServiceProvider.GetRequiredService<IClnblTypesCodeParser>().GetCsFilePath(
+            string csFilePath = ServiceProvider.GetRequiredService<IClnblTypesCodeParser>().GetImplCsFilePath(
                 templateFileName);
 
-            Assert.AreEqual(csFilePath, "TextTemplate.cs");
+            Assert.AreEqual(csFilePath, "TextTemplate.clnbl-impl.cs");
         }
 
         [TestMethod]
         public void MainTestMethod()
         {
-            var path = AppEnv.GetPath(
-                AppEnvDir.Data,
-                GetType(),
-                "SourceCodeSample.cs");
         }
     }
 }

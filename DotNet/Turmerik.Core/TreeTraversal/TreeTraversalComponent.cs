@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Text;
+using System.Threading;
 using Turmerik.Utils;
 
 namespace Turmerik.TreeTraversal
@@ -26,10 +27,10 @@ namespace Turmerik.TreeTraversal
                 while (args.CurrentTreeNode != null)
                 {
                     if (args.Opts.GoNextPredicate(args,
-                        args.CurrentTreeNode.Data) && args.CurrentTreeNode.ChildrenNmrtr.MoveNext())
+                        args.CurrentTreeNode.Data) && args.CurrentTreeNode.ChildrenNmrtr.Value.MoveNext())
                     {
                         var nextNode = GetNextTreeNode(args,
-                            args.CurrentTreeNode.ChildrenNmrtr.Current);
+                            args.CurrentTreeNode.ChildrenNmrtr.Value.Current);
 
                         args.CurrentTreeNode.CurrentChildTreeNode = nextNode;
                         args.CurrentTreeNode.CurrentChildIdx++;
@@ -40,7 +41,12 @@ namespace Turmerik.TreeTraversal
                     else
                     {
                         var parentNode = args.CurrentTreeNode.ParentTreeNode;
-                        args.CurrentTreeNode.Dispose();
+
+                        if (args.Opts.DisposeTreeNodes)
+                        {
+                            args.CurrentTreeNode.Dispose();
+                        }
+                        
                         args.CurrentTreeNode = parentNode;
 
                         if (parentNode != null)
@@ -53,13 +59,16 @@ namespace Turmerik.TreeTraversal
             }
         }
 
-        protected virtual TreeTraversalComponentOpts.Immtbl<T> NormalizeOpts(
+        protected virtual TreeTraversalComponentNormOpts.Immtbl<T> NormalizeOpts(
             TreeTraversalComponentOpts.Mtbl<T> optsMtbl)
         {
             optsMtbl.OnDescend = optsMtbl.OnDescend.FirstNotNull((args, data) => { });
             optsMtbl.OnAscend = optsMtbl.OnAscend.FirstNotNull((args, data) => { });
 
-            var optsImmtbl = optsMtbl.ToImmtbl();
+            var optsImmtbl = new TreeTraversalComponentNormOpts.Mtbl<T>(optsMtbl)
+            {
+                DisposeTreeNodes = optsMtbl.DisposeTreeNodes ?? true
+            }.ToImmtbl();
             return optsImmtbl;
         }
 
@@ -68,17 +77,20 @@ namespace Turmerik.TreeTraversal
             T data) => new TreeNode(
                 data,
                 args.CurrentTreeNode,
-                args.Opts.ChildNodesNmrtrRetriever(args, data));
+                args.Opts.ChildNodesNmrtrRetriever(args, data))
+            {
+                CurrentChildIdx = -1
+            };
 
         public class Args : IDisposable
         {
             public Args(
-                TreeTraversalComponentOpts.Immtbl<T> opts)
+                TreeTraversalComponentNormOpts.Immtbl<T> opts)
             {
                 Opts = opts ?? throw new ArgumentNullException(nameof(opts));
             }
 
-            public TreeTraversalComponentOpts.Immtbl<T> Opts { get; }
+            public TreeTraversalComponentNormOpts.Immtbl<T> Opts { get; }
             public TreeNode RootTreeNode { get; set; }
             public TreeNode CurrentTreeNode { get; set; }
 
@@ -95,25 +107,26 @@ namespace Turmerik.TreeTraversal
             public TreeNode(
                 T data,
                 TreeNode parentTreeNode,
-                IEnumerator<T> childrenNmrtrl)
+                Lazy<IEnumerator<T>> childrenNmrtr)
             {
                 Data = data;
                 ParentTreeNode = parentTreeNode;
                 CurrentLevel = (parentTreeNode?.CurrentLevel ?? -1) + 1;
-                ChildrenNmrtr = childrenNmrtrl;
+
+                ChildrenNmrtr = childrenNmrtr;
             }
 
             public T Data { get; }
             public TreeNode ParentTreeNode { get; }
             public int CurrentLevel { get; }
-            public IEnumerator<T> ChildrenNmrtr { get; }
+            public Lazy<IEnumerator<T>> ChildrenNmrtr { get; }
             public TreeNode CurrentChildTreeNode { get; set; }
             public int CurrentChildIdx { get; set; }
 
             public void Dispose()
             {
-                CurrentChildTreeNode?.Dispose();
-                ChildrenNmrtr.Dispose();
+                // CurrentChildTreeNode?.Dispose();
+                ChildrenNmrtr.Value.Dispose();
             }
         }
     }

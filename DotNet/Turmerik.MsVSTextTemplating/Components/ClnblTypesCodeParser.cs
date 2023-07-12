@@ -23,16 +23,26 @@ namespace Turmerik.MsVSTextTemplating.Components
         ClnblTypesCodeParserOutput.Immtbl ParseCode(
             ClnblTypesCodeGeneratorOptions.IClnbl opts);
 
-        string GetCsFilePath(string templateFileName);
+        string GetImplCsFilePath(string templateFilePath);
+        string GetDefsCsFilePath(string templateFilePath);
     }
 
     public class ClnblTypesCodeParser : ClnblTypesCodeGeneratorBase, IClnblTypesCodeParser
     {
-        public const string SUFFIX = "generated";
+        public const string DEFS_SFFX = ".clnbl-defs";
+        public const string IMPL_SFFX = ".clnbl-impl";
+
+        public const string TT_EXTN = ".tt";
         public const string CS_EXTN = ".cs";
 
-        public static readonly int SuffixLength = SUFFIX.Length + 1;
-        public static readonly Regex SuffixRegex = new Regex($@"\-{SUFFIX}$");
+        public static readonly int DefsSffxLen = DEFS_SFFX.Length;
+        public static readonly int ImplSffxLen = IMPL_SFFX.Length;
+
+        public static readonly string DefsSffxRegexStr = DEFS_SFFX.EncodeForRegex(false, true);
+        public static readonly string ImplSffxRegexStr = IMPL_SFFX.EncodeForRegex(false, true);
+
+        public static readonly Regex DefsSffxRegex = new Regex(DefsSffxRegexStr);
+        public static readonly Regex ImplSffxRegex = new Regex(ImplSffxRegexStr);
 
         public ClnblTypesCodeParser(
             IAppConfig appConfig,
@@ -47,65 +57,82 @@ namespace Turmerik.MsVSTextTemplating.Components
         {
             options = NormalizeOpts(options.AsMtbl());
 
-            string csFilePath = GetCsFilePath(
+            string csFilePath = GetImplCsFilePath(
                 options.TemplateFilePath);
 
             string csCode = File.ReadAllText(csFilePath);
 
-            SyntaxTree tree = CSharpSyntaxTree.ParseText(csCode);
-            CompilationUnitSyntax root = tree.GetCompilationUnitRoot();
-
             var resultMtbl = TraverseTree(
-                new SyntaxTreeTraversalOptsCore<ClnblTypesCodeParserArgs, ClnblTypesCodeParserOutput.Mtbl>.Mtbl
+                new SyntaxTreeTraversalOptsCore<ClnblTypesCodeParserArgs, TreeNode, ClnblTypesCodeParserOutput.Mtbl>.Mtbl
                 {
                     Code = csCode,
                     OnAscend = (args, trArgs, treeNode) => OnAscend(args, trArgs, treeNode),
                     OnDescend = (args, trArgs, treeNode) => OnDescend(args, trArgs, treeNode),
                 },
-                argsFactory: opts => new ClnblTypesCodeParserArgs(
+                argsFactory: opts => GetDefaultArgs<ClnblTypesCodeParserOutput.Mtbl>(opts).WithValue(dfArgs => new ClnblTypesCodeParserArgs(
                     opts,
-                    tree,
-                    root,
+                    dfArgs.SyntaxTree,
+                    dfArgs.RootNode,
                     GetConfig(),
                     options,
                     new ClnblTypesCodeParserOutput.Mtbl
                     {
-                        SyntaxTree = tree,
-                        Root = root,
+                        SyntaxTree = dfArgs.SyntaxTree,
+                        Root = dfArgs.RootNode,
                         UsingNamespaceStatements = new List<string>(),
                         NamespaceAliases = new Dictionary<string, string>(),
                         StaticallyUsedNamespaces = new List<string>(),
                         UsedNamespaces = new List<string>(),
                         ClassDefinitions = new List<ParserOutputClassDefinition.Mtbl>(),
                         InterfaceDefinitions = new List<ParserOutputInterfaceDefinition.Mtbl>()
-                    }));
+                    })));
 
             var output = resultMtbl.ToImmtbl();
             return output;
         }
 
-        public string GetCsFilePath(string templateFileName)
+        public string GetImplCsFilePath(
+            string templateFilePath) => GetCsFilePath(
+                templateFilePath,
+                IMPL_SFFX);
+
+        public string GetDefsCsFilePath(
+            string templateFilePath) => GetCsFilePath(
+                templateFilePath,
+                DEFS_SFFX);
+
+        private string GetCsFilePath(
+            string templateFilePath,
+            string csFileNameSffx)
         {
-            string dirName = Path.GetDirectoryName(templateFileName);
-            string fileNameWithoutExtn = Path.GetFileNameWithoutExtension(templateFileName);
+            string dirName = Path.GetDirectoryName(templateFilePath);
+            string fileNameWithoutExtn = Path.GetFileNameWithoutExtension(templateFilePath);
 
-            if (!SuffixRegex.IsMatch(fileNameWithoutExtn))
-            {
-                throw new InvalidOperationException(
-                    string.Join(" ",
-                    $@"The template file name must end with the string ""-{SUFFIX}"".",
-                    $"The provided template file name is {fileNameWithoutExtn}"));
-            }
-
-            string restOfFileName = fileNameWithoutExtn.SubStr(
-                (str, len) => len - SuffixLength).Item1;
+            string baseFileName = GetBaseFileName(fileNameWithoutExtn);
 
             string csFileName = string.Concat(
-                restOfFileName,
+                baseFileName,
+                csFileNameSffx,
                 CS_EXTN);
 
             string csFilePath = Path.Combine(dirName, csFileName);
             return csFilePath;
+        }
+
+        private string GetBaseFileName(string fileNameWithoutExtn)
+        {
+            if (!ImplSffxRegex.IsMatch(fileNameWithoutExtn))
+            {
+                throw new InvalidOperationException(
+                    string.Join(" ",
+                    $@"The template file name must end with the string ""{IMPL_SFFX}{TT_EXTN}""",
+                    $"The provided template file name is {fileNameWithoutExtn}"));
+            }
+
+            string baseFileName = fileNameWithoutExtn.SubStr(
+                (str, len) => len - ImplSffxLen).Item1;
+
+            return baseFileName;
         }
 
         private void OnAscend(

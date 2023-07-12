@@ -14,9 +14,16 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="app-env-locator.dev.json">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </None>
     <None Update="app-env-locator.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </None>
   </ItemGroup>
+
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="if '$(ConfigurationName)' == 'Debug' ( copy /y $(SolutionDir)app-env-locator.dev.json $(ProjectDir)$(OutDir)app-env-locator.json ) ELSE (copy /y $(SolutionDir)app-env-locator.json $(ProjectDir)$(OutDir)app-env-locator.json )" />
+  </Target>
 
 </Project>

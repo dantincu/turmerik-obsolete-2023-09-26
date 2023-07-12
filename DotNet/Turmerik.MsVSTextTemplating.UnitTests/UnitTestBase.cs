@@ -12,12 +12,20 @@ namespace Turmerik.MsVSTextTemplating.UnitTests
 {
     public abstract class UnitTestBase : UnitTestCoreBase
     {
+        static UnitTestBase()
+        {
+            ServiceProviderContainer.AssureServicesRegistered(services =>
+            {
+                services.AddTransient<IRoslynTestComponent, RoslynTestComponent>();
+            });
+        }
+
         protected UnitTestBase()
         {
             AppEnv = ServiceProvider.GetRequiredService<IAppEnv>();
         }
 
-        protected override IServiceProvider ServiceProvider => Turmerik.MsVSTextTemplating.ServiceProviderContainer.Instance.Value.Services;
+        protected override IServiceProvider ServiceProvider => ServiceProviderContainer.Instance.Value.Services;
 
         protected IAppEnv AppEnv { get; }
     }

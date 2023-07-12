@@ -147,6 +147,7 @@
     <Compile Include="Components\ParserOutputClnblTypeAttributeDecoration.clnbl.cs" />
     <Compile Include="Components\ParserOutputClnblTypeNsAttributeDecoration.clnbl.cs" />
     <Compile Include="Components\ParserOutputAttributeDecoration.clnbl.cs" />
+    <Compile Include="MsVsTextTemplatingServiceCollectionBuilder.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ServiceProviderContainer.cs" />
   </ItemGroup>
@@ -176,4 +177,7 @@
     <Analyzer Include="..\packages\Microsoft.CodeAnalysis.Analyzers.3.3.4\analyzers\dotnet\cs\Microsoft.CodeAnalysis.CSharp.Analyzers.dll" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>if '$(ConfigurationName)' == 'Debug' ( copy /y $(SolutionDir)app-env-locator.dev.json $(ProjectDir)$(OutDir)app-env-locator.json ) ELSE (copy /y $(SolutionDir)app-env-locator.json $(ProjectDir)$(OutDir)app-env-locator.json )</PostBuildEvent>
+  </PropertyGroup>
 </Project>

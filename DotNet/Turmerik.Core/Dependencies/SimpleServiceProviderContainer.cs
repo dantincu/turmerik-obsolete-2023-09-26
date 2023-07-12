@@ -36,6 +36,17 @@ namespace Turmerik.Dependencies
             }
         }
 
+        public void AssureServicesRegistered(IServiceCollection services)
+        {
+            lock (syncRoot)
+            {
+                if (serviceProvider == null)
+                {
+                    serviceProvider = services.BuildServiceProvider();
+                }
+            }
+        }
+
         public IServiceProvider Services
         {
             get

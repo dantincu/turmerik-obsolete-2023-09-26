@@ -62,21 +62,17 @@ namespace Turmerik.CodeAnalysis.Core.Dependencies
             src as SyntaxTreeTraversalOptsCore<TArgs, TTreeNode, TResult>.Mtbl) ?? src.ToMtbl();
 
         public static SyntaxTreeTraversalOptsCore<TArgs, TResult>.Immtbl ToImmtbl<TArgs, TResult>(
-            this SyntaxTreeTraversalOptsCore<TArgs, TResult>.IClnbl src)
-            where TArgs : SyntaxTreeTraversal.Args<TArgs, TResult> => new SyntaxTreeTraversalOptsCore<TArgs, TResult>.Immtbl(src);
+            this SyntaxTreeTraversalOptsCore<TArgs, TResult>.IClnbl src) => new SyntaxTreeTraversalOptsCore<TArgs, TResult>.Immtbl(src);
 
         public static SyntaxTreeTraversalOptsCore<TArgs, TResult>.Immtbl AsImmtbl<TArgs, TResult>(
-            this SyntaxTreeTraversalOptsCore<TArgs, TResult>.IClnbl src)
-            where TArgs : SyntaxTreeTraversal.Args<TArgs, TResult> => (
+            this SyntaxTreeTraversalOptsCore<TArgs, TResult>.IClnbl src) => (
             src as SyntaxTreeTraversalOptsCore<TArgs, TResult>.Immtbl) ?? src.ToImmtbl();
 
         public static SyntaxTreeTraversalOptsCore<TArgs, TResult>.Mtbl ToMtbl<TArgs, TResult>(
-            this SyntaxTreeTraversalOptsCore<TArgs, TResult>.IClnbl src)
-            where TArgs : SyntaxTreeTraversal.Args<TArgs, TResult> => new SyntaxTreeTraversalOptsCore<TArgs, TResult>.Mtbl(src);
+            this SyntaxTreeTraversalOptsCore<TArgs, TResult>.IClnbl src) => new SyntaxTreeTraversalOptsCore<TArgs, TResult>.Mtbl(src);
 
         public static SyntaxTreeTraversalOptsCore<TArgs, TResult>.Mtbl AsMtbl<TArgs, TResult>(
-            this SyntaxTreeTraversalOptsCore<TArgs, TResult>.IClnbl src)
-            where TArgs : SyntaxTreeTraversal.Args<TArgs, TResult> => (
+            this SyntaxTreeTraversalOptsCore<TArgs, TResult>.IClnbl src) => (
             src as SyntaxTreeTraversalOptsCore<TArgs, TResult>.Mtbl) ?? src.ToMtbl();
     }
 
@@ -133,7 +129,6 @@ namespace Turmerik.CodeAnalysis.Core.Dependencies
     }
 
     public class SyntaxTreeTraversalOptsCore<TArgs, TResult>
-        where TArgs : SyntaxTreeTraversal.Args<TArgs, TResult>
     {
         public interface IClnbl : SyntaxTreeTraversalOptsCore<TArgs, SyntaxTreeTraversal.TreeNode, TResult>.IClnbl
         {
