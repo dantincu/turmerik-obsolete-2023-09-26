@@ -6,12 +6,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Turmerik.CodeAnalysis.Core.Dependencies;
 using Turmerik.TreeTraversal;
 using Turmerik.Collections;
 using Turmerik.Utils;
-using static Turmerik.CodeAnalysis.Core.Dependencies.SyntaxTreeTraversal;
+using static Turmerik.CodeAnalysis.Core.Components.SyntaxTreeTraversal;
 using static Turmerik.MsVSTextTemplating.UnitTests.RoslynTestComponent;
+using Turmerik.CodeAnalysis.Core.Components;
 
 namespace Turmerik.MsVSTextTemplating.UnitTests
 {

@@ -11,7 +11,7 @@ using Turmerik.Utils;
 using System.Xml.Linq;
 using System.Linq;
 
-namespace Turmerik.CodeAnalysis.Core.Dependencies
+namespace Turmerik.CodeAnalysis.Core.Components
 {
     public class SyntaxTreeTraversal : ComponentCoreBase
     {
@@ -38,7 +38,7 @@ namespace Turmerik.CodeAnalysis.Core.Dependencies
                 optsNormalizer.FirstNotNull(
                     opts =>
                     {
-                        var optsMtbl = opts.CreateInstance<SyntaxTreeTraversalOptsCore<TArgs, TTreeNode, TResult >.Mtbl>();
+                        var optsMtbl = opts.CreateInstance<SyntaxTreeTraversalOptsCore<TArgs, TTreeNode, TResult>.Mtbl>();
                         NormalizeOpts(optsMtbl);
 
                         var normOpts = optsMtbl.CreateInstance<TNormOpts>();
@@ -58,7 +58,7 @@ namespace Turmerik.CodeAnalysis.Core.Dependencies
                         new TreeTraversalComponentOpts.Mtbl<TTreeNode>
                         {
                             RootNode = args.Opts.TreeNodeFactory(args, null, args.RootNode),
-                            ChildNodesNmrtrRetriever = (trArgs, treeNode) => 
+                            ChildNodesNmrtrRetriever = (trArgs, treeNode) =>
                                 LazyH.Lazy(() => treeNode.Node.ChildNodes().ToArray().Select(
                                     node => args.Opts.TreeNodeFactory(args, trArgs, node)).GetEnumerator()),
                             GoNextPredicate = (trArgs, treeNode) => args.Opts.GoNextPredicate(args, trArgs, treeNode),

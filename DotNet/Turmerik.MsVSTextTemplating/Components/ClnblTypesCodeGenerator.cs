@@ -16,8 +16,8 @@ using Turmerik.Collections;
 using Turmerik.Text;
 using Turmerik.LocalDevice.Core.Env;
 using Turmerik.TreeTraversal;
-using Turmerik.CodeAnalysis.Core.Dependencies;
-using static Turmerik.CodeAnalysis.Core.Dependencies.SyntaxTreeTraversal;
+using static Turmerik.CodeAnalysis.Core.Components.SyntaxTreeTraversal;
+using Turmerik.CodeAnalysis.Core.Components;
 
 namespace Turmerik.MsVSTextTemplating.Components
 {
@@ -66,10 +66,10 @@ namespace Turmerik.MsVSTextTemplating.Components
         public ClnblTypesCodeGeneratorTreeTraversalState TrState { get; set; }
         public ClnblTypesCodeParserOutput.Mtbl ParserOutput { get; }
 
-        public List<ParserOutputAttributeDecoration.Mtbl> CurrentAttrDecrtsList { get; set; }
-        public ParserOutputAttributeDecoration.Mtbl CurrentAttrDecrt { get; set; }
-        public ParserOutputTypeDefinition.Mtbl CurrentTypeDef { get; set; }
-        public ParserOutputTypeMemberDeclaration.Mtbl CurrentMemberDeclr { get; set; }
+        public List<ParsedAttributeDecoration.Mtbl> CurrentAttrDecrtsList { get; set; }
+        public ParsedAttributeDecoration.Mtbl CurrentAttrDecrt { get; set; }
+        public ParsedTypeDefinition.Mtbl CurrentTypeDef { get; set; }
+        public ParsedTypeMemberDeclaration.Mtbl CurrentMemberDeclr { get; set; }
     }
 
     public class ClnblTypesCodeGeneratorArgs

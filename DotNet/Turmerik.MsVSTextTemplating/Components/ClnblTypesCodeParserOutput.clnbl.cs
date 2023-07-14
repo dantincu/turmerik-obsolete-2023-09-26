@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Turmerik.Cloneable;
+using Turmerik.CodeAnalysis.Core.Components;
 using Turmerik.Collections;
 
 namespace Turmerik.MsVSTextTemplating.Components
@@ -26,8 +27,8 @@ namespace Turmerik.MsVSTextTemplating.Components
 
             IDictionaryCore<string, string> GetNamespaceAliases();
 
-            IEnumerable<ParserOutputClassDefinition.IClnbl> GetClassDefinitions();
-            IEnumerable<ParserOutputInterfaceDefinition.IClnbl> GetInterfaceDefinitions();
+            IEnumerable<ParsedClassDefinition.IClnbl> GetClassDefinitions();
+            IEnumerable<ParsedInterfaceDefinition.IClnbl> GetInterfaceDefinitions();
         }
 
         public class Immtbl : IClnbl
@@ -60,15 +61,15 @@ namespace Turmerik.MsVSTextTemplating.Components
             public ReadOnlyCollection<string> UsedNamespaces { get; }
             public ReadOnlyCollection<string> StaticallyUsedNamespaces { get; }
             public ReadOnlyDictionary<string, string> NamespaceAliases { get; }
-            public ReadOnlyCollection<ParserOutputClassDefinition.Immtbl> ClassDefinitions { get; }
-            public ReadOnlyCollection<ParserOutputInterfaceDefinition.Immtbl> InterfaceDefinitions { get; }
+            public ReadOnlyCollection<ParsedClassDefinition.Immtbl> ClassDefinitions { get; }
+            public ReadOnlyCollection<ParsedInterfaceDefinition.Immtbl> InterfaceDefinitions { get; }
 
             public IEnumerable<string> GetUsingNamespaceStatements() => UsingNamespaceStatements;
             public IEnumerable<string> GetUsedNamespaces() => UsedNamespaces;
             public IEnumerable<string> GetStaticallyUsedNamespaces() => StaticallyUsedNamespaces;
             public IDictionaryCore<string, string> GetNamespaceAliases() => NamespaceAliases.AsDictnrCore();
-            public IEnumerable<ParserOutputClassDefinition.IClnbl> GetClassDefinitions() => ClassDefinitions;
-            public IEnumerable<ParserOutputInterfaceDefinition.IClnbl> GetInterfaceDefinitions() => InterfaceDefinitions;
+            public IEnumerable<ParsedClassDefinition.IClnbl> GetClassDefinitions() => ClassDefinitions;
+            public IEnumerable<ParsedInterfaceDefinition.IClnbl> GetInterfaceDefinitions() => InterfaceDefinitions;
         }
 
         public class Mtbl : IClnbl
@@ -101,15 +102,15 @@ namespace Turmerik.MsVSTextTemplating.Components
             public List<string> UsedNamespaces { get; set; }
             public List<string> StaticallyUsedNamespaces { get; set; }
             public Dictionary<string, string> NamespaceAliases { get; set; }
-            public List<ParserOutputClassDefinition.Mtbl> ClassDefinitions { get; set; }
-            public List<ParserOutputInterfaceDefinition.Mtbl> InterfaceDefinitions { get; set; }
+            public List<ParsedClassDefinition.Mtbl> ClassDefinitions { get; set; }
+            public List<ParsedInterfaceDefinition.Mtbl> InterfaceDefinitions { get; set; }
 
             public IEnumerable<string> GetUsingNamespaceStatements() => UsingNamespaceStatements;
             public IEnumerable<string> GetUsedNamespaces() => UsedNamespaces;
             public IEnumerable<string> GetStaticallyUsedNamespaces() => StaticallyUsedNamespaces;
             public IDictionaryCore<string, string> GetNamespaceAliases() => NamespaceAliases as IDictionaryCore<string, string>;
-            public IEnumerable<ParserOutputClassDefinition.IClnbl> GetClassDefinitions() => ClassDefinitions;
-            public IEnumerable<ParserOutputInterfaceDefinition.IClnbl> GetInterfaceDefinitions() => InterfaceDefinitions;
+            public IEnumerable<ParsedClassDefinition.IClnbl> GetClassDefinitions() => ClassDefinitions;
+            public IEnumerable<ParsedInterfaceDefinition.IClnbl> GetInterfaceDefinitions() => InterfaceDefinitions;
         }
 
         public static Immtbl ToImmtbl(

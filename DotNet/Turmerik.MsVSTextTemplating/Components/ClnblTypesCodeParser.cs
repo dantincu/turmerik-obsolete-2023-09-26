@@ -14,7 +14,7 @@ using Turmerik.TreeTraversal;
 using Turmerik.Collections;
 using Turmerik.Utils;
 using Microsoft.VisualStudio.OLE.Interop;
-using Turmerik.CodeAnalysis.Core.Dependencies;
+using Turmerik.CodeAnalysis.Core.Components;
 
 namespace Turmerik.MsVSTextTemplating.Components
 {
@@ -61,8 +61,8 @@ namespace Turmerik.MsVSTextTemplating.Components
                         NamespaceAliases = new Dictionary<string, string>(),
                         StaticallyUsedNamespaces = new List<string>(),
                         UsedNamespaces = new List<string>(),
-                        ClassDefinitions = new List<ParserOutputClassDefinition.Mtbl>(),
-                        InterfaceDefinitions = new List<ParserOutputInterfaceDefinition.Mtbl>()
+                        ClassDefinitions = new List<ParsedClassDefinition.Mtbl>(),
+                        InterfaceDefinitions = new List<ParsedInterfaceDefinition.Mtbl>()
                     })));
 
             var output = resultMtbl.ToImmtbl();
@@ -167,17 +167,17 @@ namespace Turmerik.MsVSTextTemplating.Components
             ClnblTypesCodeParserArgs args,
             TNode nextTypeDef,
             TreeTraversalComponent<TreeNode>.Args trArgs)
-            where TNode : ParserOutputTypeDefinition.Mtbl
+            where TNode : ParsedTypeDefinition.Mtbl
         {
             var currentTypeDef = args.CurrentTypeDef;
 
-            nextTypeDef.NestedParentClass = args.CurrentTypeDef.SafeCast<ParserOutputClassDefinition.Mtbl>(
+            nextTypeDef.NestedParentClass = args.CurrentTypeDef.SafeCast<ParsedClassDefinition.Mtbl>(
                 () => throw new InvalidOperationException("Only classes can have nested types"));
 
             nextTypeDef.Attributes = args.CurrentAttrDecrtsList;
 
             args.CurrentAttrDecrt = null;
-            args.CurrentAttrDecrtsList = new List<ParserOutputAttributeDecoration.Mtbl>();
+            args.CurrentAttrDecrtsList = new List<ParsedAttributeDecoration.Mtbl>();
 
             args.CurrentTypeDef = nextTypeDef;
         }
@@ -193,11 +193,11 @@ namespace Turmerik.MsVSTextTemplating.Components
 
             if (isRootLevel)
             {
-                if (currentTypeDef is ParserOutputClassDefinition.Mtbl classDef)
+                if (currentTypeDef is ParsedClassDefinition.Mtbl classDef)
                 {
                     args.ParserOutput.ClassDefinitions.Add(classDef);
                 }
-                else if (currentTypeDef is ParserOutputInterfaceDefinition.Mtbl interfaceDef)
+                else if (currentTypeDef is ParsedInterfaceDefinition.Mtbl interfaceDef)
                 {
                     args.ParserOutput.InterfaceDefinitions.Add(interfaceDef);
                 }
@@ -225,9 +225,9 @@ namespace Turmerik.MsVSTextTemplating.Components
         {
             var node = trArgs.CurrentTreeNode.Data.Node as AttributeSyntax;
 
-            args.CurrentAttrDecrt = new ParserOutputAttributeDecoration.Mtbl
+            args.CurrentAttrDecrt = new ParsedAttributeDecoration.Mtbl
             {
-                Name = node.Name.ToString()
+                AttrTypeName = node.Name.ToString()
             };
         }
 
@@ -288,7 +288,7 @@ namespace Turmerik.MsVSTextTemplating.Components
         {
             var node = trArgs.CurrentTreeNode.Data.Node as ClassDeclarationSyntax;
 
-            PushNode(args, new ParserOutputClassDefinition.Mtbl
+            PushNode(args, new ParsedClassDefinition.Mtbl
             {
                 Name = node.Identifier.Text
             }, trArgs);
@@ -300,7 +300,7 @@ namespace Turmerik.MsVSTextTemplating.Components
         {
             var node = trArgs.CurrentTreeNode.Data.Node as InterfaceDeclarationSyntax;
 
-            PushNode(args, new ParserOutputInterfaceDefinition.Mtbl
+            PushNode(args, new ParsedInterfaceDefinition.Mtbl
             {
                 Name = node.Identifier.Text
             }, trArgs);
@@ -312,7 +312,7 @@ namespace Turmerik.MsVSTextTemplating.Components
         {
             var node = trArgs.CurrentTreeNode.Data.Node as StructDeclarationSyntax;
 
-            PushNode(args, new ParserOutputTypeDefinition.Mtbl
+            PushNode(args, new ParsedTypeDefinition.Mtbl
             {
                 Name = node.Identifier.Text
             }, trArgs);
@@ -324,7 +324,7 @@ namespace Turmerik.MsVSTextTemplating.Components
         {
             var node = trArgs.CurrentTreeNode.Data.Node as EnumDeclarationSyntax;
 
-            PushNode(args, new ParserOutputTypeDefinition.Mtbl
+            PushNode(args, new ParsedTypeDefinition.Mtbl
             {
                 Name = node.Identifier.Text
             }, trArgs);

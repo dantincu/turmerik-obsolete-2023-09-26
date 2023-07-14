@@ -4,12 +4,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Turmerik.MsVSTextTemplating.Components
+namespace Turmerik.CodeAnalysis.Core.Components
 {
-    public enum ParserOutputMemberKind
+    public enum ParsedMemberKind
     {
         None = 0,
         Property,
-        Method
+        Method,
+        Field,
+        Event
     }
 }

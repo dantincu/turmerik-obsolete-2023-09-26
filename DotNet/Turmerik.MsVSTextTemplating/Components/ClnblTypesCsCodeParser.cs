@@ -9,6 +9,8 @@ using System.Threading.Tasks;
 using Turmerik.TreeTraversal;
 using System.Xml.Linq;
 using System.Windows.Forms;
+using Turmerik.Utils;
+using Turmerik.CodeAnalysis.Core.Components;
 
 namespace Turmerik.MsVSTextTemplating.Components
 {
@@ -41,8 +43,8 @@ namespace Turmerik.MsVSTextTemplating.Components
                     NamespaceAliases = new Dictionary<string, string>(),
                     StaticallyUsedNamespaces = new List<string>(),
                     UsedNamespaces = new List<string>(),
-                    ClassDefinitions = new List<ParserOutputClassDefinition.Mtbl>(),
-                    InterfaceDefinitions = new List<ParserOutputInterfaceDefinition.Mtbl>()
+                    ClassDefinitions = new List<ParsedClassDefinition.Mtbl>(),
+                    InterfaceDefinitions = new List<ParsedInterfaceDefinition.Mtbl>()
                 },
                 rootNode.ChildNodes());
 
@@ -58,7 +60,7 @@ namespace Turmerik.MsVSTextTemplating.Components
 
             GetCsFileNodes(args);
 
-            AddNodes<ParserOutputTypeDefinition.Mtbl>(
+            AddNodes<ParsedTypeDefinition.Mtbl>(
                 args,
                 args.NsDeclrNodes,
                 null);
@@ -93,42 +95,26 @@ namespace Turmerik.MsVSTextTemplating.Components
         private void AddNodes<TEnclosingType>(
             ClnblTypesCsCodeParserArgs args,
             IEnumerable<SyntaxNode> nodesNmrbl,
-            ParserOutputTypeDefinition.Mtbl enclosingType)
-            where TEnclosingType : ParserOutputTypeDefinition.Mtbl
+            TEnclosingType enclosingType)
+            where TEnclosingType : ParsedTypeDefinition.Mtbl
         {
-            var attrDecorsList = new List<ParserOutputAttributeDecoration.Mtbl>();
-
             foreach (var node in nodesNmrbl)
             {
                 TryAddNode(
-                    new ClnblTypesCsCodeParserRdnlArgs<ParserOutputTypeDefinition.Mtbl>(
+                    new ClnblTypesCsCodeParserRdnlArgs<TEnclosingType>(
                         args,
                         node,
                         enclosingType,
-                        attrDecorsList,
-                        enclosingType as ParserOutputClassDefinition.Mtbl));
+                        enclosingType as ParsedClassDefinition.Mtbl));
             }
         }
 
         private bool TryAddNode(
             IClnblTypesCsCodeParserRdnlArgs rdnlArgs)
         {
-            bool isAttrDecor = false;
-
             bool hasMatch = TryAddClassDef(rdnlArgs);
             hasMatch = hasMatch || TryAddInterfaceDef(rdnlArgs);
             hasMatch = hasMatch || TryAddMemberDef(rdnlArgs);
-
-            if (!hasMatch)
-            {
-                isAttrDecor = TryAddAttrDecor(rdnlArgs);
-                hasMatch = isAttrDecor;
-            }
-
-            if (!isAttrDecor)
-            {
-                rdnlArgs.AttrDecorsList.Clear();
-            }
 
             return hasMatch;
         }
@@ -141,7 +127,9 @@ namespace Turmerik.MsVSTextTemplating.Components
 
             if (retVal)
             {
-                var classDef = GetClassDef(rdnlArgs);
+                var classDef = GetClassDef(
+                    rdnlArgs,
+                    classDefNode);
 
                 if (rdnlArgs.ParentNestedClassDef != null)
                 {
@@ -164,7 +152,9 @@ namespace Turmerik.MsVSTextTemplating.Components
 
             if (retVal)
             {
-                var interfaceDef = GetInterfaceDef(rdnlArgs);
+                var interfaceDef = GetInterfaceDef(
+                    rdnlArgs,
+                    interfaceDefNode);
 
                 if (rdnlArgs.ParentNestedClassDef != null)
                 {
@@ -187,7 +177,9 @@ namespace Turmerik.MsVSTextTemplating.Components
 
             if (retVal)
             {
-                var memberDef = GetMemberDef(rdnlArgs);
+                var memberDef = GetMemberDef(
+                    rdnlArgs,
+                    memberDefNode);
 
                 rdnlArgs.GetEnclosingType().MemberDeclarations.Add(memberDef);
             }
@@ -195,44 +187,82 @@ namespace Turmerik.MsVSTextTemplating.Components
             return retVal;
         }
 
-        private bool TryAddAttrDecor(
-            IClnblTypesCsCodeParserRdnlArgs rdnlArgs)
+        private void AssignTypeDefProps(
+            IClnblTypesCsCodeParserRdnlArgs rdnlArgs,
+            TypeDeclarationSyntax typeDeclrNode,
+            ParsedTypeDefinition.Mtbl typeDef)
         {
-            var attrNode = rdnlArgs.Node as AttributeSyntax;
-            bool retVal = attrNode != null;
+            typeDef.Name = typeDeclrNode.Identifier.Text;// .Split('<').First()
 
-            if (retVal)
+            typeDef.Modifiers = typeDeclrNode.Modifiers.Select(
+                item => (ParsedCsKeyword)Enum.Parse(typeof(ParsedCsKeyword), item.Text)).ToList();
+
+            typeDef.GenericTypeParameters = typeDeclrNode.TypeParameterList?.WithValue(
+                    typeParameterList => GetTypeParametersList(typeParameterList));
+
+            typeDef.Attributes = typeDeclrNode.AttributeLists.SelectMany(
+                attrList => attrList.Attributes).Select(
+                attr => GetAttrDecor(rdnlArgs, attr)).ToList();
+        }
+
+        private ParsedClassDefinition.Mtbl GetClassDef(
+            IClnblTypesCsCodeParserRdnlArgs rdnlArgs,
+            ClassDeclarationSyntax classDeclrNode)
+        {
+            var classDef = new ParsedClassDefinition.Mtbl();
+            AssignTypeDefProps(rdnlArgs, classDeclrNode, classDef);
+
+            var childNodes = classDeclrNode.ChildNodes();
+
+            AddNodes(
+                rdnlArgs.Args,
+                childNodes,
+                classDef);
+
+            throw new NotImplementedException();
+        }
+
+        private List<ParsedGenericTypeParameter.Mtbl> GetTypeParametersList(
+            TypeParameterListSyntax typeParameterList) => typeParameterList.Parameters.Select(
+                typeParamNode => GetTypeParameter(typeParamNode)).ToList();
+
+        private ParsedGenericTypeParameter.Mtbl GetTypeParameter(
+            TypeParameterSyntax typeParamNode) => new ParsedGenericTypeParameter.Mtbl
             {
-                var attrDecor = GetAttrDecor(rdnlArgs);
-                rdnlArgs.AttrDecorsList.Add(attrDecor);
-            }
+                Name = typeParamNode.Identifier.Text,
+            };
 
-            return retVal;
+        private ParsedInterfaceDefinition.Mtbl GetInterfaceDef(
+            IClnblTypesCsCodeParserRdnlArgs rdnlArgs,
+            InterfaceDeclarationSyntax interfaceDeclrNode)
+        {
+            var interfaceDef = new ParsedInterfaceDefinition.Mtbl();
+            AssignTypeDefProps(rdnlArgs, interfaceDeclrNode, interfaceDef);
+
+            var childNodes = interfaceDeclrNode.ChildNodes();
+
+            AddNodes(
+                rdnlArgs.Args,
+                childNodes,
+                interfaceDef);
+
+            throw new NotImplementedException();
         }
 
-        private ParserOutputClassDefinition.Mtbl GetClassDef(
-            IClnblTypesCsCodeParserRdnlArgs rdnlArgs)
+        private ParsedTypeMemberDeclaration.Mtbl GetMemberDef(
+            IClnblTypesCsCodeParserRdnlArgs rdnlArgs,
+            MemberDeclarationSyntax memberDeclrNode)
         {
             throw new NotImplementedException();
         }
 
-        private ParserOutputInterfaceDefinition.Mtbl GetInterfaceDef(
-            IClnblTypesCsCodeParserRdnlArgs rdnlArgs)
-        {
-            throw new NotImplementedException();
-        }
-
-        private ParserOutputTypeMemberDeclaration.Mtbl GetMemberDef(
-            IClnblTypesCsCodeParserRdnlArgs rdnlArgs)
-        {
-            throw new NotImplementedException();
-        }
-
-        private ParserOutputAttributeDecoration.Mtbl GetAttrDecor(
-            IClnblTypesCsCodeParserRdnlArgs rdnlArgs)
-        {
-            throw new NotImplementedException();
-        }
+        private ParsedAttributeDecoration.Mtbl GetAttrDecor(
+            IClnblTypesCsCodeParserRdnlArgs rdnlArgs,
+            AttributeSyntax attrNode) => new ParsedAttributeDecoration.Mtbl
+            {
+                AttrTypeName = attrNode.Name.ToString(),
+                // Kind = ParserOutputAttributeKind.None
+            };
 
         private void AddNamespaces(ClnblTypesCsCodeParserArgs args)
         {
@@ -287,24 +317,22 @@ namespace Turmerik.MsVSTextTemplating.Components
     {
         ClnblTypesCsCodeParserArgs Args { get; }
         SyntaxNode Node { get; }
-        List<ParserOutputAttributeDecoration.Mtbl> AttrDecorsList { get; }
-        ParserOutputClassDefinition.Mtbl ParentNestedClassDef { get; }
+        ParsedClassDefinition.Mtbl ParentNestedClassDef { get; }
 
-        ParserOutputTypeDefinition.Mtbl GetEnclosingType();
+        ParsedTypeDefinition.Mtbl GetEnclosingType();
     }
 
     public readonly struct ClnblTypesCsCodeParserRdnlArgs<TEnclosingType> : IClnblTypesCsCodeParserRdnlArgs
-        where TEnclosingType : ParserOutputTypeDefinition.Mtbl
+        where TEnclosingType : ParsedTypeDefinition.Mtbl
     {
         public ClnblTypesCsCodeParserRdnlArgs(
             IClnblTypesCsCodeParserRdnlArgs src,
             TEnclosingType enclosingType,
-            ParserOutputClassDefinition.Mtbl parentNestedClassDef)
+            ParsedClassDefinition.Mtbl parentNestedClassDef)
         {
             Args = src.Args;
             Node = src.Node;
             EnclosingType = enclosingType;
-            AttrDecorsList = src.AttrDecorsList;
             ParentNestedClassDef = parentNestedClassDef;
         }
 
@@ -312,22 +340,19 @@ namespace Turmerik.MsVSTextTemplating.Components
             ClnblTypesCsCodeParserArgs args,
             SyntaxNode node,
             TEnclosingType enclosingType,
-            List<ParserOutputAttributeDecoration.Mtbl> attrDecorsList,
-            ParserOutputClassDefinition.Mtbl parentNestedClassDef)
+            ParsedClassDefinition.Mtbl parentNestedClassDef)
         {
             Args = args;
             Node = node;
             EnclosingType = enclosingType;
-            AttrDecorsList = attrDecorsList;
             ParentNestedClassDef = parentNestedClassDef;
         }
 
         public ClnblTypesCsCodeParserArgs Args { get; }
         public SyntaxNode Node { get; }
         public TEnclosingType EnclosingType { get; }
-        public List<ParserOutputAttributeDecoration.Mtbl> AttrDecorsList { get; }
-        public ParserOutputClassDefinition.Mtbl ParentNestedClassDef { get; }
+        public ParsedClassDefinition.Mtbl ParentNestedClassDef { get; }
 
-        public ParserOutputTypeDefinition.Mtbl GetEnclosingType() => EnclosingType;
+        public ParsedTypeDefinition.Mtbl GetEnclosingType() => EnclosingType;
     }
 }

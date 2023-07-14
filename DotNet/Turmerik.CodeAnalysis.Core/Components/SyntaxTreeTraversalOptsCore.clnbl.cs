@@ -4,7 +4,7 @@ using System.Text;
 using Turmerik.TreeTraversal;
 using Microsoft.CodeAnalysis;
 
-namespace Turmerik.CodeAnalysis.Core.Dependencies
+namespace Turmerik.CodeAnalysis.Core.Components
 {
     public static class SyntaxTreeTraversalOptsCore
     {
@@ -40,40 +40,40 @@ namespace Turmerik.CodeAnalysis.Core.Dependencies
         public static Immtbl ToImmtbl(this IClnbl src) => new Immtbl(src);
 
         public static Immtbl AsImmtbl(
-            this IClnbl src) => (src as Immtbl) ?? src.ToImmtbl();
+            this IClnbl src) => src as Immtbl ?? src.ToImmtbl();
 
         public static Mtbl ToMtbl(this IClnbl src) => new Mtbl(src);
 
         public static Mtbl AsMtbl(
-            this IClnbl src) => (src as Mtbl) ?? src.ToMtbl();
+            this IClnbl src) => src as Mtbl ?? src.ToMtbl();
 
         public static SyntaxTreeTraversalOptsCore<TArgs, TTreeNode, TResult>.Immtbl ToImmtbl<TArgs, TTreeNode, TResult>(
             this SyntaxTreeTraversalOptsCore<TArgs, TTreeNode, TResult>.IClnbl src) => new SyntaxTreeTraversalOptsCore<TArgs, TTreeNode, TResult>.Immtbl(src);
 
         public static SyntaxTreeTraversalOptsCore<TArgs, TTreeNode, TResult>.Immtbl AsImmtbl<TArgs, TTreeNode, TResult>(
-            this SyntaxTreeTraversalOptsCore<TArgs, TTreeNode, TResult>.IClnbl src) => (
-            src as SyntaxTreeTraversalOptsCore<TArgs, TTreeNode, TResult>.Immtbl) ?? src.ToImmtbl();
+            this SyntaxTreeTraversalOptsCore<TArgs, TTreeNode, TResult>.IClnbl src) => 
+            src as SyntaxTreeTraversalOptsCore<TArgs, TTreeNode, TResult>.Immtbl ?? src.ToImmtbl();
 
         public static SyntaxTreeTraversalOptsCore<TArgs, TTreeNode, TResult>.Mtbl ToMtbl<TArgs, TTreeNode, TResult>(
             this SyntaxTreeTraversalOptsCore<TArgs, TTreeNode, TResult>.IClnbl src) => new SyntaxTreeTraversalOptsCore<TArgs, TTreeNode, TResult>.Mtbl(src);
 
         public static SyntaxTreeTraversalOptsCore<TArgs, TTreeNode, TResult>.Mtbl AsMtbl<TArgs, TTreeNode, TResult>(
-            this SyntaxTreeTraversalOptsCore<TArgs, TTreeNode, TResult>.IClnbl src) => (
-            src as SyntaxTreeTraversalOptsCore<TArgs, TTreeNode, TResult>.Mtbl) ?? src.ToMtbl();
+            this SyntaxTreeTraversalOptsCore<TArgs, TTreeNode, TResult>.IClnbl src) => 
+            src as SyntaxTreeTraversalOptsCore<TArgs, TTreeNode, TResult>.Mtbl ?? src.ToMtbl();
 
         public static SyntaxTreeTraversalOptsCore<TArgs, TResult>.Immtbl ToImmtbl<TArgs, TResult>(
             this SyntaxTreeTraversalOptsCore<TArgs, TResult>.IClnbl src) => new SyntaxTreeTraversalOptsCore<TArgs, TResult>.Immtbl(src);
 
         public static SyntaxTreeTraversalOptsCore<TArgs, TResult>.Immtbl AsImmtbl<TArgs, TResult>(
-            this SyntaxTreeTraversalOptsCore<TArgs, TResult>.IClnbl src) => (
-            src as SyntaxTreeTraversalOptsCore<TArgs, TResult>.Immtbl) ?? src.ToImmtbl();
+            this SyntaxTreeTraversalOptsCore<TArgs, TResult>.IClnbl src) => 
+            src as SyntaxTreeTraversalOptsCore<TArgs, TResult>.Immtbl ?? src.ToImmtbl();
 
         public static SyntaxTreeTraversalOptsCore<TArgs, TResult>.Mtbl ToMtbl<TArgs, TResult>(
             this SyntaxTreeTraversalOptsCore<TArgs, TResult>.IClnbl src) => new SyntaxTreeTraversalOptsCore<TArgs, TResult>.Mtbl(src);
 
         public static SyntaxTreeTraversalOptsCore<TArgs, TResult>.Mtbl AsMtbl<TArgs, TResult>(
-            this SyntaxTreeTraversalOptsCore<TArgs, TResult>.IClnbl src) => (
-            src as SyntaxTreeTraversalOptsCore<TArgs, TResult>.Mtbl) ?? src.ToMtbl();
+            this SyntaxTreeTraversalOptsCore<TArgs, TResult>.IClnbl src) => 
+            src as SyntaxTreeTraversalOptsCore<TArgs, TResult>.Mtbl ?? src.ToMtbl();
     }
 
     public class SyntaxTreeTraversalOptsCore<TArgs, TTreeNode, TResult>
@@ -111,7 +111,7 @@ namespace Turmerik.CodeAnalysis.Core.Dependencies
             {
             }
 
-            public Mtbl(IClnbl src) : base (src)
+            public Mtbl(IClnbl src) : base(src)
             {
                 OnAscend = src.OnAscend;
                 OnDescend = src.OnDescend;
