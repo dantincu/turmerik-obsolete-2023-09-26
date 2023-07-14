@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Turmerik.MsVSTextTemplating.Components
 {
-    public enum ParserOutputClnblTypeMemberKind
+    public enum ParserOutputMemberKind
     {
         None = 0,
         Property,

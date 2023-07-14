@@ -19,14 +19,14 @@ namespace Turmerik.MsVSTextTemplating.Components
             bool IsClass { get; }
 
             ParserOutputClassDefinition.IClnbl GetNestedParentClass();
-            ParserOutputClassDefinition.IClnbl GetInheritedParentClass();
+            ParserOutputTypeIdentifier.IClnbl GetInheritedParentClass();
 
             IEnumerable<ParserOutputAttributeDecoration.IClnbl> GetAttributes();
             IEnumerable<ParserOutputGenericTypeParameter.IClnbl> GetGenericTypeParameters();
-            IEnumerable<ParserOutputInterfaceDefinition.IClnbl> GetInterfaces();
+            IEnumerable<ParserOutputTypeIdentifier.IClnbl> GetInterfaces();
             IEnumerable<IClnbl> GetNestedTypes();
 
-            IEnumerable<ParserOutputClnblTypeMemberDeclaration.IClnbl> GetMemberDeclarations();
+            IEnumerable<ParserOutputTypeMemberDeclaration.IClnbl> GetMemberDeclarations();
         }
 
         public class Immtbl : IClnbl
@@ -54,23 +54,23 @@ namespace Turmerik.MsVSTextTemplating.Components
             public bool IsClass { get; }
 
             public ParserOutputClassDefinition.Immtbl NestedParentClass { get; }
-            public ParserOutputClassDefinition.Immtbl InheritedParentClass { get; }
+            public ParserOutputTypeIdentifier.Immtbl InheritedParentClass { get; }
 
             public ReadOnlyCollection<ParserOutputAttributeDecoration.Immtbl> Attributes { get; }
             public ReadOnlyCollection<ParserOutputGenericTypeParameter.Immtbl> GenericTypeParameters { get; }
-            public ReadOnlyCollection<ParserOutputInterfaceDefinition.Immtbl> Interfaces { get; }
+            public ReadOnlyCollection<ParserOutputTypeIdentifier.Immtbl> Interfaces { get; }
             public ReadOnlyCollection<Immtbl> NestedTypes { get; }
-            public ReadOnlyCollection<ParserOutputClnblTypeMemberDeclaration.Immtbl> MemberDeclarations { get; }
+            public ReadOnlyCollection<ParserOutputTypeMemberDeclaration.Immtbl> MemberDeclarations { get; }
 
             public ParserOutputClassDefinition.IClnbl GetNestedParentClass() => NestedParentClass;
-            public ParserOutputClassDefinition.IClnbl GetInheritedParentClass() => InheritedParentClass;
+            public ParserOutputTypeIdentifier.IClnbl GetInheritedParentClass() => InheritedParentClass;
 
             public IEnumerable<ParserOutputAttributeDecoration.IClnbl> GetAttributes() => Attributes;
             public IEnumerable<ParserOutputGenericTypeParameter.IClnbl> GetGenericTypeParameters() => GenericTypeParameters;
-            public IEnumerable<ParserOutputInterfaceDefinition.IClnbl> GetInterfaces() => Interfaces;
+            public IEnumerable<ParserOutputTypeIdentifier.IClnbl> GetInterfaces() => Interfaces;
             public IEnumerable<IClnbl> GetNestedTypes() => NestedTypes;
 
-            public IEnumerable<ParserOutputClnblTypeMemberDeclaration.IClnbl> GetMemberDeclarations() => MemberDeclarations;
+            public IEnumerable<ParserOutputTypeMemberDeclaration.IClnbl> GetMemberDeclarations() => MemberDeclarations;
         }
 
         public class Mtbl : IClnbl
@@ -102,23 +102,23 @@ namespace Turmerik.MsVSTextTemplating.Components
             public bool IsClass { get; set; }
 
             public ParserOutputClassDefinition.Mtbl NestedParentClass { get; set; }
-            public ParserOutputClassDefinition.Mtbl InheritedParentClass { get; set; }
+            public ParserOutputTypeIdentifier.Mtbl InheritedParentClass { get; set; }
 
             public List<ParserOutputAttributeDecoration.Mtbl> Attributes { get; set; }
             public List<ParserOutputGenericTypeParameter.Mtbl> GenericTypeParameters { get; set; }
-            public List<ParserOutputInterfaceDefinition.Mtbl> Interfaces { get; set; }
+            public List<ParserOutputTypeIdentifier.Mtbl> Interfaces { get; set; }
             public List<Mtbl> NestedTypes { get; set; }
-            public List<ParserOutputClnblTypeMemberDeclaration.Mtbl> MemberDeclarations { get; set; }
+            public List<ParserOutputTypeMemberDeclaration.Mtbl> MemberDeclarations { get; set; }
 
             public ParserOutputClassDefinition.IClnbl GetNestedParentClass() => NestedParentClass;
-            public ParserOutputClassDefinition.IClnbl GetInheritedParentClass() => InheritedParentClass;
+            public ParserOutputTypeIdentifier.IClnbl GetInheritedParentClass() => InheritedParentClass;
 
             public IEnumerable<ParserOutputAttributeDecoration.IClnbl> GetAttributes() => Attributes;
             public IEnumerable<ParserOutputGenericTypeParameter.IClnbl> GetGenericTypeParameters() => GenericTypeParameters;
-            public IEnumerable<ParserOutputInterfaceDefinition.IClnbl> GetInterfaces() => Interfaces;
+            public IEnumerable<ParserOutputTypeIdentifier.IClnbl> GetInterfaces() => Interfaces;
             public IEnumerable<IClnbl> GetNestedTypes() => NestedTypes;
 
-            public IEnumerable<ParserOutputClnblTypeMemberDeclaration.IClnbl> GetMemberDeclarations() => MemberDeclarations;
+            public IEnumerable<ParserOutputTypeMemberDeclaration.IClnbl> GetMemberDeclarations() => MemberDeclarations;
         }
 
         public static Immtbl ToImmtbl(

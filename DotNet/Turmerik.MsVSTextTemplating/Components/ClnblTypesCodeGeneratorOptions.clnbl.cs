@@ -14,6 +14,7 @@ namespace Turmerik.MsVSTextTemplating.Components
     {
         public interface IClnbl
         {
+            string DefsCode { get; }
             string TemplateFilePath { get; }
         }
 
@@ -21,9 +22,11 @@ namespace Turmerik.MsVSTextTemplating.Components
         {
             public Immtbl(IClnbl src)
             {
+                DefsCode = src.DefsCode;
                 TemplateFilePath = src.TemplateFilePath;
             }
 
+            public string DefsCode { get; }
             public string TemplateFilePath { get; }
         }
 
@@ -35,9 +38,11 @@ namespace Turmerik.MsVSTextTemplating.Components
 
             public Mtbl(IClnbl src)
             {
+                DefsCode = src.DefsCode;
                 TemplateFilePath = src.TemplateFilePath;
             }
 
+            public string DefsCode { get; set; }
             public string TemplateFilePath { get; set; }
         }
 

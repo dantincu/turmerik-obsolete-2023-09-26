@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Turmerik.TreeTraversal;
+using Turmerik.Utils;
 
 namespace Turmerik.LocalDevice.UnitTests
 {
@@ -34,7 +35,7 @@ namespace Turmerik.LocalDevice.UnitTests
                 new TreeTraversalComponentOpts.Mtbl<int>
                 {
                     RootNode = 0,
-                    ChildNodesNmrtrRetriever = (args, val) => Enumerable.Range(0, mxDim).GetEnumerator(),
+                    ChildNodesNmrtrRetriever = (args, val) => LazyH.Lazy(() => Enumerable.Range(0, mxDim).GetEnumerator()),
                     GoNextPredicate = (args, val) => args.CurrentTreeNode.CurrentLevel < mxDim,
                     OnDescend = (args, val) =>
                     {

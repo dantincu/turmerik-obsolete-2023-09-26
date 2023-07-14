@@ -18,8 +18,7 @@ namespace Turmerik.MsVSTextTemplating.Components
             SyntaxTree SyntaxTree { get; }
             CompilationUnitSyntax Root { get; }
             string Namespace { get; }
-            string NamespaceDeclaration { get; }
-            string FileScopedNamespaceDeclaration { get; }
+            bool NamespaceIsFileScoped { get; }
 
             IEnumerable<string> GetUsingNamespaceStatements();
             IEnumerable<string> GetUsedNamespaces();
@@ -42,8 +41,7 @@ namespace Turmerik.MsVSTextTemplating.Components
                 SyntaxTree = src.SyntaxTree;
                 Root = src.Root;
                 Namespace = src.Namespace;
-                NamespaceDeclaration = src.NamespaceDeclaration;
-                FileScopedNamespaceDeclaration = src.FileScopedNamespaceDeclaration;
+                NamespaceIsFileScoped = src.NamespaceIsFileScoped;
 
                 UsingNamespaceStatements = src.GetUsingNamespaceStatements()?.RdnlC();
                 UsedNamespaces = src.GetUsedNamespaces()?.RdnlC();
@@ -56,8 +54,7 @@ namespace Turmerik.MsVSTextTemplating.Components
             public SyntaxTree SyntaxTree { get; }
             public CompilationUnitSyntax Root { get; }
             public string Namespace { get; }
-            public string NamespaceDeclaration { get; }
-            public string FileScopedNamespaceDeclaration { get; }
+            public bool NamespaceIsFileScoped { get; }
 
             public ReadOnlyCollection<string> UsingNamespaceStatements { get; }
             public ReadOnlyCollection<string> UsedNamespaces { get; }
@@ -85,8 +82,7 @@ namespace Turmerik.MsVSTextTemplating.Components
                 SyntaxTree = src.SyntaxTree;
                 Root = src.Root;
                 Namespace = src.Namespace;
-                NamespaceDeclaration = src.NamespaceDeclaration;
-                FileScopedNamespaceDeclaration = src.FileScopedNamespaceDeclaration;
+                NamespaceIsFileScoped = src.NamespaceIsFileScoped;
 
                 UsingNamespaceStatements = src.GetUsingNamespaceStatements()?.ToList();
                 UsedNamespaces = src.GetUsedNamespaces()?.ToList();
@@ -99,8 +95,7 @@ namespace Turmerik.MsVSTextTemplating.Components
             public SyntaxTree SyntaxTree { get; set; }
             public CompilationUnitSyntax Root { get; set; }
             public string Namespace { get; set; }
-            public string NamespaceDeclaration { get; set; }
-            public string FileScopedNamespaceDeclaration { get; set; }
+            public bool NamespaceIsFileScoped { get; set; }
 
             public List<string> UsingNamespaceStatements { get; set; }
             public List<string> UsedNamespaces { get; set; }

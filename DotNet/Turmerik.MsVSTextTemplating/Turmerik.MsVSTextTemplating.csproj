@@ -129,6 +129,7 @@
     <Compile Include="Components\ClnblTypesCodeGeneratorConfig.clnbl.cs" />
     <Compile Include="Components\ClnblTypesCodeParser.cs" />
     <Compile Include="Components\ClnblTypesCodeParserOutput.clnbl.cs" />
+    <Compile Include="Components\ClnblTypesCsCodeParser.cs" />
     <Compile Include="Components\ClnblTypesGenerator.cs" />
     <Compile Include="Components\ITextTemplatingService.cs" />
     <Compile Include="Components\ParserOutputAttributeKind.cs" />
@@ -139,7 +140,7 @@
     <Compile Include="Components\ParserOutputClnblMtblClassDefinition.clnbl.cs" />
     <Compile Include="Components\ParserOutputClnblNsClassDefinition.clnbl.cs" />
     <Compile Include="Components\ParserOutputClnblTypeMemberDeclaration.clnbl.cs" />
-    <Compile Include="Components\ParserOutputClnblTypeMemberKind.cs" />
+    <Compile Include="Components\ParserOutputMemberKind.cs" />
     <Compile Include="Components\ParserOutputGenericTypeParameter.clnbl.cs" />
     <Compile Include="Components\ParserOutputInterfaceDefinition.clnbl.cs" />
     <Compile Include="Components\ParserOutputTypeDefinition.clnbl.cs" />

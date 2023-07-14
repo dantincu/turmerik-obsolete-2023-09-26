@@ -111,7 +111,7 @@ namespace Turmerik.CodeAnalysis.Core.Dependencies
         protected ArgsCore<SyntaxTreeTraversalOptsCore.Immtbl, TResult> GetDefaultArgs<TResult>(
             SyntaxTreeTraversalOptsCore.Immtbl opts)
         {
-            SyntaxTree tree = CSharpSyntaxTree.ParseText(opts.Code);
+            SyntaxTree tree = CSharpSyntaxTree.ParseText(opts.DefsCode);
             CompilationUnitSyntax root = tree.GetCompilationUnitRoot();
 
             var args = new ArgsCore<SyntaxTreeTraversalOptsCore.Immtbl, TResult>(opts, tree, root);

@@ -18,32 +18,14 @@ using Turmerik.CodeAnalysis.Core.Dependencies;
 
 namespace Turmerik.MsVSTextTemplating.Components
 {
-    public interface IClnblTypesCodeParser
+    public interface IClnblTypesCodeParser : IClnblTypesCodeGeneratorCore
     {
         ClnblTypesCodeParserOutput.Immtbl ParseCode(
             ClnblTypesCodeGeneratorOptions.IClnbl opts);
-
-        string GetImplCsFilePath(string templateFilePath);
-        string GetDefsCsFilePath(string templateFilePath);
     }
 
     public class ClnblTypesCodeParser : ClnblTypesCodeGeneratorBase, IClnblTypesCodeParser
     {
-        public const string DEFS_SFFX = ".clnbl-defs";
-        public const string IMPL_SFFX = ".clnbl-impl";
-
-        public const string TT_EXTN = ".tt";
-        public const string CS_EXTN = ".cs";
-
-        public static readonly int DefsSffxLen = DEFS_SFFX.Length;
-        public static readonly int ImplSffxLen = IMPL_SFFX.Length;
-
-        public static readonly string DefsSffxRegexStr = DEFS_SFFX.EncodeForRegex(false, true);
-        public static readonly string ImplSffxRegexStr = IMPL_SFFX.EncodeForRegex(false, true);
-
-        public static readonly Regex DefsSffxRegex = new Regex(DefsSffxRegexStr);
-        public static readonly Regex ImplSffxRegex = new Regex(ImplSffxRegexStr);
-
         public ClnblTypesCodeParser(
             IAppConfig appConfig,
             ITreeTraversalComponentFactory treeTraversalComponentFactory) : base(
@@ -57,17 +39,13 @@ namespace Turmerik.MsVSTextTemplating.Components
         {
             options = NormalizeOpts(options.AsMtbl());
 
-            string csFilePath = GetImplCsFilePath(
-                options.TemplateFilePath);
-
-            string csCode = File.ReadAllText(csFilePath);
-
             var resultMtbl = TraverseTree(
                 new SyntaxTreeTraversalOptsCore<ClnblTypesCodeParserArgs, TreeNode, ClnblTypesCodeParserOutput.Mtbl>.Mtbl
                 {
-                    Code = csCode,
+                    DefsCode = options.DefsCode,
                     OnAscend = (args, trArgs, treeNode) => OnAscend(args, trArgs, treeNode),
                     OnDescend = (args, trArgs, treeNode) => OnDescend(args, trArgs, treeNode),
+                    ResultFactory = args => new ClnblTypesCodeParserOutput.Mtbl()
                 },
                 argsFactory: opts => GetDefaultArgs<ClnblTypesCodeParserOutput.Mtbl>(opts).WithValue(dfArgs => new ClnblTypesCodeParserArgs(
                     opts,
@@ -91,51 +69,7 @@ namespace Turmerik.MsVSTextTemplating.Components
             return output;
         }
 
-        public string GetImplCsFilePath(
-            string templateFilePath) => GetCsFilePath(
-                templateFilePath,
-                IMPL_SFFX);
-
-        public string GetDefsCsFilePath(
-            string templateFilePath) => GetCsFilePath(
-                templateFilePath,
-                DEFS_SFFX);
-
-        private string GetCsFilePath(
-            string templateFilePath,
-            string csFileNameSffx)
-        {
-            string dirName = Path.GetDirectoryName(templateFilePath);
-            string fileNameWithoutExtn = Path.GetFileNameWithoutExtension(templateFilePath);
-
-            string baseFileName = GetBaseFileName(fileNameWithoutExtn);
-
-            string csFileName = string.Concat(
-                baseFileName,
-                csFileNameSffx,
-                CS_EXTN);
-
-            string csFilePath = Path.Combine(dirName, csFileName);
-            return csFilePath;
-        }
-
-        private string GetBaseFileName(string fileNameWithoutExtn)
-        {
-            if (!ImplSffxRegex.IsMatch(fileNameWithoutExtn))
-            {
-                throw new InvalidOperationException(
-                    string.Join(" ",
-                    $@"The template file name must end with the string ""{IMPL_SFFX}{TT_EXTN}""",
-                    $"The provided template file name is {fileNameWithoutExtn}"));
-            }
-
-            string baseFileName = fileNameWithoutExtn.SubStr(
-                (str, len) => len - ImplSffxLen).Item1;
-
-            return baseFileName;
-        }
-
-        private void OnAscend(
+        private void OnDescend(
             ClnblTypesCodeParserArgs args,
             TreeTraversalComponent<TreeNode>.Args trArgs,
             TreeNode treeNode)
@@ -197,32 +131,35 @@ namespace Turmerik.MsVSTextTemplating.Components
             }
         }
 
-        private void OnDescend(
+        private void OnAscend(
             ClnblTypesCodeParserArgs args,
             TreeTraversalComponent<TreeNode>.Args trArgs,
             TreeNode treeNode)
         {
-            switch (args.TrState)
+            if (args.TrState == (ClnblTypesCodeGeneratorTreeTraversalState)(-100))
             {
-                case ClnblTypesCodeGeneratorTreeTraversalState.File:
-                    break;
-                case ClnblTypesCodeGeneratorTreeTraversalState.TypeDef:
-                    HandleTypeDeclarationEnd(args, trArgs);
-                    break;
-                case ClnblTypesCodeGeneratorTreeTraversalState.PropertyDef:
-                    HandlePropertyDeclarationEnd(args, trArgs);
-                    break;
-                case ClnblTypesCodeGeneratorTreeTraversalState.MethodDef:
-                    HandleMethodDeclarationEnd(args, trArgs);
-                    break;
-                case ClnblTypesCodeGeneratorTreeTraversalState.MemberDef:
-                    HandleMemberDeclarationEnd(args, trArgs);
-                    break;
-                case ClnblTypesCodeGeneratorTreeTraversalState.AttrDecrt:
-                    HandleAttributeEnd(args, trArgs);
-                    break;
-                default:
-                    throw new InvalidOperationException("Invalid tree traversal state");
+                switch (args.TrState)
+                {
+                    case ClnblTypesCodeGeneratorTreeTraversalState.File:
+                        break;
+                    case ClnblTypesCodeGeneratorTreeTraversalState.TypeDef:
+                        HandleTypeDeclarationEnd(args, trArgs);
+                        break;
+                    case ClnblTypesCodeGeneratorTreeTraversalState.PropertyDef:
+                        HandlePropertyDeclarationEnd(args, trArgs);
+                        break;
+                    case ClnblTypesCodeGeneratorTreeTraversalState.MethodDef:
+                        HandleMethodDeclarationEnd(args, trArgs);
+                        break;
+                    case ClnblTypesCodeGeneratorTreeTraversalState.MemberDef:
+                        HandleMemberDeclarationEnd(args, trArgs);
+                        break;
+                    case ClnblTypesCodeGeneratorTreeTraversalState.AttrDecrt:
+                        HandleAttributeEnd(args, trArgs);
+                        break;
+                    default:
+                        throw new InvalidOperationException("Invalid tree traversal state");
+                }
             }
         }
 
@@ -409,20 +346,22 @@ namespace Turmerik.MsVSTextTemplating.Components
             var output = args.ParserOutput;
 
             output.UsingNamespaceStatements.Add(node.ToFullString());
+            string @namespace = node.Name.ToString();
 
             if (node.StaticKeyword != default)
             {
-                output.StaticallyUsedNamespaces.Add(node.Name.ToString());
+                output.StaticallyUsedNamespaces.Add(@namespace);
             }
             else if (node.Alias != null)
             {
                 output.NamespaceAliases.Add(
-                    node.Alias.ToString(),
-                    node.Name.ToString());
+                    node.Alias.Name.ToString(),
+                    @namespace);
             }
             else
             {
                 output.UsedNamespaces = output.UsedNamespaces ?? new List<string>();
+                output.UsedNamespaces.Add(@namespace);
             }
         }
 
@@ -434,7 +373,6 @@ namespace Turmerik.MsVSTextTemplating.Components
             var nsNode = trArgs.CurrentTreeNode.Data.Node as NamespaceDeclarationSyntax;
             var output = args.ParserOutput;
 
-            output.NamespaceDeclaration = nsNode.ToFullString();
             output.Namespace = nsNode.Name.ToString();
         }
 
@@ -446,8 +384,8 @@ namespace Turmerik.MsVSTextTemplating.Components
             var fsNsNode = trArgs.CurrentTreeNode.Data.Node as FileScopedNamespaceDeclarationSyntax;
             var output = args.ParserOutput;
 
-            output.FileScopedNamespaceDeclaration = fsNsNode.ToFullString();
             output.Namespace = fsNsNode.Name.ToString();
+            output.NamespaceIsFileScoped = true;
         }
 
         private void AssertNoNamespaceDeclaration(

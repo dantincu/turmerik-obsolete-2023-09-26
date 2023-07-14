@@ -31,7 +31,7 @@ namespace Turmerik.MsVSTextTemplating.UnitTests
         public List<RoslynTestComponentNode> ParseCode(string code) => TraverseTree(
             new SyntaxTreeTraversalOptsCore<Args, RoslynTestComponentNode, List<RoslynTestComponentNode>>.Mtbl
             {
-                Code = code,
+                DefsCode = code,
                 OnAscend = (args, trArgs, treeNode) =>
                 {
                     args.CurrentTreeNode = treeNode;

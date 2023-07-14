@@ -24,7 +24,7 @@ namespace Turmerik.MsVSTextTemplating
                 registerAppLoggerFactoryFunc);
 
             services.AddSingleton<IAppConfig, AppConfig>();
-            services.AddSingleton<IClnblTypesCodeParser, ClnblTypesCodeParser>();
+            services.AddSingleton<IClnblTypesCodeParser, ClnblTypesCsCodeParser>();
             services.AddSingleton<IClnblTypesCodeGenerator, ClnblTypesCodeGenerator>();
         }
     }

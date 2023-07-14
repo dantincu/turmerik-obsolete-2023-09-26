@@ -10,17 +10,17 @@ namespace Turmerik.CodeAnalysis.Core.Dependencies
     {
         public interface IClnbl
         {
-            string Code { get; }
+            string DefsCode { get; }
         }
 
         public class Immtbl : IClnbl
         {
             public Immtbl(IClnbl src)
             {
-                Code = src.Code;
+                DefsCode = src.DefsCode;
             }
 
-            public string Code { get; }
+            public string DefsCode { get; }
         }
 
         public class Mtbl : IClnbl
@@ -31,10 +31,10 @@ namespace Turmerik.CodeAnalysis.Core.Dependencies
 
             public Mtbl(IClnbl src)
             {
-                Code = src.Code;
+                DefsCode = src.DefsCode;
             }
 
-            public string Code { get; set; }
+            public string DefsCode { get; set; }
         }
 
         public static Immtbl ToImmtbl(this IClnbl src) => new Immtbl(src);

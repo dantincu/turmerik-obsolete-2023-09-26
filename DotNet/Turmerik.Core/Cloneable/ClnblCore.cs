@@ -343,4 +343,24 @@ namespace Turmerik.Cloneable
     public abstract class ClnblTypeDecoratorBase
     {
     }
+
+    [AttributeUsage(AttributeTargets.Method)]
+    public class ClnblOnBeforeConstructorAttribute : Attribute
+    {
+    }
+
+    [AttributeUsage(AttributeTargets.Method)]
+    public class ClnblOnBeforeStateFulConstructorAttribute : Attribute
+    {
+    }
+
+    [AttributeUsage(AttributeTargets.Method)]
+    public class ClnblOnAfterConstructorAttribute : Attribute
+    {
+    }
+
+    [AttributeUsage(AttributeTargets.Method)]
+    public class ClnblOnAfterStateFulConstructorAttribute : Attribute
+    {
+    }
 }
