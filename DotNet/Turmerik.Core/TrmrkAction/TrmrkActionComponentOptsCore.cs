@@ -11,7 +11,7 @@ namespace Turmerik.TrmrkAction
     {
         string ActionName { get; set; }
         Action BeforeExecute { get; set; }
-        bool SuppressUIMessageAlerts { get; set; }
+        bool EnableUIBlockingMessagePopups { get; set; }
         LogLevel? LogLevel { get; set; }
         LogLevel? ErrorLogLevel { get; set; }
     }
@@ -53,7 +53,7 @@ namespace Turmerik.TrmrkAction
     {
         public string ActionName { get; set; }
         public Action BeforeExecute { get; set; }
-        public bool SuppressUIMessageAlerts { get; set; }
+        public bool EnableUIBlockingMessagePopups { get; set; }
         public LogLevel? LogLevel { get; set; }
         public LogLevel? ErrorLogLevel { get; set; }
 
@@ -69,19 +69,19 @@ namespace Turmerik.TrmrkAction
         public Action<TActionResult, Exception, TrmrkUnhandledErrorActionStepKind> FinalCallback { get; set; }
     }
 
-    public class TrmrkActionComponentOpts<TMsgTemplate> : TrmrkActionComponentOptsCore<ITrmrkActionResult, ITrmrkActionResult>, ITrmrkActionComponentOpts
+    public class TrmrkActionComponentOpts : TrmrkActionComponentOptsCore<ITrmrkActionResult, ITrmrkActionResult>, ITrmrkActionComponentOpts
     {
     }
 
-    public class TrmrkActionComponentOpts<TData, TMsgTemplate> : TrmrkActionComponentOptsCore<ITrmrkActionResult<TData>, ITrmrkActionResult<TData>>, ITrmrkActionComponentOpts<TData>
+    public class TrmrkActionComponentOpts<TData> : TrmrkActionComponentOptsCore<ITrmrkActionResult<TData>, ITrmrkActionResult<TData>>, ITrmrkActionComponentOpts<TData>
     {
     }
 
-    public class TrmrkAsyncActionComponentOpts<TMsgTemplate> : TrmrkActionComponentOptsCore<Task<ITrmrkActionResult>, ITrmrkActionResult>, ITrmrkAsyncActionComponentOpts
+    public class TrmrkAsyncActionComponentOpts : TrmrkActionComponentOptsCore<Task<ITrmrkActionResult>, ITrmrkActionResult>, ITrmrkAsyncActionComponentOpts
     {
     }
 
-    public class TrmrkAsyncActionComponentOpts<TData, TMsgTemplate> : TrmrkActionComponentOptsCore<Task<ITrmrkActionResult<TData>>, ITrmrkActionResult<TData>>, ITrmrkAsyncActionComponentOpts<TData>
+    public class TrmrkAsyncActionComponentOpts<TData> : TrmrkActionComponentOptsCore<Task<ITrmrkActionResult<TData>>, ITrmrkActionResult<TData>>, ITrmrkAsyncActionComponentOpts<TData>
     {
     }
 }

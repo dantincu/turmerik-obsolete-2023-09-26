@@ -12,7 +12,7 @@ using Turmerik.Utils;
 namespace Turmerik.TrmrkAction
 {
     public class TrmrkActionComponentCore<TManager>
-        where TManager : class, ITrmrkActionComponentsManagerCore
+        where TManager : class, ITrmrkActionComponentsManager
     {
         protected const string DEFAULT_LOG_MESSAGE_TEMPLATE = "{0} for action {1}";
         protected const string DEFAULT_ERROR_LOG_MESSAGE_TEMPLATE = "Error at {0} for action {1}: {2}";
@@ -112,30 +112,13 @@ namespace Turmerik.TrmrkAction
         }
 
         protected virtual void ShowUIMessageAlert(
-            ITrmrkActionComponentOptsCore opts,
-            ITrmrkActionResult actionResult,
-            Exception exc,
-            TrmrkUnhandledErrorActionStepKind actionStepKind,
-            ITrmrkActionMessageTuple msgTuple)
+            ShowUIMessageAlertArgs args)
         {
-            if (msgTuple.ShowBlockingUIMessage.HasValue || (!opts.SuppressUIMessageAlerts && !Manager.SuppressUIMessageAlerts))
-            {
-                ShowUIMessageAlertCore(
-                    opts,
-                    actionResult,
-                    exc,
-                    actionStepKind,
-                    msgTuple);
-            }
-        }
+            bool useUIBlockingMessagePopup = args.MsgTuple.UseUIBlockingMessagePopups == true && args.Opts.EnableUIBlockingMessagePopups && Manager.EnableUIBlockingMessagePopups;
 
-        protected virtual void ShowUIMessageAlertCore(
-            ITrmrkActionComponentOptsCore opts,
-            ITrmrkActionResult actionResult,
-            Exception exc,
-            TrmrkUnhandledErrorActionStepKind actionStepKind,
-            ITrmrkActionMessageTuple msgTuple)
-        {
+            Manager.ShowUIMessageAlert(
+                args,
+                useUIBlockingMessagePopup);
         }
 
         protected virtual ITrmrkActionMessageTuple GetDefaultLogMessage<TResult, TActionResult, TMsgTuple>(
@@ -147,7 +130,6 @@ namespace Turmerik.TrmrkAction
             where TMsgTuple : ITrmrkActionMessageTuple
         {
             string message;
-            LogLevel logLevel;
 
             if (actionResult.IsSuccess)
             {
@@ -177,6 +159,33 @@ namespace Turmerik.TrmrkAction
             {
                 Message = message,
             };
+        }
+
+        protected virtual string GetErrorMessage(
+            ITrmrkActionResult actionResult,
+            Exception exc)
+        {
+            var msgParts = new List<string>();
+
+            if (actionResult != null)
+            {
+                msgParts.AddRange(
+                    actionResult.ResponseCaption,
+                    actionResult.ResponseMessage,
+                    actionResult.Exception?.Message);
+            }
+
+            msgParts.Add(exc?.Message);
+            var msgPartsArr = msgParts.NotNull().ToArray();
+
+            string msg = null;
+
+            if (msgPartsArr.Any())
+            {
+                msg = string.Join(": ", msgPartsArr);
+            }
+
+            return msg;
         }
 
         private void OnBeforeExecute<TResult, TActionResult, TMsgTuple>(
@@ -212,7 +221,7 @@ namespace Turmerik.TrmrkAction
 
             if (actionResult.HasError)
             {
-                opts.ValidationErrorCallback(actionResult);
+                opts.ValidationErrorCallback?.Invoke(actionResult);
             }
 
             LogMessageIfReq(opts, actionResult, null, actionStepKind);
@@ -240,11 +249,11 @@ namespace Turmerik.TrmrkAction
 
             if (actionResult.HasError)
             {
-                opts.ActionErrorCallback(actionResult);
+                opts.ActionErrorCallback?.Invoke(actionResult);
             }
             else
             {
-                opts.SuccessCallback(actionResult);
+                opts.SuccessCallback?.Invoke(actionResult);
             }
 
             LogMessageIfReq(opts, actionResult, null, actionStepKind);
@@ -328,48 +337,84 @@ namespace Turmerik.TrmrkAction
 
             if (msgTuple != null)
             {
-                var excp = exc ?? actionResult?.Error?.Exception;
+                LogMessageIfReqCore(
+                    opts,
+                    actionResult,
+                    exc,
+                    actionStepKind,
+                    msgTuple);
+            }
+        }
 
-                if (Logger != null)
-                {
-                    var logLevel = GetLogLevel(
-                        opts,
-                        actionResult,
-                        exc,
-                        msgTuple);
+        private void LogMessageIfReqCore<TResult, TActionResult, TMsgTuple>(
+            ITrmrkActionComponentOptsCore<TResult, TActionResult, TMsgTuple> opts,
+            TActionResult actionResult,
+            Exception exc,
+            TrmrkUnhandledErrorActionStepKind actionStepKind,
+            ITrmrkActionMessageTuple msgTuple)
+            where TActionResult : ITrmrkActionResult
+            where TMsgTuple : ITrmrkActionMessageTuple
+        {
+            var excp = exc ?? actionResult?.Exception;
 
-                    Logger.Write(
-                        logLevel,
-                        excp,
-                        msgTuple.Message);
-                }
+            var logLevel = GetLogLevel(
+                opts,
+                actionResult,
+                excp,
+                msgTuple);
 
-                if (msgTuple.ShowBlockingUIMessage.HasValue || excp != null || (actionResult?.HasError ?? false))
-                {
-                    ShowUIMessageAlert(
+            LogMessageIfReqCore(excp, msgTuple, logLevel);
+
+            ShowUIMessageAlertIfReq(
+                opts,
+                actionResult,
+                excp,
+                actionStepKind,
+                msgTuple,
+                logLevel);
+        }
+
+        private void LogMessageIfReqCore(
+            Exception excp,
+            ITrmrkActionMessageTuple msgTuple,
+            LogLevel logLevel)
+        {
+            if (Logger != null)
+            {
+                string message = string.Join(
+                    ": ",
+                    msgTuple.Caption.Arr(
+                        msgTuple.Message).NotNull(
+                        ).ToArray());
+
+                Logger.Write(
+                    logLevel,
+                    excp,
+                    message);
+            }
+        }
+
+        private void ShowUIMessageAlertIfReq<TResult, TActionResult, TMsgTuple>(
+            ITrmrkActionComponentOptsCore<TResult, TActionResult, TMsgTuple> opts,
+            TActionResult actionResult,
+            Exception excp,
+            TrmrkUnhandledErrorActionStepKind actionStepKind,
+            ITrmrkActionMessageTuple msgTuple,
+            LogLevel logLevel)
+            where TActionResult : ITrmrkActionResult
+            where TMsgTuple : ITrmrkActionMessageTuple
+        {
+            if (msgTuple.UseUIBlockingMessagePopups.HasValue || excp != null || (actionResult?.HasError ?? false))
+            {
+                ShowUIMessageAlert(
+                    new ShowUIMessageAlertArgs(
                         opts,
                         actionResult,
                         excp,
                         actionStepKind,
-                        msgTuple);
-                }
+                        msgTuple,
+                        logLevel));
             }
-        }
-
-        private string GetErrorMessage(
-            ITrmrkActionResult actionResult,
-            Exception exc)
-        {
-            string errMsg = null;
-            var error = actionResult?.Error;
-
-            if (error != null)
-            {
-                errMsg = error.Message ?? error.Exception?.Message;
-            }
-
-            errMsg = errMsg ?? exc?.Message;
-            return errMsg;
         }
 
         private LogLevel GetLogLevel<TResult, TActionResult, TMsgTuple>(

@@ -22,10 +22,11 @@ namespace Turmerik.TrmrkAction
             ITrmrkAsyncActionComponentOpts<TData> opts);
     }
 
-    public class TrmrkActionComponent : TrmrkActionComponentCore<ITrmrkActionComponentsManagerCore>, ITrmrkActionComponent
+    public class TrmrkActionComponent<TManager> : TrmrkActionComponentCore<TManager>, ITrmrkActionComponent
+        where TManager : class, ITrmrkActionComponentsManager
     {
         public TrmrkActionComponent(
-            ITrmrkActionComponentsManagerCore manager,
+            TManager manager,
             IAppLogger logger) : base(
                 manager,
                 logger)

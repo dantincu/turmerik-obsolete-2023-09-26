@@ -64,14 +64,14 @@ namespace Turmerik.Synchronized
             try
             {
                 action();
-                result = new TrmrkActionResult(true, null);
+                result = new TrmrkActionResult();
             }
             catch (Exception ex)
             {
-                result = new TrmrkActionResult(
-                    false,
-                    new TrmrkActionError(
-                        null, ex));
+                result = new TrmrkActionResult
+                {
+                    Exception = ex
+                };
             }
 
             return result;
@@ -84,15 +84,18 @@ namespace Turmerik.Synchronized
             try
             {
                 var data = action();
-                result = new TrmrkActionResult<TData>(true, data, null);
+
+                result = new TrmrkActionResult<TData>
+                {
+                    Data = data
+                };
             }
             catch (Exception ex)
             {
-                result = new TrmrkActionResult<TData>(
-                    false,
-                    default,
-                    new TrmrkActionError(
-                        null, ex));
+                result = new TrmrkActionResult<TData>
+                {
+                    Exception = ex
+                };
             }
 
             return result;

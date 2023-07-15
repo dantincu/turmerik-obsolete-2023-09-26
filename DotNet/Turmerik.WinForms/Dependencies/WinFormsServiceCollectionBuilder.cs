@@ -23,6 +23,7 @@ namespace Turmerik.WinForms.Dependencies
                 registerFsExplorerServiceEngineAsDefault,
                 registerAppLoggerFactoryFunc);
 
+            services.AddSingleton<IWinFormsActionComponentsManagerRetriever, WinFormsActionComponentsManagerRetriever>();
             services.AddSingleton<IWinFormsActionComponentFactory, WinFormsActionComponentFactory>();
         }
     }

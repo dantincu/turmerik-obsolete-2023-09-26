@@ -9,7 +9,7 @@ namespace Turmerik.TrmrkAction
     {
         string Message { get; set; }
         string Caption { get; set; }
-        bool? ShowBlockingUIMessage { get; set; }
+        bool? UseUIBlockingMessagePopups { get; set; }
         LogLevel? LogLevel { get; set; }
     }
 
@@ -17,7 +17,7 @@ namespace Turmerik.TrmrkAction
     {
         public string Message { get; set; }
         public string Caption { get; set; }
-        public bool? ShowBlockingUIMessage { get; set; }
+        public bool? UseUIBlockingMessagePopups { get; set; }
         public LogLevel? LogLevel { get; set; }
     }
 }

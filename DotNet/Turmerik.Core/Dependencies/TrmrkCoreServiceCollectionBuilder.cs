@@ -72,9 +72,6 @@ namespace Turmerik.Dependencies
             // services.AddSingleton<ITypesMappingCache, TypesMappingCache>();
             // services.AddSingleton<IPropsMapper, PropsMapper>();
 
-            services.AddSingleton<ITrmrkActionComponentsManagerFactoryCore, TrmrkActionComponentsManagerFactoryCore>();
-            services.AddSingleton<ITrmrkActionComponentFactory, TrmrkActionComponentFactory>();
-
             services.AddTransient<IDriveExplorerService, DriveExplorerService>();
         }
     }

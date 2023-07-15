@@ -199,11 +199,12 @@ namespace Turmerik.DriveExplorerCore
 
         private HttpActionResult<TData> HandleException<TData>(Exception exc)
         {
-            var httpStatusCode = GetHttpStatusCode(exc);
-            var errViewModel = new TrmrkActionError(null, exc);
-
-            var result = new HttpActionResult<TData>(
-                false, default, errViewModel, httpStatusCode);
+            var result = new HttpActionResult<TData>()
+            {
+                HasError = true,
+                Exception = exc,
+                HttpStatusCode = GetHttpStatusCode(exc),
+            };
 
             return result;
         }
@@ -251,8 +252,10 @@ namespace Turmerik.DriveExplorerCore
             excHandler = excHandler.FirstNotNull(DriveItemDefaultExceptionHandler);
 
             var actionResult = await ExecuteCoreAsync(
-                async () => new HttpActionResult<DriveItem.Mtbl>(
-                    true, await action()), excHandler);
+                async () => new HttpActionResult<DriveItem.Mtbl>
+                {
+                    Data = await action()
+                }, excHandler);
 
             return actionResult;
         }
