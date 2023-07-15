@@ -3,27 +3,34 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using Turmerik.Cloneable;
 using Turmerik.Collections;
+using Turmerik.Utils;
 
 namespace Turmerik.CodeAnalysis.Core.Components
 {
-    public static partial class ParsedGenericTypeParameter
+    public static partial class ParsedCsFile
     {
         public interface IClnbl
         {
-            string Name { get; }
+            bool HasTopLevelStatements { get; }
+
+            IEnumerable<ParsedSyntaxNode.IClnbl> GetNodes();
         }
 
         public class Immtbl : IClnbl
         {
             public Immtbl(IClnbl src)
             {
-                Name = src.Name;
+                HasTopLevelStatements = src.HasTopLevelStatements;
+                Nodes = src.GetNodes().AsImmtblCllctn();
             }
 
-            public string Name { get; set; }
+            public bool HasTopLevelStatements { get; }
+
+            public ReadOnlyCollection<ParsedSyntaxNode.Immtbl> Nodes { get; }
+
+            public IEnumerable<ParsedSyntaxNode.IClnbl> GetNodes() => Nodes;
         }
 
         public class Mtbl : IClnbl
@@ -34,10 +41,15 @@ namespace Turmerik.CodeAnalysis.Core.Components
 
             public Mtbl(IClnbl src)
             {
-                Name = src.Name;
+                HasTopLevelStatements = src.HasTopLevelStatements;
+                Nodes = src.GetNodes().AsMtblList();
             }
 
-            public string Name { get; set; }
+            public bool HasTopLevelStatements { get; set; }
+
+            public List<ParsedSyntaxNode.Mtbl> Nodes { get; set; }
+
+            public IEnumerable<ParsedSyntaxNode.IClnbl> GetNodes() => Nodes;
         }
 
         public static Immtbl ToImmtbl(
@@ -74,5 +86,13 @@ namespace Turmerik.CodeAnalysis.Core.Components
         public static Dictionary<TKey, Mtbl> AsMtblDictnr<TKey>(
             IDictionaryCore<TKey, IClnbl> src) => src as Dictionary<TKey, Mtbl> ?? (src as ReadOnlyDictionary<TKey, Immtbl>)?.ToDictionary(
                 kvp => kvp.Key, kvp => kvp.Value?.AsMtbl());
+
+        public static IDictionaryCore<TKey, IClnbl> ToClnblDictnr<TKey>(
+            this Dictionary<TKey, Mtbl> src) => (IDictionaryCore<TKey, IClnbl>)src.ToDictionary(
+                kvp => kvp.Key, kvp => kvp.Value.SafeCast<IClnbl>());
+
+        public static IDictionaryCore<TKey, IClnbl> ToClnblDictnr<TKey>(
+            this ReadOnlyDictionary<TKey, Immtbl> src) => (IDictionaryCore<TKey, IClnbl>)src.ToDictionary(
+                kvp => kvp.Key, kvp => kvp.Value.SafeCast<IClnbl>());
     }
 }

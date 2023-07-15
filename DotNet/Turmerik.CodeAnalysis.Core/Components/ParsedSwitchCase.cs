@@ -5,12 +5,13 @@ using System.Linq;
 using System.Text;
 using Turmerik.Cloneable;
 using Turmerik.Collections;
+using Turmerik.Utils;
 
 namespace Turmerik.CodeAnalysis.Core.Components
 {
     public static partial class ParsedSwitchCase
     {
-        public interface IClnbl
+        public interface IClnbl : ParsedSyntaxNode.IClnbl
         {
             bool IsPatternMatchingCase { get; }
 
@@ -18,9 +19,9 @@ namespace Turmerik.CodeAnalysis.Core.Components
             ParsedExpressionOrStatementsBlock.IClnbl GetFunctionExpressionOrStatementsBlock();
         }
 
-        public class Immtbl : IClnbl
+        public class Immtbl : ParsedSyntaxNode.Immtbl, IClnbl
         {
-            public Immtbl(IClnbl src)
+            public Immtbl(IClnbl src) : base(src)
             {
                 IsPatternMatchingCase = src.IsPatternMatchingCase;
                 CaseExpr = src.GetCaseExpr().AsImmtbl();
@@ -36,7 +37,7 @@ namespace Turmerik.CodeAnalysis.Core.Components
             public ParsedExpressionOrStatementsBlock.IClnbl GetFunctionExpressionOrStatementsBlock() => FunctionExpressionOrStatementsBlock;
         }
 
-        public class Mtbl : IClnbl
+        public class Mtbl : ParsedSyntaxNode.Mtbl, IClnbl
         {
             public Mtbl()
             {
@@ -92,5 +93,13 @@ namespace Turmerik.CodeAnalysis.Core.Components
         public static Dictionary<TKey, Mtbl> AsMtblDictnr<TKey>(
             IDictionaryCore<TKey, IClnbl> src) => src as Dictionary<TKey, Mtbl> ?? (src as ReadOnlyDictionary<TKey, Immtbl>)?.ToDictionary(
                 kvp => kvp.Key, kvp => kvp.Value?.AsMtbl());
+
+        public static IDictionaryCore<TKey, IClnbl> ToClnblDictnr<TKey>(
+            this Dictionary<TKey, Mtbl> src) => (IDictionaryCore<TKey, IClnbl>)src.ToDictionary(
+                kvp => kvp.Key, kvp => kvp.Value.SafeCast<IClnbl>());
+
+        public static IDictionaryCore<TKey, IClnbl> ToClnblDictnr<TKey>(
+            this ReadOnlyDictionary<TKey, Immtbl> src) => (IDictionaryCore<TKey, IClnbl>)src.ToDictionary(
+                kvp => kvp.Key, kvp => kvp.Value.SafeCast<IClnbl>());
     }
 }

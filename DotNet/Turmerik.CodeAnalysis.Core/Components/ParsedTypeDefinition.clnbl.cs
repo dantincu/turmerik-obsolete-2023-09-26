@@ -6,12 +6,13 @@ using System.Text;
 using System.Threading.Tasks;
 using Turmerik.Cloneable;
 using Turmerik.Collections;
+using Turmerik.Utils;
 
 namespace Turmerik.CodeAnalysis.Core.Components
 {
     public static partial class ParsedTypeDefinition
     {
-        public interface IClnbl
+        public interface IClnbl : ParsedSyntaxNode.IClnbl
         {
             string Name { get; }
             bool IsPartial { get; }
@@ -21,18 +22,18 @@ namespace Turmerik.CodeAnalysis.Core.Components
             ParsedClassDefinition.IClnbl GetNestedParentClass();
             ParsedTypeOrMemberIdentifier.IClnbl GetInheritedParentClass();
 
-            IEnumerable<ParsedCsKeyword> GetModifiers();
+            IEnumerable<ParsedCsKeywordKind> GetModifiers();
             IEnumerable<ParsedAttributeDecoration.IClnbl> GetAttributes();
-            IEnumerable<ParsedGenericTypeParameter.IClnbl> GetGenericTypeParameters();
+            IDictionaryCore<string, ParsedGenericTypeParameterConstraint.IClnbl> GetGenericTypeParameters();
             IEnumerable<ParsedTypeOrMemberIdentifier.IClnbl> GetInterfaces();
             IEnumerable<IClnbl> GetNestedTypes();
 
             IEnumerable<ParsedTypeMemberDeclaration.IClnbl> GetMemberDeclarations();
         }
 
-        public class Immtbl : IClnbl
+        public class Immtbl : ParsedSyntaxNode.Immtbl, IClnbl
         {
-            public Immtbl(IClnbl src)
+            public Immtbl(IClnbl src) : base(src)
             {
                 Name = src.Name;
                 IsPartial = src.IsPartial;
@@ -44,7 +45,7 @@ namespace Turmerik.CodeAnalysis.Core.Components
 
                 Modifiers = src.GetModifiers()?.RdnlC();
                 Attributes = src.GetAttributes().AsImmtblCllctn();
-                GenericTypeParameters = src.GetGenericTypeParameters().AsImmtblCllctn();
+                GenericTypeParameters = src.GetGenericTypeParameters().AsImmtblDictnr();
                 Interfaces = src.GetInterfaces().AsImmtblCllctn();
                 NestedTypes = src.GetNestedTypes().AsImmtblCllctn();
                 MemberDeclarations = src.GetMemberDeclarations().AsImmtblCllctn();
@@ -58,9 +59,9 @@ namespace Turmerik.CodeAnalysis.Core.Components
             public ParsedClassDefinition.Immtbl NestedParentClass { get; }
             public ParsedTypeOrMemberIdentifier.Immtbl InheritedParentClass { get; }
 
-            public ReadOnlyCollection<ParsedCsKeyword> Modifiers { get; }
+            public ReadOnlyCollection<ParsedCsKeywordKind> Modifiers { get; }
             public ReadOnlyCollection<ParsedAttributeDecoration.Immtbl> Attributes { get; }
-            public ReadOnlyCollection<ParsedGenericTypeParameter.Immtbl> GenericTypeParameters { get; }
+            public ReadOnlyDictionary<string, ParsedGenericTypeParameterConstraint.Immtbl> GenericTypeParameters { get; }
             public ReadOnlyCollection<ParsedTypeOrMemberIdentifier.Immtbl> Interfaces { get; }
             public ReadOnlyCollection<Immtbl> NestedTypes { get; }
             public ReadOnlyCollection<ParsedTypeMemberDeclaration.Immtbl> MemberDeclarations { get; }
@@ -68,22 +69,22 @@ namespace Turmerik.CodeAnalysis.Core.Components
             public ParsedClassDefinition.IClnbl GetNestedParentClass() => NestedParentClass;
             public ParsedTypeOrMemberIdentifier.IClnbl GetInheritedParentClass() => InheritedParentClass;
 
-            public IEnumerable<ParsedCsKeyword> GetModifiers() => Modifiers;
+            public IEnumerable<ParsedCsKeywordKind> GetModifiers() => Modifiers;
             public IEnumerable<ParsedAttributeDecoration.IClnbl> GetAttributes() => Attributes;
-            public IEnumerable<ParsedGenericTypeParameter.IClnbl> GetGenericTypeParameters() => GenericTypeParameters;
+            public IDictionaryCore<string, ParsedGenericTypeParameterConstraint.IClnbl> GetGenericTypeParameters() => GenericTypeParameters?.ToClnblDictnr();
             public IEnumerable<ParsedTypeOrMemberIdentifier.IClnbl> GetInterfaces() => Interfaces;
             public IEnumerable<IClnbl> GetNestedTypes() => NestedTypes;
 
             public IEnumerable<ParsedTypeMemberDeclaration.IClnbl> GetMemberDeclarations() => MemberDeclarations;
         }
 
-        public class Mtbl : IClnbl
+        public class Mtbl : ParsedSyntaxNode.Mtbl, IClnbl
         {
             public Mtbl()
             {
             }
 
-            public Mtbl(IClnbl src)
+            public Mtbl(IClnbl src) : base(src)
             {
                 Name = src.Name;
                 IsPartial = src.IsPartial;
@@ -95,7 +96,7 @@ namespace Turmerik.CodeAnalysis.Core.Components
 
                 Modifiers = src.GetModifiers()?.ToList();
                 Attributes = src.GetAttributes().AsMtblList();
-                GenericTypeParameters = src.GetGenericTypeParameters().AsMtblList();
+                GenericTypeParameters = src.GetGenericTypeParameters().AsMtblDictnr();
                 Interfaces = src.GetInterfaces().AsMtblList();
                 NestedTypes = src.GetNestedTypes().AsMtblList();
                 MemberDeclarations = src.GetMemberDeclarations().AsMtblList();
@@ -109,9 +110,9 @@ namespace Turmerik.CodeAnalysis.Core.Components
             public ParsedClassDefinition.Mtbl NestedParentClass { get; set; }
             public ParsedTypeOrMemberIdentifier.Mtbl InheritedParentClass { get; set; }
 
-            public List<ParsedCsKeyword> Modifiers { get; set; }
+            public List<ParsedCsKeywordKind> Modifiers { get; set; }
             public List<ParsedAttributeDecoration.Mtbl> Attributes { get; set; }
-            public List<ParsedGenericTypeParameter.Mtbl> GenericTypeParameters { get; set; }
+            public Dictionary<string, ParsedGenericTypeParameterConstraint.Mtbl> GenericTypeParameters { get; set; }
             public List<ParsedTypeOrMemberIdentifier.Mtbl> Interfaces { get; set; }
             public List<Mtbl> NestedTypes { get; set; }
             public List<ParsedTypeMemberDeclaration.Mtbl> MemberDeclarations { get; set; }
@@ -119,9 +120,9 @@ namespace Turmerik.CodeAnalysis.Core.Components
             public ParsedClassDefinition.IClnbl GetNestedParentClass() => NestedParentClass;
             public ParsedTypeOrMemberIdentifier.IClnbl GetInheritedParentClass() => InheritedParentClass;
 
-            public IEnumerable<ParsedCsKeyword> GetModifiers() => Modifiers;
+            public IEnumerable<ParsedCsKeywordKind> GetModifiers() => Modifiers;
             public IEnumerable<ParsedAttributeDecoration.IClnbl> GetAttributes() => Attributes;
-            public IEnumerable<ParsedGenericTypeParameter.IClnbl> GetGenericTypeParameters() => GenericTypeParameters;
+            public IDictionaryCore<string, ParsedGenericTypeParameterConstraint.IClnbl> GetGenericTypeParameters() => GenericTypeParameters?.ToClnblDictnr();
             public IEnumerable<ParsedTypeOrMemberIdentifier.IClnbl> GetInterfaces() => Interfaces;
             public IEnumerable<IClnbl> GetNestedTypes() => NestedTypes;
 
@@ -162,5 +163,13 @@ namespace Turmerik.CodeAnalysis.Core.Components
         public static Dictionary<TKey, Mtbl> AsMtblDictnr<TKey>(
             IDictionaryCore<TKey, IClnbl> src) => src as Dictionary<TKey, Mtbl> ?? (src as ReadOnlyDictionary<TKey, Immtbl>)?.ToDictionary(
                 kvp => kvp.Key, kvp => kvp.Value?.AsMtbl());
+
+        public static IDictionaryCore<TKey, IClnbl> ToClnblDictnr<TKey>(
+            this Dictionary<TKey, Mtbl> src) => (IDictionaryCore<TKey, IClnbl>)src.ToDictionary(
+                kvp => kvp.Key, kvp => kvp.Value.SafeCast<IClnbl>());
+
+        public static IDictionaryCore<TKey, IClnbl> ToClnblDictnr<TKey>(
+            this ReadOnlyDictionary<TKey, Immtbl> src) => (IDictionaryCore<TKey, IClnbl>)src.ToDictionary(
+                kvp => kvp.Key, kvp => kvp.Value.SafeCast<IClnbl>());
     }
 }

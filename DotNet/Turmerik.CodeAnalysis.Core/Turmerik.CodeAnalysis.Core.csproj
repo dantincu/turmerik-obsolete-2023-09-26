@@ -16,6 +16,7 @@
 
   <ItemGroup>
     <Folder Include="Dependencies\" />
+    <Folder Include="CSharp\" />
   </ItemGroup>
 
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">

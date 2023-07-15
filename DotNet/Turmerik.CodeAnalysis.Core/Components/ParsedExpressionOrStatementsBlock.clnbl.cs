@@ -6,26 +6,32 @@ using System.Linq.Expressions;
 using System.Text;
 using Turmerik.Cloneable;
 using Turmerik.Collections;
+using Turmerik.Utils;
 
 namespace Turmerik.CodeAnalysis.Core.Components
 {
     public static partial class ParsedExpressionOrStatementsBlock
     {
-        public interface IClnbl
+        public interface IClnbl : ParsedSyntaxNode.IClnbl
         {
+            bool StatementsNotSurroundedByCurlyBraces { get; }
+
             ParsedExpression.IClnbl GetExpression();
             ParsedStatement.IClnbl GetSingleStatement();
             IEnumerable<ParsedStatement.IClnbl> GetStatements();
         }
 
-        public class Immtbl : IClnbl
+        public class Immtbl : ParsedSyntaxNode.Immtbl, IClnbl
         {
-            public Immtbl(IClnbl src)
+            public Immtbl(IClnbl src) : base(src)
             {
+                StatementsNotSurroundedByCurlyBraces = src.StatementsNotSurroundedByCurlyBraces;
                 Expression = src.GetExpression().AsImmtbl();
                 SingleStatement = src.GetSingleStatement().AsImmtbl();
                 Statements = src.GetStatements().AsImmtblCllctn();
             }
+
+            public bool StatementsNotSurroundedByCurlyBraces { get; }
 
             public ParsedExpression.Immtbl Expression { get; }
             public ParsedStatement.Immtbl SingleStatement { get; }
@@ -36,18 +42,21 @@ namespace Turmerik.CodeAnalysis.Core.Components
             public IEnumerable<ParsedStatement.IClnbl> GetStatements() => Statements;
         }
 
-        public class Mtbl : IClnbl
+        public class Mtbl : ParsedSyntaxNode.Mtbl, IClnbl
         {
             public Mtbl()
             {
             }
 
-            public Mtbl(IClnbl src)
+            public Mtbl(IClnbl src) : base(src)
             {
+                StatementsNotSurroundedByCurlyBraces = src.StatementsNotSurroundedByCurlyBraces;
                 Expression = src.GetExpression().AsMtbl();
                 SingleStatement = src.GetSingleStatement().AsMtbl();
                 Statements = src.GetStatements().AsMtblList();
             }
+
+            public bool StatementsNotSurroundedByCurlyBraces { get; set; }
 
             public ParsedExpression.Mtbl Expression { get; set; }
             public ParsedStatement.Mtbl SingleStatement { get; set; }
@@ -92,5 +101,13 @@ namespace Turmerik.CodeAnalysis.Core.Components
         public static Dictionary<TKey, Mtbl> AsMtblDictnr<TKey>(
             IDictionaryCore<TKey, IClnbl> src) => src as Dictionary<TKey, Mtbl> ?? (src as ReadOnlyDictionary<TKey, Immtbl>)?.ToDictionary(
                 kvp => kvp.Key, kvp => kvp.Value?.AsMtbl());
+
+        public static IDictionaryCore<TKey, IClnbl> ToClnblDictnr<TKey>(
+            this Dictionary<TKey, Mtbl> src) => (IDictionaryCore<TKey, IClnbl>)src.ToDictionary(
+                kvp => kvp.Key, kvp => kvp.Value.SafeCast<IClnbl>());
+
+        public static IDictionaryCore<TKey, IClnbl> ToClnblDictnr<TKey>(
+            this ReadOnlyDictionary<TKey, Immtbl> src) => (IDictionaryCore<TKey, IClnbl>)src.ToDictionary(
+                kvp => kvp.Key, kvp => kvp.Value.SafeCast<IClnbl>());
     }
 }

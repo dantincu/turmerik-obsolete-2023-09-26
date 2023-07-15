@@ -7,7 +7,7 @@ namespace Turmerik.CodeAnalysis.Core.Components
     /// <summary>
     /// A complete list of C# keywords taken from https://www.programiz.com/csharp-programming/keywords-identifiers <br />
     /// </summary>
-    public enum ParsedCsKeyword
+    public enum ParsedCsKeywordKind
     {
         None = 0,
 

@@ -6,38 +6,44 @@ using System.Text;
 using System.Threading.Tasks;
 using Turmerik.Cloneable;
 using Turmerik.Collections;
+using Turmerik.Utils;
 
 namespace Turmerik.CodeAnalysis.Core.Components
 {
     public static partial class ParsedExpression
     {
-        public interface IClnbl
+        public interface IClnbl : ParsedSyntaxNode.IClnbl
         {
             ParsedExpressionType ExprType { get; }
+            bool IsSurroundedByRoundParens { get; }
         }
 
-        public class Immtbl : IClnbl
+        public class Immtbl : ParsedSyntaxNode.Immtbl, IClnbl
         {
-            public Immtbl(IClnbl src)
+            public Immtbl(IClnbl src) : base(src)
             {
                 ExprType = src.ExprType;
+                IsSurroundedByRoundParens = src.IsSurroundedByRoundParens;
             }
 
             public ParsedExpressionType ExprType { get; }
+            public bool IsSurroundedByRoundParens { get; }
         }
 
-        public class Mtbl : IClnbl
+        public class Mtbl : ParsedSyntaxNode.Mtbl, IClnbl
         {
             public Mtbl()
             {
             }
 
-            public Mtbl(IClnbl src)
+            public Mtbl(IClnbl src) : base(src)
             {
                 ExprType = src.ExprType;
+                IsSurroundedByRoundParens = src.IsSurroundedByRoundParens;
             }
 
             public ParsedExpressionType ExprType { get; set; }
+            public bool IsSurroundedByRoundParens { get; set; }
         }
 
         public static Immtbl ToImmtbl(
@@ -74,5 +80,13 @@ namespace Turmerik.CodeAnalysis.Core.Components
         public static Dictionary<TKey, Mtbl> AsMtblDictnr<TKey>(
             IDictionaryCore<TKey, IClnbl> src) => src as Dictionary<TKey, Mtbl> ?? (src as ReadOnlyDictionary<TKey, Immtbl>)?.ToDictionary(
                 kvp => kvp.Key, kvp => kvp.Value?.AsMtbl());
+
+        public static IDictionaryCore<TKey, IClnbl> ToClnblDictnr<TKey>(
+            this Dictionary<TKey, Mtbl> src) => (IDictionaryCore<TKey, IClnbl>)src.ToDictionary(
+                kvp => kvp.Key, kvp => kvp.Value.SafeCast<IClnbl>());
+
+        public static IDictionaryCore<TKey, IClnbl> ToClnblDictnr<TKey>(
+            this ReadOnlyDictionary<TKey, Immtbl> src) => (IDictionaryCore<TKey, IClnbl>)src.ToDictionary(
+                kvp => kvp.Key, kvp => kvp.Value.SafeCast<IClnbl>());
     }
 }

@@ -18,7 +18,10 @@ namespace Turmerik.Utils
     public interface ITrmrkActionResult
     {
         bool IsSuccess { get; }
-        TrmrkActionError Error { get; }
+        bool HasError { get; }
+        ITrmrkActionError Error { get; }
+
+        object GetData();
     }
 
     public interface ITrmrkActionResult<TData> : ITrmrkActionResult
@@ -109,7 +112,7 @@ namespace Turmerik.Utils
     {
         public TrmrkActionResult(ITrmrkActionResult src)
         {
-            IsSuccess = src.IsSuccess;
+            HasError = src.HasError;
             Error = src.Error;
         }
 
@@ -117,12 +120,15 @@ namespace Turmerik.Utils
             bool isSuccess,
             TrmrkActionError error)
         {
-            IsSuccess = isSuccess;
+            HasError = !isSuccess;
             Error = error;
         }
 
-        public bool IsSuccess { get; }
-        public TrmrkActionError Error { get; }
+        public bool IsSuccess => !HasError;
+        public bool HasError { get; }
+        public ITrmrkActionError Error { get; }
+
+        public virtual object GetData() => null;
     }
 
     public class TrmrkActionResult<TData> : TrmrkActionResult, ITrmrkActionResult<TData>
@@ -147,6 +153,8 @@ namespace Turmerik.Utils
         }
 
         public TData Data { get; }
+
+        public override object GetData() => Data;
     }
 
     public class HttpActionResult : TrmrkActionResult, IHttpActionResult

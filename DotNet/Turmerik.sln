@@ -5,7 +5,7 @@ VisualStudioVersion = 17.6.33723.286
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Core", "Core", "{E9A3255F-0E33-4796-A489-8B4C016C573A}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{D5115A7C-0835-4E11-9EE7-BB5AA80031F2}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UnitTests", "UnitTests", "{D5115A7C-0835-4E11-9EE7-BB5AA80031F2}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "LocalFilesExplorer", "LocalFilesExplorer", "{BE50DEF6-C9A9-40ED-8538-3496CAAD368C}"
 EndProject
@@ -65,7 +65,17 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Turmerik.MsVSTextTemplating
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Turmerik.Testing.NetFx", "Turmerik.Testing.NetFx\Turmerik.Testing.NetFx.csproj", "{EF4DBDE9-E40F-4DA9-BD60-750E145FB0E5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Turmerik.CodeAnalysis.Core", "Turmerik.CodeAnalysis.Core\Turmerik.CodeAnalysis.Core.csproj", "{8D19E346-0C33-4778-BDD0-012C3A2545C0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Turmerik.CodeAnalysis.Core", "Turmerik.CodeAnalysis.Core\Turmerik.CodeAnalysis.Core.csproj", "{8D19E346-0C33-4778-BDD0-012C3A2545C0}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "TestApps", "TestApps", "{6AD730D0-C509-4FBC-9620-BC288BDF4CEF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Turmerik.CodeAnalysis.WinFormsTestApp", "Turmerik.CodeAnalysis.WinFormsTestApp\Turmerik.CodeAnalysis.WinFormsTestApp.csproj", "{984B11CD-D307-4488-9532-1D857EE2975E}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UtilityApps", "UtilityApps", "{58B107F0-C220-4721-82B6-E77C972AEE4D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Turmerik.MkFsNotesDirPairs.WinFormsApp", "Turmerik.MkFsNotesDirPairs.WinFormsApp\Turmerik.MkFsNotesDirPairs.WinFormsApp.csproj", "{E8B1F9A0-78D5-4567-ACE7-4CDA85872DA1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Turmerik.WinForms", "Turmerik.WinForms\Turmerik.WinForms.csproj", "{8E3A7878-69F3-4AC1-AE28-77920AD3E60A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -137,6 +147,18 @@ Global
 		{8D19E346-0C33-4778-BDD0-012C3A2545C0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8D19E346-0C33-4778-BDD0-012C3A2545C0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8D19E346-0C33-4778-BDD0-012C3A2545C0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{984B11CD-D307-4488-9532-1D857EE2975E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{984B11CD-D307-4488-9532-1D857EE2975E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{984B11CD-D307-4488-9532-1D857EE2975E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{984B11CD-D307-4488-9532-1D857EE2975E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E8B1F9A0-78D5-4567-ACE7-4CDA85872DA1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E8B1F9A0-78D5-4567-ACE7-4CDA85872DA1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E8B1F9A0-78D5-4567-ACE7-4CDA85872DA1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E8B1F9A0-78D5-4567-ACE7-4CDA85872DA1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8E3A7878-69F3-4AC1-AE28-77920AD3E60A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8E3A7878-69F3-4AC1-AE28-77920AD3E60A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8E3A7878-69F3-4AC1-AE28-77920AD3E60A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8E3A7878-69F3-4AC1-AE28-77920AD3E60A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -167,6 +189,9 @@ Global
 		{BD2BBD4C-41BA-43C3-AEFF-3C139BF74640} = {D5115A7C-0835-4E11-9EE7-BB5AA80031F2}
 		{EF4DBDE9-E40F-4DA9-BD60-750E145FB0E5} = {E9A3255F-0E33-4796-A489-8B4C016C573A}
 		{8D19E346-0C33-4778-BDD0-012C3A2545C0} = {E9A3255F-0E33-4796-A489-8B4C016C573A}
+		{984B11CD-D307-4488-9532-1D857EE2975E} = {6AD730D0-C509-4FBC-9620-BC288BDF4CEF}
+		{E8B1F9A0-78D5-4567-ACE7-4CDA85872DA1} = {58B107F0-C220-4721-82B6-E77C972AEE4D}
+		{8E3A7878-69F3-4AC1-AE28-77920AD3E60A} = {E9A3255F-0E33-4796-A489-8B4C016C573A}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {884DC105-C0BD-4026-B220-D2D435105F94}

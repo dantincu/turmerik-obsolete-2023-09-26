@@ -195,7 +195,7 @@ namespace Turmerik.MsVSTextTemplating.Components
             typeDef.Name = typeDeclrNode.Identifier.Text;// .Split('<').First()
 
             typeDef.Modifiers = typeDeclrNode.Modifiers.Select(
-                item => (ParsedCsKeyword)Enum.Parse(typeof(ParsedCsKeyword), item.Text)).ToList();
+                item => (ParsedCsKeywordKind)Enum.Parse(typeof(ParsedCsKeywordKind), item.Text, true)).ToList();
 
             typeDef.GenericTypeParameters = typeDeclrNode.TypeParameterList?.WithValue(
                     typeParameterList => GetTypeParametersList(typeParameterList));
@@ -222,15 +222,14 @@ namespace Turmerik.MsVSTextTemplating.Components
             throw new NotImplementedException();
         }
 
-        private List<ParsedGenericTypeParameter.Mtbl> GetTypeParametersList(
-            TypeParameterListSyntax typeParameterList) => typeParameterList.Parameters.Select(
-                typeParamNode => GetTypeParameter(typeParamNode)).ToList();
-
-        private ParsedGenericTypeParameter.Mtbl GetTypeParameter(
-            TypeParameterSyntax typeParamNode) => new ParsedGenericTypeParameter.Mtbl
-            {
-                Name = typeParamNode.Identifier.Text,
-            };
+        private Dictionary<string, ParsedGenericTypeParameterConstraint.Mtbl> GetTypeParametersList(
+            TypeParameterListSyntax typeParameterList) => typeParameterList.Parameters.ToDictionary(
+                @param => param.Identifier.Text,
+                @param =>
+                {
+                    ParsedGenericTypeParameterConstraint.Mtbl retVal = null;
+                    return retVal;
+                });
 
         private ParsedInterfaceDefinition.Mtbl GetInterfaceDef(
             IClnblTypesCsCodeParserRdnlArgs rdnlArgs,

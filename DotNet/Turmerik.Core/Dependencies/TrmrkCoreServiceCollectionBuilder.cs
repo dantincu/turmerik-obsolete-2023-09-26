@@ -15,6 +15,7 @@ using Turmerik.Reflection.Cache;
 using Turmerik.Synchronized;
 using Turmerik.Text;
 using Turmerik.TreeTraversal;
+using Turmerik.TrmrkAction;
 using Turmerik.Utils;
 
 namespace Turmerik.Dependencies
@@ -68,8 +69,11 @@ namespace Turmerik.Dependencies
 
             services.AddSingleton(svcProv => svcProv.GetRequiredService<ICachedTypesMapFactory>().Create());
 
-            services.AddSingleton<ITypesMappingCache, TypesMappingCache>();
-            services.AddSingleton<IPropsMapper, PropsMapper>();
+            // services.AddSingleton<ITypesMappingCache, TypesMappingCache>();
+            // services.AddSingleton<IPropsMapper, PropsMapper>();
+
+            services.AddSingleton<ITrmrkActionComponentsManagerFactoryCore, TrmrkActionComponentsManagerFactoryCore>();
+            services.AddSingleton<ITrmrkActionComponentFactory, TrmrkActionComponentFactory>();
 
             services.AddTransient<IDriveExplorerService, DriveExplorerService>();
         }
