@@ -22,6 +22,11 @@ namespace Turmerik.PureFuncJs.Core.JintCompnts
             bool useCamelCase = true);
     }
 
+    public interface IJintComponent<TBehaviour>
+    {
+        TBehaviour Behaviour { get; }
+    }
+
     public class JintComponent : IJintComponent
     {
         public JintComponent(
@@ -81,5 +86,19 @@ namespace Turmerik.PureFuncJs.Core.JintCompnts
 
             return rdnlMap;
         }
+    }
+
+    public class JintComponent<TBehaviour> : JintComponent, IJintComponent<TBehaviour>
+    {
+        public JintComponent(
+            string jsCode,
+            Func<Engine, ReadOnlyDictionary<string, ReadOnlyDictionary<string, string>>, TBehaviour> behaviourFactory) : base(jsCode)
+        {
+            Behaviour = behaviourFactory(
+                Engine,
+                ExportedMemberNames);
+        }
+
+        public TBehaviour Behaviour { get; }
     }
 }

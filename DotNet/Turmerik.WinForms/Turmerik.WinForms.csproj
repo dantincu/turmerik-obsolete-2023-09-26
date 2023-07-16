@@ -30,6 +30,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Jint, Version=0.0.0.0, Culture=neutral, PublicKeyToken=2e92ba9c8d81157f, processorArchitecture=MSIL">
+      <HintPath>..\packages\Jint.2.11.58\lib\net451\Jint.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.Bcl.AsyncInterfaces, Version=7.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.Bcl.AsyncInterfaces.7.0.0\lib\net462\Microsoft.Bcl.AsyncInterfaces.dll</HintPath>
     </Reference>
@@ -71,6 +74,7 @@
     <Compile Include="ActionComponent\WinFormsActionComponent.cs" />
     <Compile Include="ActionComponent\WinFormsActionComponentFactory.cs" />
     <Compile Include="ActionComponent\WinFormsActionComponentsManager.cs" />
+    <Compile Include="Behaviours\TimeStampParserBehaviour.cs" />
     <Compile Include="Dependencies\ServiceProviderContainer.cs" />
     <Compile Include="Dependencies\WinFormsServiceCollectionBuilder.cs" />
     <Compile Include="Forms\UIMessageForm.cs">
@@ -95,12 +99,17 @@
       <Project>{5F16EB51-0BA3-4549-B6E2-B14A83AD89B5}</Project>
       <Name>Turmerik.LocalDevice.Core</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Turmerik.PureFuncJs.Core\Turmerik.PureFuncJs.Core.csproj">
+      <Project>{08e959d5-7347-418d-816e-ed60a3ec87b4}</Project>
+      <Name>Turmerik.PureFuncJs.Core</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Components\" />
     <Folder Include="Controls\" />
   </ItemGroup>
   <ItemGroup>

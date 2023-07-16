@@ -15,7 +15,7 @@ namespace Turmerik.Text
     public static class JsonH
     {
         public static string ToJson(
-            object obj,
+            this object obj,
             bool useCamelCase = true,
             bool ignoreNullValues = true,
             Formatting formatting = Formatting.Indented,
@@ -50,7 +50,7 @@ namespace Turmerik.Text
         }
 
         public static TData FromJson<TData>(
-            string json,
+            this string json,
             bool useCamelCase = true,
             bool useStringEnumConverter = true)
         {

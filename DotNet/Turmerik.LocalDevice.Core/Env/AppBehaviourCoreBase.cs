@@ -10,19 +10,19 @@ using Turmerik.Utils;
 
 namespace Turmerik.LocalDevice.Core.Env
 {
-    public interface IAppBehaviourCore : IAppDefaultBehaviourCore
+    public interface IAppBehaviourCore<TBehaviour> : IAppDefaultBehaviourCore<TBehaviour>
     {
         string DefaultJsFilePath { get; }
 
-        event Action<IJintComponent> BehaviourSaved;
+        event Action<IJintComponent<TBehaviour>> BehaviourSaved;
 
-        IJintComponent Update(string newBehaviourJsCode);
-        IJintComponent ResetToDefault();
+        IJintComponent<TBehaviour> Update(string newBehaviourJsCode);
+        IJintComponent<TBehaviour> ResetToDefault();
     }
 
-    public abstract class AppBehaviourCoreBase : AppDefaultBehaviourCoreBase, IAppBehaviourCore
+    public abstract class AppBehaviourCoreBase<TBehaviour> : AppDefaultBehaviourCoreBase<TBehaviour>, IAppBehaviourCore<TBehaviour>
     {
-        private Action<IJintComponent> behaviourSaved;
+        private Action<IJintComponent<TBehaviour>> behaviourSaved;
 
         protected AppBehaviourCoreBase(
             IAppEnv appEnv,
@@ -37,13 +37,13 @@ namespace Turmerik.LocalDevice.Core.Env
 
         public string DefaultJsFilePath { get; }
 
-        public event Action<IJintComponent> BehaviourSaved
+        public event Action<IJintComponent<TBehaviour>> BehaviourSaved
         {
             add => behaviourSaved += value;
             remove => behaviourSaved -= value;
         }
 
-        public IJintComponent Update(
+        public IJintComponent<TBehaviour> Update(
             string newBehaviourJsCode) => ConcurrentActionComponent.Execute(() =>
             {
                 var newBehaviour = SaveJsCore(
@@ -56,7 +56,7 @@ namespace Turmerik.LocalDevice.Core.Env
                 return newBehaviour;
             });
 
-        public IJintComponent ResetToDefault() => Update(
+        public IJintComponent<TBehaviour> ResetToDefault() => Update(
             GetDefaultBehaviourJsCode());
 
         protected abstract string GetDefaultBehaviourJsCodeCore();
@@ -72,6 +72,6 @@ namespace Turmerik.LocalDevice.Core.Env
 
         protected virtual string GetDefaultJsFilePath() => base.GetJsFilePath();
 
-        protected void OnDataSaved(IJintComponent newBehaviour) => behaviourSaved?.Invoke(newBehaviour);
+        protected void OnDataSaved(IJintComponent<TBehaviour> newBehaviour) => behaviourSaved?.Invoke(newBehaviour);
     }
 }

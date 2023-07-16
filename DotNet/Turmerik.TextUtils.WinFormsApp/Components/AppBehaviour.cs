@@ -1,5 +1,7 @@
-﻿using System;
+﻿using Jint;
+using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -7,14 +9,13 @@ using Turmerik.LocalDevice.Core.Env;
 using Turmerik.PureFuncJs.Core.JintCompnts;
 using Turmerik.Synchronized;
 
-namespace Turmerik.MkFsNotesDirPairs.WinFormsApp
+namespace Turmerik.TextUtils.WinFormsApp.Components
 {
-    public interface IAppBehaviour : IAppBehaviourCore
+    public interface IAppBehaviour : IAppBehaviourCore<IBehavioursAgg>
     {
-
     }
 
-    public class AppBehaviour : AppBehaviourCoreBase, IAppBehaviour
+    public class AppBehaviour : AppBehaviourCoreBase<IBehavioursAgg>, IAppBehaviour
     {
         public AppBehaviour(
             IAppEnv appEnv,
@@ -24,6 +25,13 @@ namespace Turmerik.MkFsNotesDirPairs.WinFormsApp
                 concurrentActionComponentFactory,
                 componentFactory)
         {
+        }
+
+        protected override IBehavioursAgg CreateBehaviour(
+            Engine jsEngine,
+            ReadOnlyDictionary<string, ReadOnlyDictionary<string, string>> exportedMemberNames)
+        {
+            throw new NotImplementedException();
         }
 
         protected override string GetDefaultBehaviourJsCodeCore(

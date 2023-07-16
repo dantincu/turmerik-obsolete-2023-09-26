@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Turmerik.MkFsNotesDirPairs.WinFormsApp.Components;
 using Turmerik.MkFsNotesDirPairs.WinFormsApp.ViewModels;
 using Turmerik.WinForms.Dependencies;
 

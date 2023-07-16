@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Turmerik.LocalDevice.Core.Dependencies;
+using Turmerik.TextUtils.WinFormsApp.Components;
 using Turmerik.TextUtils.WinFormsApp.ViewModels;
 using Turmerik.WinForms.Dependencies;
 

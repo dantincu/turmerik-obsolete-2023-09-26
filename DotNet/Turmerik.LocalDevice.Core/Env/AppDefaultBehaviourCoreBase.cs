@@ -1,5 +1,7 @@
-﻿using System;
+﻿using Jint;
+using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Text;
 using Turmerik.PureFuncJs.Core.JintCompnts;
@@ -8,21 +10,21 @@ using Turmerik.Text;
 
 namespace Turmerik.LocalDevice.Core.Env
 {
-    public interface IAppDefaultBehaviourCore
+    public interface IAppDefaultBehaviourCore<TBehaviour>
     {
         string JsFilePath { get; }
-        IJintComponent Behaviour { get; }
+        IJintComponent<TBehaviour> Behaviour { get; }
 
-        event Action<IJintComponent> BehaviourLoaded;
+        event Action<IJintComponent<TBehaviour>> BehaviourLoaded;
 
-        IJintComponent LoadBehaviour();
+        IJintComponent<TBehaviour> LoadBehaviour();
     }
 
-    public abstract class AppDefaultBehaviourCoreBase
+    public abstract class AppDefaultBehaviourCoreBase<TBehaviour> : IAppDefaultBehaviourCore<TBehaviour>
     {
         public const string JS_FILE_NAME = "behaviour.js";
 
-        private Action<IJintComponent> behaviourLoaded;
+        private Action<IJintComponent<TBehaviour>> behaviourLoaded;
 
         protected AppDefaultBehaviourCoreBase(
             IAppEnv appEnv,
@@ -40,22 +42,22 @@ namespace Turmerik.LocalDevice.Core.Env
 
         public string JsFilePath { get; }
 
-        public IJintComponent Behaviour => ConcurrentActionComponent.Execute(
+        public IJintComponent<TBehaviour> Behaviour => ConcurrentActionComponent.Execute(
             () => BehaviourCore ?? LoadDataNotSync());
 
         protected IAppEnv AppEnv { get; }
         protected IInterProcessConcurrentActionComponent ConcurrentActionComponent { get; }
         protected IJintComponentFactory ComponentFactory { get; }
 
-        protected IJintComponent BehaviourCore { get; set; }
+        protected IJintComponent<TBehaviour> BehaviourCore { get; set; }
 
-        public event Action<IJintComponent> BehaviourLoaded
+        public event Action<IJintComponent<TBehaviour>> BehaviourLoaded
         {
             add => behaviourLoaded += value;
             remove => behaviourLoaded -= value;
         }
 
-        public IJintComponent LoadBehaviour() => ConcurrentActionComponent.Execute(
+        public IJintComponent<TBehaviour> LoadBehaviour() => ConcurrentActionComponent.Execute(
             () => LoadDataNotSync());
 
         public void Dispose()
@@ -65,27 +67,32 @@ namespace Turmerik.LocalDevice.Core.Env
 
         protected abstract string GetDefaultBehaviourJsCode();
 
+        protected abstract TBehaviour CreateBehaviour(
+            Engine jsEngine,
+            ReadOnlyDictionary<string, ReadOnlyDictionary<string, string>> exportedMemberNames);
+
         protected virtual string GetJsFilePath() => AppEnv.GetPath(
             AppEnvDir.Config,
             GetType(),
             JS_FILE_NAME);
 
-        protected virtual IJintComponent LoadDataNotSyncCore()
+        protected virtual IJintComponent<TBehaviour> LoadDataNotSyncCore()
         {
             string behaviourJsCode = LoadJsCore(
                 JsFilePath,
                 GetDefaultBehaviourJsCode);
 
             var behaviour = ComponentFactory.Create(
-                behaviourJsCode);
+                behaviourJsCode,
+                CreateBehaviour);
 
             return behaviour;
         }
 
         protected void OnBehaviourLoaded(
-            IJintComponent behaviour) => behaviourLoaded?.Invoke(behaviour);
+            IJintComponent<TBehaviour> behaviour) => behaviourLoaded?.Invoke(behaviour);
 
-        protected IJintComponent LoadDataNotSync()
+        protected IJintComponent<TBehaviour> LoadDataNotSync()
         {
             var data = LoadDataNotSyncCore();
 
@@ -113,11 +120,14 @@ namespace Turmerik.LocalDevice.Core.Env
             return jsCode;
         }
 
-        protected IJintComponent SaveJsCore(
+        protected IJintComponent<TBehaviour> SaveJsCore(
             string jsCode,
             string jsFilePath)
         {
-            var behaviour = ComponentFactory.Create(jsCode);
+            var behaviour = ComponentFactory.Create(
+                jsCode,
+                CreateBehaviour);
+
             File.WriteAllText(jsFilePath, jsCode);
 
             return behaviour;
