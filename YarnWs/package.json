@@ -1,0 +1,9 @@
+{
+  "private": true,
+  "workspaces": [
+    "packages.pureFunc/*",
+    "packages.jint.NET/*",
+    "packages.browser/*",
+    "packages.node/*"
+  ]
+}

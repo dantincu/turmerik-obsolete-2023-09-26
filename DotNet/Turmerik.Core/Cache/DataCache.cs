@@ -49,7 +49,7 @@ namespace Turmerik.Cache
         private readonly IDictionary<TKey, TValue> dictnr;
 
         public DataCache(
-            IActionComponent threadSafeActionComponent,
+            IConcurrentActionComponentCore threadSafeActionComponent,
             IEqualityComparer<TKey> keyEqCompr = null)
         {
             ConcurrentActionComponent = threadSafeActionComponent ?? throw new ArgumentNullException(
@@ -58,7 +58,7 @@ namespace Turmerik.Cache
             dictnr = new Dictionary<TKey, TValue>(keyEqCompr ?? EqualityComparer<TKey>.Default);
         }
 
-        protected IActionComponent ConcurrentActionComponent { get; }
+        protected IConcurrentActionComponentCore ConcurrentActionComponent { get; }
 
         public TValue GetOrCreate(TKey key, Func<TKey, TValue> factory)
         {
@@ -163,7 +163,7 @@ namespace Turmerik.Cache
     }
 
     public class DataCacheFactory<TConcurrentActionComponent> : IDataCacheFactory
-        where TConcurrentActionComponent : class, IActionComponent
+        where TConcurrentActionComponent : class, IConcurrentActionComponentCore
     {
         private readonly TConcurrentActionComponent threadSafeActionComponent;
 

@@ -14,10 +14,12 @@ namespace Turmerik.MsVSTextTemplating.UnitTests
     {
         static UnitTestBase()
         {
-            ServiceProviderContainer.AssureServicesRegistered(services =>
-            {
-                services.AddTransient<IRoslynTestComponent, RoslynTestComponent>();
-            });
+            ServiceProviderContainer.AssureServicesRegistered(
+                new ServiceCollection(),
+                services =>
+                {
+                    services.AddTransient<IRoslynTestComponent, RoslynTestComponent>();
+                });
         }
 
         protected UnitTestBase()

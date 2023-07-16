@@ -23,6 +23,12 @@ namespace Turmerik.MsVSTextTemplating
                 registerFsExplorerServiceEngineAsDefault,
                 registerAppLoggerFactoryFunc);
 
+            RegisterAllCore(services);
+        }
+
+        public static void RegisterAllCore(
+            IServiceCollection services)
+        {
             services.AddSingleton<IAppConfig, AppConfig>();
             services.AddSingleton<IClnblTypesCodeParser, ClnblTypesCsCodeParser>();
             services.AddSingleton<IClnblTypesCodeGenerator, ClnblTypesCodeGenerator>();

@@ -19,13 +19,15 @@ namespace Turmerik.WinForms.Dependencies
         {
         }
 
-        public static void AssureServicesRegistered(Action<IServiceCollection> callback = null)
+        public static IServiceProvider AssureServicesRegistered(
+            IServiceCollection services,
+            Action<IServiceCollection> callback = null)
         {
-            var services = new ServiceCollection();
             WinFormsServiceCollectionBuilder.RegisterAll(services);
-
             callback?.Invoke(services);
-            Instance.Value.AssureServicesRegistered(services);
+
+            var svcProv = Instance.Value.AssureServicesRegisteredCore(services);
+            return svcProv;
         }
     }
 }

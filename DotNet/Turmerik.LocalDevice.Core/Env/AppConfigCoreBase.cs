@@ -33,7 +33,7 @@ namespace Turmerik.LocalDevice.Core.Env
             JsonFilePath = GetJsonFilePath();
 
             ConcurrentActionComponent = concurrentActionComponentFactory.Create(
-                JsonFilePath);
+                JsonFilePath, false, true);
         }
 
         public string JsonFilePath { get; }

@@ -36,7 +36,8 @@ namespace Turmerik.Dependencies
             }
         }
 
-        public void AssureServicesRegistered(IServiceCollection services)
+        public IServiceProvider AssureServicesRegisteredCore(
+            IServiceCollection services)
         {
             lock (syncRoot)
             {
@@ -45,6 +46,8 @@ namespace Turmerik.Dependencies
                     serviceProvider = services.BuildServiceProvider();
                 }
             }
+
+            return serviceProvider;
         }
 
         public IServiceProvider Services

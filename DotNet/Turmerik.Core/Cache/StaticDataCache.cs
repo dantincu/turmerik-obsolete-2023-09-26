@@ -146,7 +146,7 @@ namespace Turmerik.Cache
     }
 
     public class StaticDataCacheFactory<TConcurrentActionComponent, TDataCacheFactory> : IStaticDataCacheFactory
-        where TConcurrentActionComponent : IActionComponent
+        where TConcurrentActionComponent : IConcurrentActionComponentCore
         where TDataCacheFactory : class, IDataCacheFactory
     {
         private readonly TDataCacheFactory dataCacheFactory;

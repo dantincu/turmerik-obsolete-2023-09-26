@@ -11,6 +11,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Turmerik.Core\Turmerik.Core.csproj" />
+    <ProjectReference Include="..\Turmerik.PureFuncJs.Core\Turmerik.PureFuncJs.Core.csproj" />
   </ItemGroup>
 
   <ItemGroup>
