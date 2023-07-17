@@ -33,7 +33,7 @@ namespace Turmerik.WinForms.Dependencies
             services.AddSingleton<IWinFormsActionComponentsManagerRetriever, WinFormsActionComponentsManagerRetriever>();
             services.AddSingleton<IWinFormsActionComponentFactory, WinFormsActionComponentFactory>();
 
-            services.AddTransient<ITextLinesIndenterVM, TextLinesIndenterVM>();
+            services.AddTransient<ITextLinesMdIndenterVM, TextLinesMdIndenterVM>();
             services.AddTransient<IFsNotesDirPairsCreatorVM, FsNotesDirPairsCreatorVM>();
         }
     }

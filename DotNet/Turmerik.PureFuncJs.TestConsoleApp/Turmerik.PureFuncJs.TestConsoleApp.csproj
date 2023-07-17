@@ -8,6 +8,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="7.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\Turmerik.LocalDevice\Turmerik.LocalDevice.csproj" />
     <ProjectReference Include="..\Turmerik.PureFuncJs.Core\Turmerik.PureFuncJs.Core.csproj" />
   </ItemGroup>

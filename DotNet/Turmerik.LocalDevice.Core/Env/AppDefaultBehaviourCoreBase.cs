@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.IO;
 using System.Text;
 using Turmerik.PureFuncJs.Core.JintCompnts;
@@ -10,7 +11,7 @@ using Turmerik.Text;
 
 namespace Turmerik.LocalDevice.Core.Env
 {
-    public interface IAppDefaultBehaviourCore<TBehaviour>
+    public interface IAppDefaultBehaviourCore<TBehaviour> : IDisposable
     {
         string JsFilePath { get; }
         TBehaviour Behaviour { get; }
@@ -61,6 +62,7 @@ namespace Turmerik.LocalDevice.Core.Env
 
         public void Dispose()
         {
+            Component?.Dispose();
             ConcurrentActionComponent.Dispose();
         }
 

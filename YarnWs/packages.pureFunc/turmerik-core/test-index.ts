@@ -1,4 +1,4 @@
-import { slice } from "./text/slice-str";
+import { slice } from "./src/text/slice-str";
 
 let str = slice(
   "asdfasdf",

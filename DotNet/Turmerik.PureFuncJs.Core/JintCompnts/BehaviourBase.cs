@@ -18,7 +18,7 @@ namespace Turmerik.PureFuncJs.Core.JintCompnts
 
             ModulePropName = string.Join(
                 ".",
-                Component.ExportedMembersRootObjVarName,
+                JintComponent.TrmrkExpObjPath,
                 ModuleName);
         }
 

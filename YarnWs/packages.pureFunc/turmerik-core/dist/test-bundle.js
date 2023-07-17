@@ -98,14 +98,14 @@ const constSlice = (inputStr, startIdx = 0, count = -1) => {
     const outArr = inputStr.slice(args.startIdxVal, args.startIdxVal + args.countVal);
     return outArr;
 };
-const getNextWord = (inputStr, startIdx = 0, terminalChars = "", callback = null) => {
+const getNextWord = (inputStr, startIdx = 0, terminalChars = null, callback = null) => {
     terminalChars ??= "";
     const result = slice(inputStr, (args) => (args.idx < startIdx || (0,_char__WEBPACK_IMPORTED_MODULE_1__.areAllWhitespaces)(args.char) ? 1 : 0), (args, stIdx) => (0,_char__WEBPACK_IMPORTED_MODULE_1__.areAllWhitespaces)(args.char) || terminalChars.indexOf(args.char) >= 0
         ? 0
         : 1, false, callback);
     return result;
 };
-const getNextAlphaNumericWord = (inputStr, startIdx = 0, allowedChars = "", callback = null) => {
+const getNextAlphaNumericWord = (inputStr, startIdx = 0, allowedChars = null, callback = null) => {
     allowedChars ??= "";
     const result = slice(inputStr, (args) => args.idx >= startIdx && (0,_char__WEBPACK_IMPORTED_MODULE_1__.areAllLettersOrNumbers)(args.char) ? 0 : 1, (args, stIdx) => (0,_char__WEBPACK_IMPORTED_MODULE_1__.areAllLettersOrNumbers)(args.char) || allowedChars.indexOf(args.char) >= 0
         ? 1
@@ -271,11 +271,11 @@ var __webpack_exports__ = {};
 // This entry need to be wrapped in an IIFE because it need to be isolated against other modules in the chunk.
 (() => {
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _text_slice_str__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(1);
+/* harmony import */ var _src_text_slice_str__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(1);
 
-let str = (0,_text_slice_str__WEBPACK_IMPORTED_MODULE_0__.slice)("asdfasdf", (args) => 3 - args.idx, (args, stIdx) => NaN);
+let str = (0,_src_text_slice_str__WEBPACK_IMPORTED_MODULE_0__.slice)("asdfasdf", (args) => 3 - args.idx, (args, stIdx) => NaN);
 console.log("sliceStr", str);
-str = (0,_text_slice_str__WEBPACK_IMPORTED_MODULE_0__.slice)("asdfasdf", (args) => 3 - args.idx, (args, stIdx) => 3 - args.idx);
+str = (0,_src_text_slice_str__WEBPACK_IMPORTED_MODULE_0__.slice)("asdfasdf", (args) => 3 - args.idx, (args, stIdx) => 3 - args.idx);
 console.log("sliceStr", str);
 
 })();

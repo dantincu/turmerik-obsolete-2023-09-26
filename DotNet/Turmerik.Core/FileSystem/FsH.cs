@@ -37,6 +37,9 @@ namespace Turmerik.FileSystem
             ".mp3", ".flac", ".aac", ".wav"
         }.RdnlC();
 
+        public static readonly string ParentDir = string.Concat(
+            "..", Path.DirectorySeparatorChar);
+
         public static bool IsWinDrive(string path)
         {
             bool isWinDrive = path.LastOrDefault() == ':';

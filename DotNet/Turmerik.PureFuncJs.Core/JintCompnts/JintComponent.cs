@@ -7,15 +7,18 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using Jint;
 using Jint.Native;
+using Jint.Native.Function;
 using Jint.Native.Object;
+using Jint.Runtime.Interop;
 using Turmerik.Collections;
 using Turmerik.Text;
+using Turmerik.Utils;
 
 namespace Turmerik.PureFuncJs.Core.JintCompnts
 {
-    public interface IJintComponent
+    public interface IJintComponent : IDisposable
     {
-        string ExportedMembersRootObjVarName { get; }
+        IJintConsole Console { get; }
         ReadOnlyDictionary<string, ReadOnlyDictionary<string, string>> ExportedMemberNames { get; }
 
         string Execute(string jsCode);
@@ -32,30 +35,48 @@ namespace Turmerik.PureFuncJs.Core.JintCompnts
 
     public class JintComponent : IJintComponent
     {
-        public JintComponent(
-            string jsCode,
-            Func<string, string> exportedMembersRootObjVarNameFactory = null,
-            Func<string, string, string> jsCodeAugmenter = null)
-        {
-            ExportedMembersRootObjVarName = exportedMembersRootObjVarNameFactory?.Invoke(jsCode) ?? GetExportedMembersRootObjVarName(jsCode);
-            JsCode = jsCodeAugmenter?.Invoke(jsCode, ExportedMembersRootObjVarName) ?? AugmentJsCode(jsCode, ExportedMembersRootObjVarName);
+        public const string CONSOLE_VAR_NAME = "console";
+        public const string TRMRK_ROOT_OBJ_NAME = "trmrk";
 
-            Engine = new Engine().Execute(JsCode);
-            ExportedMembers = Engine.GetCompletionValue().AsObject();
+        public const string TRMRK_EXP_OBJ_NAME = "exp";
+        public const string TRMRK_LIB_OBJ_NAME = "lib";
+        public const string TRMRK_IMP_OBJ_NAME = "imp";
+
+        public static readonly string TrmrkExpObjPath = string.Join(".",
+            TRMRK_ROOT_OBJ_NAME,
+            TRMRK_EXP_OBJ_NAME);
+
+        public static readonly string TrmrkLibObjPath = string.Join(".",
+            TRMRK_ROOT_OBJ_NAME,
+            TRMRK_LIB_OBJ_NAME);
+
+        public static readonly string TrmrkImpObjPath = string.Join(".",
+            TRMRK_ROOT_OBJ_NAME,
+            TRMRK_IMP_OBJ_NAME);
+
+        public JintComponent(
+            IJintConsole console,
+            string jsCode)
+        {
+            Console = console ?? throw new ArgumentNullException(nameof(console));
+            JsCode = jsCode;
+            Engine = GetEngine(console).Execute(JsCode);
+
+            ExportedMembers = Engine.Evaluate(
+                TrmrkExpObjPath).AsObject();
 
             ExportedMemberNames = GetExportedMemberNames(
-                ExportedMembersRootObjVarName,
                 ExportedMembers);
         }
 
-        public string ExportedMembersRootObjVarName { get; }
+        public IJintConsole Console { get; }
         public ReadOnlyDictionary<string, ReadOnlyDictionary<string, string>> ExportedMemberNames { get; }
 
         protected string JsCode { get; }
         protected Engine Engine { get; }
         protected ObjectInstance ExportedMembers { get; }
 
-        public string Execute(string jsCode) => Engine.Execute(jsCode).GetCompletionValue().ToString();
+        public string Execute(string jsCode) => Engine.Evaluate(jsCode).ToString();
 
         public TResult Execute<TResult>(
             string jsCode,
@@ -70,72 +91,36 @@ namespace Turmerik.PureFuncJs.Core.JintCompnts
             return result;
         }
 
-        protected virtual string GetExportedMembersRootObjVarName(
-            string jsCode)
+        public void Dispose()
         {
-            _ = jsCode.SliceStr(
-                args => char.IsLetter(args.Char) ? 0 : 1,
-                (args, stIdx) => char.IsLetter(args.Char) ? 1 : 0,
-                false,
-                result =>
-                {
-                    if (result.SlicedStr != "var")
-                    {
-                        throw new InvalidOperationException(
-                            $"The provided javascript code's first word should be 'var', but it is '{result.SlicedStr}'");
-                    }
-                }).SlicedStr ?? throw new InvalidOperationException(
-                    "Invalid javascript code");
-
-            string exportedMembersRootObjVarName = jsCode.SliceStr(
-                args => args.Char.IsValidCodeIdentifier() ? 0 : 1,
-                (args, stIdx) => args.Char.IsValidCodeIdentifier() ? 1 : 0).SlicedStr ?? throw new InvalidOperationException(
-                    "Invalid javascript code");
-
-            return exportedMembersRootObjVarName;
-        }
-
-        protected virtual string AugmentJsCode(
-            string jsCode,
-            string exportedMembersRootObjVarName)
-        {
-            string completionValueJsStatement = $"{exportedMembersRootObjVarName};";
-
-            if (!jsCode.TrimEnd().EndsWith(";"))
-            {
-                completionValueJsStatement = $";{completionValueJsStatement}";
-            }
-
-            jsCode = string.Concat(
-                jsCode,
-                completionValueJsStatement);
-
-            return jsCode;
+            Engine.Dispose();
         }
 
         private ReadOnlyDictionary<string, ReadOnlyDictionary<string, string>> GetExportedMemberNames(
-            string exportedMembersRootObjVarName,
             ObjectInstance exportedMembers)
         {
             var mtblMap = new Dictionary<string, Dictionary<string, string>>();
+            var ownProperties = exportedMembers.GetOwnProperties();
 
-            var exportedMembersRootObj = exportedMembers.GetProperty(
-                exportedMembersRootObjVarName).Value.AsObject();
-
-            foreach (var groupProp in exportedMembersRootObj.GetOwnProperties())
+            foreach (var groupProp in ownProperties)
             {
                 var groupName = groupProp.Key;
-                var group = groupProp.Value.Get.AsObject();
+                var value = groupProp.Value.Value ?? groupProp.Value.Get;
+
+                var type = value.GetType();
+                var typeName = type.Name;
+
+                var group = value.AsObject();
 
                 var map = new Dictionary<string, string>();
-                mtblMap.Add(groupName, map);
+                mtblMap.Add(groupName.ToString(), map);
 
                 foreach (var memberProp in group.GetOwnProperties())
                 {
                     var memberName = memberProp.Key;
-                    var member = memberProp.Value.Get.ToString();
+                    var member = memberProp.Value.Value.ToString();
 
-                    map.Add(memberName, member);
+                    map.Add(memberName.ToString(), member);
                 }
             }
 
@@ -145,18 +130,57 @@ namespace Turmerik.PureFuncJs.Core.JintCompnts
 
             return rdnlMap;
         }
+
+        private JsObject GetConsoleObject(
+            Engine engine,
+            IJintConsole console)
+        {
+            var obj = new JsObject(engine);
+
+            var propsMap = new Dictionary<string, Action<object>>()
+            {
+                { nameof(console.Log), console.Log },
+                { nameof(console.Trace), console.Trace },
+                { nameof(console.Debug), console.Debug },
+                { nameof(console.Info), console.Info },
+                { nameof(console.Warn), console.Warn },
+                { nameof(console.Error), console.Error },
+                { nameof(console.Fatal), console.Fatal },
+            };
+
+            foreach (var kvp in propsMap)
+            {
+                obj[kvp.Key.DecapitalizeFirstLetter()] = 
+                    new DelegateWrapper(
+                        engine,
+                        kvp.Value);
+            }
+
+            return obj;
+        }
+
+        private Engine GetEngine(
+            IJintConsole console)
+        {
+            var engine = new Engine();
+            var consoleObj = GetConsoleObject(engine, console);
+
+            engine = engine.SetValue(
+                CONSOLE_VAR_NAME,
+                consoleObj);
+
+            return engine;
+        }
     }
 
     public class JintComponent<TBehaviour> : JintComponent, IJintComponent<TBehaviour>
     {
         public JintComponent(
+            IJintConsole jintConsole,
             string jsCode,
-            Func<IJintComponent<TBehaviour>, ReadOnlyDictionary<string, ReadOnlyDictionary<string, string>>, TBehaviour> behaviourFactory,
-            Func<string, string> exportedMembersRootObjVarNameFactory = null,
-            Func<string, string, string> jsCodeAugmenter = null) : base(
-                jsCode,
-                exportedMembersRootObjVarNameFactory,
-                jsCodeAugmenter)
+            Func<IJintComponent<TBehaviour>, ReadOnlyDictionary<string, ReadOnlyDictionary<string, string>>, TBehaviour> behaviourFactory) : base(
+                jintConsole,
+                jsCode)
         {
             Behaviour = behaviourFactory(
                 this,

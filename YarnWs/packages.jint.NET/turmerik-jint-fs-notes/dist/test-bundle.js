@@ -1,30 +1,287 @@
 /******/ (() => { // webpackBootstrap
 /******/ 	"use strict";
 /******/ 	var __webpack_modules__ = ([
-/* 0 */
-/***/ ((module, __webpack_exports__, __webpack_require__) => {
-
-__webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
-__webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _index__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(1);
-
-await (0,_index__WEBPACK_IMPORTED_MODULE_0__.func)();
-
-__webpack_async_result__();
-} catch(e) { __webpack_async_result__(e); } }, 1);
-
-/***/ }),
+/* 0 */,
 /* 1 */
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   func: () => (/* binding */ func)
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
-const funct = async () => {
+/* harmony import */ var turmerik_core__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(2);
+
+const funct = () => {
     console.log("asdfasdf");
 };
-const func = funct;
+const trmrk = {
+    exp: {
+        main: {
+            funct: funct,
+        },
+    },
+    lib: {
+        trmkrCore: turmerik_core__WEBPACK_IMPORTED_MODULE_0__,
+    },
+    imp: {},
+};
+globalThis.trmrk = trmrk;
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (trmrk);
+
+
+/***/ }),
+/* 2 */
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   char: () => (/* reexport module object */ _src_text_char__WEBPACK_IMPORTED_MODULE_2__),
+/* harmony export */   findIdx: () => (/* reexport module object */ _src_arrays_find_idx__WEBPACK_IMPORTED_MODULE_1__),
+/* harmony export */   sliceArr: () => (/* reexport module object */ _src_arrays_slice_arr__WEBPACK_IMPORTED_MODULE_0__),
+/* harmony export */   sliceStr: () => (/* reexport module object */ _src_text_slice_str__WEBPACK_IMPORTED_MODULE_3__)
+/* harmony export */ });
+/* harmony import */ var _src_arrays_slice_arr__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3);
+/* harmony import */ var _src_arrays_find_idx__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(4);
+/* harmony import */ var _src_text_char__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(5);
+/* harmony import */ var _src_text_slice_str__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(6);
+
+
+
+
+
+
+/***/ }),
+/* 3 */
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   constSlice: () => (/* binding */ constSlice),
+/* harmony export */   normalizeSliceIndexes: () => (/* binding */ normalizeSliceIndexes)
+/* harmony export */ });
+const normalizeSliceIndexes = (args) => {
+    if (args.totalCount == 0) {
+        args.startIdxVal = 0;
+        args.countVal = 0;
+    }
+    else {
+        args.startIdxVal = args.startIdx;
+        args.countVal = args.count;
+        if (args.startIdx >= 0) {
+            if (args.count < 0) {
+                args.countVal += args.totalCount + 1 - args.startIdxVal;
+            }
+        }
+        else {
+            args.startIdxVal += args.totalCount;
+            if (args.count < 0) {
+                args.countVal *= -1;
+                args.startIdxVal += args.count;
+            }
+        }
+    }
+    return args;
+};
+const constSlice = (inputArr, startIdx = 0, count = -1) => {
+    var args = normalizeSliceIndexes({
+        startIdx: startIdx,
+        count: count,
+        totalCount: inputArr.length,
+        countVal: 0,
+        startIdxVal: 0,
+    });
+    const outArr = inputArr.slice(args.startIdxVal, args.startIdxVal + args.countVal);
+    return outArr;
+};
+
+
+/***/ }),
+/* 4 */
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   findIdx: () => (/* binding */ findIdx)
+/* harmony export */ });
+const findIdx = (inputArr, predicate) => {
+    const result = {
+        idx: -1,
+        val: null,
+    };
+    inputArr.find((item, idx) => {
+        const retVal = predicate(item, idx);
+        if (retVal) {
+            result.idx = idx;
+            result.val = item;
+        }
+        return retVal;
+    });
+    return result;
+};
+
+
+/***/ }),
+/* 5 */
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   areAllLetters: () => (/* binding */ areAllLetters),
+/* harmony export */   areAllLettersOrNumbers: () => (/* binding */ areAllLettersOrNumbers),
+/* harmony export */   areAllLowerCaseLetters: () => (/* binding */ areAllLowerCaseLetters),
+/* harmony export */   areAllLowerCaseLettersOrNumbers: () => (/* binding */ areAllLowerCaseLettersOrNumbers),
+/* harmony export */   areAllNumbers: () => (/* binding */ areAllNumbers),
+/* harmony export */   areAllUpperCaseLetters: () => (/* binding */ areAllUpperCaseLetters),
+/* harmony export */   areAllUpperCaseLettersOrNumbers: () => (/* binding */ areAllUpperCaseLettersOrNumbers),
+/* harmony export */   areAllWhitespaces: () => (/* binding */ areAllWhitespaces),
+/* harmony export */   codeIdentifierRegex: () => (/* binding */ codeIdentifierRegex),
+/* harmony export */   isValidCodeIdentifier: () => (/* binding */ isValidCodeIdentifier),
+/* harmony export */   lettersOrNumbersRegex: () => (/* binding */ lettersOrNumbersRegex),
+/* harmony export */   lettersRegex: () => (/* binding */ lettersRegex),
+/* harmony export */   lowerCaseLettersOrNumbersRegex: () => (/* binding */ lowerCaseLettersOrNumbersRegex),
+/* harmony export */   lowerCaseLettersRegex: () => (/* binding */ lowerCaseLettersRegex),
+/* harmony export */   numbersRegex: () => (/* binding */ numbersRegex),
+/* harmony export */   upperCaseLettersOrNumbersRegex: () => (/* binding */ upperCaseLettersOrNumbersRegex),
+/* harmony export */   upperCaseLettersRegex: () => (/* binding */ upperCaseLettersRegex),
+/* harmony export */   whitespacesRegex: () => (/* binding */ whitespacesRegex)
+/* harmony export */ });
+const whitespacesRegex = /^\s$/;
+const lettersRegex = /^[a-zA-Z]$/;
+const numbersRegex = /^[0-9]$/;
+const lettersOrNumbersRegex = /^[a-zA-Z0-9]$/;
+const lowerCaseLettersOrNumbersRegex = /^[a-z0-9]$/;
+const lowerCaseLettersRegex = /^[a-z]$/;
+const upperCaseLettersOrNumbersRegex = /^[A-Z0-9]$/;
+const upperCaseLettersRegex = /^[A-Z]$/;
+const codeIdentifierRegex = /^[a-zA-Z0-9_]$/;
+const areAllWhitespaces = (str) => !!str.match(whitespacesRegex);
+const areAllLetters = (str) => !!str.match(lettersRegex);
+const areAllNumbers = (str) => !!str.match(numbersRegex);
+const areAllLettersOrNumbers = (str) => !!str.match(lettersOrNumbersRegex);
+const areAllLowerCaseLettersOrNumbers = (str) => !!str.match(lowerCaseLettersOrNumbersRegex);
+const areAllLowerCaseLetters = (str) => !!str.match(lowerCaseLettersRegex);
+const areAllUpperCaseLettersOrNumbers = (str) => !!str.match(upperCaseLettersOrNumbersRegex);
+const areAllUpperCaseLetters = (str) => !!str.match(upperCaseLettersRegex);
+const isValidCodeIdentifier = (str) => !!str.match(codeIdentifierRegex);
+
+
+/***/ }),
+/* 6 */
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   constSlice: () => (/* binding */ constSlice),
+/* harmony export */   getArgs: () => (/* binding */ getArgs),
+/* harmony export */   getEndIdx: () => (/* binding */ getEndIdx),
+/* harmony export */   getNextAlphaNumericWord: () => (/* binding */ getNextAlphaNumericWord),
+/* harmony export */   getNextWord: () => (/* binding */ getNextWord),
+/* harmony export */   getStartIdx: () => (/* binding */ getStartIdx),
+/* harmony export */   slice: () => (/* binding */ slice),
+/* harmony export */   tryDigestStr: () => (/* binding */ tryDigestStr)
+/* harmony export */ });
+/* harmony import */ var _arrays_slice_arr__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3);
+/* harmony import */ var _char__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(5);
+
+
+const getArgs = (inputStr, inputLen, char, idx) => ({
+    inputStr: inputStr,
+    inputLen: inputLen,
+    char: char,
+    idx: idx,
+});
+const getStartIdx = (inputStr, inputLen, startCharPredicate) => {
+    let startIdx = -1;
+    let i = 0;
+    while (i < inputLen) {
+        const ch = inputStr[i];
+        const inc = startCharPredicate(getArgs(inputStr, inputLen, ch, i));
+        i += inc;
+        if (inc <= 0) {
+            startIdx = i;
+            break;
+        }
+    }
+    return startIdx;
+};
+const getEndIdx = (inputStr, inputLen, startIdx, endCharPredicate) => {
+    let endIdx = -1;
+    let i = 0;
+    startIdx++;
+    let lenOfRest = inputLen - startIdx;
+    while (i < lenOfRest) {
+        const ch = inputStr[startIdx + 1];
+        let inc = endCharPredicate(getArgs(inputStr, inputLen, ch, i), startIdx);
+        if (isNaN(inc)) {
+            endIdx = inputLen;
+            break;
+        }
+        else {
+            i += inc;
+            if (inc <= 0) {
+                endIdx = startIdx + i;
+                break;
+            }
+        }
+    }
+    return endIdx;
+};
+const slice = (inputStr, startCharPredicate, endCharPredicate, retIdxesOnly = false, callback = null) => {
+    const inputLen = inputStr.length;
+    const startIdx = getStartIdx(inputStr, inputLen, startCharPredicate);
+    let endIdx = -1;
+    let retStr = null;
+    let lastChar = null;
+    let nextChar = null;
+    if (startIdx >= 0) {
+        endIdx = getEndIdx(inputStr, inputLen, startIdx, endCharPredicate);
+    }
+    if (endIdx >= 0 && !retIdxesOnly) {
+        retStr = inputStr.substring(startIdx, endIdx);
+        lastChar = inputStr[endIdx - 1];
+        nextChar = inputStr[endIdx] ?? null;
+    }
+    const result = {
+        slicedStr: retStr,
+        lastChar: lastChar,
+        nextChar: nextChar,
+        startIdx: startIdx,
+        endIdx: endIdx,
+    };
+    callback?.call(result);
+    return result;
+};
+const constSlice = (inputStr, startIdx = 0, count = -1) => {
+    var args = (0,_arrays_slice_arr__WEBPACK_IMPORTED_MODULE_0__.normalizeSliceIndexes)({
+        startIdx: startIdx,
+        count: count,
+        totalCount: inputStr.length,
+        countVal: 0,
+        startIdxVal: 0,
+    });
+    const outArr = inputStr.slice(args.startIdxVal, args.startIdxVal + args.countVal);
+    return outArr;
+};
+const getNextWord = (inputStr, startIdx = 0, terminalChars = null, callback = null) => {
+    terminalChars ??= "";
+    const result = slice(inputStr, (args) => (args.idx < startIdx || (0,_char__WEBPACK_IMPORTED_MODULE_1__.areAllWhitespaces)(args.char) ? 1 : 0), (args, stIdx) => (0,_char__WEBPACK_IMPORTED_MODULE_1__.areAllWhitespaces)(args.char) || terminalChars.indexOf(args.char) >= 0
+        ? 0
+        : 1, false, callback);
+    return result;
+};
+const getNextAlphaNumericWord = (inputStr, startIdx = 0, allowedChars = null, callback = null) => {
+    allowedChars ??= "";
+    const result = slice(inputStr, (args) => args.idx >= startIdx && (0,_char__WEBPACK_IMPORTED_MODULE_1__.areAllLettersOrNumbers)(args.char) ? 0 : 1, (args, stIdx) => (0,_char__WEBPACK_IMPORTED_MODULE_1__.areAllLettersOrNumbers)(args.char) || allowedChars.indexOf(args.char) >= 0
+        ? 1
+        : 0, false, callback);
+    return result;
+};
+const tryDigestStr = (inputStr, str, startIdx = 0, retIdxesOnly = false, callback = null) => {
+    const strLen = str.length;
+    const negStrLen = -strLen;
+    const result = slice(inputStr, (args) => (constSlice(str, startIdx, negStrLen) == str ? 0 : 1), (args, stIdx) => NaN, retIdxesOnly, callback);
+    return result;
+};
 
 
 /***/ })
@@ -55,75 +312,6 @@ const func = funct;
 /******/ 	}
 /******/ 	
 /************************************************************************/
-/******/ 	/* webpack/runtime/async module */
-/******/ 	(() => {
-/******/ 		var webpackQueues = typeof Symbol === "function" ? Symbol("webpack queues") : "__webpack_queues__";
-/******/ 		var webpackExports = typeof Symbol === "function" ? Symbol("webpack exports") : "__webpack_exports__";
-/******/ 		var webpackError = typeof Symbol === "function" ? Symbol("webpack error") : "__webpack_error__";
-/******/ 		var resolveQueue = (queue) => {
-/******/ 			if(queue && queue.d < 1) {
-/******/ 				queue.d = 1;
-/******/ 				queue.forEach((fn) => (fn.r--));
-/******/ 				queue.forEach((fn) => (fn.r-- ? fn.r++ : fn()));
-/******/ 			}
-/******/ 		}
-/******/ 		var wrapDeps = (deps) => (deps.map((dep) => {
-/******/ 			if(dep !== null && typeof dep === "object") {
-/******/ 				if(dep[webpackQueues]) return dep;
-/******/ 				if(dep.then) {
-/******/ 					var queue = [];
-/******/ 					queue.d = 0;
-/******/ 					dep.then((r) => {
-/******/ 						obj[webpackExports] = r;
-/******/ 						resolveQueue(queue);
-/******/ 					}, (e) => {
-/******/ 						obj[webpackError] = e;
-/******/ 						resolveQueue(queue);
-/******/ 					});
-/******/ 					var obj = {};
-/******/ 					obj[webpackQueues] = (fn) => (fn(queue));
-/******/ 					return obj;
-/******/ 				}
-/******/ 			}
-/******/ 			var ret = {};
-/******/ 			ret[webpackQueues] = x => {};
-/******/ 			ret[webpackExports] = dep;
-/******/ 			return ret;
-/******/ 		}));
-/******/ 		__webpack_require__.a = (module, body, hasAwait) => {
-/******/ 			var queue;
-/******/ 			hasAwait && ((queue = []).d = -1);
-/******/ 			var depQueues = new Set();
-/******/ 			var exports = module.exports;
-/******/ 			var currentDeps;
-/******/ 			var outerResolve;
-/******/ 			var reject;
-/******/ 			var promise = new Promise((resolve, rej) => {
-/******/ 				reject = rej;
-/******/ 				outerResolve = resolve;
-/******/ 			});
-/******/ 			promise[webpackExports] = exports;
-/******/ 			promise[webpackQueues] = (fn) => (queue && fn(queue), depQueues.forEach(fn), promise["catch"](x => {}));
-/******/ 			module.exports = promise;
-/******/ 			body((deps) => {
-/******/ 				currentDeps = wrapDeps(deps);
-/******/ 				var fn;
-/******/ 				var getResult = () => (currentDeps.map((d) => {
-/******/ 					if(d[webpackError]) throw d[webpackError];
-/******/ 					return d[webpackExports];
-/******/ 				}))
-/******/ 				var promise = new Promise((resolve) => {
-/******/ 					fn = () => (resolve(getResult));
-/******/ 					fn.r = 0;
-/******/ 					var fnQueue = (q) => (q !== queue && !depQueues.has(q) && (depQueues.add(q), q && !q.d && (fn.r++, q.push(fn))));
-/******/ 					currentDeps.map((dep) => (dep[webpackQueues](fnQueue)));
-/******/ 				});
-/******/ 				return fn.r ? promise : getResult();
-/******/ 			}, (err) => ((err ? reject(promise[webpackError] = err) : outerResolve(exports)), resolveQueue(queue)));
-/******/ 			queue && queue.d < 0 && (queue.d = 0);
-/******/ 		};
-/******/ 	})();
-/******/ 	
 /******/ 	/* webpack/runtime/define property getters */
 /******/ 	(() => {
 /******/ 		// define getter functions for harmony exports
@@ -153,11 +341,15 @@ const func = funct;
 /******/ 	})();
 /******/ 	
 /************************************************************************/
-/******/ 	
-/******/ 	// startup
-/******/ 	// Load entry module and return exports
-/******/ 	// This entry module used 'module' so it can't be inlined
-/******/ 	var __webpack_exports__ = __webpack_require__(0);
-/******/ 	
+var __webpack_exports__ = {};
+// This entry need to be wrapped in an IIFE because it need to be isolated against other modules in the chunk.
+(() => {
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _index__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(1);
+
+_index__WEBPACK_IMPORTED_MODULE_0__["default"].exp.main.funct();
+
+})();
+
 /******/ })()
 ;

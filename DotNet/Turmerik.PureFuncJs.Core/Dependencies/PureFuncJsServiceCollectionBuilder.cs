@@ -11,6 +11,7 @@ namespace Turmerik.PureFuncJs.Core.Dependencies
         public static void RegisterAllCore(
             IServiceCollection services)
         {
+            services.AddTransient<IJintConsoleFactory, JintConsoleFactory>();
             services.AddSingleton<IJintComponentFactory, JintComponentFactory>();
         }
     }

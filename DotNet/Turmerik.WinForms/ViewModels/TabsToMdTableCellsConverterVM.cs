@@ -8,13 +8,13 @@ using Turmerik.WinForms.ActionComponent;
 
 namespace Turmerik.WinForms.ViewModels
 {
-    public interface ITextLinesIndenterVM
+    public interface ITabsToMdTableCellsConverterVM
     {
     }
 
-    public class TextLinesIndenterVM : ViewModelBase, ITextLinesIndenterVM
+    public class TabsToMdTableCellsConverterVM : ViewModelBase, ITabsToMdTableCellsConverterVM
     {
-        public TextLinesIndenterVM(
+        public TabsToMdTableCellsConverterVM(
             IAppLoggerFactory appLoggerFactory,
             IWinFormsActionComponentFactory actionComponentFactory) : base(
                 appLoggerFactory,
