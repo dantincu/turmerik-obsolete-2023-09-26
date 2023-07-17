@@ -13,18 +13,18 @@ namespace Turmerik.LocalDevice.Core.Env
     public interface IAppDefaultBehaviourCore<TBehaviour>
     {
         string JsFilePath { get; }
-        IJintComponent<TBehaviour> Behaviour { get; }
+        TBehaviour Behaviour { get; }
 
-        event Action<IJintComponent<TBehaviour>> BehaviourLoaded;
+        event Action<TBehaviour> BehaviourLoaded;
 
-        IJintComponent<TBehaviour> LoadBehaviour();
+        TBehaviour LoadBehaviour();
     }
 
     public abstract class AppDefaultBehaviourCoreBase<TBehaviour> : IAppDefaultBehaviourCore<TBehaviour>
     {
         public const string JS_FILE_NAME = "behaviour.js";
 
-        private Action<IJintComponent<TBehaviour>> behaviourLoaded;
+        private Action<TBehaviour> behaviourLoaded;
 
         protected AppDefaultBehaviourCoreBase(
             IAppEnv appEnv,
@@ -42,23 +42,22 @@ namespace Turmerik.LocalDevice.Core.Env
 
         public string JsFilePath { get; }
 
-        public IJintComponent<TBehaviour> Behaviour => ConcurrentActionComponent.Execute(
-            () => BehaviourCore ?? LoadDataNotSync());
+        public TBehaviour Behaviour => ConcurrentActionComponent.Execute(
+            () => (Component ?? LoadBehaviourNotSync()).Behaviour);
 
         protected IAppEnv AppEnv { get; }
         protected IInterProcessConcurrentActionComponent ConcurrentActionComponent { get; }
         protected IJintComponentFactory ComponentFactory { get; }
+        protected IJintComponent<TBehaviour> Component { get; set; }
 
-        protected IJintComponent<TBehaviour> BehaviourCore { get; set; }
-
-        public event Action<IJintComponent<TBehaviour>> BehaviourLoaded
+        public event Action<TBehaviour> BehaviourLoaded
         {
             add => behaviourLoaded += value;
             remove => behaviourLoaded -= value;
         }
 
-        public IJintComponent<TBehaviour> LoadBehaviour() => ConcurrentActionComponent.Execute(
-            () => LoadDataNotSync());
+        public TBehaviour LoadBehaviour() => ConcurrentActionComponent.Execute(
+            () => LoadBehaviourNotSync().Behaviour);
 
         public void Dispose()
         {
@@ -68,7 +67,7 @@ namespace Turmerik.LocalDevice.Core.Env
         protected abstract string GetDefaultBehaviourJsCode();
 
         protected abstract TBehaviour CreateBehaviour(
-            Engine jsEngine,
+            IJintComponent<TBehaviour> component,
             ReadOnlyDictionary<string, ReadOnlyDictionary<string, string>> exportedMemberNames);
 
         protected virtual string GetJsFilePath() => AppEnv.GetPath(
@@ -82,7 +81,7 @@ namespace Turmerik.LocalDevice.Core.Env
                 JsFilePath,
                 GetDefaultBehaviourJsCode);
 
-            var behaviour = ComponentFactory.Create(
+            var behaviour = ComponentFactory.Create<TBehaviour>(
                 behaviourJsCode,
                 CreateBehaviour);
 
@@ -90,13 +89,14 @@ namespace Turmerik.LocalDevice.Core.Env
         }
 
         protected void OnBehaviourLoaded(
-            IJintComponent<TBehaviour> behaviour) => behaviourLoaded?.Invoke(behaviour);
+            IJintComponent<TBehaviour> component) => behaviourLoaded?.Invoke(
+                component.Behaviour);
 
-        protected IJintComponent<TBehaviour> LoadDataNotSync()
+        protected IJintComponent<TBehaviour> LoadBehaviourNotSync()
         {
             var data = LoadDataNotSyncCore();
 
-            BehaviourCore = data;
+            Component = data;
             OnBehaviourLoaded(data);
 
             return data;
@@ -124,7 +124,7 @@ namespace Turmerik.LocalDevice.Core.Env
             string jsCode,
             string jsFilePath)
         {
-            var behaviour = ComponentFactory.Create(
+            var behaviour = ComponentFactory.Create<TBehaviour>(
                 jsCode,
                 CreateBehaviour);
 

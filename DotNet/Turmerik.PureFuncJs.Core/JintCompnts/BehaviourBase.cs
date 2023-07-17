@@ -11,27 +11,39 @@ namespace Turmerik.PureFuncJs.Core.JintCompnts
     {
         protected BehaviourBase(
             string moduleName,
-            Engine jsEngine)
+            IJintComponent component)
         {
             ModuleName = moduleName ?? throw new ArgumentNullException(nameof(moduleName));
-            JsEngine = jsEngine ?? throw new ArgumentNullException(nameof(jsEngine));
+            Component = component ?? throw new ArgumentNullException(nameof(component));
+
+            ModulePropName = string.Join(
+                ".",
+                Component.ExportedMembersRootObjVarName,
+                ModuleName);
         }
 
         public string ModuleName { get; }
-        protected Engine JsEngine { get; }
+        protected IJintComponent Component { get; }
+        protected string ModulePropName { get; }
 
         protected TResult ExecuteJs<TResult>(
             string methodName,
             params object[] args)
         {
-            string jsMethodName = $"{ModuleName}[{methodName}]";
+            string jsMethodName = string.Join(
+                ".",
+                ModulePropName,
+                methodName);
+
             string argsStr = string.Join(", ", args);
+            argsStr = $"({argsStr});";
 
-            string methodCallScript = $"{jsMethodName}({argsStr})";
-            var complVal = JsEngine.Execute(methodCallScript).GetCompletionValue();
+            string methodCallScript = string.Concat(
+                jsMethodName,
+                argsStr);
 
-            string json = complVal.ToString();
-            TResult result = JsonH.FromJson<TResult>(json);
+            var result = Component.Execute<TResult>(
+                methodCallScript);
 
             return result;
         }

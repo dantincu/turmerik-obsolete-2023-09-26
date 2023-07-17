@@ -74,7 +74,6 @@
     <Compile Include="ActionComponent\WinFormsActionComponent.cs" />
     <Compile Include="ActionComponent\WinFormsActionComponentFactory.cs" />
     <Compile Include="ActionComponent\WinFormsActionComponentsManager.cs" />
-    <Compile Include="Behaviours\TimeStampParserBehaviour.cs" />
     <Compile Include="Dependencies\ServiceProviderContainer.cs" />
     <Compile Include="Dependencies\WinFormsServiceCollectionBuilder.cs" />
     <Compile Include="Forms\UIMessageForm.cs">
@@ -109,6 +108,7 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Behaviours\" />
     <Folder Include="Components\" />
     <Folder Include="Controls\" />
   </ItemGroup>

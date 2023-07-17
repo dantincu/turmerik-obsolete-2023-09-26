@@ -8,16 +8,17 @@ namespace Turmerik.PureFuncJs.Core.JintCompnts
 {
     public abstract class BehavioursAggBase
     {
-        protected BehavioursAggBase(Engine jsEngine)
+        protected BehavioursAggBase(
+            IJintComponent component)
         {
-            JsEngine = jsEngine ?? throw new ArgumentNullException(nameof(jsEngine));
+            Component = component ?? throw new ArgumentNullException(nameof(component));
         }
 
-        protected Engine JsEngine { get; }
+        protected IJintComponent Component { get; }
 
         protected TBehaviour CreateBehaviour<TBehaviour>(
             string moduleName)
             where TBehaviour : BehaviourBase => moduleName.CreateInstance<TBehaviour>(
-                null, moduleName, JsEngine);
+                null, moduleName, Component);
     }
 }

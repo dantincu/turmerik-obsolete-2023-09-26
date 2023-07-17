@@ -14,15 +14,15 @@ namespace Turmerik.LocalDevice.Core.Env
     {
         string DefaultJsFilePath { get; }
 
-        event Action<IJintComponent<TBehaviour>> BehaviourSaved;
+        event Action<TBehaviour> BehaviourSaved;
 
-        IJintComponent<TBehaviour> Update(string newBehaviourJsCode);
-        IJintComponent<TBehaviour> ResetToDefault();
+        TBehaviour Update(string newBehaviourJsCode);
+        TBehaviour ResetToDefault();
     }
 
     public abstract class AppBehaviourCoreBase<TBehaviour> : AppDefaultBehaviourCoreBase<TBehaviour>, IAppBehaviourCore<TBehaviour>
     {
-        private Action<IJintComponent<TBehaviour>> behaviourSaved;
+        private Action<TBehaviour> behaviourSaved;
 
         protected AppBehaviourCoreBase(
             IAppEnv appEnv,
@@ -37,26 +37,26 @@ namespace Turmerik.LocalDevice.Core.Env
 
         public string DefaultJsFilePath { get; }
 
-        public event Action<IJintComponent<TBehaviour>> BehaviourSaved
+        public event Action<TBehaviour> BehaviourSaved
         {
             add => behaviourSaved += value;
             remove => behaviourSaved -= value;
         }
 
-        public IJintComponent<TBehaviour> Update(
+        public TBehaviour Update(
             string newBehaviourJsCode) => ConcurrentActionComponent.Execute(() =>
             {
-                var newBehaviour = SaveJsCore(
+                var component = SaveJsCore(
                     newBehaviourJsCode,
                     JsFilePath);
 
-                BehaviourCore = newBehaviour;
-                OnDataSaved(newBehaviour);
+                Component = component;
+                OnDataSaved(component);
 
-                return newBehaviour;
+                return component.Behaviour;
             });
 
-        public IJintComponent<TBehaviour> ResetToDefault() => Update(
+        public TBehaviour ResetToDefault() => Update(
             GetDefaultBehaviourJsCode());
 
         protected abstract string GetDefaultBehaviourJsCodeCore();
@@ -72,6 +72,8 @@ namespace Turmerik.LocalDevice.Core.Env
 
         protected virtual string GetDefaultJsFilePath() => base.GetJsFilePath();
 
-        protected void OnDataSaved(IJintComponent<TBehaviour> newBehaviour) => behaviourSaved?.Invoke(newBehaviour);
+        protected void OnDataSaved(
+            IJintComponent<TBehaviour> component) => behaviourSaved?.Invoke(
+                component.Behaviour);
     }
 }

@@ -1,6 +1,7 @@
 ﻿using Jint;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -14,7 +15,9 @@ namespace Turmerik.TextUtils.WinFormsApp.Components
 
     public class BehavioursAgg : BehavioursAggBase, IBehavioursAgg
     {
-        public BehavioursAgg(Engine jsEngine) : base(jsEngine)
+        public BehavioursAgg(
+            IJintComponent<IBehavioursAgg> component,
+            ReadOnlyDictionary<string, ReadOnlyDictionary<string, string>> exportedMemberNames) : base(component)
         {
         }
     }

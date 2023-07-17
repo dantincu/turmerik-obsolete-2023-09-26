@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using Jint;
 using Jint.Native;
@@ -13,6 +15,7 @@ namespace Turmerik.PureFuncJs.Core.JintCompnts
 {
     public interface IJintComponent
     {
+        string ExportedMembersRootObjVarName { get; }
         ReadOnlyDictionary<string, ReadOnlyDictionary<string, string>> ExportedMemberNames { get; }
 
         string Execute(string jsCode);
@@ -22,7 +25,7 @@ namespace Turmerik.PureFuncJs.Core.JintCompnts
             bool useCamelCase = true);
     }
 
-    public interface IJintComponent<TBehaviour>
+    public interface IJintComponent<TBehaviour> : IJintComponent
     {
         TBehaviour Behaviour { get; }
     }
@@ -30,16 +33,25 @@ namespace Turmerik.PureFuncJs.Core.JintCompnts
     public class JintComponent : IJintComponent
     {
         public JintComponent(
-            string jsCode)
+            string jsCode,
+            Func<string, string> exportedMembersRootObjVarNameFactory = null,
+            Func<string, string, string> jsCodeAugmenter = null)
         {
-            Engine = new Engine().Execute(jsCode);
+            ExportedMembersRootObjVarName = exportedMembersRootObjVarNameFactory?.Invoke(jsCode) ?? GetExportedMembersRootObjVarName(jsCode);
+            JsCode = jsCodeAugmenter?.Invoke(jsCode, ExportedMembersRootObjVarName) ?? AugmentJsCode(jsCode, ExportedMembersRootObjVarName);
+
+            Engine = new Engine().Execute(JsCode);
             ExportedMembers = Engine.GetCompletionValue().AsObject();
 
-            ExportedMemberNames = GetExportedMemberNames(ExportedMembers);
+            ExportedMemberNames = GetExportedMemberNames(
+                ExportedMembersRootObjVarName,
+                ExportedMembers);
         }
 
+        public string ExportedMembersRootObjVarName { get; }
         public ReadOnlyDictionary<string, ReadOnlyDictionary<string, string>> ExportedMemberNames { get; }
 
+        protected string JsCode { get; }
         protected Engine Engine { get; }
         protected ObjectInstance ExportedMembers { get; }
 
@@ -58,12 +70,59 @@ namespace Turmerik.PureFuncJs.Core.JintCompnts
             return result;
         }
 
+        protected virtual string GetExportedMembersRootObjVarName(
+            string jsCode)
+        {
+            _ = jsCode.SliceStr(
+                args => char.IsLetter(args.Char) ? 0 : 1,
+                (args, stIdx) => char.IsLetter(args.Char) ? 1 : 0,
+                false,
+                result =>
+                {
+                    if (result.SlicedStr != "var")
+                    {
+                        throw new InvalidOperationException(
+                            $"The provided javascript code's first word should be 'var', but it is '{result.SlicedStr}'");
+                    }
+                }).SlicedStr ?? throw new InvalidOperationException(
+                    "Invalid javascript code");
+
+            string exportedMembersRootObjVarName = jsCode.SliceStr(
+                args => args.Char.IsValidCodeIdentifier() ? 0 : 1,
+                (args, stIdx) => args.Char.IsValidCodeIdentifier() ? 1 : 0).SlicedStr ?? throw new InvalidOperationException(
+                    "Invalid javascript code");
+
+            return exportedMembersRootObjVarName;
+        }
+
+        protected virtual string AugmentJsCode(
+            string jsCode,
+            string exportedMembersRootObjVarName)
+        {
+            string completionValueJsStatement = $"{exportedMembersRootObjVarName};";
+
+            if (!jsCode.TrimEnd().EndsWith(";"))
+            {
+                completionValueJsStatement = $";{completionValueJsStatement}";
+            }
+
+            jsCode = string.Concat(
+                jsCode,
+                completionValueJsStatement);
+
+            return jsCode;
+        }
+
         private ReadOnlyDictionary<string, ReadOnlyDictionary<string, string>> GetExportedMemberNames(
+            string exportedMembersRootObjVarName,
             ObjectInstance exportedMembers)
         {
             var mtblMap = new Dictionary<string, Dictionary<string, string>>();
 
-            foreach (var groupProp in exportedMembers.GetOwnProperties())
+            var exportedMembersRootObj = exportedMembers.GetProperty(
+                exportedMembersRootObjVarName).Value.AsObject();
+
+            foreach (var groupProp in exportedMembersRootObj.GetOwnProperties())
             {
                 var groupName = groupProp.Key;
                 var group = groupProp.Value.Get.AsObject();
@@ -92,10 +151,15 @@ namespace Turmerik.PureFuncJs.Core.JintCompnts
     {
         public JintComponent(
             string jsCode,
-            Func<Engine, ReadOnlyDictionary<string, ReadOnlyDictionary<string, string>>, TBehaviour> behaviourFactory) : base(jsCode)
+            Func<IJintComponent<TBehaviour>, ReadOnlyDictionary<string, ReadOnlyDictionary<string, string>>, TBehaviour> behaviourFactory,
+            Func<string, string> exportedMembersRootObjVarNameFactory = null,
+            Func<string, string, string> jsCodeAugmenter = null) : base(
+                jsCode,
+                exportedMembersRootObjVarNameFactory,
+                jsCodeAugmenter)
         {
             Behaviour = behaviourFactory(
-                Engine,
+                this,
                 ExportedMemberNames);
         }
 

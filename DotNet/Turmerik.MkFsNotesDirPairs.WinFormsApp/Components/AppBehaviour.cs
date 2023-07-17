@@ -28,11 +28,10 @@ namespace Turmerik.MkFsNotesDirPairs.WinFormsApp.Components
         }
 
         protected override IBehavioursAgg CreateBehaviour(
-            Engine jsEngine,
-            ReadOnlyDictionary<string, ReadOnlyDictionary<string, string>> exportedMemberNames)
-        {
-            throw new NotImplementedException();
-        }
+            IJintComponent<IBehavioursAgg> component,
+            ReadOnlyDictionary<string, ReadOnlyDictionary<string, string>> exportedMemberNames) => new BehavioursAgg(
+                component,
+                exportedMemberNames);
 
         protected override string GetDefaultBehaviourJsCodeCore(
             ) => throw new NotSupportedException("No default js code availlable");
