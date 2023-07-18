@@ -21,5 +21,18 @@ namespace Turmerik.RegexH
             Match src) => new RegexMatch(
                 RegexGroup.FromSrcCollctn(
                     src.Groups));
+
+        public static ReadOnlyCollection<RegexMatch> FromSrcCollctn(
+            MatchCollection srcCollctn)
+        {
+            var list = new List<RegexMatch>();
+
+            foreach (Match src in srcCollctn)
+            {
+                list.Add(FromSrc(src));
+            }
+
+            return list.RdnlC();
+        }
     }
 }

@@ -26,24 +26,17 @@ namespace Turmerik.PureFuncJs.Core.JintCompnts
         protected IJintComponent Component { get; }
         protected string ModulePropName { get; }
 
-        protected TResult ExecuteJs<TResult>(
+        protected TResult Call<TResult>(
             string methodName,
+            bool useCamelCase = true,
             params object[] args)
         {
-            string jsMethodName = string.Join(
-                ".",
-                ModulePropName,
-                methodName);
+            string methodCallScript = $"{ModulePropName}.{methodName}();";
 
-            string argsStr = string.Join(", ", args);
-            argsStr = $"({argsStr});";
-
-            string methodCallScript = string.Concat(
-                jsMethodName,
-                argsStr);
-
-            var result = Component.Execute<TResult>(
-                methodCallScript);
+            var result = Component.Call<TResult>(
+                methodCallScript,
+                useCamelCase,
+                args);
 
             return result;
         }

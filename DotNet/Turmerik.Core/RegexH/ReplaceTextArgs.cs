@@ -5,7 +5,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
-namespace Turmerik.WinForms.ViewModels
+namespace Turmerik.RegexH
 {
     public readonly struct ReplaceTextArgs
     {
@@ -13,20 +13,17 @@ namespace Turmerik.WinForms.ViewModels
             string inputText,
             int inputLength,
             string matchingText,
-            MatchCollection matches,
             int matchingStartIdx)
         {
             InputText = inputText;
             InputLength = inputLength;
             MatchingText = matchingText;
-            Matches = matches;
             MatchingStartIdx = matchingStartIdx;
         }
 
         public string InputText { get; }
         public int InputLength { get; }
         public string MatchingText { get; }
-        public MatchCollection Matches { get; }
         public int MatchingStartIdx { get; }
     }
 }
