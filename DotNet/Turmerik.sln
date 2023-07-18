@@ -79,11 +79,15 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Turmerik.WinForms", "Turmer
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Turmerik.TextUtils.WinFormsApp", "Turmerik.TextUtils.WinFormsApp\Turmerik.TextUtils.WinFormsApp.csproj", "{673502EA-744D-436D-A3BF-5EC5881E257A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Turmerik.PureFuncJs.Core", "Turmerik.PureFuncJs.Core\Turmerik.PureFuncJs.Core.csproj", "{08E959D5-7347-418D-816E-ED60A3EC87B4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Turmerik.PureFuncJs.Core", "Turmerik.PureFuncJs.Core\Turmerik.PureFuncJs.Core.csproj", "{08E959D5-7347-418D-816E-ED60A3EC87B4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Turmerik.PureFuncJs.UnitTests", "Turmerik.PureFuncJs.UnitTests\Turmerik.PureFuncJs.UnitTests.csproj", "{5DD53BED-3E25-4E34-B35C-9251A325C352}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Turmerik.PureFuncJs.UnitTests", "Turmerik.PureFuncJs.UnitTests\Turmerik.PureFuncJs.UnitTests.csproj", "{5DD53BED-3E25-4E34-B35C-9251A325C352}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Turmerik.PureFuncJs.TestConsoleApp", "Turmerik.PureFuncJs.TestConsoleApp\Turmerik.PureFuncJs.TestConsoleApp.csproj", "{9DE7D3FD-9244-4FF4-9092-A5266771C3FF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Turmerik.PureFuncJs.TestConsoleApp", "Turmerik.PureFuncJs.TestConsoleApp\Turmerik.PureFuncJs.TestConsoleApp.csproj", "{9DE7D3FD-9244-4FF4-9092-A5266771C3FF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Turmerik.PureFuncJsPlayground.WinFormsApp", "Turmerik.PureFuncJsPlayground.WinFormsApp\Turmerik.PureFuncJsPlayground.WinFormsApp.csproj", "{CFC08B8A-84BF-4C0E-B6D6-713759234856}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Turmerik.SharedLogFileTestConsoleApp", "Turmerik.SharedLogFileTestConsoleApp\Turmerik.SharedLogFileTestConsoleApp.csproj", "{2FCA26D6-22A2-4FE5-ACAA-4125A46B2F25}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -183,6 +187,14 @@ Global
 		{9DE7D3FD-9244-4FF4-9092-A5266771C3FF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9DE7D3FD-9244-4FF4-9092-A5266771C3FF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9DE7D3FD-9244-4FF4-9092-A5266771C3FF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CFC08B8A-84BF-4C0E-B6D6-713759234856}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CFC08B8A-84BF-4C0E-B6D6-713759234856}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CFC08B8A-84BF-4C0E-B6D6-713759234856}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CFC08B8A-84BF-4C0E-B6D6-713759234856}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2FCA26D6-22A2-4FE5-ACAA-4125A46B2F25}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2FCA26D6-22A2-4FE5-ACAA-4125A46B2F25}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2FCA26D6-22A2-4FE5-ACAA-4125A46B2F25}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2FCA26D6-22A2-4FE5-ACAA-4125A46B2F25}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -220,6 +232,8 @@ Global
 		{08E959D5-7347-418D-816E-ED60A3EC87B4} = {E9A3255F-0E33-4796-A489-8B4C016C573A}
 		{5DD53BED-3E25-4E34-B35C-9251A325C352} = {D5115A7C-0835-4E11-9EE7-BB5AA80031F2}
 		{9DE7D3FD-9244-4FF4-9092-A5266771C3FF} = {6AD730D0-C509-4FBC-9620-BC288BDF4CEF}
+		{CFC08B8A-84BF-4C0E-B6D6-713759234856} = {58B107F0-C220-4721-82B6-E77C972AEE4D}
+		{2FCA26D6-22A2-4FE5-ACAA-4125A46B2F25} = {6AD730D0-C509-4FBC-9620-BC288BDF4CEF}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {884DC105-C0BD-4026-B220-D2D435105F94}

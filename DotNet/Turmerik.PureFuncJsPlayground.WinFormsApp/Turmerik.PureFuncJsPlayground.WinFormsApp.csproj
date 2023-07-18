@@ -4,10 +4,10 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{984B11CD-D307-4488-9532-1D857EE2975E}</ProjectGuid>
+    <ProjectGuid>{CFC08B8A-84BF-4C0E-B6D6-713759234856}</ProjectGuid>
     <OutputType>WinExe</OutputType>
-    <RootNamespace>Turmerik.CodeAnalysis.WinFormsTestApp</RootNamespace>
-    <AssemblyName>Turmerik.CodeAnalysis.WinFormsTestApp</AssemblyName>
+    <RootNamespace>Turmerik.PureFuncJsPlayground.WinFormsApp</RootNamespace>
+    <AssemblyName>Turmerik.PureFuncJsPlayground.WinFormsApp</AssemblyName>
     <TargetFrameworkVersion>v4.8.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
@@ -54,6 +54,9 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="MainForm.resx">
+      <DependentUpon>MainForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
@@ -75,6 +78,24 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Turmerik.Core\Turmerik.Core.csproj">
+      <Project>{ac31c2ca-db3f-470e-8200-519d0dccb3b5}</Project>
+      <Name>Turmerik.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Turmerik.LocalDevice.Core\Turmerik.LocalDevice.Core.csproj">
+      <Project>{5f16eb51-0ba3-4549-b6e2-b14a83ad89b5}</Project>
+      <Name>Turmerik.LocalDevice.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Turmerik.PureFuncJs.Core\Turmerik.PureFuncJs.Core.csproj">
+      <Project>{08e959d5-7347-418d-816e-ed60a3ec87b4}</Project>
+      <Name>Turmerik.PureFuncJs.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Turmerik.WinForms\Turmerik.WinForms.csproj">
+      <Project>{8e3a7878-69f3-4ac1-ae28-77920ad3e60a}</Project>
+      <Name>Turmerik.WinForms</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

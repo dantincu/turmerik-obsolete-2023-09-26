@@ -121,7 +121,6 @@ namespace Turmerik.LocalDevice.Core.Logging
 
         private string GetLogFilePath() => AppEnv.GetPath(
             AppEnvDir.Logs,
-            null,
             LogDirRelPath,
             LogFileName);
 

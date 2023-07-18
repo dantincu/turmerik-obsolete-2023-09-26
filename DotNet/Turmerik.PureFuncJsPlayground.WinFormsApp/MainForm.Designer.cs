@@ -1,4 +1,4 @@
-﻿namespace Turmerik.MkFsNotesDirPairs.WinFormsApp
+﻿namespace Turmerik.PureFuncJsPlayground.WinFormsApp
 {
     partial class MainForm
     {
@@ -36,8 +36,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1784, 861);
             this.Name = "MainForm";
-            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "Turmerik Fs Notes Mk Dir Pairs";
+            this.Text = "Pure functional javascript playground";
             this.ResumeLayout(false);
 
         }

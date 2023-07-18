@@ -31,7 +31,7 @@ namespace Turmerik.MsVSTextTemplating.UnitTests
         [TestMethod]
         public void MainTest()
         {
-            var basePath = AppEnv.GetPath(
+            var basePath = AppEnv.GetTypePath(
                 AppEnvDir.Data,
                 GetType());
 

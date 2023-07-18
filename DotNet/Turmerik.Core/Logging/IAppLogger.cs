@@ -10,6 +10,8 @@ namespace Turmerik.Logging
     public interface IAppLogger : IDisposable
     {
         string LogDirRelPath { get; }
+        string LogFileName { get; }
+        string LogFilePath { get; }
         void Write(LogLevel logLevel, string messageTemplate, params object[] propertyValues);
         void Write(LogLevel logLevel, Exception ex, string messageTemplate, params object[] propertyValues);
         void Verbose(string messageTemplate, params object[] propertyValues);

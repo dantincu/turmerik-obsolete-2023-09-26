@@ -7,6 +7,7 @@ using static System.Environment;
 using Turmerik.Reflection;
 using Turmerik.Text;
 using System.IO;
+using Turmerik.Collections;
 
 namespace Turmerik.LocalDevice.Core.Env
 {
@@ -14,7 +15,8 @@ namespace Turmerik.LocalDevice.Core.Env
     {
         AppEnvLocator.IClnbl Locator { get; }
         string AppEnvDirBasePath { get; }
-        string GetPath(AppEnvDir appEnvDir, Type dirNameType, params string[] pathPartsArr);
+        string GetPath(AppEnvDir appEnvDir, params string[] pathPartsArr);
+        string GetTypePath(AppEnvDir appEnvDir, Type dirNameType, params string[] pathPartsArr);
     }
 
     public class AppEnv : IAppEnv
@@ -35,6 +37,19 @@ namespace Turmerik.LocalDevice.Core.Env
 
         public string GetPath(
             AppEnvDir appEnvDir,
+            params string[] pathPartsArr)
+        {
+            pathPartsArr = new string[] {
+                AppEnvDirBasePath,
+                appEnvDir > 0 ? appEnvDir.ToString() : null,
+            }.NotNull().Concat(pathPartsArr).ToArray();
+
+            string retPath = Path.Combine(pathPartsArr);
+            return retPath;
+        }
+
+        public string GetTypePath(
+            AppEnvDir appEnvDir,
             Type dirNameType,
             params string[] pathPartsArr)
         {
@@ -42,7 +57,7 @@ namespace Turmerik.LocalDevice.Core.Env
                 AppEnvDirBasePath,
                 appEnvDir > 0 ? appEnvDir.ToString() : null,
                 dirNameType?.GetTypeFullDisplayName()
-            }.Where(part => part != null).Concat(pathPartsArr).ToArray();
+            }.NotNull().Concat(pathPartsArr).ToArray();
 
             string retPath = Path.Combine(pathPartsArr);
             return retPath;

@@ -72,7 +72,7 @@ namespace Turmerik.LocalDevice.Core.Env
             IJintComponent<TBehaviour> component,
             ReadOnlyDictionary<string, ReadOnlyDictionary<string, string>> exportedMemberNames);
 
-        protected virtual string GetJsFilePath() => AppEnv.GetPath(
+        protected virtual string GetJsFilePath() => AppEnv.GetTypePath(
             AppEnvDir.Config,
             GetType(),
             JS_FILE_NAME);

@@ -63,7 +63,7 @@ namespace Turmerik.LocalDevice.Core.Env
         protected abstract TMtblSrlzbl GetDefaultConfig();
         protected abstract TImmtbl NormalizeConfig(TMtblSrlzbl config);
 
-        protected virtual string GetJsonFilePath() => AppEnv.GetPath(
+        protected virtual string GetJsonFilePath() => AppEnv.GetTypePath(
             AppEnvDir.Config,
             GetType(),
             JSON_FILE_NAME);

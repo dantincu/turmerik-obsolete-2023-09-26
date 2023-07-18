@@ -1,4 +1,5 @@
-﻿using Jint;
+﻿// See https://aka.ms/new-console-template for more information
+using Jint;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
 using System.Reflection;

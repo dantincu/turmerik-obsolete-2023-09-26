@@ -15,7 +15,7 @@ namespace Turmerik.WinForms.ViewModels
             IAppLoggerFactory appLoggerFactory,
             IWinFormsActionComponentFactory actionComponentFactory)
         {
-            Logger = appLoggerFactory.GetAppLogger(GetType());
+            Logger = appLoggerFactory.GetSharedAppLogger(GetType());
             ActionComponent = actionComponentFactory.Create(Logger);
         }
 

@@ -61,7 +61,7 @@ namespace Turmerik.LocalDevice.Core.Env
 
         protected abstract string GetDefaultBehaviourJsCodeCore();
 
-        protected override string GetJsFilePath() => AppEnv.GetPath(
+        protected override string GetJsFilePath() => AppEnv.GetTypePath(
             AppEnvDir.Data,
             GetType(),
             JS_FILE_NAME);
