@@ -8,6 +8,9 @@ namespace Turmerik.LocalDevice.Core.Logging
 {
     public interface IAppLoggerFactory
     {
+        void AssureAppProcessIdnfDumped();
+        void DumpAppProcessIdnf();
+
         IAppLogger GetAppLogger(
             string loggerRelPath,
             LogLevel logEventLevel = LogLevel.Information,

@@ -74,6 +74,7 @@ namespace Turmerik.LocalDevice.Core.Dependencies
             }
             else
             {
+                AppLoggerFactory.UseAppProcessIdnfByDefault = true;
                 services.AddSingleton<IAppLoggerFactory, AppLoggerFactory>();
             }
 

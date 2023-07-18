@@ -87,7 +87,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Turmerik.PureFuncJs.TestCon
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Turmerik.PureFuncJsPlayground.WinFormsApp", "Turmerik.PureFuncJsPlayground.WinFormsApp\Turmerik.PureFuncJsPlayground.WinFormsApp.csproj", "{CFC08B8A-84BF-4C0E-B6D6-713759234856}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Turmerik.SharedLogFileTestConsoleApp", "Turmerik.SharedLogFileTestConsoleApp\Turmerik.SharedLogFileTestConsoleApp.csproj", "{2FCA26D6-22A2-4FE5-ACAA-4125A46B2F25}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Turmerik.SharedLogFileTestConsoleApp", "Turmerik.SharedLogFileTestConsoleApp\Turmerik.SharedLogFileTestConsoleApp.csproj", "{2FCA26D6-22A2-4FE5-ACAA-4125A46B2F25}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Turmerik.SharedRandomAccessLogFileTestConsoleApp", "Turmerik.SharedRandomAccessLogFileTestConsoleApp\Turmerik.SharedRandomAccessLogFileTestConsoleApp.csproj", "{1703FBE0-F74D-442C-BDBF-BA49EC2C0C3B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -195,6 +197,10 @@ Global
 		{2FCA26D6-22A2-4FE5-ACAA-4125A46B2F25}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2FCA26D6-22A2-4FE5-ACAA-4125A46B2F25}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2FCA26D6-22A2-4FE5-ACAA-4125A46B2F25}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1703FBE0-F74D-442C-BDBF-BA49EC2C0C3B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1703FBE0-F74D-442C-BDBF-BA49EC2C0C3B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1703FBE0-F74D-442C-BDBF-BA49EC2C0C3B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1703FBE0-F74D-442C-BDBF-BA49EC2C0C3B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -234,6 +240,7 @@ Global
 		{9DE7D3FD-9244-4FF4-9092-A5266771C3FF} = {6AD730D0-C509-4FBC-9620-BC288BDF4CEF}
 		{CFC08B8A-84BF-4C0E-B6D6-713759234856} = {58B107F0-C220-4721-82B6-E77C972AEE4D}
 		{2FCA26D6-22A2-4FE5-ACAA-4125A46B2F25} = {6AD730D0-C509-4FBC-9620-BC288BDF4CEF}
+		{1703FBE0-F74D-442C-BDBF-BA49EC2C0C3B} = {6AD730D0-C509-4FBC-9620-BC288BDF4CEF}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {884DC105-C0BD-4026-B220-D2D435105F94}

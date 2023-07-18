@@ -10,6 +10,7 @@ using Turmerik.Logging;
 using Turmerik.LocalDevice.Core.Env;
 using Turmerik.Infrastucture;
 using Turmerik.Utils;
+using System.Runtime.CompilerServices;
 
 namespace Turmerik.LocalDevice.Core.Logging
 {
@@ -22,7 +23,10 @@ namespace Turmerik.LocalDevice.Core.Logging
         private readonly ITimeStampHelper timeStampHelper;
         private readonly ITrmrkJsonFormatterFactory trmrkJsonFormatterFactory;
         private readonly IStringTemplateParser stringTemplateParser;
+        private readonly Lazy<IAppLogger> logger;
+
         private volatile int bufferedLoggerDirNameIdx;
+        private volatile int appProcessIdnfDumped;
 
         public AppLoggerFactory(
             IAppEnv appEnv,
@@ -36,11 +40,30 @@ namespace Turmerik.LocalDevice.Core.Logging
             this.timeStampHelper = timeStampHelper ?? throw new ArgumentNullException(nameof(timeStampHelper));
             this.trmrkJsonFormatterFactory = trmrkJsonFormatterFactory ?? throw new ArgumentNullException(nameof(trmrkJsonFormatterFactory));
             this.stringTemplateParser = stringTemplateParser ?? throw new ArgumentNullException(nameof(stringTemplateParser));
+            this.logger = LazyH.Lazy(() => GetAppLogger(GetType()));
 
-            this.UseAppProcessIdnfByDefault = true;
+            if (UseAppProcessIdnfByDefault)
+            {
+                AssureAppProcessIdnfDumped();
+            }
         }
 
-        public bool UseAppProcessIdnfByDefault { get; set; }
+        public static bool UseAppProcessIdnfByDefault { get; set; }
+
+        public void AssureAppProcessIdnfDumped()
+        {
+            if (Interlocked.CompareExchange(ref appProcessIdnfDumped, 1, 0) == 0)
+            {
+                DumpAppProcessIdnf();
+            }
+        }
+
+        public void DumpAppProcessIdnf()
+        {
+            logger.Value.InformationData(
+                appProcessIdentifier,
+                nameof(appProcessIdentifier));
+        }
 
         public IAppLogger GetAppLogger(
             string loggerRelPath,
