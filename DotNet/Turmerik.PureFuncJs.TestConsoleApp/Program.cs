@@ -1,6 +1,7 @@
 ﻿// See https://aka.ms/new-console-template for more information
 using Jint;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using System.Reflection;
 using Turmerik.Dependencies;
@@ -18,13 +19,22 @@ var factory = svcProv.GetRequiredService<IJintComponentFactory>();
 string jsFilePath = Path.Combine(TrmrkRepoH.TrmrkRepoPath, "YarnWs\\packages.jint.NET\\turmerik-jint-fs-notes\\dist\\test-bundle.js");
 
 var component = factory.Create(File.ReadAllText(jsFilePath));
-component.Console.OnLog += Console_OnLog;
+component.JintConsole.OnWrite += Console_OnWrite;
 
 var sysAsm = Assembly.GetAssembly(typeof(int));
 
-void Console_OnLog(object obj)
+void Console_OnWrite(
+    LogLevel logLevel,
+    object obj)
 {
-    Console.WriteLine(obj);
+    if (logLevel >= LogLevel.Error)
+    {
+        Console.Error.WriteLine(obj);
+    }
+    else
+    {
+        Console.Out.WriteLine(obj);
+    }
 }
 
 var rslt = component.Call(

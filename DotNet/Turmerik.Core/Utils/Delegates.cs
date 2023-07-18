@@ -7,6 +7,10 @@ using System.Threading.Tasks;
 
 namespace Turmerik.Utils
 {
+    public delegate void ParamsAction(params object[] arguments);
+
+    public delegate void ParamsAction<T1>(T1 arg1, params object[] arguments);
+
     public delegate void RefAction<T>(ref T t);
 
     public delegate bool TryRetrieve<TInput, TOutput>(

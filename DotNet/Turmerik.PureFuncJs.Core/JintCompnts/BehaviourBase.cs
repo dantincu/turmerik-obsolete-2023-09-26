@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Turmerik.Collections;
 using Turmerik.Text;
 
 namespace Turmerik.PureFuncJs.Core.JintCompnts
@@ -26,19 +27,40 @@ namespace Turmerik.PureFuncJs.Core.JintCompnts
         protected IJintComponent Component { get; }
         protected string ModulePropName { get; }
 
-        protected TResult Call<TResult>(
+        protected string CallMethod(
             string methodName,
             bool useCamelCase = true,
-            params object[] args)
-        {
-            string methodCallScript = $"{ModulePropName}.{methodName}();";
-
-            var result = Component.Call<TResult>(
-                methodCallScript,
+            params object[] args) => Component.CallMethod(
+                ModulePropName.Arr(
+                    methodName),
                 useCamelCase,
                 args);
 
-            return result;
-        }
+        protected TResult CallMethod<TResult>(
+            string methodName,
+            bool useCamelCase = true,
+            params object[] args) => Component.CallMethod<TResult>(
+                ModulePropName.Arr(
+                    methodName),
+                useCamelCase,
+                args);
+
+        protected string CallMethod(
+            string[] methodPath,
+            bool useCamelCase = true,
+            params object[] args) => Component.CallMethod(
+                ModulePropName.Arr().Concat(
+                    methodPath).ToArray(),
+                useCamelCase,
+                args);
+
+        protected TResult CallMethod<TResult>(
+            string[] methodPath,
+            bool useCamelCase = true,
+            params object[] args) => Component.CallMethod<TResult>(
+                ModulePropName.Arr().Concat(
+                    methodPath).ToArray(),
+                useCamelCase,
+                args);
     }
 }

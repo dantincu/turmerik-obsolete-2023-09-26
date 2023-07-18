@@ -18,7 +18,7 @@ namespace Turmerik.PureFuncJs.Core.JintCompnts
 {
     public interface IJintComponent : IDisposable
     {
-        IJintConsole Console { get; }
+        IJintConsole JintConsole { get; }
         ReadOnlyDictionary<string, ReadOnlyDictionary<string, string>> ExportedMemberNames { get; }
 
         string Execute(string jsCode);
@@ -34,6 +34,26 @@ namespace Turmerik.PureFuncJs.Core.JintCompnts
 
         TResult Call<TResult>(
             string jsCode,
+            bool useCamelCase = true,
+            params object[] argsArr);
+
+        string CallMethod(
+            string methodName,
+            bool useCamelCase = true,
+            params object[] argsArr);
+
+        TResult CallMethod<TResult>(
+            string methodName,
+            bool useCamelCase = true,
+            params object[] argsArr);
+
+        string CallMethod(
+            string[] methodPath,
+            bool useCamelCase = true,
+            params object[] argsArr);
+
+        TResult CallMethod<TResult>(
+            string[] methodPath,
             bool useCamelCase = true,
             params object[] argsArr);
     }
@@ -68,7 +88,7 @@ namespace Turmerik.PureFuncJs.Core.JintCompnts
             IJintConsole console,
             string jsCode)
         {
-            Console = console ?? throw new ArgumentNullException(nameof(console));
+            JintConsole = console ?? throw new ArgumentNullException(nameof(console));
             JsCode = jsCode;
             Engine = GetEngine(console).Execute(JsCode);
 
@@ -79,7 +99,7 @@ namespace Turmerik.PureFuncJs.Core.JintCompnts
                 ExportedMembers);
         }
 
-        public IJintConsole Console { get; }
+        public IJintConsole JintConsole { get; }
         public ReadOnlyDictionary<string, ReadOnlyDictionary<string, string>> ExportedMemberNames { get; }
 
         protected string JsCode { get; }
@@ -109,7 +129,7 @@ namespace Turmerik.PureFuncJs.Core.JintCompnts
                 useCamelCase,
                 argsArr);
 
-            jsCode = CreateScript(
+            jsCode = JintH.CreateScript(
                 jsCode, argsJson);
 
             var result = Execute(jsCode);
@@ -133,33 +153,74 @@ namespace Turmerik.PureFuncJs.Core.JintCompnts
             return result;
         }
 
-        public void Dispose()
+        public string CallMethod(
+            string methodName,
+            bool useCamelCase = true,
+            params object[] argsArr)
         {
-            Engine.Dispose();
+            string methodCallScript = $"{methodName}();";
+
+            var result = Call(
+                methodCallScript,
+                useCamelCase,
+                argsArr);
+
+            return result;
         }
 
-        protected virtual string CreateScript(
-            string jsCode,
-            string argsJson)
+        public TResult CallMethod<TResult>(
+            string methodName,
+            bool useCamelCase = true,
+            params object[] argsArr)
         {
-            jsCode = jsCode.Trim().TrimEnd(';').TrimEnd(')');
+            string json = CallMethod(
+                methodName,
+                useCamelCase,
+                argsArr);
 
-            if (jsCode.First() == '(')
-            {
-                jsCode = string.Concat(
-                    jsCode,
-                    argsJson,
-                    "));");
-            }
-            else
-            {
-                jsCode = string.Concat(
-                    jsCode,
-                    argsJson,
-                    ");");
-            }
+            TResult result = JsonH.FromJson<TResult>(
+                json,
+                useCamelCase);
 
-            return jsCode;
+            return result;
+        }
+
+        public string CallMethod(
+            string[] methodPath,
+            bool useCamelCase = true,
+            params object[] argsArr)
+        {
+            string methodName = string.Join(".", methodPath);
+
+            string result = CallMethod(
+                methodName,
+                useCamelCase,
+                argsArr);
+
+            return result;
+        }
+
+        public TResult CallMethod<TResult>(
+            string[] methodPath,
+            bool useCamelCase = true,
+            params object[] argsArr)
+        {
+            string json = CallMethod(
+                methodPath,
+                useCamelCase,
+                argsArr);
+
+            TResult result = JsonH.FromJson<TResult>(
+                json,
+                useCamelCase);
+
+            return result;
+        }
+
+        public void Dispose()
+        {
+            JintConsole.Dispose();
+            Engine.Dispose();
         }
 
         protected virtual string GetArgsJson(
@@ -177,17 +238,7 @@ namespace Turmerik.PureFuncJs.Core.JintCompnts
 
         protected virtual string GetArgJson(
             bool useCamelCase,
-            object arg)
-        {
-            string argJson = arg.ToJson(useCamelCase);
-
-            /* if (arg is string || arg is char)
-            {
-                argJson = $@"""{argJson}""";
-            } */
-
-            return argJson;
-        }
+            object arg) => arg.ToJson(useCamelCase);
 
         private ReadOnlyDictionary<string, ReadOnlyDictionary<string, string>> GetExportedMemberNames(
             ObjectInstance exportedMembers)
@@ -230,7 +281,7 @@ namespace Turmerik.PureFuncJs.Core.JintCompnts
         {
             var obj = new JsObject(engine);
 
-            var propsMap = new Dictionary<string, Action<object>>()
+            var propsMap = new Dictionary<string, ParamsAction>()
             {
                 { nameof(console.Log), console.Log },
                 { nameof(console.Trace), console.Trace },

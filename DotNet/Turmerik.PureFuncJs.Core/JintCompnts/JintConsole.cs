@@ -1,96 +1,123 @@
-﻿using System;
+﻿using Microsoft.Extensions.Logging;
+using System;
 using System.Collections.Generic;
+using System.Security.Cryptography;
 using System.Text;
+using Turmerik.LocalDevice.Core.Logging;
+using Turmerik.Logging;
+using Turmerik.Utils;
 
 namespace Turmerik.PureFuncJs.Core.JintCompnts
 {
-    public interface IJintConsole
+    public interface IJintConsole : IDisposable
     {
-        void Log(object obj);
-        void Trace(object obj);
-        void Debug(object obj);
-        void Warn(object obj);
-        void Info(object obj);
-        void Error(object obj);
-        void Fatal(object obj);
+        void Write(
+            LogLevel logLevel,
+            params object[] argsArr);
 
-        event Action<object> OnLog;
-        event Action<object> OnTrace;
-        event Action<object> OnDebug;
-        event Action<object> OnInfo;
-        event Action<object> OnWarn;
-        event Action<object> OnError;
-        event Action<object> OnFatal;
+        void Log(params object[] argsArr);
+        void Trace(params object[] argsArr);
+        void Debug(params object[] argsArr);
+        void Info(params object[] argsArr);
+        void Warn(params object[] argsArr);
+        void Error(params object[] argsArr);
+        void Fatal(params object[] argsArr);
+
+        void Map(
+            IAppLogger appLogger,
+            Func<object[], Tuple<string, object[]>> logEventFactory);
+
+        event ParamsAction<LogLevel> OnWrite;
     }
 
     public interface IJintConsoleFactory
     {
-        IJintConsole Create();
+        IJintConsole Create(
+            LogLevel defaultLogLevel = LogLevel.Debug);
     }
 
     public class JintConsole : IJintConsole
     {
-        private Action<object> onLog;
-        private Action<object> onTrace;
-        private Action<object> onDebug;
-        private Action<object> onInfo;
-        private Action<object> onWarn;
-        private Action<object> onError;
-        private Action<object> onFatal;
+        private readonly LogLevel defaultLogLevel;
 
-        public event Action<object> OnLog
+        private ParamsAction<LogLevel> onWrite;
+
+        public JintConsole(
+            LogLevel defaultLogLevel)
         {
-            add => onLog += value;
-            remove => onLog -= value;
+            this.defaultLogLevel = defaultLogLevel;
         }
 
-        public event Action<object> OnTrace
+        public event ParamsAction<LogLevel> OnWrite
         {
-            add => onTrace += value;
-            remove => onTrace -= value;
+            add => onWrite += value;
+            remove => onWrite -= value;
         }
 
-        public event Action<object> OnDebug
+        public void Write(
+            LogLevel logLevel,
+            params object[] argsArr) => onWrite?.Invoke(
+                logLevel,
+                argsArr);
+
+        public void Log(
+            params object[] argsArr) => Write(
+                defaultLogLevel,
+                argsArr);
+
+        public void Trace(
+            params object[] argsArr) => Write(
+                LogLevel.Trace,
+                argsArr);
+        
+        public void Debug(
+            params object[] argsArr) => Write(
+                LogLevel.Debug,
+                argsArr);
+        
+        public void Info(
+            params object[] argsArr) => Write(
+                LogLevel.Information,
+                argsArr);
+
+        public void Warn(
+            params object[] argsArr) => Write(
+                LogLevel.Warning,
+                argsArr);
+
+        public void Error(
+            params object[] argsArr) => Write(
+                LogLevel.Error,
+                argsArr);
+        
+        public void Fatal(
+            params object[] argsArr) => Write(
+                LogLevel.Critical,
+                argsArr);
+
+        public void Map(
+            IAppLogger appLogger,
+            Func<object[], Tuple<string, object[]>> logEventFactory)
         {
-            add => onDebug += value;
-            remove => onDebug -= value;
+            onWrite += (logLevel, argsArr) => logEventFactory(
+                argsArr).ActWithValue(
+                logEvtTuple => appLogger.WriteData(
+                    logLevel,
+                    argsArr,
+                    logEvtTuple.Item1,
+                    logEvtTuple.Item2));
         }
 
-        public event Action<object> OnInfo
+        public void Dispose()
         {
-            add => onInfo += value;
-            remove => onInfo -= value;
+            onWrite = null;
         }
-
-        public event Action<object> OnWarn
-        {
-            add => onWarn += value;
-            remove => onWarn -= value;
-        }
-
-        public event Action<object> OnError
-        {
-            add => onError += value;
-            remove => onError -= value;
-        }
-
-        public event Action<object> OnFatal
-        {
-            add => onFatal += value;
-            remove => onFatal -= value;
-        }
-
-        public void Log(object obj) => onLog?.Invoke(obj);
-        public void Trace(object obj) => onTrace?.Invoke(obj);
-        public void Debug(object obj) => onDebug?.Invoke(obj);
-        public void Warn(object obj) => onInfo?.Invoke(obj);
-        public void Info(object obj) => onWarn?.Invoke(obj);
-        public void Error(object obj) => onError?.Invoke(obj);
-        public void Fatal(object obj) => onFatal?.Invoke(obj);
     }
 
     public class JintConsoleFactory : IJintConsoleFactory
     {
-        public IJintConsole Create() => new JintConsole();
+        public IJintConsole Create(
+            LogLevel defaultLogLevel = LogLevel.Debug) => new JintConsole(
+                defaultLogLevel);
     }
 }
