@@ -26,6 +26,16 @@ namespace Turmerik.PureFuncJs.Core.JintCompnts
         TResult Execute<TResult>(
             string jsCode,
             bool useCamelCase = true);
+
+        string Call(
+            string jsCode,
+            bool useCamelCase = true,
+            params object[] argsArr);
+
+        TResult Call<TResult>(
+            string jsCode,
+            bool useCamelCase = true,
+            params object[] argsArr);
     }
 
     public interface IJintComponent<TBehaviour> : IJintComponent
@@ -91,9 +101,92 @@ namespace Turmerik.PureFuncJs.Core.JintCompnts
             return result;
         }
 
+        public string Call(string jsCode,
+            bool useCamelCase = true,
+            params object[] argsArr)
+        {
+            string argsJson = GetArgsJson(
+                useCamelCase,
+                argsArr);
+
+            jsCode = CreateScript(
+                jsCode, argsJson);
+
+            var result = Execute(jsCode);
+            return result;
+        }
+
+        public TResult Call<TResult>(
+            string jsCode,
+            bool useCamelCase = true,
+            params object[] argsArr)
+        {
+            string json = Call(
+                jsCode,
+                useCamelCase,
+                argsArr);
+
+            TResult result = JsonH.FromJson<TResult>(
+                json,
+                useCamelCase);
+
+            return result;
+        }
+
         public void Dispose()
         {
             Engine.Dispose();
+        }
+
+        protected virtual string CreateScript(
+            string jsCode,
+            string argsJson)
+        {
+            jsCode = jsCode.Trim().TrimEnd(';').TrimEnd(')');
+
+            if (jsCode.First() == '(')
+            {
+                jsCode = string.Concat(
+                    jsCode,
+                    argsJson,
+                    "));");
+            }
+            else
+            {
+                jsCode = string.Concat(
+                    jsCode,
+                    argsJson,
+                    ");");
+            }
+
+            return jsCode;
+        }
+
+        protected virtual string GetArgsJson(
+            bool useCamelCase,
+            object[] argsArr)
+        {
+            string[] argsJsonArr = argsArr.Select(
+                arg => GetArgJson(
+                    useCamelCase,
+                    arg)).ToArray();
+
+            string argsJson = string.Join(", ", argsJsonArr);
+            return argsJson;
+        }
+
+        protected virtual string GetArgJson(
+            bool useCamelCase,
+            object arg)
+        {
+            string argJson = arg.ToJson(useCamelCase);
+
+            /* if (arg is string || arg is char)
+            {
+                argJson = $@"""{argJson}""";
+            } */
+
+            return argJson;
         }
 
         private ReadOnlyDictionary<string, ReadOnlyDictionary<string, string>> GetExportedMemberNames(
