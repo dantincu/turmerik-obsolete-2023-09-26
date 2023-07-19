@@ -5,10 +5,11 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Turmerik.Logging;
+using Turmerik.TrmrkAction;
 
 namespace Turmerik.WinForms.ActionComponent
 {
-    public interface IWinFormsActionComponentFactory
+    public interface IWinFormsActionComponentFactory : ITrmrkActionComponentFactory
     {
         IWinFormsActionComponent Create(IAppLogger logger);
     }
@@ -25,5 +26,8 @@ namespace Turmerik.WinForms.ActionComponent
 
         public IWinFormsActionComponent Create(
             IAppLogger logger) => new WinFormsActionComponent(manager, logger);
+
+        public ITrmrkActionComponent CreateCore(
+            IAppLogger logger) => Create(logger);
     }
 }

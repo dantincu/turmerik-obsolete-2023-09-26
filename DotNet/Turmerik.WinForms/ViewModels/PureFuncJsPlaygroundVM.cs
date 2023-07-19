@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Turmerik.LocalDevice.Core.Logging;
+using Turmerik.Logging;
 using Turmerik.PureFuncJs.Core.JintCompnts;
 using Turmerik.TrmrkAction;
 using Turmerik.Utils;
@@ -26,7 +26,7 @@ namespace Turmerik.WinForms.ViewModels
     public class PureFuncJsPlaygroundVM : ViewModelBase, IPureFuncJsPlaygroundVM
     {
         public PureFuncJsPlaygroundVM(
-            IAppLoggerFactory appLoggerFactory,
+            IAppLoggerCreator appLoggerFactory,
             IWinFormsActionComponentFactory actionComponentFactory) : base(
                 appLoggerFactory,
                 actionComponentFactory)
@@ -57,7 +57,7 @@ namespace Turmerik.WinForms.ViewModels
                         return new TrmrkActionResult<string>
                         {
                             Data = output
-                        }.AsIntf();
+                        };
                     },
                     ActionName = nameof(CallJs)
                 });

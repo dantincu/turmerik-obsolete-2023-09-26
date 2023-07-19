@@ -2,11 +2,10 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using Turmerik.Logging;
 
-namespace Turmerik.LocalDevice.Core.Logging
+namespace Turmerik.Logging
 {
-    public interface IAppLoggerFactory
+    public interface IAppLoggerCreator
     {
         void AssureAppProcessIdnfDumped();
         void DumpAppProcessIdnf();

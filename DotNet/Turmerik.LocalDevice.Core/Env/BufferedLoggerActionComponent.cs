@@ -3,7 +3,6 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
-using Turmerik.LocalDevice.Core.Logging;
 using Turmerik.Logging;
 
 namespace Turmerik.LocalDevice.Core.Env
@@ -34,9 +33,9 @@ namespace Turmerik.LocalDevice.Core.Env
 
     public class BufferedLoggerActionComponent : IBufferedLoggerActionComponent
     {
-        private readonly IAppLoggerFactory appLoggerFactory;
+        private readonly IAppLoggerCreator appLoggerFactory;
 
-        public BufferedLoggerActionComponent(IAppLoggerFactory appLoggerFactory)
+        public BufferedLoggerActionComponent(IAppLoggerCreator appLoggerFactory)
         {
             this.appLoggerFactory = appLoggerFactory ?? throw new ArgumentNullException(nameof(appLoggerFactory));
         }

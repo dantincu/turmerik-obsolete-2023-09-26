@@ -9,6 +9,7 @@ using Turmerik.DriveExplorerCore;
 using Turmerik.LocalDevice.Core.Env;
 using Turmerik.LocalDevice.Core.FileExplorerCore;
 using Turmerik.LocalDevice.Core.Logging;
+using Turmerik.Logging;
 using Turmerik.PureFuncJs.Core.Dependencies;
 
 namespace Turmerik.LocalDevice.Core.Dependencies
@@ -19,7 +20,7 @@ namespace Turmerik.LocalDevice.Core.Dependencies
             IServiceCollection services,
             bool includeNetCoreAppEnv = false,
             bool registerFsExplorerServiceEngineAsDefault = false,
-            Action<IServiceCollection> registerAppLoggerFactoryFunc = null)
+            bool useAppProcessIdnfForAppLoggersByDefault = true)
         {
             TrmrkCoreServiceCollectionBuilder.RegisterAll(services);
             PureFuncJsServiceCollectionBuilder.RegisterAllCore(services);
@@ -28,14 +29,14 @@ namespace Turmerik.LocalDevice.Core.Dependencies
                 services,
                 includeNetCoreAppEnv,
                 registerFsExplorerServiceEngineAsDefault,
-                registerAppLoggerFactoryFunc);
+                useAppProcessIdnfForAppLoggersByDefault);
         }
 
         public static void RegisterAllCore(
             IServiceCollection services,
             bool includeNetCoreAppEnv = false,
             bool registerFsExplorerServiceEngineAsDefault = false,
-            Action<IServiceCollection> registerAppLoggerFactoryFunc = null)
+            bool useAppProcessIdnfForAppLoggersByDefault = true)
         {
             RegisterAppEnv(
                 services,
@@ -43,7 +44,7 @@ namespace Turmerik.LocalDevice.Core.Dependencies
 
             RegisterAppLoggerFactory(
                 services,
-                registerAppLoggerFactoryFunc);
+                useAppProcessIdnfForAppLoggersByDefault);
 
             RegisterFsExplorerServices(
                 services,
@@ -64,19 +65,14 @@ namespace Turmerik.LocalDevice.Core.Dependencies
 
         public static void RegisterAppLoggerFactory(
             IServiceCollection services,
-            Action<IServiceCollection> registerAppLoggerFactoryFunc = null)
+            bool useAppProcessIdnfForAppLoggersByDefault = true)
         {
             services.AddSingleton<ITrmrkJsonFormatterFactory, TrmrkJsonFormatterFactory>();
+            services.AddSingleton<IAppLoggerCreatorFactory, AppLoggerCreatorFactory>();
 
-            if (registerAppLoggerFactoryFunc != null)
-            {
-                registerAppLoggerFactoryFunc(services);
-            }
-            else
-            {
-                AppLoggerFactory.UseAppProcessIdnfByDefault = true;
-                services.AddSingleton<IAppLoggerFactory, AppLoggerFactory>();
-            }
+            services.AddSingleton(
+                svcProv => svcProv.GetRequiredService<IAppLoggerCreatorFactory>(
+                    ).Create(useAppProcessIdnfForAppLoggersByDefault));
 
             services.AddSingleton<IBufferedLoggerActionComponent, BufferedLoggerActionComponent>();
         }

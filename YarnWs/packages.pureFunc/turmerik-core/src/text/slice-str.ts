@@ -12,6 +12,7 @@ export interface Result {
 export interface Args {
   inputStr: string;
   inputLen: number;
+  startIdx: number;
   char: string;
   idx: number;
 }
@@ -32,34 +33,11 @@ export const getArgs = (
 export const getStartIdx = (
   inputStr: string,
   inputLen: number,
-  startCharPredicate: (args: Args) => number
-) => {
-  let startIdx = -1;
-  let i = 0;
-
-  while (i < inputLen) {
-    const ch = inputStr[i];
-    const inc = startCharPredicate(getArgs(inputStr, inputLen, ch, i));
-    i += inc;
-
-    if (inc <= 0) {
-      startIdx = i;
-      break;
-    }
-  }
-
-  return startIdx;
-};
-
-export const getEndIdx = (
-  inputStr: string,
-  inputLen: number,
   startIdx: number,
   endCharPredicate: (args: Args, stIdx: number) => number
 ) => {
   let endIdx = -1;
   let i = 0;
-  startIdx++;
   let lenOfRest = inputLen - startIdx;
 
   while (i < lenOfRest) {
@@ -85,12 +63,13 @@ export const getEndIdx = (
 export const slice = (
   inputStr: string,
   startCharPredicate: (args: Args) => number,
-  endCharPredicate: (args: Args, stIdx: number) => number,
+  endCharPredicate: (args: Args) => number,
+  startIdx: number = 0,
   retIdxesOnly: boolean = false,
   callback: (result: Result) => void = null
 ) => {
   const inputLen = inputStr.length;
-  const startIdx = getStartIdx(inputStr, inputLen, startCharPredicate);
+  startIdx = getStartIdx(inputStr, inputLen, startIdx, startCharPredicate);
 
   let endIdx = -1;
   let retStr: string = null;
@@ -98,7 +77,7 @@ export const slice = (
   let nextChar: string = null;
 
   if (startIdx >= 0) {
-    endIdx = getEndIdx(inputStr, inputLen, startIdx, endCharPredicate);
+    endIdx = getStartIdx(inputStr, inputLen, startIdx + 1, endCharPredicate);
   }
 
   if (endIdx >= 0 && !retIdxesOnly) {
@@ -151,10 +130,11 @@ export const getNextWord = (
   const result = slice(
     inputStr,
     (args) => (args.idx < startIdx || areAllWhitespaces(args.char) ? 1 : 0),
-    (args, stIdx) =>
+    (args) =>
       areAllWhitespaces(args.char) || terminalChars.indexOf(args.char) >= 0
         ? 0
         : 1,
+    startIdx,
     false,
     callback
   );
@@ -174,10 +154,11 @@ export const getNextAlphaNumericWord = (
     inputStr,
     (args) =>
       args.idx >= startIdx && areAllLettersOrNumbers(args.char) ? 0 : 1,
-    (args, stIdx) =>
+    (args) =>
       areAllLettersOrNumbers(args.char) || allowedChars.indexOf(args.char) >= 0
         ? 1
         : 0,
+    startIdx,
     false,
     callback
   );
@@ -198,7 +179,8 @@ export const tryDigestStr = (
   const result = slice(
     inputStr,
     (args) => (constSlice(str, startIdx, negStrLen) == str ? 0 : 1),
-    (args, stIdx) => NaN,
+    (args) => NaN,
+    startIdx,
     retIdxesOnly,
     callback
   );

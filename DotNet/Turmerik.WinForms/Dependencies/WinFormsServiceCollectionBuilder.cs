@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Turmerik.LocalDevice.Core.Dependencies;
+using Turmerik.TrmrkAction;
 using Turmerik.WinForms.ActionComponent;
 using Turmerik.WinForms.ViewModels;
 
@@ -16,13 +17,13 @@ namespace Turmerik.WinForms.Dependencies
             IServiceCollection services,
             bool includeNetCoreAppEnv = false,
             bool registerFsExplorerServiceEngineAsDefault = false,
-            Action<IServiceCollection> registerAppLoggerFactoryFunc = null)
+            bool useAppProcessIdnfForAppLoggersByDefault = true)
         {
             LocalDeviceServiceCollectionBuilder.RegisterAll(
                 services,
                 includeNetCoreAppEnv,
                 registerFsExplorerServiceEngineAsDefault,
-                registerAppLoggerFactoryFunc);
+                useAppProcessIdnfForAppLoggersByDefault);
 
             RegisterAllCore(services);
         }
@@ -32,6 +33,7 @@ namespace Turmerik.WinForms.Dependencies
         {
             services.AddSingleton<IWinFormsActionComponentsManagerRetriever, WinFormsActionComponentsManagerRetriever>();
             services.AddSingleton<IWinFormsActionComponentFactory, WinFormsActionComponentFactory>();
+            services.AddSingleton<ITrmrkActionComponentFactory, WinFormsActionComponentFactory>();
 
             services.AddTransient<ITextLinesMdIndenterVM, TextLinesMdIndenterVM>();
             services.AddTransient<IFsNotesDirPairsCreatorVM, FsNotesDirPairsCreatorVM>();

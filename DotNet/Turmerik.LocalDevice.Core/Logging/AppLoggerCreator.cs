@@ -14,7 +14,7 @@ using System.Runtime.CompilerServices;
 
 namespace Turmerik.LocalDevice.Core.Logging
 {
-    public class AppLoggerFactory : IAppLoggerFactory
+    public class AppLoggerCreator : IAppLoggerCreator
     {
         public const string BUFFERED_LOGGER_DIR_NAME_TPL = "{0:D4}";
 
@@ -28,12 +28,13 @@ namespace Turmerik.LocalDevice.Core.Logging
         private volatile int bufferedLoggerDirNameIdx;
         private volatile int appProcessIdnfDumped;
 
-        public AppLoggerFactory(
+        public AppLoggerCreator(
             IAppEnv appEnv,
-            ITimeStampHelper timeStampHelper,
             IAppProcessIdentifier appProcessIdentifier,
+            ITimeStampHelper timeStampHelper,
             ITrmrkJsonFormatterFactory trmrkJsonFormatterFactory,
-            IStringTemplateParser stringTemplateParser)
+            IStringTemplateParser stringTemplateParser,
+            bool useAppProcessIdnfByDefault = false)
         {
             this.appEnv = appEnv ?? throw new ArgumentNullException(nameof(appEnv));
             this.appProcessIdentifier = appProcessIdentifier ?? throw new ArgumentNullException(nameof(appProcessIdentifier));
@@ -41,14 +42,15 @@ namespace Turmerik.LocalDevice.Core.Logging
             this.trmrkJsonFormatterFactory = trmrkJsonFormatterFactory ?? throw new ArgumentNullException(nameof(trmrkJsonFormatterFactory));
             this.stringTemplateParser = stringTemplateParser ?? throw new ArgumentNullException(nameof(stringTemplateParser));
             this.logger = LazyH.Lazy(() => GetAppLogger(GetType()));
+            this.UseAppProcessIdnfByDefault = useAppProcessIdnfByDefault;
 
-            if (UseAppProcessIdnfByDefault)
+            if (useAppProcessIdnfByDefault)
             {
                 AssureAppProcessIdnfDumped();
             }
         }
 
-        public static bool UseAppProcessIdnfByDefault { get; set; }
+        public bool UseAppProcessIdnfByDefault { get; }
 
         public void AssureAppProcessIdnfDumped()
         {

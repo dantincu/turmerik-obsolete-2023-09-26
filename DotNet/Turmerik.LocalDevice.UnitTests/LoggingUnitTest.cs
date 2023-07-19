@@ -8,7 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Turmerik.Collections;
-using Turmerik.LocalDevice.Core.Logging;
+using Turmerik.Logging;
 using Turmerik.Testing;
 using Turmerik.Utils;
 
@@ -16,11 +16,11 @@ namespace Turmerik.LocalDevice.UnitTests
 {
     public class LoggingUnitTest : UnitTestBase
     {
-        private readonly IAppLoggerFactory appLoggerFactory;
+        private readonly IAppLoggerCreator appLoggerFactory;
 
         public LoggingUnitTest()
         {
-            appLoggerFactory = ServiceProvider.GetRequiredService<IAppLoggerFactory>();
+            appLoggerFactory = ServiceProvider.GetRequiredService<IAppLoggerCreator>();
         }
 
         [Fact]

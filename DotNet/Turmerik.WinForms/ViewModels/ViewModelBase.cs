@@ -3,23 +3,33 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Turmerik.LocalDevice.Core.Logging;
 using Turmerik.Logging;
+using Turmerik.Ux.MvvmH;
 using Turmerik.WinForms.ActionComponent;
 
 namespace Turmerik.WinForms.ViewModels
 {
-    public abstract class ViewModelBase
+    public abstract class ViewModelBase : ViewModelCoreBase
     {
         protected ViewModelBase(
-            IAppLoggerFactory appLoggerFactory,
-            IWinFormsActionComponentFactory actionComponentFactory)
+            IAppLoggerCreator appLoggerFactory,
+            IWinFormsActionComponentFactory actionComponentFactory) : base(appLoggerFactory, actionComponentFactory)
         {
-            Logger = appLoggerFactory.GetSharedAppLogger(GetType());
-            ActionComponent = actionComponentFactory.Create(Logger);
+            ActionComponent = (IWinFormsActionComponent)ActionComponentCore;
         }
 
-        protected IAppLogger Logger { get; }
+        protected IWinFormsActionComponent ActionComponent { get; }
+    }
+
+    public abstract class ViewModelBase<TState> : ViewModelCoreBase<TState>
+    {
+        protected ViewModelBase(
+            IAppLoggerCreator appLoggerFactory,
+            IWinFormsActionComponentFactory actionComponentFactory) : base(appLoggerFactory, actionComponentFactory)
+        {
+            ActionComponent = (IWinFormsActionComponent)ActionComponentCore;
+        }
+
         protected IWinFormsActionComponent ActionComponent { get; }
     }
 }

@@ -7,6 +7,7 @@ using Turmerik.Dependencies;
 using Turmerik.LocalDevice.Core.Dependencies;
 using Turmerik.LocalDevice.Core.Env;
 using Turmerik.LocalDevice.Core.Logging;
+using Turmerik.Logging;
 using Turmerik.SharedLogFileTestConsoleApp;
 
 var services = new ServiceCollection();
@@ -27,7 +28,7 @@ string outputFilePath = Path.Combine(
     outputDirPath,
     "out.json");
 
-var loggerFactory = svcProv.GetRequiredService<IAppLoggerFactory>();
+var loggerFactory = svcProv.GetRequiredService<IAppLoggerCreator>();
 
 var logger = loggerFactory.GetSharedAppLogger(
     typeof(ServiceProviderContainer),

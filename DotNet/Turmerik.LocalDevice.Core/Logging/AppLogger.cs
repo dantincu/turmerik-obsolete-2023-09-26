@@ -92,7 +92,7 @@ namespace Turmerik.LocalDevice.Core.Logging
         private string GetLogDirRelPath(
             string logDirRelPath)
         {
-            string appProcessDirName = GetAppProcessDirName();
+            string appProcessDirName = GetAppProcessDirName() ?? string.Empty;
 
             logDirRelPath = Path.Combine(
                 appProcessDirName,

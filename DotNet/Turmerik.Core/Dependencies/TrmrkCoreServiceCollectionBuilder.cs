@@ -11,8 +11,10 @@ using Turmerik.Infrastucture;
 using Turmerik.MathH;
 using Turmerik.Reflection;
 using Turmerik.Reflection.Cache;
+using Turmerik.RegexH;
 using Turmerik.Synchronized;
 using Turmerik.Text;
+using Turmerik.Text.MdH;
 using Turmerik.TreeTraversal;
 using Turmerik.TrmrkAction;
 using Turmerik.Utils;
@@ -32,6 +34,10 @@ namespace Turmerik.Dependencies
             services.AddSingleton<ILambdaExprHelper, LambdaExprHelper>();
             services.AddSingleton<ILambdaExprHelperFactory, LambdaExprHelperFactory>();
             services.AddSingleton<IBasicEqualityComparerFactory, BasicEqualityComparerFactory>();
+
+            services.AddSingleton<ITextReplacerComponent, TextReplacerComponent>();
+            services.AddSingleton<ITabsToMdTableConverter, TabsToMdTableConverter>();
+            services.AddSingleton<ILinesMdIndenter, LinesMdIndenter>();
 
             services.AddSingleton<ITreeTraversalComponentFactory, TreeTraversalComponentFactory>();
             services.AddSingleton<IMatrixBuilderFactory, MatrixBuilderFactory>();

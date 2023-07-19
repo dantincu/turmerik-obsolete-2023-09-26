@@ -15,13 +15,13 @@ namespace Turmerik.MsVSTextTemplating
             IServiceCollection services,
             bool includeNetCoreAppEnv = false,
             bool registerFsExplorerServiceEngineAsDefault = false,
-            Action<IServiceCollection> registerAppLoggerFactoryFunc = null)
+            bool useAppProcessIdnfForAppLoggersByDefault = true)
         {
             LocalDeviceServiceCollectionBuilder.RegisterAll(
                 services,
                 includeNetCoreAppEnv,
                 registerFsExplorerServiceEngineAsDefault,
-                registerAppLoggerFactoryFunc);
+                useAppProcessIdnfForAppLoggersByDefault);
 
             RegisterAllCore(services);
         }

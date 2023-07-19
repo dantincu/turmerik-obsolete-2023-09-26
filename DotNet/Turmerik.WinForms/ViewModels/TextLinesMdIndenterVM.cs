@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Turmerik.LocalDevice.Core.Logging;
+using Turmerik.Logging;
 using Turmerik.WinForms.ActionComponent;
 
 namespace Turmerik.WinForms.ViewModels
@@ -15,7 +15,7 @@ namespace Turmerik.WinForms.ViewModels
     public class TextLinesMdIndenterVM : ViewModelBase, ITextLinesMdIndenterVM
     {
         public TextLinesMdIndenterVM(
-            IAppLoggerFactory appLoggerFactory,
+            IAppLoggerCreator appLoggerFactory,
             IWinFormsActionComponentFactory actionComponentFactory) : base(
                 appLoggerFactory,
                 actionComponentFactory)

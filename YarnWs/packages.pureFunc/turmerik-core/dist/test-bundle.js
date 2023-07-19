@@ -9,7 +9,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   constSlice: () => (/* binding */ constSlice),
 /* harmony export */   getArgs: () => (/* binding */ getArgs),
-/* harmony export */   getEndIdx: () => (/* binding */ getEndIdx),
 /* harmony export */   getNextAlphaNumericWord: () => (/* binding */ getNextAlphaNumericWord),
 /* harmony export */   getNextWord: () => (/* binding */ getNextWord),
 /* harmony export */   getStartIdx: () => (/* binding */ getStartIdx),
@@ -26,24 +25,9 @@ const getArgs = (inputStr, inputLen, char, idx) => ({
     char: char,
     idx: idx,
 });
-const getStartIdx = (inputStr, inputLen, startCharPredicate) => {
-    let startIdx = -1;
-    let i = 0;
-    while (i < inputLen) {
-        const ch = inputStr[i];
-        const inc = startCharPredicate(getArgs(inputStr, inputLen, ch, i));
-        i += inc;
-        if (inc <= 0) {
-            startIdx = i;
-            break;
-        }
-    }
-    return startIdx;
-};
-const getEndIdx = (inputStr, inputLen, startIdx, endCharPredicate) => {
+const getStartIdx = (inputStr, inputLen, startIdx, endCharPredicate) => {
     let endIdx = -1;
     let i = 0;
-    startIdx++;
     let lenOfRest = inputLen - startIdx;
     while (i < lenOfRest) {
         const ch = inputStr[startIdx + 1];
@@ -62,15 +46,15 @@ const getEndIdx = (inputStr, inputLen, startIdx, endCharPredicate) => {
     }
     return endIdx;
 };
-const slice = (inputStr, startCharPredicate, endCharPredicate, retIdxesOnly = false, callback = null) => {
+const slice = (inputStr, startCharPredicate, endCharPredicate, startIdx = 0, retIdxesOnly = false, callback = null) => {
     const inputLen = inputStr.length;
-    const startIdx = getStartIdx(inputStr, inputLen, startCharPredicate);
+    startIdx = getStartIdx(inputStr, inputLen, startIdx, startCharPredicate);
     let endIdx = -1;
     let retStr = null;
     let lastChar = null;
     let nextChar = null;
     if (startIdx >= 0) {
-        endIdx = getEndIdx(inputStr, inputLen, startIdx, endCharPredicate);
+        endIdx = getStartIdx(inputStr, inputLen, startIdx + 1, endCharPredicate);
     }
     if (endIdx >= 0 && !retIdxesOnly) {
         retStr = inputStr.substring(startIdx, endIdx);
@@ -100,22 +84,22 @@ const constSlice = (inputStr, startIdx = 0, count = -1) => {
 };
 const getNextWord = (inputStr, startIdx = 0, terminalChars = null, callback = null) => {
     terminalChars ??= "";
-    const result = slice(inputStr, (args) => (args.idx < startIdx || (0,_char__WEBPACK_IMPORTED_MODULE_1__.areAllWhitespaces)(args.char) ? 1 : 0), (args, stIdx) => (0,_char__WEBPACK_IMPORTED_MODULE_1__.areAllWhitespaces)(args.char) || terminalChars.indexOf(args.char) >= 0
+    const result = slice(inputStr, (args) => (args.idx < startIdx || (0,_char__WEBPACK_IMPORTED_MODULE_1__.areAllWhitespaces)(args.char) ? 1 : 0), (args) => (0,_char__WEBPACK_IMPORTED_MODULE_1__.areAllWhitespaces)(args.char) || terminalChars.indexOf(args.char) >= 0
         ? 0
-        : 1, false, callback);
+        : 1, startIdx, false, callback);
     return result;
 };
 const getNextAlphaNumericWord = (inputStr, startIdx = 0, allowedChars = null, callback = null) => {
     allowedChars ??= "";
-    const result = slice(inputStr, (args) => args.idx >= startIdx && (0,_char__WEBPACK_IMPORTED_MODULE_1__.areAllLettersOrNumbers)(args.char) ? 0 : 1, (args, stIdx) => (0,_char__WEBPACK_IMPORTED_MODULE_1__.areAllLettersOrNumbers)(args.char) || allowedChars.indexOf(args.char) >= 0
+    const result = slice(inputStr, (args) => args.idx >= startIdx && (0,_char__WEBPACK_IMPORTED_MODULE_1__.areAllLettersOrNumbers)(args.char) ? 0 : 1, (args) => (0,_char__WEBPACK_IMPORTED_MODULE_1__.areAllLettersOrNumbers)(args.char) || allowedChars.indexOf(args.char) >= 0
         ? 1
-        : 0, false, callback);
+        : 0, startIdx, false, callback);
     return result;
 };
 const tryDigestStr = (inputStr, str, startIdx = 0, retIdxesOnly = false, callback = null) => {
     const strLen = str.length;
     const negStrLen = -strLen;
-    const result = slice(inputStr, (args) => (constSlice(str, startIdx, negStrLen) == str ? 0 : 1), (args, stIdx) => NaN, retIdxesOnly, callback);
+    const result = slice(inputStr, (args) => (constSlice(str, startIdx, negStrLen) == str ? 0 : 1), (args) => NaN, startIdx, retIdxesOnly, callback);
     return result;
 };
 
@@ -273,9 +257,9 @@ var __webpack_exports__ = {};
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _src_text_slice_str__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(1);
 
-let str = (0,_src_text_slice_str__WEBPACK_IMPORTED_MODULE_0__.slice)("asdfasdf", (args) => 3 - args.idx, (args, stIdx) => NaN);
+let str = (0,_src_text_slice_str__WEBPACK_IMPORTED_MODULE_0__.slice)("asdfasdf", (args) => 3 - args.idx, (args) => NaN);
 console.log("sliceStr", str);
-str = (0,_src_text_slice_str__WEBPACK_IMPORTED_MODULE_0__.slice)("asdfasdf", (args) => 3 - args.idx, (args, stIdx) => 3 - args.idx);
+str = (0,_src_text_slice_str__WEBPACK_IMPORTED_MODULE_0__.slice)("asdfasdf", (args) => 3 - args.idx, (args) => 3 - args.idx);
 console.log("sliceStr", str);
 
 })();

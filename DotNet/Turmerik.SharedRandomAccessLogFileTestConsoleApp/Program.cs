@@ -9,6 +9,7 @@ using Turmerik.Dependencies;
 using Turmerik.LocalDevice.Core.Dependencies;
 using Turmerik.LocalDevice.Core.Env;
 using Turmerik.LocalDevice.Core.Logging;
+using Turmerik.Logging;
 using Turmerik.SharedRandomAccessLogFileTestConsoleApp;
 
 var services = new ServiceCollection();
@@ -39,7 +40,7 @@ using (var sw = new StreamWriter(
         Mode = FileMode.Create,
     }))
 {
-    var loggerFactory = svcProv.GetRequiredService<IAppLoggerFactory>();
+    var loggerFactory = svcProv.GetRequiredService<IAppLoggerCreator>();
 
     var logger = loggerFactory.GetSharedAppLogger(
         typeof(ServiceProviderContainer),

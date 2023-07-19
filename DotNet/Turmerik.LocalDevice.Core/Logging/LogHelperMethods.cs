@@ -25,7 +25,7 @@ namespace Turmerik.LocalDevice.Core.Logging
             Type loggerNameType,
             LogLevel logEventLevel = LogLevel.Information)
         {
-            var appLoggerFactory = serviceProvider.GetRequiredService<IAppLoggerFactory>();
+            var appLoggerFactory = serviceProvider.GetRequiredService<IAppLoggerCreator>();
             var appLogger = appLoggerFactory.GetAppLogger(loggerNameType, logEventLevel);
 
             return appLogger;
@@ -36,7 +36,7 @@ namespace Turmerik.LocalDevice.Core.Logging
             Type loggerNameType,
             LogLevel logEventLevel = LogLevel.Information)
         {
-            var appLoggerFactory = serviceProvider.GetRequiredService<IAppLoggerFactory>();
+            var appLoggerFactory = serviceProvider.GetRequiredService<IAppLoggerCreator>();
             var appLogger = appLoggerFactory.GetSharedAppLogger(loggerNameType, logEventLevel);
 
             return appLogger;
