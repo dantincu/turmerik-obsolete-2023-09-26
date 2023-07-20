@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using Turmerik.Collections;
 using Turmerik.Text;
 using Turmerik.Utils;
 
@@ -216,6 +217,23 @@ namespace Turmerik.RegexH
 
         private void NormalizeOpts(ReplaceTextOpts opts)
         {
+            if (opts.SearchedTextRegex == null && opts.SearchedText == null)
+            {
+                if (opts.SearchedTextStartCharPredicate == null)
+                {
+                    opts.SearchedTextStartCharPredicate = args => args.InputStr.StartsWithStr(
+                        args.Idx, opts.SearchedTextStartDelim).ToIncIdxAnswer(0, 1);
+                }
+
+                if (opts.SearchedTextEndCharPredicate == null)
+                {
+                    int searchedTextStartDelimLen = opts.SearchedTextStartDelim?.Length ?? 0;
+
+                    opts.SearchedTextEndCharPredicate = (args, stIdx) => (args.Idx >= args.StartIdx + searchedTextStartDelimLen &&
+                            args.InputStr.EndsWithStr(
+                                args.Idx + 1, opts.SearchedTextEndDelim)).ToIncIdxAnswer(1);
+                }
+            }
         }
     }
 }

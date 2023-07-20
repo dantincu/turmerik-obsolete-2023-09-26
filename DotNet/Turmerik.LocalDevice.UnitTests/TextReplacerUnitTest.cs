@@ -76,6 +76,60 @@ namespace Turmerik.LocalDevice.UnitTests
                 TextReplacerFactory = args => ">>>"
             },
             ">>>0987zxcv1234zxcv0987>>>");
+
+            PerformTest(new ReplaceTextOpts
+            {
+                InputText = "asdf0987zxcv1234zxcv0987asdf",
+                SearchedTextStartDelim = "as",
+                SearchedTextEndDelim = "df",
+                TextReplacerFactory = args => ">>>>>"
+            },
+            ">>>>>0987zxcv1234zxcv0987>>>>>");
+
+            PerformTest(new ReplaceTextOpts
+            {
+                InputText = "asdf0987zxcv1234zxcv0987asdf",
+                SearchedTextStartDelim = "as",
+                SearchedTextEndDelim = "df",
+                TextReplacerFactory = args => ">>>"
+            },
+            ">>>0987zxcv1234zxcv0987>>>");
+
+            PerformTest(new ReplaceTextOpts
+            {
+                InputText = "asqwerdf0987zxcv1234zxcv0987asqwerdf",
+                SearchedTextStartDelim = "asq",
+                SearchedTextEndDelim = "rdf",
+                TextReplacerFactory = args => ">>>>>"
+            },
+            ">>>>>0987zxcv1234zxcv0987>>>>>");
+
+            PerformTest(new ReplaceTextOpts
+            {
+                InputText = "asqwerdf0987zxcv1234zxcv0987asqwerdf",
+                SearchedTextStartDelim = "asq",
+                SearchedTextEndDelim = "rdf",
+                TextReplacerFactory = args => ">>>"
+            },
+            ">>>0987zxcv1234zxcv0987>>>");
+
+            PerformTest(new ReplaceTextOpts
+            {
+                InputText = "asqwerdf0987zxcv1234zxcv0987asqwerdf",
+                SearchedTextStartDelim = "asqw",
+                SearchedTextEndDelim = "erdf",
+                TextReplacerFactory = args => ">>>>>"
+            },
+            ">>>>>0987zxcv1234zxcv0987>>>>>");
+
+            PerformTest(new ReplaceTextOpts
+            {
+                InputText = "asqwerdf0987zxcv1234zxcv0987asqwerdf",
+                SearchedTextStartDelim = "asqw",
+                SearchedTextEndDelim = "erdf",
+                TextReplacerFactory = args => ">>>"
+            },
+            ">>>0987zxcv1234zxcv0987>>>");
         }
 
         private void PerformTest(

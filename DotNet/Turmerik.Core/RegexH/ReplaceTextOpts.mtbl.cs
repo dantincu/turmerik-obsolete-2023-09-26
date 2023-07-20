@@ -17,6 +17,8 @@ namespace Turmerik.RegexH
         public string SearchedText { get; set; }
         public Func<SliceStrArgs, IncIdxAnswer> SearchedTextStartCharPredicate { get; set; }
         public Func<SliceStrArgs, int, IncIdxAnswer> SearchedTextEndCharPredicate { get; set; }
+        public string SearchedTextStartDelim { get; set; }
+        public string SearchedTextEndDelim { get; set; }
         public Func<ReplaceTextArgs, string> TextReplacerFactory { get; set; }
         public Func<ReplaceRegexArgs, string> RegexReplacerFactory { get; set; }
     }
