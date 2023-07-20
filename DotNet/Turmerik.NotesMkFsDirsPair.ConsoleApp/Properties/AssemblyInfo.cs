@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("Turmerik.MkFsNotesDirPairs.WinFormsApp")]
+[assembly: AssemblyTitle("Turmerik.NotesMakeFsDirPairs.ConsoleApp")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("Turmerik.MkFsNotesDirPairs.WinFormsApp")]
+[assembly: AssemblyProduct("Turmerik.NotesMakeFsDirPairs.ConsoleApp")]
 [assembly: AssemblyCopyright("Copyright ©  2023")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("e8b1f9a0-78d5-4567-ace7-4cda85872da1")]
+[assembly: Guid("bafcc1d3-7fa4-471d-b561-eabe94d7ebe3")]
 
 // Version information for an assembly consists of the following four values:
 //

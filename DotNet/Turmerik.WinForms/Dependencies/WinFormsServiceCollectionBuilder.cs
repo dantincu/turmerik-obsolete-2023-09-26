@@ -34,9 +34,6 @@ namespace Turmerik.WinForms.Dependencies
             services.AddSingleton<IWinFormsActionComponentsManagerRetriever, WinFormsActionComponentsManagerRetriever>();
             services.AddSingleton<IWinFormsActionComponentFactory, WinFormsActionComponentFactory>();
             services.AddSingleton<ITrmrkActionComponentFactory, WinFormsActionComponentFactory>();
-
-            services.AddTransient<ITextLinesMdIndenterVM, TextLinesMdIndenterVM>();
-            services.AddTransient<IFsNotesDirPairsCreatorVM, FsNotesDirPairsCreatorVM>();
         }
     }
 }

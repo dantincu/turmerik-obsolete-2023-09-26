@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "Turmerik.LaunchApp": {
+      "commandName": "Project",
+      "commandLineArgs": "in 1234 \".\\asdf\\\\asdf\""
+    }
+  }
+}

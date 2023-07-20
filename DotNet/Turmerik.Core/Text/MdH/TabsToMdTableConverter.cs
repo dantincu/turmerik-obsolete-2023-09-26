@@ -40,10 +40,12 @@ namespace Turmerik.Text.MdH
                 string[] headerCellsArr = linesArr.First().Split('\t');
 
                 string[] headerDelimCells = headerCellsArr.Select(
-                    cell => "==").ToArray();
+                    cell => "--").ToArray();
 
-                string headerDelimLine = string.Join("|", headerDelimCells);
-                linesList.Add(headerDelimLine);
+                string headerDelimLine = string.Join(" | ", headerDelimCells);
+                headerDelimLine = $" | {headerDelimLine} |  ";
+
+                linesList.Insert(1, headerDelimLine);
             }
 
             return linesList.ToArray();
@@ -65,10 +67,10 @@ namespace Turmerik.Text.MdH
 
         public string LineToMdTable(string line)
         {
-            string[] lineParts = line.Split('\t');
+            string[] lineParts = line.TrimEnd('\r').Split('\t');
             line = string.Join(" | ", lineParts);
 
-            line = $" | {line} | ";
+            line = $" | {line} |  ";
             return line;
         }
     }
