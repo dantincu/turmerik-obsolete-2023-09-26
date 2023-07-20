@@ -62,9 +62,9 @@ namespace Turmerik.LocalDevice.UnitTests
                     args.Idx, "as").ToIncIdxAnswer(0, 1),
                 SearchedTextEndCharPredicate = (args, stIdx) => (args.Idx - args.StartIdx >= 2 && args.InputStr.EndsWithStr(
                     args.Idx + 1, "df")).ToIncIdxAnswer(1),
-                TextReplacerFactory = args => ">>>>>"
+                TextReplacerFactory = args => $"<{args.MatchingText}>"
             },
-            ">>>>>0987zxcv1234zxcv0987>>>>>");
+            "<asdf>0987zxcv1234zxcv0987<asdf>");
 
             PerformTest(new ReplaceTextOpts
             {
@@ -82,9 +82,9 @@ namespace Turmerik.LocalDevice.UnitTests
                 InputText = "asdf0987zxcv1234zxcv0987asdf",
                 SearchedTextStartDelim = "as",
                 SearchedTextEndDelim = "df",
-                TextReplacerFactory = args => ">>>>>"
+                TextReplacerFactory = args => $"<{args.MatchingText}>"
             },
-            ">>>>>0987zxcv1234zxcv0987>>>>>");
+            "<asdf>0987zxcv1234zxcv0987<asdf>");
 
             PerformTest(new ReplaceTextOpts
             {
@@ -100,9 +100,9 @@ namespace Turmerik.LocalDevice.UnitTests
                 InputText = "asqwerdf0987zxcv1234zxcv0987asqwerdf",
                 SearchedTextStartDelim = "asq",
                 SearchedTextEndDelim = "rdf",
-                TextReplacerFactory = args => ">>>>>"
+                TextReplacerFactory = args => $"<{args.MatchingText}>"
             },
-            ">>>>>0987zxcv1234zxcv0987>>>>>");
+            "<asqwerdf>0987zxcv1234zxcv0987<asqwerdf>");
 
             PerformTest(new ReplaceTextOpts
             {
@@ -118,9 +118,9 @@ namespace Turmerik.LocalDevice.UnitTests
                 InputText = "asqwerdf0987zxcv1234zxcv0987asqwerdf",
                 SearchedTextStartDelim = "asqw",
                 SearchedTextEndDelim = "erdf",
-                TextReplacerFactory = args => ">>>>>"
+                TextReplacerFactory = args => $"<{args.MatchingText}>"
             },
-            ">>>>>0987zxcv1234zxcv0987>>>>>");
+            "<asqwerdf>0987zxcv1234zxcv0987<asqwerdf>");
 
             PerformTest(new ReplaceTextOpts
             {
