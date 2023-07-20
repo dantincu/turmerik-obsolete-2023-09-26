@@ -46,5 +46,10 @@ namespace Turmerik.Collections
             idx = list.NormalizeIdx(idx);
             list.RemoveAt(idx);
         }
+
+        public static bool IsIdxDiffFromLast<T>(
+            this IList<T> list,
+            int idx,
+            int offset = 0) => idx == list.Count - 1 - offset;
     }
 }

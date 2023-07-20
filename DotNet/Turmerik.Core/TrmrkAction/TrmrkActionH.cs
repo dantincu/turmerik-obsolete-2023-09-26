@@ -10,6 +10,9 @@ namespace Turmerik.TrmrkAction
 {
     public static class TrmrkActionH
     {
+        public static readonly Type TrmrkActionResultGenericTypeDef = typeof(
+            TrmrkActionResult<object>).GetGenericTypeDefinition();
+
         public static TrmrkActionMessageTuple TrmrkMsgTuple(
             this string message,
             string caption = null,
@@ -69,5 +72,48 @@ namespace Turmerik.TrmrkAction
                 BeforeExecute = beforeExecute,
                 AlwaysCallback = alwaysCallback
             };
+
+        public static TRetActRslt Then<TRetActRslt, TInActRslt>(
+            this TInActRslt inActRslt,
+            Func<TInActRslt, TRetActRslt> successCallback,
+            Func<TInActRslt, TRetActRslt> errorCallback = null)
+            where TRetActRslt : ITrmrkActionResult
+            where TInActRslt : ITrmrkActionResult
+        {
+            TRetActRslt retActRslt;
+
+            if (inActRslt.IsSuccess)
+            {
+                retActRslt = successCallback(inActRslt);
+            }
+            else if (errorCallback != null)
+            {
+                retActRslt = errorCallback(inActRslt);
+            }
+            else
+            {
+                var retActRsltType = typeof(TRetActRslt);
+
+                if (retActRsltType.IsGenericType)
+                {
+                    retActRsltType = TrmrkActionResultGenericTypeDef.MakeGenericType(
+                        retActRsltType.GetGenericArguments());
+                }
+                else
+                {
+                    retActRsltType = typeof(TrmrkActionResult);
+                }
+
+                retActRslt = retActRsltType.CreateInstance<TRetActRslt>();
+
+                retActRslt.HasError = true;
+                retActRslt.Exception = inActRslt.Exception;
+
+                retActRslt.ResponseMessage = inActRslt.ResponseMessage;
+                retActRslt.ResponseCaption = inActRslt.ResponseCaption;
+            }
+
+            return retActRslt;
+        }
     }
 }

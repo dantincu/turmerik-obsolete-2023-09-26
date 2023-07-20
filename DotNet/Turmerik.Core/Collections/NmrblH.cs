@@ -38,5 +38,10 @@ namespace Turmerik.Collections
 
             return idx;
         }
+
+        public static bool IsIdxDiffFromLast<T>(
+            this IEnumerable<T> nmrbl,
+            int idx,
+            int offset = 0) => idx == nmrbl.Count() - 1 - offset;
     }
 }

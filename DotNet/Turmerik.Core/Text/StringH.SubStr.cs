@@ -79,5 +79,65 @@ namespace Turmerik.Text
 
             return subStr;
         }
+
+        public static bool StartsWithStr(
+            this string inputStr,
+            int startIdx,
+            string searchedStr)
+        {
+            int strLen = searchedStr.Length;
+            int endIdx = strLen + startIdx;
+            bool startsWith = endIdx < inputStr.Length;
+
+            if (startsWith)
+            {
+                for (int i = 0; i < strLen; i++)
+                {
+                    int idx = startIdx + i;
+                    startsWith = inputStr[idx] == searchedStr[i];
+
+                    if (!startsWith)
+                    {
+                        break;
+                    }
+                    else
+                    {
+                        i++;
+                    }
+                }
+            }
+
+            return startsWith;
+        }
+
+        public static bool EndsWithStr(
+            this string inputStr,
+            int endIdx,
+            string searchedStr)
+        {
+            int strLen = searchedStr.Length;
+            int startIdx = endIdx - strLen;
+            bool startsWith = startIdx > 0;
+
+            if (startsWith)
+            {
+                for (int i = 0; i < strLen; i++)
+                {
+                    int idx = startIdx + i;
+                    startsWith = inputStr[idx] == searchedStr[i];
+
+                    if (!startsWith)
+                    {
+                        break;
+                    }
+                    else
+                    {
+                        i++;
+                    }
+                }
+            }
+
+            return startsWith;
+        }
     }
 }

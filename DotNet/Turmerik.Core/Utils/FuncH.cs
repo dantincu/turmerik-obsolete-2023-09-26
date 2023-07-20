@@ -227,6 +227,12 @@ namespace Turmerik.Utils
             return (T)retObj;
         }
 
+        public static T CreateInstance<T>(this Type type)
+        {
+            object retObj = Activator.CreateInstance(type);
+            return (T)retObj;
+        }
+
         public static TRetVal IfBothNotNull<TRetVal, T1, T2>(
             this T1 item1,
             T2 item2,

@@ -107,5 +107,10 @@ namespace Turmerik.Text
 
             return outputStr;
         }
+
+        public static bool IsIdxDiffFromLast<T>(
+            this string str,
+            int idx,
+            int offset = 0) => idx == str.Length - 1 - offset;
     }
 }

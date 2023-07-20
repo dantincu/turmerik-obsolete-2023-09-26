@@ -18,5 +18,10 @@ namespace Turmerik.Collections
             nextItems.CopyTo(retArr, 1);
             return retArr;
         }
+
+        public static bool IsIdxDiffFromLast<T>(
+            this T[] arr,
+            int idx,
+            int offset = 0) => idx == arr.Length - 1 - offset;
     }
 }

@@ -35,6 +35,7 @@ namespace Turmerik.Dependencies
             services.AddSingleton<ILambdaExprHelperFactory, LambdaExprHelperFactory>();
             services.AddSingleton<IBasicEqualityComparerFactory, BasicEqualityComparerFactory>();
 
+            services.AddSingleton<ISliceStrResultEqCompr, SliceStrResultEqCompr>();
             services.AddSingleton<ITextReplacerComponent, TextReplacerComponent>();
             services.AddSingleton<ITabsToMdTableConverter, TabsToMdTableConverter>();
             services.AddSingleton<ILinesMdIndenter, LinesMdIndenter>();

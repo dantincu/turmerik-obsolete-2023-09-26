@@ -12,5 +12,10 @@ namespace Turmerik.Collections
         {
             list.AddRange(items);
         }
+
+        public static bool IsIdxDiffFromLast<T>(
+            this List<T> list,
+            int idx,
+            int offset = 0) => idx == list.Count - 1 - offset;
     }
 }

@@ -37,14 +37,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   char: () => (/* reexport module object */ _src_text_char__WEBPACK_IMPORTED_MODULE_2__),
 /* harmony export */   findIdx: () => (/* reexport module object */ _src_arrays_find_idx__WEBPACK_IMPORTED_MODULE_1__),
-/* harmony export */   sliceArr: () => (/* reexport module object */ _src_arrays_slice_arr__WEBPACK_IMPORTED_MODULE_0__),
-/* harmony export */   sliceStr: () => (/* reexport module object */ _src_text_slice_str__WEBPACK_IMPORTED_MODULE_3__)
+/* harmony export */   sliceArr: () => (/* reexport module object */ _src_arrays_slice_arr__WEBPACK_IMPORTED_MODULE_0__)
 /* harmony export */ });
 /* harmony import */ var _src_arrays_slice_arr__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3);
 /* harmony import */ var _src_arrays_find_idx__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(4);
 /* harmony import */ var _src_text_char__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(5);
-/* harmony import */ var _src_text_slice_str__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(6);
-
 
 
 
@@ -163,125 +160,6 @@ const areAllLowerCaseLetters = (str) => !!str.match(lowerCaseLettersRegex);
 const areAllUpperCaseLettersOrNumbers = (str) => !!str.match(upperCaseLettersOrNumbersRegex);
 const areAllUpperCaseLetters = (str) => !!str.match(upperCaseLettersRegex);
 const isValidCodeIdentifier = (str) => !!str.match(codeIdentifierRegex);
-
-
-/***/ }),
-/* 6 */
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   constSlice: () => (/* binding */ constSlice),
-/* harmony export */   getArgs: () => (/* binding */ getArgs),
-/* harmony export */   getEndIdx: () => (/* binding */ getEndIdx),
-/* harmony export */   getNextAlphaNumericWord: () => (/* binding */ getNextAlphaNumericWord),
-/* harmony export */   getNextWord: () => (/* binding */ getNextWord),
-/* harmony export */   getStartIdx: () => (/* binding */ getStartIdx),
-/* harmony export */   slice: () => (/* binding */ slice),
-/* harmony export */   tryDigestStr: () => (/* binding */ tryDigestStr)
-/* harmony export */ });
-/* harmony import */ var _arrays_slice_arr__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3);
-/* harmony import */ var _char__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(5);
-
-
-const getArgs = (inputStr, inputLen, char, idx) => ({
-    inputStr: inputStr,
-    inputLen: inputLen,
-    char: char,
-    idx: idx,
-});
-const getStartIdx = (inputStr, inputLen, startCharPredicate) => {
-    let startIdx = -1;
-    let i = 0;
-    while (i < inputLen) {
-        const ch = inputStr[i];
-        const inc = startCharPredicate(getArgs(inputStr, inputLen, ch, i));
-        i += inc;
-        if (inc <= 0) {
-            startIdx = i;
-            break;
-        }
-    }
-    return startIdx;
-};
-const getEndIdx = (inputStr, inputLen, startIdx, endCharPredicate) => {
-    let endIdx = -1;
-    let i = 0;
-    startIdx++;
-    let lenOfRest = inputLen - startIdx;
-    while (i < lenOfRest) {
-        const ch = inputStr[startIdx + 1];
-        let inc = endCharPredicate(getArgs(inputStr, inputLen, ch, i), startIdx);
-        if (isNaN(inc)) {
-            endIdx = inputLen;
-            break;
-        }
-        else {
-            i += inc;
-            if (inc <= 0) {
-                endIdx = startIdx + i;
-                break;
-            }
-        }
-    }
-    return endIdx;
-};
-const slice = (inputStr, startCharPredicate, endCharPredicate, retIdxesOnly = false, callback = null) => {
-    const inputLen = inputStr.length;
-    const startIdx = getStartIdx(inputStr, inputLen, startCharPredicate);
-    let endIdx = -1;
-    let retStr = null;
-    let lastChar = null;
-    let nextChar = null;
-    if (startIdx >= 0) {
-        endIdx = getEndIdx(inputStr, inputLen, startIdx, endCharPredicate);
-    }
-    if (endIdx >= 0 && !retIdxesOnly) {
-        retStr = inputStr.substring(startIdx, endIdx);
-        lastChar = inputStr[endIdx - 1];
-        nextChar = inputStr[endIdx] ?? null;
-    }
-    const result = {
-        slicedStr: retStr,
-        lastChar: lastChar,
-        nextChar: nextChar,
-        startIdx: startIdx,
-        endIdx: endIdx,
-    };
-    callback?.call(result);
-    return result;
-};
-const constSlice = (inputStr, startIdx = 0, count = -1) => {
-    var args = (0,_arrays_slice_arr__WEBPACK_IMPORTED_MODULE_0__.normalizeSliceIndexes)({
-        startIdx: startIdx,
-        count: count,
-        totalCount: inputStr.length,
-        countVal: 0,
-        startIdxVal: 0,
-    });
-    const outArr = inputStr.slice(args.startIdxVal, args.startIdxVal + args.countVal);
-    return outArr;
-};
-const getNextWord = (inputStr, startIdx = 0, terminalChars = null, callback = null) => {
-    terminalChars ??= "";
-    const result = slice(inputStr, (args) => (args.idx < startIdx || (0,_char__WEBPACK_IMPORTED_MODULE_1__.areAllWhitespaces)(args.char) ? 1 : 0), (args, stIdx) => (0,_char__WEBPACK_IMPORTED_MODULE_1__.areAllWhitespaces)(args.char) || terminalChars.indexOf(args.char) >= 0
-        ? 0
-        : 1, false, callback);
-    return result;
-};
-const getNextAlphaNumericWord = (inputStr, startIdx = 0, allowedChars = null, callback = null) => {
-    allowedChars ??= "";
-    const result = slice(inputStr, (args) => args.idx >= startIdx && (0,_char__WEBPACK_IMPORTED_MODULE_1__.areAllLettersOrNumbers)(args.char) ? 0 : 1, (args, stIdx) => (0,_char__WEBPACK_IMPORTED_MODULE_1__.areAllLettersOrNumbers)(args.char) || allowedChars.indexOf(args.char) >= 0
-        ? 1
-        : 0, false, callback);
-    return result;
-};
-const tryDigestStr = (inputStr, str, startIdx = 0, retIdxesOnly = false, callback = null) => {
-    const strLen = str.length;
-    const negStrLen = -strLen;
-    const result = slice(inputStr, (args) => (constSlice(str, startIdx, negStrLen) == str ? 0 : 1), (args, stIdx) => NaN, retIdxesOnly, callback);
-    return result;
-};
 
 
 /***/ })

@@ -21,8 +21,8 @@ namespace Turmerik.Text
 
         public static SliceStrResult SliceStr(
             this string inputStr,
-            Func<SliceStrArgs, int> startCharPredicate,
-            Func<SliceStrArgs, int> endCharPredicate,
+            Func<SliceStrArgs, IncIdxAnswer> startCharPredicate,
+            Func<SliceStrArgs, int, IncIdxAnswer> endCharPredicate,
             int startIdx = 0,
             bool retIdxesOnly = false,
             Action<SliceStrResult> callback = null)
@@ -30,7 +30,7 @@ namespace Turmerik.Text
             int inputLen = inputStr.Length;
             int endIdx = -1;
 
-            startIdx = GetStartIdx(
+            int startIdxVal = GetStartIdx(
                 inputStr,
                 inputLen,
                 startIdx,
@@ -39,25 +39,27 @@ namespace Turmerik.Text
             endIdx = -1;
             string retStr = null;
 
-            if (startIdx >= 0)
+            if (startIdxVal >= 0)
             {
                 endIdx = GetStartIdx(
                     inputStr,
                     inputLen,
-                    startIdx,
-                    endCharPredicate);
+                    startIdxVal,
+                    args => endCharPredicate(
+                        args,
+                        startIdx));
             }
 
             if (endIdx >= 0 && !retIdxesOnly)
             {
                 retStr = inputStr.Substring(
-                    startIdx,
-                    endIdx - startIdx);
+                    startIdxVal,
+                    endIdx - startIdxVal);
             }
 
             var result = new SliceStrResult(
                 retStr,
-                startIdx,
+                startIdxVal,
                 endIdx);
 
             callback?.Invoke(result);
@@ -66,42 +68,44 @@ namespace Turmerik.Text
 
         public static int GetStartIdx(
             this string inputStr,
+            int startIdx,
+            Func<SliceStrArgs, IncIdxAnswer> startCharPredicate) => GetStartIdx(
+                inputStr,
+                inputStr.Length,
+                startIdx,
+                startCharPredicate);
+
+        public static int GetStartIdx(
+            this string inputStr,
             int inputLen,
             int startIdx,
-            Func<SliceStrArgs, int> endCharPredicate)
+            Func<SliceStrArgs, IncIdxAnswer> startCharPredicate)
         {
             int endIdx = -1;
             int i = 0;
 
-            startIdx++;
             int lenOfRest = inputLen - startIdx;
 
             while (i < lenOfRest)
             {
-                char ch = inputStr[startIdx + i];
+                int idx = startIdx + i;
+                char ch = inputStr[idx];
 
-                int inc = endCharPredicate(
+                var match = startCharPredicate(
                     new SliceStrArgs(
                         inputStr,
                         inputLen,
                         startIdx,
                         ch,
-                        i));
+                        idx));
 
-                if (inc == int.MaxValue)
+                int incIdx = match.IncIdx ?? 1;
+                i += incIdx;
+
+                if (match.Answer || incIdx == 0)
                 {
-                    endIdx = inputLen;
+                    endIdx = startIdx + i;
                     break;
-                }
-                else
-                {
-                    i += inc;
-
-                    if (inc <= 0)
-                    {
-                        endIdx = startIdx + i;
-                        break;
-                    }
                 }
             }
 
@@ -118,8 +122,8 @@ namespace Turmerik.Text
 
             var result = SliceStr(
                 inputStr,
-                args => char.IsWhiteSpace(args.Char) ? 1 : 0,
-                (args) => char.IsWhiteSpace(args.Char) || terminalChars.Contains(args.Char) ? 0 : 1,
+                args => new IncIdxAnswer(char.IsWhiteSpace(args.Char), 0),
+                (args, stIdx) => new IncIdxAnswer(char.IsWhiteSpace(args.Char) || terminalChars.Contains(args.Char), 0),
                 startIdx,
                 false,
                 callback);
@@ -137,8 +141,8 @@ namespace Turmerik.Text
 
             var result = SliceStr(
                 inputStr,
-                args => char.IsLetterOrDigit(args.Char) ? 0 : 1,
-                (args) => char.IsLetterOrDigit(args.Char) || allowedChars.Contains(args.Char) ? 1 : 0,
+                args => new IncIdxAnswer(char.IsLetterOrDigit(args.Char), 0),
+                (args, stIdx) => new IncIdxAnswer(char.IsLetterOrDigit(args.Char) || allowedChars.Contains(args.Char), 0),
                 startIdx,
                 false,
                 callback);
@@ -158,11 +162,10 @@ namespace Turmerik.Text
 
             var result = SliceStr(
                 inputStr,
-                args => SliceStr(
-                    args.InputStr,
-                    startIdx,
-                    negStrLen) == str ? 0 : 1,
-                (args) => int.MaxValue,
+                args => new IncIdxAnswer(
+                    args.InputStr.StartsWithStr(
+                        args.Idx, str), str.Length),
+                (args, stIdx) => new IncIdxAnswer(true, strLen - args.Idx),
                 startIdx,
                 retIdxesOnly,
                 callback);

@@ -1,6 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
+using Turmerik.RegexH;
+using Turmerik.Utils;
 
 namespace Turmerik.Text.MdH
 {
@@ -13,9 +17,26 @@ namespace Turmerik.Text.MdH
 
     public class LinesMdIndenter : ILinesMdIndenter
     {
-        public string AddIdent(string line, int emphasizeLinkMaxLength)
+        private readonly ITextReplacerComponent textReplacer;
+
+        public LinesMdIndenter(
+            ITextReplacerComponent textReplacer)
         {
-            throw new NotImplementedException();
+            this.textReplacer = textReplacer ?? throw new ArgumentNullException(nameof(textReplacer));
+        }
+
+        public string AddIdent(
+            string line,
+            int emphasizeLinkMaxLength)
+        {
+            string retLine = line;
+
+            if (emphasizeLinkMaxLength > 0)
+            {
+            }
+            
+            retLine = string.Concat(" > ", retLine);
+            return retLine;
         }
     }
 }

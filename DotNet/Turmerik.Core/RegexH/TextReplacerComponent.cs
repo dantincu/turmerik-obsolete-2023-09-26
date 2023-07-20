@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using Turmerik.Text;
 using Turmerik.Utils;
 
 namespace Turmerik.RegexH
@@ -15,6 +16,14 @@ namespace Turmerik.RegexH
 
     public class TextReplacerComponent : ITextReplacerComponent
     {
+        private readonly ISliceStrResultEqCompr sliceStrResultEqCompr;
+
+        public TextReplacerComponent(
+            ISliceStrResultEqCompr sliceStrResultEqCompr)
+        {
+            this.sliceStrResultEqCompr = sliceStrResultEqCompr ?? throw new ArgumentNullException(nameof(sliceStrResultEqCompr));
+        }
+
         public string ReplaceText(ReplaceTextOpts opts)
         {
             NormalizeOpts(opts);
@@ -24,9 +33,17 @@ namespace Turmerik.RegexH
             {
                 result = ReplaceSearchedRegex(opts);
             }
-            else
+            else if (opts.SearchedText != null)
             {
                 result = ReplaceSearchedText(opts);
+            }
+            else if (!string.IsNullOrEmpty(opts.InputText))
+            {
+                result = ReplaceTextCore(opts);
+            }
+            else
+            {
+                result = opts.InputText;
             }
 
             return result;
@@ -35,6 +52,7 @@ namespace Turmerik.RegexH
         private string ReplaceSearchedRegex(
             ReplaceTextOpts opts)
         {
+            var list = new List<string>();
             var inputText = opts.InputText;
             int inputLen = inputText.Length;
             var searchedRegex = opts.SearchedTextRegex;
@@ -43,12 +61,24 @@ namespace Turmerik.RegexH
             var matchCllctn = searchedRegex.Matches(inputText);
             var matchesCollctn = RegexMatch.FromSrcCollctn(matchCllctn);
             int matchesCount = matchCllctn.Count;
-            string result = inputText;
+
+            int endIdx = 0;
+            int prevStartIdx = 0;
 
             for (int i = 0; i < matchesCount; i++)
             {
                 var match = matchCllctn[i];
                 var regexMatch = matchesCollctn[i];
+
+                var capture = regexMatch.MainCapture;
+                endIdx = capture.Index;
+
+                string text = inputText.Substring(
+                    prevStartIdx,
+                    endIdx - prevStartIdx);
+
+                list.Add(text);
+                prevStartIdx = endIdx + capture.Length;
 
                 var args = new ReplaceRegexArgs(
                     inputText,
@@ -59,10 +89,10 @@ namespace Turmerik.RegexH
 
                 string replacingText = regexReplacerFactory(args);
                 replacingText = NormalizeReplacingText(opts, replacingText);
-
-                result = match.Result(replacingText);
+                list.Add(replacingText);
             }
 
+            string result = string.Concat(list);
             return result;
         }
 
@@ -73,6 +103,7 @@ namespace Turmerik.RegexH
             var inputText = opts.InputText;
             int inputLen = inputText.Length;
             var searchedText = opts.SearchedText;
+            int searchedLen = searchedText.Length;
             var textReplacerFactory = opts.TextReplacerFactory;
 
             int prevIdx = 0;
@@ -97,12 +128,74 @@ namespace Turmerik.RegexH
                 replacingText = NormalizeReplacingText(opts, replacingText);
 
                 list.Add(replacingText);
-                prevIdx = idx;
+                prevIdx = idx + searchedLen;
+
+                idx = inputText.IndexOf(
+                    searchedText,
+                    prevIdx);
             }
 
             list.Add(
                 inputText.Substring(
                     prevIdx));
+
+            string result = string.Concat(list);
+            return result;
+        }
+
+        private string ReplaceTextCore(ReplaceTextOpts opts)
+        {
+            var list = new List<string>();
+            var inputText = opts.InputText;
+            int inputLen = inputText.Length;
+            string searchedText = null;
+
+            var searchedTextStartCharPredicate = opts.SearchedTextStartCharPredicate;
+            var searchedTextEndCharPredicate = opts.SearchedTextEndCharPredicate;
+
+            var textReplacerFactory = opts.TextReplacerFactory;
+
+            SliceStrResult prevStart = default;
+            SliceStrResult start = default;
+
+            start = inputText.SliceStr(
+                searchedTextStartCharPredicate,
+                searchedTextEndCharPredicate, 0);
+
+            bool sameResult = false;
+
+            while (!sameResult && start.SlicedStr != null)
+            {
+                list.Add(
+                    inputText.Substring(
+                        prevStart.EndIdx,
+                        start.StartIdx - prevStart.EndIdx));
+
+                string replacingText = textReplacerFactory(
+                    new ReplaceTextArgs(
+                        inputText,
+                        inputLen,
+                        start.SlicedStr,
+                        start.StartIdx));
+
+                replacingText = NormalizeReplacingText(opts, replacingText);
+
+                list.Add(replacingText);
+                prevStart = start;
+
+                start = inputText.SliceStr(
+                    searchedTextStartCharPredicate,
+                    searchedTextEndCharPredicate,
+                    prevStart.EndIdx);
+
+                sameResult = sliceStrResultEqCompr.Equals(
+                    prevStart,
+                    start);
+            }
+
+            list.Add(
+                inputText.Substring(
+                    prevStart.EndIdx));
 
             string result = string.Concat(list);
             return result;
