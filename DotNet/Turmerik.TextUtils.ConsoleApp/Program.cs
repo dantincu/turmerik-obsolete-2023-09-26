@@ -21,6 +21,13 @@ namespace Turmerik.TextUtils.ConsoleApp
             string argsStr = string.Join("; ", args.Select(a => a.ToString()).ToArray());
 
             Console.WriteLine($"Hello world: {Environment.CurrentDirectory}; {str} {argsStr}");
+
+            for (int i = 0; i < 3; i++)
+            {
+                Console.WriteLine("> ");
+                string input = Console.ReadLine();
+                Console.WriteLine(input);
+            }
         }
     }
 }

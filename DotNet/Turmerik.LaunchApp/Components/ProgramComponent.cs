@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Reflection.PortableExecutable;
 using System.Text;
 using System.Threading.Tasks;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Turmerik.LaunchApp.Components
 {
@@ -131,6 +133,11 @@ namespace Turmerik.LaunchApp.Components
         {
             int argsToSkip = app.ArgsToSkip;
 
+            /* new ConsoleAppManager(
+                app.AssemblyFile.AbsPath,
+                app.AssemblyDeployDir.AbsPath).ExecuteAsync(
+                    args.ToArray()); */
+
             var startInfo = new ProcessStartInfo
             {
                 FileName = app.AssemblyFile.AbsPath,
@@ -158,6 +165,7 @@ namespace Turmerik.LaunchApp.Components
 
                 Read(process.StandardOutput, false);
                 Read(process.StandardError, true);
+                HandleWrite(process);
 
                 process.WaitForExit();
                 keepRunning = false;
@@ -190,6 +198,38 @@ namespace Turmerik.LaunchApp.Components
                     }
                 }
             }).Start();
+        }
+
+        private void HandleWrite(
+            Process process)
+        {
+            var writer = process.StandardInput;
+            var buff = new char[1024];
+
+            Action<Task<int>> callback = null;
+
+            Action startNext = () =>
+            {
+                Console.In.ReadAsync(
+                    buff,
+                    0,
+                    buff.Length).ContinueWith(
+                        callback);
+            };
+
+            callback = inputTask =>
+            {
+                int buffSize = inputTask.Result;
+                var chars = buff.Take(buffSize).ToArray();
+
+                if (keepRunning)
+                {
+                    writer.Write(chars);
+                    startNext();
+                }
+            };
+
+            startNext();
         }
     }
 }
