@@ -17,6 +17,7 @@ namespace Turmerik.LocalDevice.Core.Logging
     public class AppLoggerCreatorFactory : IAppLoggerCreatorFactory
     {
         private readonly IAppEnv appEnv;
+        private readonly IAppLoggerConfig appLoggerConfig;
         private readonly IAppProcessIdentifier appProcessIdentifier;
         private readonly ITimeStampHelper timeStampHelper;
         private readonly ITrmrkJsonFormatterFactory trmrkJsonFormatterFactory;
@@ -24,12 +25,14 @@ namespace Turmerik.LocalDevice.Core.Logging
 
         public AppLoggerCreatorFactory(
             IAppEnv appEnv,
+            IAppLoggerConfig appLoggerConfig,
             IAppProcessIdentifier appProcessIdentifier,
             ITimeStampHelper timeStampHelper,
             ITrmrkJsonFormatterFactory trmrkJsonFormatterFactory,
             IStringTemplateParser stringTemplateParser)
         {
             this.appEnv = appEnv ?? throw new ArgumentNullException(nameof(appEnv));
+            this.appLoggerConfig = appLoggerConfig ?? throw new ArgumentNullException(nameof(appLoggerConfig));
             this.appProcessIdentifier = appProcessIdentifier ?? throw new ArgumentNullException(nameof(appProcessIdentifier));
             this.timeStampHelper = timeStampHelper ?? throw new ArgumentNullException(nameof(timeStampHelper));
             this.trmrkJsonFormatterFactory = trmrkJsonFormatterFactory ?? throw new ArgumentNullException(nameof(trmrkJsonFormatterFactory));
@@ -39,6 +42,7 @@ namespace Turmerik.LocalDevice.Core.Logging
         public IAppLoggerCreator Create(
             bool useAppProcessIdnfByDefault = false) => new AppLoggerCreator(
                 appEnv,
+                appLoggerConfig,
                 appProcessIdentifier,
                 timeStampHelper,
                 trmrkJsonFormatterFactory,

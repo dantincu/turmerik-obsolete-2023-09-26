@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using Turmerik.Text;
 using Turmerik.WinForms.Dependencies;
 
-namespace Turmerik.TextIndentMdLines.ConsoleApp
+namespace Turmerik.TextUtils.ConsoleApp
 {
     internal class Program
     {

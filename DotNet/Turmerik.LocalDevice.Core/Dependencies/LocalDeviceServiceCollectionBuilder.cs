@@ -68,6 +68,7 @@ namespace Turmerik.LocalDevice.Core.Dependencies
             bool useAppProcessIdnfForAppLoggersByDefault = true)
         {
             services.AddSingleton<ITrmrkJsonFormatterFactory, TrmrkJsonFormatterFactory>();
+            services.AddSingleton<IAppLoggerConfig, AppLoggerConfig>();
             services.AddSingleton<IAppLoggerCreatorFactory, AppLoggerCreatorFactory>();
 
             services.AddSingleton(

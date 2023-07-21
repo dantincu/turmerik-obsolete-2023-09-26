@@ -19,6 +19,7 @@ namespace Turmerik.LocalDevice.Core.Logging
         public const string BUFFERED_LOGGER_DIR_NAME_TPL = "{0:D4}";
 
         private readonly IAppEnv appEnv;
+        private readonly IAppLoggerConfig appLoggerConfig;
         private readonly IAppProcessIdentifier appProcessIdentifier;
         private readonly ITimeStampHelper timeStampHelper;
         private readonly ITrmrkJsonFormatterFactory trmrkJsonFormatterFactory;
@@ -30,6 +31,7 @@ namespace Turmerik.LocalDevice.Core.Logging
 
         public AppLoggerCreator(
             IAppEnv appEnv,
+            IAppLoggerConfig appLoggerConfig,
             IAppProcessIdentifier appProcessIdentifier,
             ITimeStampHelper timeStampHelper,
             ITrmrkJsonFormatterFactory trmrkJsonFormatterFactory,
@@ -37,12 +39,15 @@ namespace Turmerik.LocalDevice.Core.Logging
             bool useAppProcessIdnfByDefault = false)
         {
             this.appEnv = appEnv ?? throw new ArgumentNullException(nameof(appEnv));
+            this.appLoggerConfig = appLoggerConfig ?? throw new ArgumentNullException(nameof(appLoggerConfig));
             this.appProcessIdentifier = appProcessIdentifier ?? throw new ArgumentNullException(nameof(appProcessIdentifier));
             this.timeStampHelper = timeStampHelper ?? throw new ArgumentNullException(nameof(timeStampHelper));
             this.trmrkJsonFormatterFactory = trmrkJsonFormatterFactory ?? throw new ArgumentNullException(nameof(trmrkJsonFormatterFactory));
             this.stringTemplateParser = stringTemplateParser ?? throw new ArgumentNullException(nameof(stringTemplateParser));
             this.logger = LazyH.Lazy(() => GetAppLogger(GetType()));
             this.UseAppProcessIdnfByDefault = useAppProcessIdnfByDefault;
+
+            MinLogLevel = appLoggerConfig.Data.MinLogLevel;
 
             if (useAppProcessIdnfByDefault)
             {
@@ -51,6 +56,8 @@ namespace Turmerik.LocalDevice.Core.Logging
         }
 
         public bool UseAppProcessIdnfByDefault { get; }
+
+        public LogLevel MinLogLevel { get; set; } = LogLevel.Information;
 
         public void AssureAppProcessIdnfDumped()
         {
@@ -69,13 +76,13 @@ namespace Turmerik.LocalDevice.Core.Logging
 
         public IAppLogger GetAppLogger(
             string loggerRelPath,
-            LogLevel logEventLevel = LogLevel.Information,
+            LogLevel? logEventLevel = null,
             bool? useAppProcessIdnf = null)
         {
             var opts = new AppLoggerOpts.Mtbl
             {
                 AppEnv = appEnv,
-                LogLevel = logEventLevel,
+                LogLevel = logEventLevel ?? MinLogLevel,
                 LogDirRelPath = loggerRelPath,
                 AppProcessIdentifier = GetIAppProcessIdentifier(useAppProcessIdnf),
                 TextFormatter = trmrkJsonFormatterFactory.CreateFormatter(),
@@ -88,7 +95,7 @@ namespace Turmerik.LocalDevice.Core.Logging
 
         public IAppLogger GetAppLogger(
             Type loggerNameType,
-            LogLevel logEventLevel = LogLevel.Information,
+            LogLevel? logEventLevel = null,
             bool? useAppProcessIdnf = null)
         {
             var appLogger = GetAppLogger(
@@ -102,7 +109,7 @@ namespace Turmerik.LocalDevice.Core.Logging
         public IAppLogger GetBufferedAppLogger(
             string loggerRelPath,
             out int bufferedLoggerDirNameIdx,
-            LogLevel logEventLevel = LogLevel.Information,
+            LogLevel? logEventLevel = null,
             bool? useAppProcessIdnf = null)
         {
             bufferedLoggerDirNameIdx = Interlocked.Increment(ref this.bufferedLoggerDirNameIdx);
@@ -126,7 +133,7 @@ namespace Turmerik.LocalDevice.Core.Logging
             var opts = new AppLoggerOpts.Mtbl
             {
                 AppEnv = appEnv,
-                LogLevel = logEventLevel,
+                LogLevel = logEventLevel ?? MinLogLevel,
                 LogDirRelPath = loggerRelPath,
                 IsLoggerBuffered = true,
                 AppProcessIdentifier = GetIAppProcessIdentifier(useAppProcessIdnf),
@@ -141,7 +148,7 @@ namespace Turmerik.LocalDevice.Core.Logging
         public IAppLogger GetBufferedAppLogger(
             Type loggerNameType,
             out int bufferedLoggerDirNameIdx,
-            LogLevel logEventLevel = LogLevel.Information,
+            LogLevel? logEventLevel = null,
             bool? useAppProcessIdnf = null)
         {
             var appLogger = GetBufferedAppLogger(
@@ -155,13 +162,13 @@ namespace Turmerik.LocalDevice.Core.Logging
 
         public IAppLogger GetSharedAppLogger(
             string loggerRelPath,
-            LogLevel logEventLevel = LogLevel.Debug,
+            LogLevel? logEventLevel = null,
             bool? useAppProcessIdnf = null)
         {
             var opts = new AppLoggerOpts.Mtbl
             {
                 AppEnv = appEnv,
-                LogLevel = logEventLevel,
+                LogLevel = logEventLevel ?? MinLogLevel,
                 LogDirRelPath = loggerRelPath,
                 IsLoggerShared = true,
                 AppProcessIdentifier = GetIAppProcessIdentifier(useAppProcessIdnf),
@@ -175,7 +182,7 @@ namespace Turmerik.LocalDevice.Core.Logging
 
         public IAppLogger GetSharedAppLogger(
             Type loggerNameType,
-            LogLevel logEventLevel = LogLevel.Debug,
+            LogLevel? logEventLevel = null,
             bool? useAppProcessIdnf = null)
         {
             var appLogger = GetSharedAppLogger(

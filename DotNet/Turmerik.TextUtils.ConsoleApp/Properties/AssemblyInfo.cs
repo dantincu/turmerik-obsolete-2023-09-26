@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("Turmerik.TextTabsToMdTable.ConsoleApp")]
+[assembly: AssemblyTitle("Turmerik.TextUtils.ConsoleApp")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("Turmerik.TextTabsToMdTable.ConsoleApp")]
+[assembly: AssemblyProduct("Turmerik.TextUtils.ConsoleApp")]
 [assembly: AssemblyCopyright("Copyright ©  2023")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("756389f1-db76-4c8f-8856-fc0dc6320490")]
+[assembly: Guid("e27c0a73-6eb1-45db-a0cb-b82d64170555")]
 
 // Version information for an assembly consists of the following four values:
 //
