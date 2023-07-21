@@ -30,9 +30,6 @@ namespace Turmerik.TextUtils.WinFormsApp
 
             ServiceProviderContainer.AssureServicesRegistered(services);
 
-            /* ServiceProviderContainer.Instance.Value.Services.GetRequiredService<IAppLoggerCreator>().GetAppLogger(
-                typeof(Program)).Verbose("asdfasdfadsf"); */
-
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(new MainForm());

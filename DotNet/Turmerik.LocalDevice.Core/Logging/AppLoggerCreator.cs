@@ -17,6 +17,7 @@ namespace Turmerik.LocalDevice.Core.Logging
     public class AppLoggerCreator : IAppLoggerCreator
     {
         public const string BUFFERED_LOGGER_DIR_NAME_TPL = "{0:D4}";
+        public static readonly string appProcessIdnfDumpFileName = $"{nameof(appProcessIdentifier)}.json";
 
         private readonly IAppEnv appEnv;
         private readonly IAppLoggerConfig appLoggerConfig;
@@ -24,7 +25,7 @@ namespace Turmerik.LocalDevice.Core.Logging
         private readonly ITimeStampHelper timeStampHelper;
         private readonly ITrmrkJsonFormatterFactory trmrkJsonFormatterFactory;
         private readonly IStringTemplateParser stringTemplateParser;
-        private readonly Lazy<IAppLogger> logger;
+        // private readonly Lazy<IAppLogger> logger;
 
         private volatile int bufferedLoggerDirNameIdx;
         private volatile int appProcessIdnfDumped;
@@ -44,7 +45,7 @@ namespace Turmerik.LocalDevice.Core.Logging
             this.timeStampHelper = timeStampHelper ?? throw new ArgumentNullException(nameof(timeStampHelper));
             this.trmrkJsonFormatterFactory = trmrkJsonFormatterFactory ?? throw new ArgumentNullException(nameof(trmrkJsonFormatterFactory));
             this.stringTemplateParser = stringTemplateParser ?? throw new ArgumentNullException(nameof(stringTemplateParser));
-            this.logger = LazyH.Lazy(() => GetAppLogger(GetType()));
+            // this.logger = LazyH.Lazy(() => GetAppLogger(GetType()));
             this.UseAppProcessIdnfByDefault = useAppProcessIdnfByDefault;
 
             MinLogLevel = appLoggerConfig.Data.MinLogLevel;
@@ -69,9 +70,20 @@ namespace Turmerik.LocalDevice.Core.Logging
 
         public void DumpAppProcessIdnf()
         {
-            logger.Value.InformationData(
-                appProcessIdentifier,
-                nameof(appProcessIdentifier));
+            string json = appProcessIdentifier.ToJson(false);
+
+            string dumpDirPath = appEnv.GetTypePath(
+                AppEnvDir.Data,
+                typeof(IAppProcessIdentifier),
+                appProcessIdentifier.ProcessDirName);
+
+            Directory.CreateDirectory(dumpDirPath);
+
+            string dumpFilePath = Path.Combine(
+                dumpDirPath,
+                appProcessIdnfDumpFileName);
+
+            File.WriteAllText(dumpFilePath, json);
         }
 
         public IAppLogger GetAppLogger(
