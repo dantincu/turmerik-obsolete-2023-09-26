@@ -22,7 +22,7 @@ namespace Turmerik.LocalDevice.Core.Dependencies
             bool registerFsExplorerServiceEngineAsDefault = false,
             bool useAppProcessIdnfForAppLoggersByDefault = true)
         {
-            TrmrkCoreServiceCollectionBuilder.RegisterAll(services);
+            TrmrkCoreServiceCollectionBuilder.RegisterAll(services, true);
             PureFuncJsServiceCollectionBuilder.RegisterAllCore(services);
 
             RegisterAllCore(

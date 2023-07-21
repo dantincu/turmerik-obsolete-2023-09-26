@@ -5,6 +5,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Turmerik.LocalDevice.Core.Dependencies;
+using Turmerik.LocalDevice.Core.Logging;
+using Turmerik.Logging;
 using Turmerik.TextUtils.WinFormsApp.Components;
 using Turmerik.TextUtils.WinFormsApp.ViewModels;
 using Turmerik.WinForms.Dependencies;
@@ -22,11 +24,14 @@ namespace Turmerik.TextUtils.WinFormsApp
             var services = new ServiceCollection();
 
             WinFormsServiceCollectionBuilder.RegisterAll(services);
-            services.AddSingleton<IAppBehaviour, AppBehaviour>();
 
+            services.AddSingleton<IAppBehaviour, AppBehaviour>();
             services.AddTransient<IMainFormVM, MainFormVM>();
 
             ServiceProviderContainer.AssureServicesRegistered(services);
+
+            /* ServiceProviderContainer.Instance.Value.Services.GetRequiredService<IAppLoggerCreator>().GetAppLogger(
+                typeof(Program)).Verbose("asdfasdfadsf"); */
 
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);

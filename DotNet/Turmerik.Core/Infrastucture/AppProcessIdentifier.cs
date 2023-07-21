@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text;
 using Turmerik.Cloneable;
 
@@ -15,10 +16,12 @@ namespace Turmerik.Infrastucture
 
     public class AppProcessIdentifier : IAppProcessIdentifier
     {
-        public AppProcessIdentifier()
+        public AppProcessIdentifier(bool addCurrentProcessInfo)
         {
             DateTime startTimeUtc = DateTime.UtcNow;
             Guid uuid = Guid.NewGuid();
+
+            var currentProcess = addCurrentProcessInfo ? Process.GetCurrentProcess() : null;
 
             Data = new AppProcessIdentifierData.Immtbl(
                 new AppProcessIdentifierData.Mtbl
@@ -26,7 +29,9 @@ namespace Turmerik.Infrastucture
                     StartTimeUtc = startTimeUtc,
                     StartTimeUtcTicks = startTimeUtc.Ticks,
                     Uuid = uuid,
-                    UuidStr = uuid.ToString("N")
+                    UuidStr = uuid.ToString("N"),
+                    ProcessId = currentProcess?.Id ?? -1,
+                    ProcessName = currentProcess?.ProcessName
                 });
 
             ProcessDirNameTpl = "[{0}]-[{1}]";
@@ -51,6 +56,8 @@ namespace Turmerik.Infrastucture
             long StartTimeUtcTicks { get; }
             Guid Uuid { get; }
             string UuidStr { get; }
+            int ProcessId { get; }
+            string ProcessName { get; }
         }
 
         public class Immtbl : ImmtblCoreBase, IClnbl
@@ -61,12 +68,16 @@ namespace Turmerik.Infrastucture
                 StartTimeUtcTicks = src.StartTimeUtcTicks;
                 Uuid = src.Uuid;
                 UuidStr = src.UuidStr;
+                ProcessId = src.ProcessId;
+                ProcessName = src.ProcessName;
             }
 
             public DateTime StartTimeUtc { get; }
             public long StartTimeUtcTicks { get; }
             public Guid Uuid { get; }
             public string UuidStr { get; }
+            public int ProcessId { get; }
+            public string ProcessName { get; }
         }
 
         public class Mtbl : MtblCoreBase, IClnbl
@@ -81,12 +92,16 @@ namespace Turmerik.Infrastucture
                 StartTimeUtcTicks = src.StartTimeUtcTicks;
                 Uuid = src.Uuid;
                 UuidStr = src.UuidStr;
+                ProcessId = src.ProcessId;
+                ProcessName = src.ProcessName;
             }
 
             public DateTime StartTimeUtc { get; set; }
             public long StartTimeUtcTicks { get; set; }
             public Guid Uuid { get; set; }
             public string UuidStr { get; set; }
+            public int ProcessId { get; set; }
+            public string ProcessName { get; set; }
         }
     }
 }

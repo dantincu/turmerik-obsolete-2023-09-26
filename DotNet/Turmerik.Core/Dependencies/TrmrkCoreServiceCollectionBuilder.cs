@@ -24,9 +24,13 @@ namespace Turmerik.Dependencies
     public static class TrmrkCoreServiceCollectionBuilder
     {
         public static void RegisterAll(
-            IServiceCollection services)
+            IServiceCollection services,
+            bool addCurrentProcessInfo = false)
         {
-            services.AddSingleton<IAppProcessIdentifier, AppProcessIdentifier>();
+            services.AddSingleton<IAppProcessIdentifier>(
+                svcProv => new AppProcessIdentifier(
+                    addCurrentProcessInfo));
+
             services.AddSingleton<IExceptionSerializer, ExceptionSerializer>();
             services.AddSingleton<IStringTemplateParser, StringTemplateParser>();
             services.AddSingleton<ITimeStampHelper, TimeStampHelper>();
