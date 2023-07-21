@@ -17,7 +17,9 @@ namespace Turmerik.LocalDevice.Core.Logging
     public class AppLoggerCreator : IAppLoggerCreator
     {
         public const string BUFFERED_LOGGER_DIR_NAME_TPL = "{0:D4}";
-        public static readonly string appProcessIdnfDumpFileName = $"{nameof(appProcessIdentifier)}.json";
+
+        public static readonly string AppProcessIdnfDumpFileName = $"{nameof(AppProcessIdentifierData)}.json";
+        public static readonly Type AppProcessIdnfDumpDirType = typeof(AppProcessIdentifierData);
 
         private readonly IAppEnv appEnv;
         private readonly IAppLoggerConfig appLoggerConfig;
@@ -74,14 +76,14 @@ namespace Turmerik.LocalDevice.Core.Logging
 
             string dumpDirPath = appEnv.GetTypePath(
                 AppEnvDir.Data,
-                typeof(IAppProcessIdentifier),
+                AppProcessIdnfDumpDirType,
                 appProcessIdentifier.ProcessDirName);
 
             Directory.CreateDirectory(dumpDirPath);
 
             string dumpFilePath = Path.Combine(
                 dumpDirPath,
-                appProcessIdnfDumpFileName);
+                AppProcessIdnfDumpFileName);
 
             File.WriteAllText(dumpFilePath, json);
         }
