@@ -10,6 +10,14 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="ProgramArgsBuilderUnitTest%24not-compiled%24.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="ProgramArgsBuilderUnitTest$not-compiled$.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.6.3" />
     <PackageReference Include="xunit" Version="2.5.0" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.5.0">

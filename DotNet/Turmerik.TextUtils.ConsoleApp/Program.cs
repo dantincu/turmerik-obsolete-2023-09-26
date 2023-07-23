@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Turmerik.Text;
+using Turmerik.TextUtils.ConsoleApp.Components;
 using Turmerik.WinForms.Dependencies;
 
 namespace Turmerik.TextUtils.ConsoleApp
@@ -14,7 +15,15 @@ namespace Turmerik.TextUtils.ConsoleApp
         static void Main(string[] args)
         {
             ServiceProviderContainer.AssureServicesRegistered(
-                new ServiceCollection());
+                new ServiceCollection(), services =>
+                {
+                    services.AddScoped<IProgramComponent, ProgramComponent>();
+                });
+
+            var svcProv = ServiceProviderContainer.Instance.Value.Services;
+            var component = svcProv.GetService<ProgramComponent>();
+
+            component.Run(args);
 
             var helper = ServiceProviderContainer.Instance.Value.Services.GetRequiredService<ITimeStampHelper>();
             var str = helper.TmStmp(DateTime.Now, true, TimeStamp.Ticks, true, false, false);

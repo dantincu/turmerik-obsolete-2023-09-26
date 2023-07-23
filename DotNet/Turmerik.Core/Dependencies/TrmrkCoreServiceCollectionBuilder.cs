@@ -38,6 +38,7 @@ namespace Turmerik.Dependencies
             services.AddSingleton<ILambdaExprHelper, LambdaExprHelper>();
             services.AddSingleton<ILambdaExprHelperFactory, LambdaExprHelperFactory>();
             services.AddSingleton<IBasicEqualityComparerFactory, BasicEqualityComparerFactory>();
+            // services.AddSingleton<IProgramArgsBuilder, ProgramArgsBuilder>();
 
             services.AddSingleton<ISliceStrResultEqCompr, SliceStrResultEqCompr>();
             services.AddSingleton<ITextReplacerComponent, TextReplacerComponent>();
