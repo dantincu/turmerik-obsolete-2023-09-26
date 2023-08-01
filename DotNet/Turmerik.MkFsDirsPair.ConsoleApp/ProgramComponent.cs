@@ -11,15 +11,14 @@ namespace Turmerik.MkFsDirsPair.ConsoleApp
     {
         public void Run(string[] args)
         {
+            var data = new DirNamesPairGenerator().Generate(
+                args);
+
             string workDir = Environment.CurrentDirectory;
 
             string[] existingEntriesArr = Directory.EnumerateFileSystemEntries(
                 workDir).Select(
                 entry => Path.GetFileName(entry)).ToArray();
-
-            var data = new DirNamesPairGenerator().Generate(
-                args,
-                existingEntriesArr);
 
             CreateDirsPair(
                 data,
@@ -55,6 +54,32 @@ namespace Turmerik.MkFsDirsPair.ConsoleApp
 
             string fullDirKeepFilePath = Path.Combine(fullDirPath, ".keep");
             File.WriteAllText(fullDirKeepFilePath, "");
+
+            if (data.DocFileName != null)
+            {
+                string docFilePath = Path.Combine(
+                    shortDirPath,
+                    data.DocFileName);
+
+                string docFileExtn = Path.GetExtension(
+                    data.DocFileName);
+
+                string docFileText = string.Empty;
+
+                if (docFileExtn == ".md")
+                {
+                    docFileText = Path.GetFileNameWithoutExtension(
+                        data.DocFileName);
+
+                    docFileText = $"# {docFileText}  \n\n";
+                }
+
+                File.WriteAllText(
+                    docFilePath,
+                    docFileText);
+
+                ProcessH.OpenWithDefaultProgram(docFilePath);
+            }
         }
     }
 }

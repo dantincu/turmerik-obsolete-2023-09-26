@@ -9,30 +9,32 @@ namespace Turmerik.MkFsDirsPair.ConsoleApp
 {
     public class DirNamesPairGenerator
     {
+        public const char ENTRY_NAME_SPECIAL_CHAR = '?';
+
+        private readonly char[] invalidFileNameChars = Path.GetInvalidFileNameChars();
+        private readonly char[] miscWsChars = new char[] { '\n', '\r', '\t' };
+
         public DirNamesPair Generate(
-            string[] args,
-            string[] existingEntriesArr)
+            string[] args)
         {
-            GetArgs(
+            string docFileName = GetArgs(
                 args,
-                existingEntriesArr,
                 out string shortDirName,
                 out string fullDirName);
 
             return new DirNamesPair(
                 shortDirName,
-                fullDirName);
+                fullDirName,
+                docFileName);
         }
 
-        private void GetArgs(
+        private string GetArgs(
             string[] args,
-            string[] existingEntriesArr,
             out string shortDirName,
             out string fullDirName)
         {
-            GetArgs(
+            string docFileName = GetArgs(
                 args,
-                existingEntriesArr,
                 out shortDirName,
                 out string fullDirNamePart,
                 out string fullDirNameJoinStr);
@@ -41,16 +43,24 @@ namespace Turmerik.MkFsDirsPair.ConsoleApp
                 fullDirNameJoinStr,
                 shortDirName,
                 fullDirNamePart);
+
+            return docFileName;
         }
 
-        private void GetArgs(
+        private string GetArgs(
             string[] args,
-            string[] existingEntriesArr,
             out string shortDirName,
             out string fullDirNamePart,
             out string fullDirNameJoinStr)
         {
+            if (args.Length > 3)
+            {
+                throw new ArgumentException(
+                    $"Expected 3 arguments but received {args.Length}");
+            }
+
             int idx = 0;
+            string docFileName = null;
 
             shortDirName = GetArg(
                 args,
@@ -65,53 +75,82 @@ namespace Turmerik.MkFsDirsPair.ConsoleApp
             fullDirNamePart = GetArg(
                 args,
                 idx++,
-                "Type the full dir name part");
+                "Type the full dir name part",
+                (rawArg, i, arg) =>
+                {
+                    int rawArgLen = rawArg.Length;
+                    int argLen = arg.Length;
 
-            if (string.IsNullOrEmpty(fullDirNamePart))
-            {
-                fullDirNamePart = GetFullDirNamePart(
-                    existingEntriesArr,
-                    shortDirName,
-                    fullDirNameJoinStr);
-            }
-        }
+                    var lastChar = rawArg.Last();
 
-        private string GetFullDirNamePart(
-            string[] existingEntriesArr,
-            string shortDirName,
-            string fullDirNameJoinStr)
-        {
-            string dirNameStartStr = string.Concat(
-                shortDirName,
-                fullDirNameJoinStr);
+                    if (lastChar == ENTRY_NAME_SPECIAL_CHAR)
+                    {
+                        docFileName = $"{arg}.md";
+                    }
+                    else if (rawArgLen >= 2 && rawArg[rawArgLen - 2] == ENTRY_NAME_SPECIAL_CHAR)
+                    {
+                        arg = arg.Substring(0, argLen - 1);
 
-            string existingEntry = existingEntriesArr.Single(
-                entry => entry.StartsWith(dirNameStartStr));
+                        switch (lastChar)
+                        {
+                            case 'd':
+                                docFileName = $"{arg}.docx";
+                                break;
+                            default:
+                                throw new ArgumentException(
+                                $"Full dir name part cannot end in {rawArg.Substring(
+                                    rawArgLen - 2)}");
+                        }
+                    }
 
-            string fullDirNamePart = Path.GetFileName(existingEntry);
-            return fullDirNamePart;
+                    return arg;
+                });
+
+            return docFileName;
         }
 
         private string GetArg(
             string[] argsArr,
             int idx,
-            string message)
+            string message,
+            Func<string, int, string, string> callback = null)
         {
-            string arg;
+            string rawArg;
 
             if (idx < argsArr.Length)
             {
-                arg = argsArr[idx];
+                rawArg = argsArr[idx];
             }
             else
             {
-                arg = GetArg(message);
+                rawArg = GetArg(message);
             }
 
-            arg = arg.Replace(
-                ':', ' ').Replace(
-                ';', default);
+            string arg = rawArg.Trim();
 
+            if (arg == "?")
+            {
+                arg = string.Empty;
+            }
+            else
+            {
+                arg = NormalizeArg(arg);
+            }
+
+            if (callback != null)
+            {
+                arg = callback(rawArg, idx, arg);
+            }
+            
+            return arg;
+        }
+
+        private string NormalizeArg(
+            string arg)
+        {
+            arg = arg.Replace(':', ' ');
+            arg = string.Join("", arg.Split(invalidFileNameChars));
+            arg = string.Join(" ", arg.Split(miscWsChars));
             return arg;
         }
 
@@ -130,13 +169,18 @@ namespace Turmerik.MkFsDirsPair.ConsoleApp
 
     public class DirNamesPair
     {
-        public DirNamesPair(string shortDirName, string fullDirName)
+        public DirNamesPair(
+            string shortDirName,
+            string fullDirName,
+            string docFileName)
         {
             ShortDirName = shortDirName ?? throw new ArgumentNullException(nameof(shortDirName));
             FullDirName = fullDirName ?? throw new ArgumentNullException(nameof(fullDirName));
+            DocFileName = docFileName;
         }
 
         public string ShortDirName { get; }
         public string FullDirName { get; }
+        public string DocFileName { get; }
     }
 }

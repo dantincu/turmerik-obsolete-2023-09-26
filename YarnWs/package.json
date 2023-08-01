@@ -4,6 +4,7 @@
     "packages.pureFunc/*",
     "packages.jint.NET/*",
     "packages.browser/*",
-    "packages.node/*"
+    "packages.node/*",
+    "trmrk-fs-explorer-app"
   ]
 }
