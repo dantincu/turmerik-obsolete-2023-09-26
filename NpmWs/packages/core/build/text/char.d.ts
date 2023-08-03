@@ -1,0 +1,18 @@
+export declare const whitespacesRegex: RegExp;
+export declare const lettersRegex: RegExp;
+export declare const numbersRegex: RegExp;
+export declare const lettersOrNumbersRegex: RegExp;
+export declare const lowerCaseLettersOrNumbersRegex: RegExp;
+export declare const lowerCaseLettersRegex: RegExp;
+export declare const upperCaseLettersOrNumbersRegex: RegExp;
+export declare const upperCaseLettersRegex: RegExp;
+export declare const codeIdentifierRegex: RegExp;
+export declare const areAllWhitespaces: (str: string) => boolean;
+export declare const areAllLetters: (str: string) => boolean;
+export declare const areAllNumbers: (str: string) => boolean;
+export declare const areAllLettersOrNumbers: (str: string) => boolean;
+export declare const areAllLowerCaseLettersOrNumbers: (str: string) => boolean;
+export declare const areAllLowerCaseLetters: (str: string) => boolean;
+export declare const areAllUpperCaseLettersOrNumbers: (str: string) => boolean;
+export declare const areAllUpperCaseLetters: (str: string) => boolean;
+export declare const isValidCodeIdentifier: (str: string) => boolean;

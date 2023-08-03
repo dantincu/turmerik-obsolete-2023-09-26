@@ -1,0 +1,19 @@
+{
+  "name": "@turmerik/axios",
+  "version": "0.1.0",
+  "description": "Axios lib-related typescript components for turmerik apps",
+  "license": "MIT",
+  "main": "build/index.js",
+  "scripts": {
+    "build": "tsc --build"
+  },
+  "devDependencies": {
+    "ts-loader": "^9.4.4",
+    "webpack": "^5.88.2",
+    "webpack-cli": "^5.1.4"
+  },
+  "dependencies": {
+    "@turmerik/core": "^0.1.0",
+    "axios": "^1.4.0"
+  }
+}
