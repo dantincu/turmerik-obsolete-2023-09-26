@@ -22,7 +22,7 @@
       "path": "./packages/axios"
     },
     {
-      "path": "./packages/local-files-explorer"
+      "path": "./packages/browser"
     }
   ]
 }

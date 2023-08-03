@@ -23,5 +23,6 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.axios = void 0;
-exports.axios = __importStar(require("./axios/index"));
+exports.session_storage = exports.app_settings = void 0;
+exports.app_settings = __importStar(require("./app-settings/index"));
+exports.session_storage = __importStar(require("./session-storage/index"));

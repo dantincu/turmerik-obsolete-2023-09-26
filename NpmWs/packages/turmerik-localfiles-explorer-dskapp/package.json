@@ -11,7 +11,15 @@
   "dependencies": {
     "@syncfusion/ej2-react-filemanager": "^22.2.5",
     "@turmerik/axios": "^0.1.0",
+    "@turmerik/browser": "^0.1.0",
     "@turmerik/core": "^0.1.0",
-    "axios": "^1.4.0"
+    "autoprefixer": "^10.4.14",
+    "axios": "^1.4.0",
+    "next": "^13.4.12",
+    "postcss": "^8.4.27",
+    "tailwindcss": "^3.3.3"
+  },
+  "devDependencies": {
+    "@types/react": "^18.2.18"
   }
 }
