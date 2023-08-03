@@ -4,6 +4,7 @@ using Turmerik.AspNetCore.Controllers;
 using Turmerik.AspNetCore.Infrastucture;
 using Turmerik.Infrastucture;
 using Turmerik.LocalFilesExplorer.AspNetCoreApp.Data;
+using Turmerik.LocalFilesExplorer.AspNetCoreApp.Services;
 
 namespace Turmerik.LocalFilesExplorer.AspNetCoreApp.Controllers
 {
@@ -12,13 +13,15 @@ namespace Turmerik.LocalFilesExplorer.AspNetCoreApp.Controllers
     [ApiController]
     public class AppSettingsController : TrmrkControllerBase
     {
-        [HttpGet]
-        public ClientAppSettings.IClnbl Get()
+        private readonly IClientAppSettingsService clientAppSettingsService;
+
+        public AppSettingsController(
+            IClientAppSettingsService clientAppSettingsService)
         {
-            return new ClientAppSettings.Mtbl
-            {
-                TrmrkPrefix = TurmerikPrefixes.TRMRK
-            };
+            this.clientAppSettingsService = clientAppSettingsService ?? throw new ArgumentNullException(nameof(clientAppSettingsService));
         }
+
+        [HttpGet]
+        public ClientAppSettings.IClnbl Get() => clientAppSettingsService.ClientAppSettings;
     }
 }

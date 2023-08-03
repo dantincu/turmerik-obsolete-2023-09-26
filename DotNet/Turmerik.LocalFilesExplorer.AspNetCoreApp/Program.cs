@@ -1,10 +1,9 @@
 using Microsoft.AspNetCore.Authentication.Negotiate;
 using Turmerik.LocalDevice.Core.Dependencies;
+using Turmerik.LocalFilesExplorer.AspNetCoreApp.Dependencies;
 
 var builder = WebApplication.CreateBuilder(args);
-
-LocalDeviceServiceCollectionBuilder.RegisterAll(
-    builder.Services, true, true);
+AppServiceCollectionBuilder.RegisterAll(builder.Services);
 
 // Add services to the container.
 

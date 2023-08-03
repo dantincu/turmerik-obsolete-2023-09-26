@@ -12,6 +12,8 @@ namespace Turmerik.AspNetCore.Infrastucture
         public new interface IClnblCore : ClnblCore.IClnblCore
         {
             string TrmrkPrefix { get; }
+            decimal MaxDecimalValue { get; }
+            decimal MinDecimalValue { get; }
         }
     }
 
@@ -29,9 +31,13 @@ namespace Turmerik.AspNetCore.Infrastucture
             public ImmtblCore(TClnbl src) : base(src)
             {
                 TrmrkPrefix = src.TrmrkPrefix;
+                MaxDecimalValue = src.MaxDecimalValue;
+                MinDecimalValue = src.MinDecimalValue;
             }
 
             public string TrmrkPrefix { get; }
+            public decimal MaxDecimalValue { get; }
+            public decimal MinDecimalValue { get; }
         }
 
         public class MtblCore : MtblCoreBase, IClnblCore
@@ -43,9 +49,13 @@ namespace Turmerik.AspNetCore.Infrastucture
             public MtblCore(TClnbl src) : base(src)
             {
                 TrmrkPrefix = src.TrmrkPrefix;
+                MaxDecimalValue = src.MaxDecimalValue;
+                MinDecimalValue = src.MinDecimalValue;
             }
 
             public string TrmrkPrefix { get; set; }
+            public decimal MaxDecimalValue { get; set; }
+            public decimal MinDecimalValue { get; set; }
         }
     }
 }

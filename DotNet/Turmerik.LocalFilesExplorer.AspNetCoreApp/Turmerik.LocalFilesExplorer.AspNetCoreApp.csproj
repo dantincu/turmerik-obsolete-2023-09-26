@@ -1,9 +1,10 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>net7.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>5228db00-82d1-404b-a835-6804db48f67f</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
@@ -15,10 +16,6 @@
   <ItemGroup>
     <ProjectReference Include="..\Turmerik.AspNetCore\Turmerik.AspNetCore.csproj" />
     <ProjectReference Include="..\Turmerik.LocalDevice\Turmerik.LocalDevice.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Services\" />
   </ItemGroup>
 
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">

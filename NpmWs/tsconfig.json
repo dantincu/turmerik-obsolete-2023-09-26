@@ -16,7 +16,13 @@
   ],
   "references": [
     {
-      "path": "./packages/utils"
+      "path": "./packages/core"
+    },
+    {
+      "path": "./packages/axios"
+    },
+    {
+      "path": "./packages/local-files-explorer"
     }
   ]
 }
