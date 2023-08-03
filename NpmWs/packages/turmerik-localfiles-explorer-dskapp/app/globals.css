@@ -24,4 +24,12 @@ body {
       rgb(var(--background-end-rgb))
     )
     rgb(var(--background-start-rgb));
+
+    .trmrk-app-load-error, .trmrk-app-loading {
+        font-size: 1.3em;
+
+      h1 {
+        font-size: 1.3em;
+      }
+    }
 }

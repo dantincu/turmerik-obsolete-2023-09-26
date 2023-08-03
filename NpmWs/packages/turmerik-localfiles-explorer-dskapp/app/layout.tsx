@@ -4,6 +4,7 @@ import './globals.css'
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import { useState, useEffect, useCallback } from "react";
+import { ErrorBoundary } from "react-error-boundary";
 
 import { axios } from "@turmerik/axios";
 import { getInstance as getAppSettingsService } from './services/app-settings/app-settings-service'
@@ -50,7 +51,9 @@ export default function RootLayout({
       return (
         <html lang="en">
             <body className={inter.className}>
-              <div className="trmrk-app">{children}</div>
+              <ErrorBoundary fallback={<div>Something went wrong</div>}>
+                <div className="trmrk-app">{children}</div>
+              </ErrorBoundary>
             </body>
         </html>)
     } else {
@@ -62,7 +65,7 @@ export default function RootLayout({
                     { appSettingsResponse?.resp ? (<div>
                       <h1>Error while loading the app - { appSettingsResponse.resp.status }</h1> - { appSettingsResponse.resp.statusText }</div>) : (appSettingsResponse?.err ? (<div>
                         <h1>Error while loading the app</h1> { appSettingsResponse.err.message }</div>) : (<div>
-                      <h2>Oops... something went wrong and the app could not be loaded</h2></div>)) }
+                      Oops... something went wrong and the app could not be loaded</div>)) }
                   </main>
                 </div>
               </body>
@@ -73,7 +76,7 @@ export default function RootLayout({
       <html lang="en">
         <body className={inter.className}>
             <div className="trmrk-app-loading">
-              <main className="flex min-h-screen flex-col items-center justify-between p-24"><h2>Loading...</h2></main>
+              <main className="flex min-h-screen flex-col items-center justify-between p-24"><h1>Loading...</h1></main>
             </div>
           </body>
       </html>)
