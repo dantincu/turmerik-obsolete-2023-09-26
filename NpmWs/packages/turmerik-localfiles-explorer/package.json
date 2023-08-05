@@ -13,6 +13,7 @@
     "@turmerik/axios": "^0.1.0",
     "@turmerik/browser": "^0.1.0",
     "@turmerik/core": "^0.1.0",
+    "@turmerik/next-react": "^0.1.0",
     "autoprefixer": "^10.4.14",
     "axios": "^1.4.0",
     "mobile-detect": "^1.4.5",

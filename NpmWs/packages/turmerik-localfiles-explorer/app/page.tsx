@@ -1,6 +1,7 @@
 "use client"; // This is a client component 👈🏽
 
-import { useIsMobile } from "./utils/useIsMobile";
+import { detect_mobile } from "@turmerik/next-react";
+const useIsMobile = detect_mobile.useIsMobile;
 
 export default function Home() {
   const isMobile = useIsMobile();
