@@ -3,15 +3,15 @@ using static Turmerik.LocalFilesExplorer.AspNetCoreApp.Data.AppSettings;
 
 namespace Turmerik.LocalFilesExplorer.AspNetCoreApp.Data
 {
-    public partial class AppSettings : AppSettingsCore<IClnbl, Imtbl, Mtbl>
+    public partial class AppSettings : AppSettingsCore<IClnbl, Immtbl, Mtbl>
     {
         public interface IClnbl : IClnblCore
         {
         }
 
-        public class Imtbl : ImmtblCore, IClnbl
+        public class Immtbl : ImmtblCore, IClnbl
         {
-            public Imtbl(IClnbl src) : base(src)
+            public Immtbl(IClnbl src) : base(src)
             {
             }
         }

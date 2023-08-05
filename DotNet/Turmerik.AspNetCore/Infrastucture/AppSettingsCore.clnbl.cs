@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Turmerik.Cloneable;
+using Turmerik.Collections;
 
 namespace Turmerik.AspNetCore.Infrastucture
 {
@@ -12,7 +14,8 @@ namespace Turmerik.AspNetCore.Infrastucture
         public new interface IClnblCore : ClnblCore.IClnblCore
         {
             string TrmrkPrefix { get; }
-            string ClientAppHost { get; }
+
+            IEnumerable<string> GetClientAppHosts();
         }
     }
 
@@ -30,11 +33,13 @@ namespace Turmerik.AspNetCore.Infrastucture
             public ImmtblCore(TClnbl src) : base(src)
             {
                 TrmrkPrefix = src.TrmrkPrefix;
-                ClientAppHost = src.ClientAppHost;
+                ClientAppHosts = src.GetClientAppHosts()?.RdnlC();
             }
 
             public string TrmrkPrefix { get; }
-            public string ClientAppHost { get; }
+            public ReadOnlyCollection<string> ClientAppHosts { get; }
+
+            public IEnumerable<string> GetClientAppHosts() => ClientAppHosts;
         }
 
         public class MtblCore : MtblCoreBase, IClnblCore
@@ -46,11 +51,13 @@ namespace Turmerik.AspNetCore.Infrastucture
             public MtblCore(TClnbl src) : base(src)
             {
                 TrmrkPrefix = src.TrmrkPrefix;
-                ClientAppHost = src.ClientAppHost;
+                ClientAppHosts = src.GetClientAppHosts()?.ToList();
             }
 
             public string TrmrkPrefix { get; set; }
-            public string ClientAppHost { get; set; }
+            public List<string> ClientAppHosts { get; set; }
+
+            public IEnumerable<string> GetClientAppHosts() => ClientAppHosts;
         }
     }
 }

@@ -52,7 +52,9 @@ export default function RootLayout({
         <html lang="en">
             <body className={inter.className}>
               <ErrorBoundary fallback={<div>Something went wrong</div>}>
-                <div className="trmrk-app">{children}</div>
+                <div className="trmrk-app">
+                  {children}
+                </div>
               </ErrorBoundary>
             </body>
         </html>)

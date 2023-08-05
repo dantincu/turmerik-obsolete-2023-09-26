@@ -1,5 +1,5 @@
 {
-  "name": "turmerik-localfiles-explorer-dskapp",
+  "name": "turmerik-localfiles-explorer",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -15,6 +15,7 @@
     "@turmerik/core": "^0.1.0",
     "autoprefixer": "^10.4.14",
     "axios": "^1.4.0",
+    "mobile-detect": "^1.4.5",
     "next": "^13.4.12",
     "postcss": "^8.4.27",
     "react-error-boundary": "^4.0.10",
