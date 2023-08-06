@@ -1,1 +1,0 @@
-var turmerik_axios;(()=>{"use strict";var e,r={};e=r,Object.defineProperty(e,"__esModule",{value:!0}),e.isEven=void 0,e.isEven=function(e){return e%2==0},turmerik_axios=r})();

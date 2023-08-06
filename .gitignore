@@ -399,3 +399,20 @@ FodyWeavers.xsd
 
 DotNet/Turmerik.LocalDevice.Core/app-env-locator.json
 DotNet/Turmerik.LocalDevice.Core/app-env-locator.dev.json
+
+NpmWs/packages/core/build/**
+NpmWs/packages/core/dist/**
+NpmWs/packages/axios/build/**
+NpmWs/packages/axios/dist/**
+NpmWs/packages/browser/build/**
+NpmWs/packages/browser/dist/**
+NpmWs/packages/node/build/**
+NpmWs/packages/node/dist/**
+NpmWs/packages/next-react/build/**
+NpmWs/packages/next-react/dist/**
+NpmWs/packages/next-node-expose-sspi/build/**
+NpmWs/packages/next-node-expose-sspi/dist/**
+NpmWs/packages/driveexplorer/build/**
+NpmWs/packages/driveexplorer/dist/**
+NpmWs/packages/turmerik-localfiles-explorer/build/**
+NpmWs/packages/turmerik-localfiles-explorer/dist/**
