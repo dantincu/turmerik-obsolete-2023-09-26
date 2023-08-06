@@ -23,7 +23,5 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.components = exports.services = exports.detect_mobile = void 0;
-exports.detect_mobile = __importStar(require("./detect-mobile/index"));
-exports.services = __importStar(require("./services/index"));
-exports.components = __importStar(require("./components"));
+exports.api = void 0;
+exports.api = __importStar(require("./api/index"));
