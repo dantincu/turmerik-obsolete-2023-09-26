@@ -397,6 +397,9 @@ FodyWeavers.xsd
 # JetBrains Rider
 *.sln.iml
 
+*.tsconfig.tsbuildinfo
+*.tsbuildinfo
+
 DotNet/Turmerik.LocalDevice.Core/app-env-locator.json
 DotNet/Turmerik.LocalDevice.Core/app-env-locator.dev.json
 
