@@ -18,8 +18,6 @@ import { getInstance as getApiService } from "./services/api/api-service"
 services.api.api_service.registerInstance(getApiService());
 services.api.app_settings_service.registerInstance(getAppSettingsService());
 
-console.log("inter.className", inter.className)
-
 export default function RootLayout({
   children,
 }: {
