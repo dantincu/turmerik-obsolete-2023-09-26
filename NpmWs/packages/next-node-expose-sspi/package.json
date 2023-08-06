@@ -1,7 +1,7 @@
 {
-  "name": "@turmerik/next-react",
+  "name": "@turmerik/next-node-expose-sspi",
   "version": "0.1.0",
-  "description": "NextJs & React related typescript components for turmerik apps",
+  "description": "NextJs & Windows Authentication related typescript components for turmerik apps",
   "license": "MIT",
   "main": "build/index.js",
   "scripts": {
@@ -15,12 +15,10 @@
   },
   "dependencies": {
     "@turmerik/axios": "^0.1.0",
-    "@turmerik/browser": "^0.1.0",
     "@turmerik/core": "^0.1.0",
     "@turmerik/node": "^0.1.0",
     "axios": "^1.4.0",
     "mobile-detect": "^1.4.5",
-    "next": "^13.4.12",
-    "react-error-boundary": "^4.0.10"
+    "next": "^13.4.12"
   }
 }

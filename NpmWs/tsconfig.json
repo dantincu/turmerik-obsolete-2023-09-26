@@ -16,7 +16,13 @@
   ],
   "references": [
     {
-      "path": "./packages/core"
+      "path": "./packages/core",
+    },
+    {
+      "path": "./packages/node"
+    },
+    {
+      "path": "./packages/next-node-expose-sspi"
     },
     {
       "path": "./packages/axios"
@@ -26,6 +32,9 @@
     },
     {
       "path": "./packages/next-react"
+    },
+    {
+      "path": "./packages/driveexplorer"
     }
   ]
 }
