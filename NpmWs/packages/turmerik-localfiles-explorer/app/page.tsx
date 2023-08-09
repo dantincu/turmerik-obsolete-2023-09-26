@@ -1,9 +1,12 @@
 "use client"; // This is a client component 👈🏽
 
-import { detect_mobile } from "@turmerik/next-react";
+import TrmrkExplorer from '../components/TrmrkExplorer/TrmrkExplorer';
+import { TrmrkExplorerProps, TrmrkExplorerPageName, defaultPageNameRetriever } from '../components/TrmrkExplorer/TrmrkExplorerProps';
 
 export default function Home() {
-  const isMobile = detect_mobile.useIsMobile()
+  const props = {
+    pageNameRetriever: defaultPageNameRetriever(0)
+  } as TrmrkExplorerProps
 
-  return isMobile ? <div>Mobile Version</div> : <div>Desktop Version</div>;
+  return <TrmrkExplorer {...props} />
 }

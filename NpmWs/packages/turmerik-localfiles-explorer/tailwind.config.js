@@ -15,4 +15,8 @@ module.exports = {
     },
   },
   plugins: [],
+  safelist: [
+    'h-screen'
+  ],
+  "darkMode": "class"
 }

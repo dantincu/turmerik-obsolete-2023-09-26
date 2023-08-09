@@ -5,7 +5,8 @@
   "license": "MIT",
   "main": "build/index.js",
   "scripts": {
-    "build": "tsc --build"
+    "build": "tsc --build",
+    "forceBuild": "tsc --build --force --verbose"
   },
   "devDependencies": {
     "ts-loader": "^9.4.4",

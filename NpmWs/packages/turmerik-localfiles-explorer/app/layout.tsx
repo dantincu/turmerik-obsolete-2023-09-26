@@ -1,8 +1,14 @@
 "use client"; // This is a client component 👈🏽
 
-import './globals.css'
+import '@fontsource/roboto/300.css';
+import '@fontsource/roboto/400.css';
+import '@fontsource/roboto/500.css';
+import '@fontsource/roboto/700.css';
+
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
+
+import './globals.css'
 import { getInstance as getAppSettingsService } from './services/app-settings/app-settings-service'
 
 const inter = Inter({ subsets: ['latin'] })
@@ -25,7 +31,7 @@ export default function RootLayout({
 }) {
   return (
     <components.Layout props={{
-      bodyClassName: inter.className
+      bodyClassName: [inter.className].join(" ")
     }}>{children}</components.Layout>
   );
 }
