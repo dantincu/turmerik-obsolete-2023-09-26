@@ -30,6 +30,13 @@ export default function RootLayout({
   const urlQuery = useSearchParams()
   const appSettingsService = getAppSettingsService();
 
+  const colorTheme = urlQuery.get("color-theme")
+  const colorThemeClass = getColorThemeCssClass(colorTheme);
+
+  if (colorThemeClass !== colorThemeCssClass) {
+    setColorThemeCssClass(colorThemeClass)
+  }
+
   const getAppSettings = useCallback(
     () => appSettingsService.getSettings().then(
       settings => {
@@ -45,12 +52,8 @@ export default function RootLayout({
      }), [appSettingsService]);
 
   useEffect(() => {
-    const colorTheme = urlQuery.get("color-theme") ?? localStorage.getItem("colorTheme")
-    const colorThemeClass = getColorThemeCssClass(colorTheme);
-
-    setColorThemeCssClass(colorThemeClass)
     getAppSettings();
-  }, [appSettings, colorThemeCssClass]);
+  }, [appSettings]);
 
   const bodyClassName = [props.bodyClassName, "h-screen", colorThemeCssClass].join(" ")
 

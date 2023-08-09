@@ -41,3 +41,23 @@ body {
       }
     }
 }
+
+.dark .trmrk-app,
+.dark .trmrk-app-load-error,
+.dark .trmrk-app-loading {
+  background-color: #000;
+  color: #FFF;
+}
+
+.light .trmrk-app,
+.light .trmrk-app-load-error,
+.light .trmrk-app-loading {
+  background-color: #FFF;
+  color: #000;
+}
+
+.trmrk-app-load-error,
+.trmrk-app-loading {
+  padding-top: 10%;
+  padding-left: 10%;
+}
