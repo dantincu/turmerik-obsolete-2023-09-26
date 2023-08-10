@@ -167,7 +167,7 @@ export class ApiComponent {
     return this.dataRequest(axios.patch<T, AxiosResponse<T>, D>, uri, data, config)
   }
 
-  private async dataRequest<T, D>(
+  async dataRequest<T, D>(
     reqFunc: (
       apiUri: string,
       data: D | undefined,
@@ -197,7 +197,7 @@ export class ApiComponent {
     return response
   }
 
-  private request<T, D>(
+  request<T, D>(
     reqFunc: (apiUri: string, config: AxiosRequestConfig<D> | undefined) => Promise<AxiosResponse<T>>,
     uri: string,
     data: D | undefined,

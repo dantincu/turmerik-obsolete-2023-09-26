@@ -12,8 +12,10 @@ export const getColorThemeCssClass = (colorTheme: string | null = null) => {
 
   if (typeof colorTheme === "string" && basicThemes.indexOf(colorTheme) >= 0) {
     themeClass = colorTheme
-  } else {
+  } else if (typeof window !== "undefined") {
     themeClass = getSystemColorThemeCssClass()
+  } else {
+    themeClass = ""
   }
 
   return themeClass

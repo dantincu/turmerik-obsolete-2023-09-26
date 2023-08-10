@@ -35,14 +35,19 @@ export abstract class AppSettingsServiceBase<TAppSettings extends AppSettings> {
   }
 
   public async loadSettings() {
-    const [hasValue, settings, hasKey] = await getOrCreateAsync<TAppSettings>(this.appSettingsSessionStorageKey, () =>
-      this.refreshSettings(),
-    )
+    if (this.appSettingsSessionStorageKey.length > 0) {
+      const [hasValue, settings, hasKey] = await getOrCreateAsync<TAppSettings>(this.appSettingsSessionStorageKey, () =>
+        this.refreshSettings(),
+      )
 
-    this.settings = settings
-    this.isSuccess ||= hasKey
+      this.settings = settings
+      this.isSuccess ||= hasKey
 
-    return [hasValue, settings]
+      return [hasValue, settings]
+    } else {
+      const [hasValue, settings] = await this.refreshSettings()
+      return [hasValue, settings]
+    }
   }
 
   public async refreshSettings(): Promise<[boolean, TAppSettings]> {
