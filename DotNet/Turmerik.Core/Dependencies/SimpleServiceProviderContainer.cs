@@ -20,6 +20,8 @@ namespace Turmerik.Dependencies
         {
         }
 
+        public bool AreServicesRegistered() => serviceProvider != null;
+
         public void RegisterServices(IServiceCollection services)
         {
             lock (syncRoot)
