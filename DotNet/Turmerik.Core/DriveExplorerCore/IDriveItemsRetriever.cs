@@ -16,6 +16,8 @@ namespace Turmerik.DriveExplorerCore
         Task<DriveItem.Mtbl> GetFolderAsync(DriveItemIdnf.IClnbl idnf);
         Task<bool> FolderExistsAsync(DriveItemIdnf.IClnbl idnf);
         Task<bool> FileExistsAsync(DriveItemIdnf.IClnbl idnf);
+
+        string DirSeparator { get; }
     }
 
     public interface IDriveItemsObjMirrorRetriever : IDriveItemsRetriever
@@ -41,13 +43,18 @@ namespace Turmerik.DriveExplorerCore
             ITimeStampHelper timeStampHelper)
         {
             TimeStampHelper = timeStampHelper ?? throw new ArgumentNullException(nameof(timeStampHelper));
+            DirSeparator = GetDirSeparator();
         }
+
+        public string DirSeparator { get; }
 
         protected ITimeStampHelper TimeStampHelper { get; }
 
         public abstract Task<bool> FileExistsAsync(DriveItemIdnf.IClnbl idnf);
         public abstract Task<bool> FolderExistsAsync(DriveItemIdnf.IClnbl idnf);
         public abstract Task<DriveItem.Mtbl> GetFolderAsync(DriveItemIdnf.IClnbl idnf);
+
+        protected abstract string GetDirSeparator();
 
         protected string GetTimeStampStr(DateTime? dateTime)
         {
@@ -70,6 +77,13 @@ namespace Turmerik.DriveExplorerCore
     public class DriveItemsObjMirrorRetriever : IDriveItemsObjMirrorRetriever
     {
         private DriveItem.Immtbl driveItem;
+
+        public DriveItemsObjMirrorRetriever()
+        {
+            DirSeparator = GetDirSeparator();
+        }
+
+        public string DirSeparator { get; }
 
         public DriveItem.IClnbl RoodDriveFolder
         {
@@ -103,6 +117,8 @@ namespace Turmerik.DriveExplorerCore
             return retVal;
         }
 
+        protected string GetDirSeparator() => Path.DirectorySeparatorChar.ToString();
+
         protected virtual DriveItem.Mtbl TryGetItem(
             DriveItem.Immtbl folder,
             DriveItemIdnf.IClnbl idnf,
@@ -120,7 +136,7 @@ namespace Turmerik.DriveExplorerCore
             }
             else
             {
-                var immtbl = ((IEnumerable<DriveItem.Immtbl>)folder.FolderFiles).FirstOrDefault(
+                var immtbl = folder.FolderFiles.FirstOrDefault(
                     item => item.Equals(idnf));
 
                 if (immtbl != null)

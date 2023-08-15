@@ -70,12 +70,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Controls\FieldViewerUC.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Controls\FieldViewerUC.Designer.cs">
-      <DependentUpon>FieldViewerUC.cs</DependentUpon>
-    </Compile>
     <Compile Include="Controls\ObjectViewerUC.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -91,12 +85,8 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ViewModels\FieldViewerVM.cs" />
     <Compile Include="ViewModels\ObjectViewerVM.cs" />
     <Compile Include="ViewModels\MainFormVM.cs" />
-    <EmbeddedResource Include="Controls\FieldViewerUC.resx">
-      <DependentUpon>FieldViewerUC.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Controls\ObjectViewerUC.resx">
       <DependentUpon>ObjectViewerUC.cs</DependentUpon>
     </EmbeddedResource>
@@ -135,6 +125,14 @@
     <ProjectReference Include="..\Turmerik.LocalDevice.Core\Turmerik.LocalDevice.Core.csproj">
       <Project>{5f16eb51-0ba3-4549-b6e2-b14a83ad89b5}</Project>
       <Name>Turmerik.LocalDevice.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Turmerik.ObjectViewer.Lib\Turmerik.ObjectViewer.Lib.csproj">
+      <Project>{bcacedd8-e893-4993-b575-87536a3f004d}</Project>
+      <Name>Turmerik.ObjectViewer.Lib</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Turmerik.ObjectViewer.WindowsFormsUCLib\Turmerik.ObjectViewer.WindowsFormsUCLib.csproj">
+      <Project>{5e04c916-8737-4be3-ab0e-c21a74261e0b}</Project>
+      <Name>Turmerik.ObjectViewer.WindowsFormsUCLib</Name>
     </ProjectReference>
     <ProjectReference Include="..\Turmerik.PureFuncJs.Core\Turmerik.PureFuncJs.Core.csproj">
       <Project>{08e959d5-7347-418d-816e-ed60a3ec87b4}</Project>

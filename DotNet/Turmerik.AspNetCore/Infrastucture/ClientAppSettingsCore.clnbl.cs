@@ -7,9 +7,9 @@ using Turmerik.Cloneable;
 
 namespace Turmerik.AspNetCore.Infrastucture
 {
-    public class ClientAppSettingsCore<TClnbl> : ClnblCore
+    public class ClientAppSettingsCore<TClnbl>
     {
-        public new interface IClnblCore : ClnblCore.IClnblCore
+        public interface IClnblCore
         {
             string TrmrkPrefix { get; }
             decimal MaxDecimalValue { get; }
@@ -17,18 +17,18 @@ namespace Turmerik.AspNetCore.Infrastucture
         }
     }
 
-    public class ClientAppSettingsCore<TClnbl, TImmtbl, TMtbl> : ClnblCore<TClnbl, TImmtbl, TMtbl>
+    public class ClientAppSettingsCore<TClnbl, TImmtbl, TMtbl>
         where TClnbl : ClientAppSettingsCore<TClnbl, TImmtbl, TMtbl>.IClnblCore
         where TImmtbl : ClientAppSettingsCore<TClnbl, TImmtbl, TMtbl>.ImmtblCore, TClnbl
         where TMtbl : ClientAppSettingsCore<TClnbl, TImmtbl, TMtbl>.MtblCore, TClnbl
     {
-        public new interface IClnblCore : ClientAppSettingsCore<TClnbl>.IClnblCore, ClnblCore<TClnbl, TImmtbl, TMtbl>.IClnblCore
+        public interface IClnblCore : ClientAppSettingsCore<TClnbl>.IClnblCore
         {
         }
 
-        public class ImmtblCore : ImmtblCoreBase, IClnblCore
+        public class ImmtblCore : IClnblCore
         {
-            public ImmtblCore(TClnbl src) : base(src)
+            public ImmtblCore(TClnbl src)
             {
                 TrmrkPrefix = src.TrmrkPrefix;
                 MaxDecimalValue = src.MaxDecimalValue;
@@ -40,13 +40,13 @@ namespace Turmerik.AspNetCore.Infrastucture
             public decimal MinDecimalValue { get; }
         }
 
-        public class MtblCore : MtblCoreBase, IClnblCore
+        public class MtblCore : IClnblCore
         {
             public MtblCore()
             {
             }
 
-            public MtblCore(TClnbl src) : base(src)
+            public MtblCore(TClnbl src)
             {
                 TrmrkPrefix = src.TrmrkPrefix;
                 MaxDecimalValue = src.MaxDecimalValue;

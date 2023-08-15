@@ -78,6 +78,10 @@
     <Compile Include="Controls\ClickToggleIconLabel.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Controls\FsTreeNode.cs" />
+    <Compile Include="Controls\FsTreeView.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Controls\IconLabel.cs">
       <SubType>Component</SubType>
     </Compile>

@@ -16,7 +16,7 @@ namespace Turmerik.Cloneable
     /// <typeparam name="TClnbl">The cloneable type.</typeparam>
     /// <typeparam name="TImmtbl">The immutable type.</typeparam>
     /// <typeparam name="TMtbl">The mutable type</typeparam>
-    public class ClnblCore
+    /* public class ClnblCore
     {
         public interface IClnblCore
         {
@@ -78,6 +78,11 @@ namespace Turmerik.Cloneable
         public abstract class ImmtblCoreBase : IClnblCore
         {
             protected ImmtblCoreBase(TClnbl src)
+            {
+            }
+
+
+            protected ImmtblCoreBase()
             {
             }
 
@@ -251,7 +256,7 @@ namespace Turmerik.Cloneable
             public IEnumerable<KeyValuePair<TKey, TClnbl>> AsNmrbl() => this;
             public Dictionary<TKey, TMtbl> AsDictnr() => this;
         }
-    }
+    } */
 
     public interface IDictionaryCore<TKey, TValue> : IEnumerable
     {

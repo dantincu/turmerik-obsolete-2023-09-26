@@ -101,6 +101,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Turmerik.MkFsDirsPair.Conso
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Turmerik.ObjectViewer.WinFormsApp", "Turmerik.ObjectViewer.WinFormsApp\Turmerik.ObjectViewer.WinFormsApp.csproj", "{955857B6-4F6D-4F4B-B752-743FAE6A0EE5}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Turmerik.ObjectViewer.Lib", "Turmerik.ObjectViewer.Lib\Turmerik.ObjectViewer.Lib.csproj", "{BCACEDD8-E893-4993-B575-87536A3F004D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Turmerik.ObjectViewer.WindowsFormsUCLib", "Turmerik.ObjectViewer.WindowsFormsUCLib\Turmerik.ObjectViewer.WindowsFormsUCLib.csproj", "{5E04C916-8737-4BE3-AB0E-C21A74261E0B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -231,6 +235,14 @@ Global
 		{955857B6-4F6D-4F4B-B752-743FAE6A0EE5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{955857B6-4F6D-4F4B-B752-743FAE6A0EE5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{955857B6-4F6D-4F4B-B752-743FAE6A0EE5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BCACEDD8-E893-4993-B575-87536A3F004D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BCACEDD8-E893-4993-B575-87536A3F004D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BCACEDD8-E893-4993-B575-87536A3F004D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BCACEDD8-E893-4993-B575-87536A3F004D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5E04C916-8737-4BE3-AB0E-C21A74261E0B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5E04C916-8737-4BE3-AB0E-C21A74261E0B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5E04C916-8737-4BE3-AB0E-C21A74261E0B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5E04C916-8737-4BE3-AB0E-C21A74261E0B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -276,6 +288,8 @@ Global
 		{E27C0A73-6EB1-45DB-A0CB-B82D64170555} = {58B107F0-C220-4721-82B6-E77C972AEE4D}
 		{98C10AE6-D073-45A8-A257-9B9A33D7E277} = {58B107F0-C220-4721-82B6-E77C972AEE4D}
 		{955857B6-4F6D-4F4B-B752-743FAE6A0EE5} = {12FEC7E3-9D8C-46DE-B949-193A3550FE2C}
+		{BCACEDD8-E893-4993-B575-87536A3F004D} = {12FEC7E3-9D8C-46DE-B949-193A3550FE2C}
+		{5E04C916-8737-4BE3-AB0E-C21A74261E0B} = {12FEC7E3-9D8C-46DE-B949-193A3550FE2C}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {884DC105-C0BD-4026-B220-D2D435105F94}

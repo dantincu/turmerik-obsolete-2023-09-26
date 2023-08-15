@@ -1,14 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Linq;
 using System.Text;
 using Turmerik.Cloneable;
 using Turmerik.Text;
+using Turmerik.Utils;
 
 namespace Turmerik.Infrastucture
 {
-    public class TrmrkMetadataCore<TClnbl> : ClnblCore
+    public class TrmrkMetadataCore<TClnbl>
     {
-        public new interface IClnblCore : ClnblCore.IClnblCore
+        public interface IClnblCore
         {
             string MetadataTypeName { get; }
         }
@@ -16,26 +19,25 @@ namespace Turmerik.Infrastucture
 
     public class TrmrkMetadataCore<TClnbl, TMetadata> : TrmrkMetadataCore<TClnbl>
     {
-        public new interface IClnblCore : TrmrkMetadataCore<TClnbl>.IClnblCore
+        public interface IClnbl : IClnblCore
         {
             [ClnblIgnoreMethod]
             TMetadata GetMetadata();
         }
     }
 
-    public class TrmrkMetadataCore<TClnbl, TImmtbl, TMtbl, TMetadata> : ClnblCore<TClnbl, TImmtbl, TMtbl>
+    public class TrmrkMetadataCore<TClnbl, TImmtbl, TMtbl, TMetadata>
         where TClnbl : TrmrkMetadataCore<TClnbl, TImmtbl, TMtbl, TMetadata>.IClnblCore
         where TImmtbl : TrmrkMetadataCore<TClnbl, TImmtbl, TMtbl, TMetadata>.ImmtblCoreBase, TClnbl
         where TMtbl : TrmrkMetadataCore<TClnbl, TImmtbl, TMtbl, TMetadata>.MtblCoreBase, TClnbl
-        where TMetadata : ClnblCore.IClnblCore
     {
-        public new interface IClnblCore : TrmrkMetadataCore<TClnbl, TMetadata>.IClnblCore, ClnblCore<TClnbl, TImmtbl, TMtbl>.IClnblCore
+        public interface IClnblCore : TrmrkMetadataCore<TClnbl, TMetadata>.IClnbl
         {
         }
 
-        public new abstract class ImmtblCoreBase : ClnblCore<TClnbl, TImmtbl, TMtbl>.ImmtblCoreBase, IClnblCore
+        public abstract class ImmtblCoreBase : IClnblCore
         {
-            public ImmtblCoreBase(TClnbl src) : base(src)
+            public ImmtblCoreBase(TClnbl src)
             {
                 MetadataTypeName = src.MetadataTypeName;
             }
@@ -45,13 +47,13 @@ namespace Turmerik.Infrastucture
             public abstract TMetadata GetMetadata();
         }
 
-        public new abstract class MtblCoreBase : ClnblCore<TClnbl, TImmtbl, TMtbl>.MtblCoreBase, IClnblCore
+        public new abstract class MtblCoreBase : IClnblCore
         {
             public MtblCoreBase()
             {
             }
 
-            public MtblCoreBase(TClnbl src) : base(src)
+            public MtblCoreBase(TClnbl src)
             {
                 MetadataTypeName = src.MetadataTypeName;
             }
@@ -66,6 +68,6 @@ namespace Turmerik.Infrastucture
 
         public static TImmtbl JsonToImmtbl(
             string jsonStr) => JsonToMtbl(
-                jsonStr).AsImmtbl();
+                jsonStr).IfNotNull(mtbl => mtbl.CreateInstance<TImmtbl>());
     }
 }

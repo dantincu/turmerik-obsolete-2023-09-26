@@ -9,26 +9,26 @@ using Turmerik.Utils;
 
 namespace Turmerik.Infrastucture
 {
-    public class TrmrkAppMetadataCore<TClnbl> : ClnblCore
+    public class TrmrkAppMetadataCore<TClnbl>
     {
-        public new interface IClnblCore : ClnblCore.IClnblCore
+        public interface IClnblCore
         {
             string TrmrkBase64LongUuid { get; }
         }
     }
 
-    public class TrmrkAppMetadataCore<TClnbl, TImmtbl, TMtbl> : ClnblCore<TClnbl, TImmtbl, TMtbl>
+    public class TrmrkAppMetadataCore<TClnbl, TImmtbl, TMtbl>
         where TClnbl : TrmrkAppMetadataCore<TClnbl, TImmtbl, TMtbl>.IClnblCore
         where TImmtbl : TrmrkAppMetadataCore<TClnbl, TImmtbl, TMtbl>.ImmtblCore, TClnbl
         where TMtbl : TrmrkAppMetadataCore<TClnbl, TImmtbl, TMtbl>.MtblCore, TClnbl
     {
-        public new interface IClnblCore : TrmrkAppMetadataCore<TClnbl>.IClnblCore, ClnblCore<TClnbl, TImmtbl, TMtbl>.IClnblCore
+        public interface IClnblCore : TrmrkAppMetadataCore<TClnbl>.IClnblCore
         {
         }
 
-        public class ImmtblCore : ImmtblCoreBase, IClnblCore
+        public class ImmtblCore : IClnblCore
         {
-            public ImmtblCore(TClnbl src) : base(src)
+            public ImmtblCore(TClnbl src)
             {
                 TrmrkBase64LongUuid = src.TrmrkBase64LongUuid;
             }
@@ -36,13 +36,13 @@ namespace Turmerik.Infrastucture
             public string TrmrkBase64LongUuid { get; }
         }
 
-        public class MtblCore : MtblCoreBase, IClnblCore
+        public class MtblCore : IClnblCore
         {
             public MtblCore()
             {
             }
 
-            public MtblCore(TClnbl src) : base(src)
+            public MtblCore(TClnbl src)
             {
                 TrmrkBase64LongUuid = src.TrmrkBase64LongUuid;
             }

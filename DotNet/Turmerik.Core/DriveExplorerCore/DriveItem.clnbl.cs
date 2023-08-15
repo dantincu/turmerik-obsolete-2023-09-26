@@ -5,8 +5,10 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 using Turmerik.Cloneable;
 using Turmerik.Collections;
+using Turmerik.Utils;
 
 namespace Turmerik.DriveExplorerCore
 {
@@ -17,135 +19,143 @@ namespace Turmerik.DriveExplorerCore
         Slides
     }
 
-    public class DriveItemIdnf<TClnbl> : ClnblCore
+    public static class DriveItemIdnf
     {
-        public new interface IClnblCore : ClnblCore.IClnblCore
+        public interface IClnbl
         {
             string Id { get; }
             string Name { get; }
 
             string PrPath { get; }
-            string PrRelPath { get; }
 
-            DriveItemIdnf.IClnbl GetPrIdnf();
-            DriveItemIdnf.IClnbl GetPrBaseIdnf();
+            IClnbl GetPrIdnf();
 
-            bool Equals(TClnbl other);
-        }
-    }
-
-    public class DriveItemIdnf<TClnbl, TImmtbl, TMtbl> : ClnblCore<TClnbl, TImmtbl, TMtbl>
-        where TClnbl : DriveItemIdnf<TClnbl, TImmtbl, TMtbl>.IClnblCore
-        where TImmtbl : DriveItemIdnf<TClnbl, TImmtbl, TMtbl>.ImmtblCore, TClnbl
-        where TMtbl : DriveItemIdnf<TClnbl, TImmtbl, TMtbl>.MtblCore, TClnbl
-    {
-        public new interface IClnblCore : DriveItemIdnf<TClnbl>.IClnblCore, ClnblCore<TClnbl, TImmtbl, TMtbl>.IClnblCore
-        {
+            bool Equals(IClnbl other);
         }
 
-        public class ImmtblCore : ImmtblCoreBase, IClnblCore
+        public class Immtbl : IClnbl
         {
-            public ImmtblCore(TClnbl src) : base(src)
+            public Immtbl(IClnbl src)
             {
                 Id = src.Id;
                 Name = src.Name;
                 PrPath = src.PrPath;
-                PrRelPath = src.PrRelPath;
-
                 PrIdnf = src.GetPrIdnf().AsImmtbl();
-                PrBaseIdnf = src.GetPrBaseIdnf().AsImmtbl();
             }
 
             public string Id { get; }
             public string Name { get; }
 
             public string PrPath { get; }
-            public string PrRelPath { get; }
 
-            public DriveItemIdnf.Immtbl PrIdnf { get; }
-            public DriveItemIdnf.Immtbl PrBaseIdnf { get; }
+            public Immtbl PrIdnf { get; }
 
-            public DriveItemIdnf.IClnbl GetPrIdnf() => PrIdnf;
-            public DriveItemIdnf.IClnbl GetPrBaseIdnf() => PrBaseIdnf;
+            public IClnbl GetPrIdnf() => PrIdnf;
 
-            public bool Equals(TClnbl other)
-            {
-                bool equals = other.Id == Id || other.PrPath == PrPath;
-                return equals;
-            }
+            public bool Equals(IClnbl other) => AreEqual(this, other);
 
             public override bool Equals(
-                object obj) => obj is TClnbl other && Equals(other);
+                object obj) => obj is IClnbl other && Equals(other);
         }
 
-        public class MtblCore : MtblCoreBase, IClnblCore
+        public class Mtbl : IClnbl
         {
-            public MtblCore(TClnbl src) : base(src)
+            public Mtbl()
+            {
+            }
+
+            public Mtbl(IClnbl src)
             {
                 Id = src.Id;
                 Name = src.Name;
                 PrPath = src.PrPath;
-                PrRelPath = src.PrRelPath;
-
                 PrIdnf = src.GetPrIdnf().AsMtbl();
-                PrBaseIdnf = src.GetPrBaseIdnf().AsMtbl();
-            }
-
-            public MtblCore()
-            {
             }
 
             public string Id { get; set; }
             public string Name { get; set; }
 
             public string PrPath { get; set; }
-            public string PrRelPath { get; set; }
 
-            public DriveItemIdnf.Mtbl PrIdnf { get; set; }
-            public DriveItemIdnf.Mtbl PrBaseIdnf { get; set; }
+            public Mtbl PrIdnf { get; set; }
 
-            public DriveItemIdnf.IClnbl GetPrIdnf() => PrIdnf;
-            public DriveItemIdnf.IClnbl GetPrBaseIdnf() => PrBaseIdnf;
+            public IClnbl GetPrIdnf() => PrIdnf;
 
-            public bool Equals(TClnbl other)
-            {
-                bool equals = other.Id == Id || other.PrPath == PrPath;
-                return equals;
-            }
+            public bool Equals(IClnbl other) => AreEqual(this, other);
 
             public override bool Equals(
-                object obj) => obj is TClnbl other && Equals(other);
+                object obj) => obj is IClnbl other && Equals(other);
         }
+
+        public static bool AreEqual(
+            IClnbl left,
+            IClnbl right)
+        {
+            bool equals = left.Id == right.Id && left.Name == right.Name && left.PrPath == right.PrPath;
+
+            if (equals)
+            {
+                var leftPrIdnf = left.GetPrIdnf();
+                var rightPrIdnf = right.GetPrIdnf();
+
+                equals = (leftPrIdnf == null) == (rightPrIdnf == null);
+
+                if (equals && leftPrIdnf != null)
+                {
+                    equals = leftPrIdnf.Equals(rightPrIdnf);
+                }
+            }
+
+            return equals;
+        }
+
+        public static Immtbl ToImmtbl(
+            this IClnbl src) => new Immtbl(src);
+
+        public static Immtbl AsImmtbl(
+            this IClnbl src) => src as Immtbl ?? src?.ToImmtbl();
+
+        public static Mtbl ToMtbl(
+            this IClnbl src) => new Mtbl(src);
+
+        public static Mtbl AsMtbl(
+            this IClnbl src) => src as Mtbl ?? src?.ToMtbl();
+
+        public static ReadOnlyCollection<Immtbl> ToImmtblCllctn(
+            this IEnumerable<IClnbl> src) => src?.Select(
+                item => item?.AsImmtbl()).RdnlC();
+
+        public static ReadOnlyCollection<Immtbl> AsImmtblCllctn(
+            this IEnumerable<IClnbl> src) =>
+            src as ReadOnlyCollection<Immtbl> ?? src?.ToImmtblCllctn();
+
+        public static List<Mtbl> ToMtblList(
+            this IEnumerable<IClnbl> src) => src?.Select(
+                item => item?.AsMtbl()).ToList();
+
+        public static List<Mtbl> AsMtblList(
+            this IEnumerable<IClnbl> src) => src as List<Mtbl> ?? src?.ToMtblList();
+
+        public static ReadOnlyDictionary<TKey, Immtbl> AsImmtblDictnr<TKey>(
+            IDictionaryCore<TKey, IClnbl> src) => src as ReadOnlyDictionary<TKey, Immtbl> ?? (src as Dictionary<TKey, Mtbl>)?.ToDictionary(
+                kvp => kvp.Key, kvp => kvp.Value?.AsImmtbl()).RdnlD();
+
+        public static Dictionary<TKey, Mtbl> AsMtblDictnr<TKey>(
+            IDictionaryCore<TKey, IClnbl> src) => src as Dictionary<TKey, Mtbl> ?? (src as ReadOnlyDictionary<TKey, Immtbl>)?.ToDictionary(
+                kvp => kvp.Key, kvp => kvp.Value?.AsMtbl());
+
+        public static IDictionaryCore<TKey, IClnbl> ToClnblDictnr<TKey>(
+            this Dictionary<TKey, Mtbl> src) => (IDictionaryCore<TKey, IClnbl>)src.ToDictionary(
+                kvp => kvp.Key, kvp => kvp.Value.SafeCast<IClnbl>());
+
+        public static IDictionaryCore<TKey, IClnbl> ToClnblDictnr<TKey>(
+            this ReadOnlyDictionary<TKey, Immtbl> src) => (IDictionaryCore<TKey, IClnbl>)src.ToDictionary(
+                kvp => kvp.Key, kvp => kvp.Value.SafeCast<IClnbl>());
     }
 
-    public class DriveItemIdnf : DriveItemIdnf<DriveItemIdnf.IClnbl, DriveItemIdnf.Immtbl, DriveItemIdnf.Mtbl>
+    public static class DriveItem
     {
-        public interface IClnbl : IClnblCore
-        {
-        }
-
-        public class Immtbl : ImmtblCore, IClnbl
-        {
-            public Immtbl(IClnbl src) : base(src)
-            {
-            }
-        }
-
-        public class Mtbl : MtblCore, IClnbl
-        {
-            public Mtbl()
-            {
-            }
-
-            public Mtbl(IClnbl src) : base(src)
-            {
-            }
-        }
-    }
-
-    public class DriveItem : DriveItemIdnf<DriveItem.IClnbl, DriveItem.Immtbl, DriveItem.Mtbl>
-    {
-        public interface IClnbl : IClnblCore
+        public interface IClnbl : DriveItemIdnf.IClnbl
         {
             string DisplayName { get; }
             bool? IsFolder { get; }
@@ -167,11 +177,11 @@ namespace Turmerik.DriveExplorerCore
             long? SizeBytesCount { get; }
             string WebUrl { get; }
 
-            IClnblCollection GetSubFolders();
-            IClnblCollection GetFolderFiles();
+            IEnumerable<IClnbl> GetSubFolders();
+            IEnumerable<IClnbl> GetFolderFiles();
         }
 
-        public class Immtbl : ImmtblCore, IClnbl
+        public class Immtbl : DriveItemIdnf.Immtbl, IClnbl
         {
             public Immtbl(IClnbl src) : base(src)
             {
@@ -219,14 +229,14 @@ namespace Turmerik.DriveExplorerCore
             public long? SizeBytesCount { get; }
             public string WebUrl { get; }
 
-            public ImmtblCollection SubFolders { get; }
-            public ImmtblCollection FolderFiles { get; }
+            public ReadOnlyCollection<Immtbl> SubFolders { get; }
+            public ReadOnlyCollection<Immtbl> FolderFiles { get; }
 
-            public IClnblCollection GetFolderFiles() => FolderFiles;
-            public IClnblCollection GetSubFolders() => SubFolders;
+            public IEnumerable<IClnbl> GetFolderFiles() => FolderFiles;
+            public IEnumerable<IClnbl> GetSubFolders() => SubFolders;
         }
 
-        public class Mtbl : MtblCore, IClnbl
+        public class Mtbl : DriveItemIdnf.Mtbl, IClnbl
         {
             public Mtbl()
             {
@@ -278,11 +288,54 @@ namespace Turmerik.DriveExplorerCore
             public long? SizeBytesCount { get; set; }
             public string WebUrl { get; set; }
 
-            public MtblList SubFolders { get; set; }
-            public MtblList FolderFiles { get; set; }
+            public List<Mtbl> SubFolders { get; set; }
+            public List<Mtbl> FolderFiles { get; set; }
 
-            public IClnblCollection GetFolderFiles() => FolderFiles;
-            public IClnblCollection GetSubFolders() => SubFolders;
+            public IEnumerable<IClnbl> GetFolderFiles() => FolderFiles;
+            public IEnumerable<IClnbl> GetSubFolders() => SubFolders;
         }
+
+        public static Immtbl ToImmtbl(
+            this IClnbl src) => new Immtbl(src);
+
+        public static Immtbl AsImmtbl(
+            this IClnbl src) => src as Immtbl ?? src?.ToImmtbl();
+
+        public static Mtbl ToMtbl(
+            this IClnbl src) => new Mtbl(src);
+
+        public static Mtbl AsMtbl(
+            this IClnbl src) => src as Mtbl ?? src?.ToMtbl();
+
+        public static ReadOnlyCollection<Immtbl> ToImmtblCllctn(
+            this IEnumerable<IClnbl> src) => src?.Select(
+                item => item?.AsImmtbl()).RdnlC();
+
+        public static ReadOnlyCollection<Immtbl> AsImmtblCllctn(
+            this IEnumerable<IClnbl> src) =>
+            src as ReadOnlyCollection<Immtbl> ?? src?.ToImmtblCllctn();
+
+        public static List<Mtbl> ToMtblList(
+            this IEnumerable<IClnbl> src) => src?.Select(
+                item => item?.AsMtbl()).ToList();
+
+        public static List<Mtbl> AsMtblList(
+            this IEnumerable<IClnbl> src) => src as List<Mtbl> ?? src?.ToMtblList();
+
+        public static ReadOnlyDictionary<TKey, Immtbl> AsImmtblDictnr<TKey>(
+            IDictionaryCore<TKey, IClnbl> src) => src as ReadOnlyDictionary<TKey, Immtbl> ?? (src as Dictionary<TKey, Mtbl>)?.ToDictionary(
+                kvp => kvp.Key, kvp => kvp.Value?.AsImmtbl()).RdnlD();
+
+        public static Dictionary<TKey, Mtbl> AsMtblDictnr<TKey>(
+            IDictionaryCore<TKey, IClnbl> src) => src as Dictionary<TKey, Mtbl> ?? (src as ReadOnlyDictionary<TKey, Immtbl>)?.ToDictionary(
+                kvp => kvp.Key, kvp => kvp.Value?.AsMtbl());
+
+        public static IDictionaryCore<TKey, IClnbl> ToClnblDictnr<TKey>(
+            this Dictionary<TKey, Mtbl> src) => (IDictionaryCore<TKey, IClnbl>)src.ToDictionary(
+                kvp => kvp.Key, kvp => kvp.Value.SafeCast<IClnbl>());
+
+        public static IDictionaryCore<TKey, IClnbl> ToClnblDictnr<TKey>(
+            this ReadOnlyDictionary<TKey, Immtbl> src) => (IDictionaryCore<TKey, IClnbl>)src.ToDictionary(
+                kvp => kvp.Key, kvp => kvp.Value.SafeCast<IClnbl>());
     }
 }

@@ -11,9 +11,9 @@ using Turmerik.Text;
 
 namespace Turmerik.FileSystem
 {
-    public class FsPathNormalizerResult : ClnblCore<FsPathNormalizerResult.IClnbl, FsPathNormalizerResult.Immtbl, FsPathNormalizerResult.Mtbl>
+    public class FsPathNormalizerResult
     {
-        public interface IClnbl : IClnblCore
+        public interface IClnbl
         {
             string NormalizedPath { get; }
             bool IsValid { get; }
@@ -30,9 +30,9 @@ namespace Turmerik.FileSystem
             IEnumerable<string> GetSegments();
         }
 
-        public class Immtbl : ImmtblCoreBase, IClnbl
+        public class Immtbl : IClnbl
         {
-            public Immtbl(IClnbl src) : base(src)
+            public Immtbl(IClnbl src)
             {
                 NormalizedPath = src.NormalizedPath;
                 IsValid = src.IsValid;
@@ -66,13 +66,13 @@ namespace Turmerik.FileSystem
             public IEnumerable<string> GetSegments() => Segments;
         }
 
-        public class Mtbl : MtblCoreBase, IClnbl
+        public class Mtbl : IClnbl
         {
             public Mtbl()
             {
             }
 
-            public Mtbl(IClnbl src) : base(src)
+            public Mtbl(IClnbl src)
             {
                 NormalizedPath = src.NormalizedPath;
                 IsValid = src.IsValid;
@@ -107,9 +107,9 @@ namespace Turmerik.FileSystem
         }
     }
 
-    public class FsPathNormalizerOpts : ClnblCore<FsPathNormalizerOpts.IClnbl, FsPathNormalizerOpts.Immtbl, FsPathNormalizerOpts.Mtbl>
+    public class FsPathNormalizerOpts
     {
-        public interface IClnbl : IClnblCore
+        public interface IClnbl
         {
             string Path { get; }
             bool? IsUnixStyle { get; }
@@ -117,9 +117,9 @@ namespace Turmerik.FileSystem
             int MaxStartingSlashesAllowed { get; }
         }
 
-        public class Immtbl : ImmtblCoreBase, IClnbl
+        public class Immtbl : IClnbl
         {
-            public Immtbl(IClnbl src) : base(src)
+            public Immtbl(IClnbl src)
             {
                 Path = src.Path;
                 IsUnixStyle = src.IsUnixStyle;
@@ -133,13 +133,13 @@ namespace Turmerik.FileSystem
             public int MaxStartingSlashesAllowed { get; }
         }
 
-        public class Mtbl : MtblCoreBase, IClnbl
+        public class Mtbl : IClnbl
         {
             public Mtbl()
             {
             }
 
-            public Mtbl(IClnbl src) : base(src)
+            public Mtbl(IClnbl src)
             {
                 Path = src.Path;
                 IsUnixStyle = src.IsUnixStyle;

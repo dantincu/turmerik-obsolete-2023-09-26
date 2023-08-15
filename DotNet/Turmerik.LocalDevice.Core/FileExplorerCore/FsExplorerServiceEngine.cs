@@ -8,7 +8,6 @@ using System.Threading.Tasks;
 using Turmerik.DriveExplorerCore;
 using Turmerik.FileSystem;
 using Turmerik.Text;
-using static System.Environment;
 
 namespace Turmerik.LocalDevice.Core.FileExplorerCore
 {
@@ -29,11 +28,11 @@ namespace Turmerik.LocalDevice.Core.FileExplorerCore
             string newFileName)
         {
             string newPath = Path.Combine(
-                newPrIdnf.GetFullPath(),
+                newPrIdnf.GetFullPath(DirSeparator),
                 newFileName);
 
             File.Copy(
-                idnf.GetFullPath(),
+                idnf.GetFullPath(DirSeparator),
                 newPath);
 
             var newEntry = new FileInfo(newPath);
@@ -48,11 +47,11 @@ namespace Turmerik.LocalDevice.Core.FileExplorerCore
             string newFolderName)
         {
             string newPath = Path.Combine(
-                newPrIdnf.GetFullPath(),
+                newPrIdnf.GetFullPath(DirSeparator),
                 newFolderName);
 
             FsH.CopyDirectory(
-                idnf.GetFullPath(),
+                idnf.GetFullPath(DirSeparator),
                 newPath);
 
             var newEntry = new DirectoryInfo(newPath);
@@ -66,7 +65,7 @@ namespace Turmerik.LocalDevice.Core.FileExplorerCore
             string newFolderName)
         {
             string newPath = Path.Combine(
-                prIdnf.GetFullPath(),
+                prIdnf.GetFullPath(DirSeparator),
                 newFolderName);
 
             Directory.CreateDirectory(newPath);
@@ -96,7 +95,7 @@ namespace Turmerik.LocalDevice.Core.FileExplorerCore
             string text)
         {
             string newPath = Path.Combine(
-                prIdnf.GetFullPath(),
+                prIdnf.GetFullPath(DirSeparator),
                 newFileName);
 
             File.WriteAllText(newPath, text);
@@ -110,7 +109,7 @@ namespace Turmerik.LocalDevice.Core.FileExplorerCore
         public async Task<DriveItem.Mtbl> DeleteFileAsync(DriveItemIdnf.IClnbl idnf)
         {
             var fileInfo = new FileInfo(
-                idnf.GetFullPath());
+                idnf.GetFullPath(DirSeparator));
 
             var driveItem = GetDriveItem(fileInfo, false);
 
@@ -121,7 +120,7 @@ namespace Turmerik.LocalDevice.Core.FileExplorerCore
         public async Task<DriveItem.Mtbl> DeleteFolderAsync(DriveItemIdnf.IClnbl idnf)
         {
             var dirInfo = new DirectoryInfo(
-                idnf.GetFullPath());
+                idnf.GetFullPath(DirSeparator));
 
             var driveItem = GetDriveItem(dirInfo, false);
             dirInfo.Delete(true);
@@ -131,11 +130,11 @@ namespace Turmerik.LocalDevice.Core.FileExplorerCore
 
         public async Task<string> GetDriveFolderWebUrlAsync(
             DriveItemIdnf.IClnbl idnf) => GetDriveItemUrl(
-                idnf.GetFullPath());
+                idnf.GetFullPath(DirSeparator));
 
         public async Task<string> GetDriveFileWebUrlAsync(
             DriveItemIdnf.IClnbl idnf) => GetDriveItemUrl(
-                idnf.GetFullPath());
+                idnf.GetFullPath(DirSeparator));
 
         /* public async Task<DriveItemMtbl> GetRootFolderAsync()
         {
@@ -197,7 +196,7 @@ namespace Turmerik.LocalDevice.Core.FileExplorerCore
 
         public async Task<DriveItem.Mtbl> GetTextFileAsync(DriveItemIdnf.IClnbl idnf)
         {
-            string path = idnf.GetFullPath();
+            string path = idnf.GetFullPath(DirSeparator);
             var entry = new FileInfo(path);
 
             var fileItem = GetDriveItem(entry, false);
@@ -211,7 +210,7 @@ namespace Turmerik.LocalDevice.Core.FileExplorerCore
             DriveItemIdnf.IClnbl newPrIdnf,
             string newFileName)
         {
-            string path = idnf.GetFullPath();
+            string path = idnf.GetFullPath(DirSeparator);
             string newPath = Path.Combine(path, newFileName);
 
             File.Move(path, newPath);
@@ -226,8 +225,8 @@ namespace Turmerik.LocalDevice.Core.FileExplorerCore
             DriveItemIdnf.IClnbl newPrIdnf,
             string newFolderName)
         {
-            string path = idnf.GetFullPath();
-            string newPrPath = newPrIdnf.GetFullPath();
+            string path = idnf.GetFullPath(DirSeparator);
+            string newPrPath = newPrIdnf.GetFullPath(DirSeparator);
 
             string newPath = Path.Combine(
                 newPrPath,

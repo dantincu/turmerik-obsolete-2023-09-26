@@ -48,9 +48,9 @@ namespace Turmerik.Infrastucture
 
     }
 
-    public class AppProcessIdentifierData : ClnblCore<AppProcessIdentifierData.IClnbl, AppProcessIdentifierData.Immtbl, AppProcessIdentifierData.Mtbl>
+    public class AppProcessIdentifierData
     {
-        public interface IClnbl : IClnblCore
+        public interface IClnbl
         {
             DateTime StartTimeUtc { get; }
             long StartTimeUtcTicks { get; }
@@ -60,9 +60,9 @@ namespace Turmerik.Infrastucture
             string ProcessName { get; }
         }
 
-        public class Immtbl : ImmtblCoreBase, IClnbl
+        public class Immtbl : IClnbl
         {
-            public Immtbl(IClnbl src) : base(src)
+            public Immtbl(IClnbl src)
             {
                 StartTimeUtc = src.StartTimeUtc;
                 StartTimeUtcTicks = src.StartTimeUtcTicks;
@@ -80,13 +80,13 @@ namespace Turmerik.Infrastucture
             public string ProcessName { get; }
         }
 
-        public class Mtbl : MtblCoreBase, IClnbl
+        public class Mtbl : IClnbl
         {
             public Mtbl()
             {
             }
 
-            public Mtbl(IClnbl src) : base(src)
+            public Mtbl(IClnbl src)
             {
                 StartTimeUtc = src.StartTimeUtc;
                 StartTimeUtcTicks = src.StartTimeUtcTicks;

@@ -1,0 +1,147 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{5E04C916-8737-4BE3-AB0E-C21A74261E0B}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <RootNamespace>Turmerik.ObjectViewer.WindowsFormsUCLib</RootNamespace>
+    <AssemblyName>Turmerik.ObjectViewer.WindowsFormsUCLib</AssemblyName>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <Deterministic>true</Deterministic>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Microsoft.Bcl.AsyncInterfaces, Version=7.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Bcl.AsyncInterfaces.7.0.0\lib\net462\Microsoft.Bcl.AsyncInterfaces.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.DependencyInjection.Abstractions, Version=7.0.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Extensions.DependencyInjection.Abstractions.7.0.0\lib\net462\Microsoft.Extensions.DependencyInjection.Abstractions.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Runtime.CompilerServices.Unsafe, Version=4.0.4.1, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Runtime.CompilerServices.Unsafe.4.5.3\lib\net461\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Threading.Tasks.Extensions, Version=4.2.0.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Threading.Tasks.Extensions.4.5.4\lib\net461\System.Threading.Tasks.Extensions.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Controls\CsprojExecutionUC.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\CsprojExecutionUC.Designer.cs">
+      <DependentUpon>CsprojExecutionUC.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\CsScriptExecutionUC.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\CsScriptExecutionUC.Designer.cs">
+      <DependentUpon>CsScriptExecutionUC.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\EditableFilePathUC.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\EditableFilePathUC.Designer.cs">
+      <DependentUpon>EditableFilePathUC.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\EditableFolderPathUC.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\EditableFolderPathUC.Designer.cs">
+      <DependentUpon>EditableFolderPathUC.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\FilePathUC.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\FilePathUC.Designer.cs">
+      <DependentUpon>FilePathUC.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\ObjectsSummaryUC.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\ObjectsSummaryUC.Designer.cs">
+      <DependentUpon>ObjectsSummaryUC.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\ObjectsUC.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\ObjectsUC.Designer.cs">
+      <DependentUpon>ObjectsUC.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Dependencies\ServiceCollectionBuilder.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Service Include="{94E38DFF-614B-4cbd-B67C-F211BB35CE8B}" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Components\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Turmerik.Core\Turmerik.Core.csproj">
+      <Project>{ac31c2ca-db3f-470e-8200-519d0dccb3b5}</Project>
+      <Name>Turmerik.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Turmerik.ObjectViewer.Lib\Turmerik.ObjectViewer.Lib.csproj">
+      <Project>{bcacedd8-e893-4993-b575-87536a3f004d}</Project>
+      <Name>Turmerik.ObjectViewer.Lib</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Turmerik.WinForms\Turmerik.WinForms.csproj">
+      <Project>{8E3A7878-69F3-4AC1-AE28-77920AD3E60A}</Project>
+      <Name>Turmerik.WinForms</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Controls\CsprojExecutionUC.resx">
+      <DependentUpon>CsprojExecutionUC.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\CsScriptExecutionUC.resx">
+      <DependentUpon>CsScriptExecutionUC.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\EditableFilePathUC.resx">
+      <DependentUpon>EditableFilePathUC.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\EditableFolderPathUC.resx">
+      <DependentUpon>EditableFolderPathUC.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\FilePathUC.resx">
+      <DependentUpon>FilePathUC.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\ObjectsSummaryUC.resx">
+      <DependentUpon>ObjectsSummaryUC.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\ObjectsUC.resx">
+      <DependentUpon>ObjectsUC.cs</DependentUpon>
+    </EmbeddedResource>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

@@ -15,10 +15,10 @@ namespace Turmerik.ObjectViewer.WinFormsApp.Dependencies
             IServiceCollection services)
         {
             WinFormsServiceCollectionBuilder.RegisterAll(services);
+            WindowsFormsUCLib.Dependencies.ServiceCollectionBuilder.RegisterAll(services);
 
-            services.AddTransient<IMainFormVM, MainFormVM>();
             services.AddTransient<IObjectViewerVM, ObjectViewerVM>();
-            services.AddTransient<IFieldViewerVM, FieldViewerVM>();
+            services.AddTransient<IMainFormVM, MainFormVM>();
         }
     }
 }

@@ -18,16 +18,16 @@ namespace Turmerik.LocalDevice.Core.Env
         Src
     }
 
-    public partial class AppEnvLocator : ClnblCore<AppEnvLocator.IClnbl, AppEnvLocator.Immtbl, AppEnvLocator.Mtbl>
+    public partial class AppEnvLocator
     {
-        public interface IClnbl : IClnblCore
+        public interface IClnbl
         {
             string AppEnvDirBasePath { get; }
         }
 
-        public class Immtbl : ImmtblCoreBase, IClnbl
+        public class Immtbl : IClnbl
         {
-            public Immtbl(IClnbl src) : base(src)
+            public Immtbl(IClnbl src)
             {
                 AppEnvDirBasePath = src.AppEnvDirBasePath;
             }
@@ -35,13 +35,13 @@ namespace Turmerik.LocalDevice.Core.Env
             public string AppEnvDirBasePath { get; }
         }
 
-        public class Mtbl : MtblCoreBase, IClnbl
+        public class Mtbl : IClnbl
         {
             public Mtbl()
             {
             }
 
-            public Mtbl(IClnbl src) : base(src)
+            public Mtbl(IClnbl src)
             {
                 AppEnvDirBasePath = src.AppEnvDirBasePath;
             }

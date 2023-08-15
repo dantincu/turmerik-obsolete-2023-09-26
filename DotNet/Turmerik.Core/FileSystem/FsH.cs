@@ -163,5 +163,20 @@ namespace Turmerik.FileSystem
 
             return path;
         }
+
+        public static string CombinePaths(
+            string[] pathParts,
+            string dirSep)
+        {
+            pathParts = pathParts.Where(part => !string.IsNullOrWhiteSpace(part)).ToArray();
+            string retPath = null;
+
+            if (pathParts.Any())
+            {
+                retPath = string.Join(dirSep, pathParts);
+            }
+
+            return retPath;
+        }
     }
 }

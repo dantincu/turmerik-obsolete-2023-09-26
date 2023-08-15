@@ -11,9 +11,9 @@ using Turmerik.Text;
 
 namespace Turmerik.LocalDevice.Core.Logging
 {
-    public partial class AppLoggerOpts : ClnblCore<AppLoggerOpts.IClnbl, AppLoggerOpts.Immtbl, AppLoggerOpts.Mtbl>
+    public partial class AppLoggerOpts
     {
-        public interface IClnbl : IClnblCore
+        public interface IClnbl
         {
             string LogDirRelPath { get; }
             IAppEnv AppEnv { get; }
@@ -25,9 +25,9 @@ namespace Turmerik.LocalDevice.Core.Logging
             bool IsLoggerShared { get; }
         }
 
-        public class Immtbl : ImmtblCoreBase, IClnbl
+        public class Immtbl : IClnbl
         {
-            public Immtbl(IClnbl src) : base(src)
+            public Immtbl(IClnbl src)
             {
                 LogDirRelPath = src.LogDirRelPath;
                 AppEnv = src.AppEnv;
@@ -49,13 +49,13 @@ namespace Turmerik.LocalDevice.Core.Logging
             public bool IsLoggerShared { get; }
         }
 
-        public class Mtbl : MtblCoreBase, IClnbl
+        public class Mtbl : IClnbl
         {
             public Mtbl()
             {
             }
 
-            public Mtbl(IClnbl src) : base(src)
+            public Mtbl(IClnbl src)
             {
                 LogDirRelPath = src.LogDirRelPath;
                 AppEnv = src.AppEnv;

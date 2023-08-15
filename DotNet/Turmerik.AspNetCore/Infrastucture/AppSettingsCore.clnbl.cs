@@ -9,9 +9,9 @@ using Turmerik.Collections;
 
 namespace Turmerik.AspNetCore.Infrastucture
 {
-    public class AppSettingsCore<TClnbl> : ClnblCore
+    public class AppSettingsCore<TClnbl>
     {
-        public new interface IClnblCore : ClnblCore.IClnblCore
+        public interface IClnblCore
         {
             string TrmrkPrefix { get; }
 
@@ -19,18 +19,18 @@ namespace Turmerik.AspNetCore.Infrastucture
         }
     }
 
-    public class AppSettingsCore<TClnbl, TImmtbl, TMtbl> : ClnblCore<TClnbl, TImmtbl, TMtbl>
+    public class AppSettingsCore<TClnbl, TImmtbl, TMtbl>
         where TClnbl : AppSettingsCore<TClnbl, TImmtbl, TMtbl>.IClnblCore
         where TImmtbl : AppSettingsCore<TClnbl, TImmtbl, TMtbl>.ImmtblCore, TClnbl
         where TMtbl : AppSettingsCore<TClnbl, TImmtbl, TMtbl>.MtblCore, TClnbl
     {
-        public new interface IClnblCore : AppSettingsCore<TClnbl>.IClnblCore, ClnblCore<TClnbl, TImmtbl, TMtbl>.IClnblCore
+        public interface IClnblCore : AppSettingsCore<TClnbl>.IClnblCore
         {
         }
 
-        public class ImmtblCore : ImmtblCoreBase, IClnblCore
+        public class ImmtblCore : IClnblCore
         {
-            public ImmtblCore(TClnbl src) : base(src)
+            public ImmtblCore(TClnbl src)
             {
                 TrmrkPrefix = src.TrmrkPrefix;
                 ClientAppHosts = src.GetClientAppHosts()?.RdnlC();
@@ -42,13 +42,13 @@ namespace Turmerik.AspNetCore.Infrastucture
             public IEnumerable<string> GetClientAppHosts() => ClientAppHosts;
         }
 
-        public class MtblCore : MtblCoreBase, IClnblCore
+        public class MtblCore : IClnblCore
         {
             public MtblCore()
             {
             }
 
-            public MtblCore(TClnbl src) : base(src)
+            public MtblCore(TClnbl src)
             {
                 TrmrkPrefix = src.TrmrkPrefix;
                 ClientAppHosts = src.GetClientAppHosts()?.ToList();

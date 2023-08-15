@@ -149,7 +149,7 @@ namespace Turmerik.MsGraph.OneDriveExplorerCore
             var filesArr = children.Where(item => item.FileObject != null).ToArray();
             var foldersArr = children.Where(item => item.Folder != null).ToArray();
 
-            driveItem.FolderFiles = new DrvItm.MtblList(
+            driveItem.FolderFiles = new List<DrvItm.Mtbl>(
                 filesArr.Select(
                     item => ConvertDriveFile(
                         item,
@@ -158,7 +158,7 @@ namespace Turmerik.MsGraph.OneDriveExplorerCore
                             Id = graphItem.Id
                         }, true)));
 
-            driveItem.SubFolders = new DrvItm.MtblList(
+            driveItem.SubFolders = new List<DrvItm.Mtbl>(
                 foldersArr.Select(
                     item => ConvertDriveFolder(
                         item,
@@ -169,5 +169,7 @@ namespace Turmerik.MsGraph.OneDriveExplorerCore
 
             return driveItem;
         }
+
+        protected override string GetDirSeparator() => "/";
     }
 }

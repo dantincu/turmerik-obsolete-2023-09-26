@@ -11,9 +11,9 @@ using Turmerik.Utils;
 
 namespace Turmerik.Reflection.Cache
 {
-    public class CachedMemberFlagsCoreBase : ClnblCore
+    public class CachedMemberFlagsCoreBase
     {
-        public new interface IClnblCore
+        public interface IClnblCore
         {
             bool IsPublic { get; }
             bool IsFamily { get; }
@@ -24,18 +24,18 @@ namespace Turmerik.Reflection.Cache
         }
     }
 
-    public class CachedMemberFlagsCore<TClnbl, TImmtbl, TMtbl> : ClnblCore<TClnbl, TImmtbl, TMtbl>
+    public class CachedMemberFlagsCore<TClnbl, TImmtbl, TMtbl>
         where TClnbl : CachedMemberFlagsCore<TClnbl, TImmtbl, TMtbl>.IClnblCore
         where TImmtbl : CachedMemberFlagsCore<TClnbl, TImmtbl, TMtbl>.ImmtblCore, TClnbl
         where TMtbl : CachedMemberFlagsCore<TClnbl, TImmtbl, TMtbl>.MtblCore, TClnbl
     {
-        public new interface IClnblCore : ClnblCore<TClnbl, TImmtbl, TMtbl>.IClnblCore, CachedMemberFlagsCoreBase.IClnblCore
+        public interface IClnblCore : CachedMemberFlagsCoreBase.IClnblCore
         {
         }
 
-        public class ImmtblCore : ImmtblCoreBase, IClnblCore
+        public class ImmtblCore : IClnblCore
         {
-            public ImmtblCore(TClnbl src) : base(src)
+            public ImmtblCore(TClnbl src)
             {
                 IsPublic = src.IsPublic;
                 IsFamily = src.IsFamily;
@@ -53,13 +53,13 @@ namespace Turmerik.Reflection.Cache
             public bool IsPrivate { get; }
         }
 
-        public class MtblCore : MtblCoreBase, IClnblCore
+        public class MtblCore : IClnblCore
         {
             public MtblCore()
             {
             }
 
-            public MtblCore(TClnbl src) : base(src)
+            public MtblCore(TClnbl src)
             {
                 IsPublic = src.IsPublic;
                 IsFamily = src.IsFamily;
@@ -105,7 +105,7 @@ namespace Turmerik.Reflection.Cache
         public static Immtbl Create<TMethodBase, TFlags>(
             ICachedMethodCore<TMethodBase, TFlags> cached)
             where TMethodBase : MethodBase => cached.Data.WithValue(
-                data => new Mtbl
+                data => new Immtbl(new Mtbl
                 {
                     IsPublic = data.IsPublic,
                     IsAssembly = data.IsAssembly,
@@ -113,10 +113,10 @@ namespace Turmerik.Reflection.Cache
                     IsFamilyAndAssembly = data.IsFamilyAndAssembly,
                     IsPrivate = data.IsPrivate,
                     IsFamilyOrAssembly = data.IsFamilyOrAssembly,
-                }).ToImmtbl();
+                }));
     }
 
-    public class CachedMemberFlagsBase : ClnblCore
+    public class CachedMemberFlagsBase
     {
         public new interface IClnblCore : CachedMemberFlagsCoreBase.IClnblCore
         {
@@ -184,7 +184,7 @@ namespace Turmerik.Reflection.Cache
 
         public static Immtbl Create(
             ICachedMethodInfo cached) => cached.Data.WithValue(
-                data => new Mtbl
+                data => new Immtbl(new Mtbl
                 {
                     IsPublic = data.IsPublic,
                     IsAssembly = data.IsAssembly,
@@ -193,12 +193,12 @@ namespace Turmerik.Reflection.Cache
                     IsPrivate = data.IsPrivate,
                     IsFamilyOrAssembly = data.IsFamilyOrAssembly,
                     IsStatic = data.IsStatic,
-                }.ToImmtbl());
+                }));
     }
 
-    public class CachedTypeFlags : ClnblCore<CachedTypeFlags.IClnbl, CachedTypeFlags.Immtbl, CachedTypeFlags.Mtbl>
+    public class CachedTypeFlags
     {
-        public interface IClnbl : IClnblCore
+        public interface IClnbl
         {
             bool IsPublic { get; }
             bool IsInternal { get; }
@@ -216,9 +216,9 @@ namespace Turmerik.Reflection.Cache
             bool IsArray { get; }
         }
 
-        public class Immtbl : ImmtblCoreBase, IClnbl
+        public class Immtbl : IClnbl
         {
-            public Immtbl(IClnbl src) : base(src)
+            public Immtbl(IClnbl src)
             {
                 IsPublic = src.IsPublic;
                 IsInternal = src.IsInternal;
@@ -252,13 +252,13 @@ namespace Turmerik.Reflection.Cache
             public bool IsArray { get; }
         }
 
-        public class Mtbl : MtblCoreBase, IClnbl
+        public class Mtbl : IClnbl
         {
             public Mtbl()
             {
             }
 
-            public Mtbl(IClnbl src) : base(src)
+            public Mtbl(IClnbl src)
             {
                 IsPublic = src.IsPublic;
                 IsInternal = src.IsInternal;
@@ -294,7 +294,7 @@ namespace Turmerik.Reflection.Cache
 
         public static Immtbl Create(
             ICachedTypeInfo cached) => cached.Data.WithValue(
-                data => new Mtbl
+                data => new Immtbl(new Mtbl
                 {
                     IsPublic = data.IsPublic,
                     IsInternal = data.IsVisible,
@@ -310,7 +310,7 @@ namespace Turmerik.Reflection.Cache
                     IsGenericType = data.IsGenericType,
                     IsGenericTypeDefinition = data.IsGenericTypeDefinition,
                     IsArray = data.IsArray
-                }.ToImmtbl());
+                }));
     }
 
     public class CachedFieldFlags : CachedMemberFlags<CachedFieldFlags.IClnbl, CachedFieldFlags.Immtbl, CachedFieldFlags.Mtbl>
@@ -356,7 +356,7 @@ namespace Turmerik.Reflection.Cache
 
         public static Immtbl Create(
             ICachedFieldInfo cached) => cached.Data.WithValue(
-                data => new Mtbl
+                data => new Immtbl(new Mtbl
                 {
                     IsPublic = data.IsPublic,
                     IsAssembly = data.IsAssembly,
@@ -368,12 +368,12 @@ namespace Turmerik.Reflection.Cache
                     IsEditable = data.IsEditable(),
                     IsInitOnly = data.IsInitOnly,
                     IsLiteral = data.IsLiteral,
-                }.ToImmtbl());
+                }));
     }
 
-    public class CachedPropertyFlags : ClnblCore<CachedPropertyFlags.IClnbl, CachedPropertyFlags.Immtbl, CachedPropertyFlags.Mtbl>
+    public class CachedPropertyFlags
     {
-        public interface IClnbl : IClnblCore
+        public interface IClnbl
         {
             Lazy<bool> IsStatic { get; }
             bool CanRead { get; }
@@ -382,9 +382,9 @@ namespace Turmerik.Reflection.Cache
             Lazy<CachedMemberFlagsCore.IClnbl> Setter { get; }
         }
 
-        public class Immtbl : ImmtblCoreBase, IClnbl
+        public class Immtbl : IClnbl
         {
-            public Immtbl(IClnbl src) : base(src)
+            public Immtbl(IClnbl src)
             {
                 IsStatic = src.IsStatic;
                 CanRead = src.CanRead;
@@ -400,13 +400,13 @@ namespace Turmerik.Reflection.Cache
             public Lazy<CachedMemberFlagsCore.IClnbl> Setter { get; }
         }
 
-        public class Mtbl : MtblCoreBase, IClnbl
+        public class Mtbl : IClnbl
         {
             public Mtbl()
             {
             }
 
-            public Mtbl(IClnbl src) : base(src)
+            public Mtbl(IClnbl src)
             {
                 IsStatic = src.IsStatic;
                 CanRead = src.CanRead;
@@ -423,7 +423,7 @@ namespace Turmerik.Reflection.Cache
         }
 
         public static Immtbl Create(
-            ICachedPropertyInfo cached) => new Mtbl
+            ICachedPropertyInfo cached) => new Immtbl(new Mtbl
             {
                 IsStatic = new Lazy<bool>(
                     () => (cached.Getter.Value ?? cached.Setter.Value).Flags.Value.IsStatic),
@@ -435,12 +435,12 @@ namespace Turmerik.Reflection.Cache
                 Setter = new Lazy<CachedMemberFlagsCore.IClnbl>(
                     () => cached.Setter.Value?.WithValue(
                     sttr => CachedMemberFlagsCore.Create(sttr)))
-            }.ToImmtbl();
+            });
     }
 
-    public class CachedEventFlags : ClnblCore<CachedEventFlags.IClnbl, CachedEventFlags.Immtbl, CachedEventFlags.Mtbl>
+    public class CachedEventFlags
     {
-        public interface IClnbl : IClnblCore
+        public interface IClnbl
         {
             bool IsMulticast { get; }
             Lazy<CachedMemberFlagsCore.IClnbl> AddMethod { get; }
@@ -448,9 +448,9 @@ namespace Turmerik.Reflection.Cache
             Lazy<CachedMemberFlagsCore.IClnbl> InvokeMethod { get; }
         }
 
-        public class Immtbl : ImmtblCoreBase, IClnbl
+        public class Immtbl : IClnbl
         {
-            public Immtbl(IClnbl src) : base(src)
+            public Immtbl(IClnbl src)
             {
                 IsMulticast = src.IsMulticast;
                 AddMethod = src.AddMethod;
@@ -464,13 +464,13 @@ namespace Turmerik.Reflection.Cache
             public Lazy<CachedMemberFlagsCore.IClnbl> InvokeMethod { get; }
         }
 
-        public class Mtbl : MtblCoreBase, IClnbl
+        public class Mtbl : IClnbl
         {
             public Mtbl()
             {
             }
 
-            public Mtbl(IClnbl src) : base(src)
+            public Mtbl(IClnbl src)
             {
                 IsMulticast = src.IsMulticast;
                 AddMethod = src.AddMethod;
@@ -485,7 +485,7 @@ namespace Turmerik.Reflection.Cache
         }
 
         public static Immtbl Create(
-            ICachedEventInfo cached) => new Mtbl
+            ICachedEventInfo cached) => new Immtbl(new Mtbl
             {
                 IsMulticast = cached.Data.IsMulticast,
                 AddMethod = new Lazy<CachedMemberFlagsCore.IClnbl>(
@@ -497,12 +497,12 @@ namespace Turmerik.Reflection.Cache
                 InvokeMethod = new Lazy<CachedMemberFlagsCore.IClnbl>(
                 () => cached.Raiser.Value?.WithValue(
                 adder => CachedMemberFlagsCore.Create(adder)))
-            }.ToImmtbl();
+            });
     }
 
-    public class CachedParameterFlags : ClnblCore<CachedParameterFlags.IClnbl, CachedParameterFlags.Immtbl, CachedParameterFlags.Mtbl>
+    public class CachedParameterFlags
     {
-        public interface IClnbl : IClnblCore
+        public interface IClnbl
         {
             bool IsIn { get; }
             bool IsLcid { get; }
@@ -511,9 +511,9 @@ namespace Turmerik.Reflection.Cache
             bool IsRetval { get; }
         }
 
-        public class Immtbl : ImmtblCoreBase, IClnbl
+        public class Immtbl : IClnbl
         {
-            public Immtbl(IClnbl src) : base(src)
+            public Immtbl(IClnbl src)
             {
                 IsIn = src.IsIn;
                 IsLcid = src.IsLcid;
@@ -529,13 +529,13 @@ namespace Turmerik.Reflection.Cache
             public bool IsRetval { get; }
         }
 
-        public class Mtbl : MtblCoreBase, IClnbl
+        public class Mtbl : IClnbl
         {
             public Mtbl()
             {
             }
 
-            public Mtbl(IClnbl src) : base(src)
+            public Mtbl(IClnbl src)
             {
                 IsIn = src.IsIn;
                 IsLcid = src.IsLcid;
@@ -553,13 +553,13 @@ namespace Turmerik.Reflection.Cache
 
         public static Immtbl Create(
             ICachedParameterInfo cached) => cached.Data.WithValue(
-                data => new Mtbl
+                data => new Immtbl(new Mtbl
                 {
                     IsIn = data.IsIn,
                     IsLcid = data.IsLcid,
                     IsOptional = data.IsOptional,
                     IsOut = data.IsOut,
                     IsRetval = data.IsRetval,
-                }.ToImmtbl());
+                }));
     }
 }

@@ -24,17 +24,17 @@ namespace Turmerik.LocalDevice.Core.FileExplorerCore
         public override async Task<DriveItem.Mtbl> GetFolderAsync(
             DriveItemIdnf.IClnbl idnf)
         {
-            var entry = new DirectoryInfo(idnf.GetFullPath());
+            var entry = new DirectoryInfo(idnf.GetFullPath(DirSeparator));
             var folder = GetDriveItem(entry, true);
 
             var driveItemsArr = entry.EnumerateFileSystemInfos(
                 ).Select(fi => GetDriveItem(fi, false)).ToArray();
 
-            folder.SubFolders = new DriveItem.MtblList(
+            folder.SubFolders = new List<DriveItem.Mtbl>(
                 driveItemsArr.Where(
                     item => item.IsFolder == true));
 
-            folder.FolderFiles = new DriveItem.MtblList(
+            folder.FolderFiles = new List<DriveItem.Mtbl>(
                 driveItemsArr.Where(
                     item => item.IsFolder != true).ToList());
 
@@ -44,14 +44,14 @@ namespace Turmerik.LocalDevice.Core.FileExplorerCore
         public override async Task<bool> FolderExistsAsync(
             DriveItemIdnf.IClnbl idnf)
         {
-            bool retVal = Directory.Exists(idnf.GetPath());
+            bool retVal = Directory.Exists(idnf.GetPath(DirSeparator));
             return retVal;
         }
 
         public override async Task<bool> FileExistsAsync(
             DriveItemIdnf.IClnbl idnf)
         {
-            bool retVal = File.Exists(idnf.GetPath());
+            bool retVal = File.Exists(idnf.GetPath(DirSeparator));
             return retVal;
         }
 
@@ -136,6 +136,8 @@ namespace Turmerik.LocalDevice.Core.FileExplorerCore
 
             return retVal;
         }
+
+        protected override string GetDirSeparator() => Path.DirectorySeparatorChar.ToString();
     }
 
 }
