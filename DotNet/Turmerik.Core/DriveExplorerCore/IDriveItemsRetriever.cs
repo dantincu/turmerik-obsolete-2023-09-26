@@ -13,7 +13,13 @@ namespace Turmerik.DriveExplorerCore
 {
     public interface IDriveItemsRetriever
     {
-        Task<DriveItem.Mtbl> GetFolderAsync(DriveItemIdnf.IClnbl idnf);
+        Task<DriveItem.Mtbl> GetFolderAsync(
+            DriveItemIdnf.IClnbl idnf);
+
+        Task<DriveItem.Mtbl> GetFolderAsync(
+            DriveItemIdnf.IClnbl idnf,
+            int depth);
+
         Task<bool> FolderExistsAsync(DriveItemIdnf.IClnbl idnf);
         Task<bool> FileExistsAsync(DriveItemIdnf.IClnbl idnf);
 
@@ -25,7 +31,41 @@ namespace Turmerik.DriveExplorerCore
         DriveItem.IClnbl RoodDriveFolder { get; }
     }
 
-    public abstract class DriveItemsRetrieverBase : IDriveItemsRetriever
+    public abstract class DriveItemsRetrieverCoreBase : IDriveItemsRetriever
+    {
+        protected DriveItemsRetrieverCoreBase()
+        {
+            DirSeparator = GetDirSeparator();
+        }
+
+        public string DirSeparator { get; }
+
+        public abstract Task<bool> FileExistsAsync(DriveItemIdnf.IClnbl idnf);
+        public abstract Task<bool> FolderExistsAsync(DriveItemIdnf.IClnbl idnf);
+        public abstract Task<DriveItem.Mtbl> GetFolderAsync(DriveItemIdnf.IClnbl idnf);
+
+        public async Task<DriveItem.Mtbl> GetFolderAsync(
+            DriveItemIdnf.IClnbl idnf,
+            int depth)
+        {
+            var folder = await GetFolderAsync(idnf);
+            var subFolders = folder.SubFolders;
+
+            if (subFolders != null && depth > 0)
+            {
+                for (int i = 0; i < depth; i++)
+                {
+                    subFolders[i] = await GetFolderAsync(subFolders[i]);
+                }
+            }
+
+            return folder;
+        }
+
+        protected abstract string GetDirSeparator();
+    }
+
+    public abstract class DriveItemsRetrieverBase : DriveItemsRetrieverCoreBase, IDriveItemsRetriever
     {
         protected static readonly ReadOnlyDictionary<OfficeLikeFileType, ReadOnlyCollection<string>> OfficeLikeFileTypesFileNameExtensions;
 
@@ -43,18 +83,9 @@ namespace Turmerik.DriveExplorerCore
             ITimeStampHelper timeStampHelper)
         {
             TimeStampHelper = timeStampHelper ?? throw new ArgumentNullException(nameof(timeStampHelper));
-            DirSeparator = GetDirSeparator();
         }
 
-        public string DirSeparator { get; }
-
         protected ITimeStampHelper TimeStampHelper { get; }
-
-        public abstract Task<bool> FileExistsAsync(DriveItemIdnf.IClnbl idnf);
-        public abstract Task<bool> FolderExistsAsync(DriveItemIdnf.IClnbl idnf);
-        public abstract Task<DriveItem.Mtbl> GetFolderAsync(DriveItemIdnf.IClnbl idnf);
-
-        protected abstract string GetDirSeparator();
 
         protected string GetTimeStampStr(DateTime? dateTime)
         {
@@ -74,16 +105,9 @@ namespace Turmerik.DriveExplorerCore
         }
     }
 
-    public class DriveItemsObjMirrorRetriever : IDriveItemsObjMirrorRetriever
+    public class DriveItemsObjMirrorRetriever : DriveItemsRetrieverCoreBase, IDriveItemsObjMirrorRetriever
     {
         private DriveItem.Immtbl driveItem;
-
-        public DriveItemsObjMirrorRetriever()
-        {
-            DirSeparator = GetDirSeparator();
-        }
-
-        public string DirSeparator { get; }
 
         public DriveItem.IClnbl RoodDriveFolder
         {
@@ -98,26 +122,26 @@ namespace Turmerik.DriveExplorerCore
             }
         }
 
-        public async Task<DriveItem.Mtbl> GetFolderAsync(DriveItemIdnf.IClnbl idnf)
+        public override async Task<DriveItem.Mtbl> GetFolderAsync(DriveItemIdnf.IClnbl idnf)
         {
             DriveItem.Mtbl retMtbl = TryGetItem(driveItem, idnf, true, true);
 
             return retMtbl;
         }
 
-        public async Task<bool> FolderExistsAsync(DriveItemIdnf.IClnbl idnf)
+        public override async Task<bool> FolderExistsAsync(DriveItemIdnf.IClnbl idnf)
         {
             bool retVal = TryGetItem(driveItem, idnf, true, true) != null;
             return retVal;
         }
 
-        public async Task<bool> FileExistsAsync(DriveItemIdnf.IClnbl idnf)
+        public override async Task<bool> FileExistsAsync(DriveItemIdnf.IClnbl idnf)
         {
             bool retVal = TryGetItem(driveItem, idnf, false, true) != null;
             return retVal;
         }
 
-        protected string GetDirSeparator() => Path.DirectorySeparatorChar.ToString();
+        protected override string GetDirSeparator() => Path.DirectorySeparatorChar.ToString();
 
         protected virtual DriveItem.Mtbl TryGetItem(
             DriveItem.Immtbl folder,

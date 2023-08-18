@@ -55,8 +55,8 @@
             // 
             this.splitContainerMain.Panel2.Controls.Add(this.checkBoxUseBlockingAlerts);
             this.splitContainerMain.Panel2.Controls.Add(this.buttonOk);
-            this.splitContainerMain.Size = new System.Drawing.Size(234, 211);
-            this.splitContainerMain.SplitterDistance = 185;
+            this.splitContainerMain.Size = new System.Drawing.Size(484, 261);
+            this.splitContainerMain.SplitterDistance = 235;
             this.splitContainerMain.SplitterWidth = 1;
             this.splitContainerMain.TabIndex = 0;
             // 
@@ -66,8 +66,9 @@
             this.textBoxMessage.Location = new System.Drawing.Point(0, 0);
             this.textBoxMessage.Multiline = true;
             this.textBoxMessage.Name = "textBoxMessage";
+            this.textBoxMessage.ReadOnly = true;
             this.textBoxMessage.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.textBoxMessage.Size = new System.Drawing.Size(234, 185);
+            this.textBoxMessage.Size = new System.Drawing.Size(484, 235);
             this.textBoxMessage.TabIndex = 0;
             // 
             // checkBoxUseBlockingAlerts
@@ -86,7 +87,7 @@
             // buttonOk
             // 
             this.buttonOk.Dock = System.Windows.Forms.DockStyle.Right;
-            this.buttonOk.Location = new System.Drawing.Point(159, 0);
+            this.buttonOk.Location = new System.Drawing.Point(409, 0);
             this.buttonOk.Name = "buttonOk";
             this.buttonOk.Size = new System.Drawing.Size(75, 25);
             this.buttonOk.TabIndex = 0;
@@ -98,7 +99,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(234, 211);
+            this.ClientSize = new System.Drawing.Size(484, 261);
             this.Controls.Add(this.splitContainerMain);
             this.Name = "UIMessageForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;

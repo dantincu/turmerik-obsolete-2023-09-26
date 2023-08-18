@@ -26,6 +26,8 @@ namespace Turmerik.WinForms.Forms
         {
             this.actionComponentsManager = actionComponentsManager ?? throw new ArgumentNullException(
                 nameof(actionComponentsManager));
+
+            InitializeComponent();
         }
 
         public TextBox MessageTextBox => this.textBoxMessage;

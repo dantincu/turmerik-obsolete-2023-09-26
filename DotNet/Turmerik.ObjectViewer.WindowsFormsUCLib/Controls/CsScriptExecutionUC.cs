@@ -30,10 +30,5 @@ namespace Turmerik.ObjectViewer.WindowsFormsUCLib.Controls
         }
 
         #endregion UI Event Handlers
-
-        private void clickToggleIconLabelSampleScript_ClickToggled(bool obj)
-        {
-
-        }
     }
 }

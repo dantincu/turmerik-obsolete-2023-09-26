@@ -34,87 +34,91 @@ namespace Turmerik.TrmrkAction
         protected virtual string DefaultUnhandledErrorLogMessageTemplate => DEFAULT_UNHANDLED_ERROR_LOG_MESSAGE_TEMPLATE;
 
         protected TActionResult ExecuteCore<TActionResult, TMsgTuple>(
-            ITrmrkActionComponentOptsCore<TActionResult, TActionResult, TMsgTuple> opts)
+            ITrmrkActionComponentOptsCore<TActionResult, TActionResult, TMsgTuple> opts,
+            TActionResult defaultSuccessActionResult,
+            TActionResult defaultErrorActionResult)
             where TActionResult : ITrmrkActionResult
             where TMsgTuple : ITrmrkActionMessageTuple
         {
-            TActionResult actionResult = default;
             var actionStepKind = TrmrkUnhandledErrorActionStepKind.BeforeExecution;
+            TActionResult actionResult = default;
             Exception excp = null;
 
             try
             {
-                OnBeforeExecute(opts, actionResult, ref actionStepKind);
+                OnBeforeExecute(opts, defaultSuccessActionResult, ref actionStepKind);
 
                 if (opts.Validation != null)
                 {
-                    OnBeforeValidation(opts, actionResult, ref actionStepKind);
+                    OnBeforeValidation(opts, defaultSuccessActionResult, ref actionStepKind);
                     actionResult = opts.Validation();
-                    OnAfterValidation(opts, actionResult, ref actionStepKind);
+                    OnAfterValidation(opts, actionResult.FirstNotNull(defaultErrorActionResult), ref actionStepKind);
                 }
 
-                if (actionResult?.IsSuccess ?? true)
+                if (opts.Validation == null || (actionResult?.IsSuccess ?? false))
                 {
-                    OnBeforeAction(opts, actionResult, ref actionStepKind);
+                    OnBeforeAction(opts, actionResult.FirstNotNull(defaultSuccessActionResult), ref actionStepKind);
                     actionResult = opts.Action();
-                    OnAfterAction(opts, actionResult, ref actionStepKind);
+                    OnAfterAction(opts, actionResult.FirstNotNull(defaultErrorActionResult), ref actionStepKind);
                 }
 
-                ExecuteAlwaysCallbackIfReq(opts, actionResult, ref actionStepKind);
+                ExecuteAlwaysCallbackIfReq(opts, actionResult.FirstNotNull(defaultErrorActionResult), ref actionStepKind);
             }
             catch (Exception exc)
             {
                 excp = exc;
-                OnUnhandledError(opts, actionResult, actionStepKind, exc);
+                OnUnhandledError(opts, actionResult.FirstNotNull(defaultErrorActionResult), actionStepKind, exc);
             }
 
-            ExecuteFinalCallbackIfReq(opts, actionResult, actionStepKind, excp);
+            ExecuteFinalCallbackIfReq(opts, actionResult.FirstNotNull(defaultErrorActionResult), actionStepKind, excp);
             return actionResult;
         }
 
         protected async Task<TActionResult> ExecuteCoreAsync<TActionResult, TMsgTuple>(
-            ITrmrkActionComponentOptsCore<Task<TActionResult>, TActionResult, TMsgTuple> opts)
+            ITrmrkActionComponentOptsCore<Task<TActionResult>, TActionResult, TMsgTuple> opts,
+            TActionResult defaultSuccessActionResult,
+            TActionResult defaultErrorActionResult)
             where TActionResult : ITrmrkActionResult
             where TMsgTuple : ITrmrkActionMessageTuple
         {
-            TActionResult actionResult = default;
             var actionStepKind = TrmrkUnhandledErrorActionStepKind.BeforeExecution;
+            TActionResult actionResult = default;
             Exception excp = null;
 
             try
             {
-                OnBeforeExecute(opts, actionResult, ref actionStepKind);
+                OnBeforeExecute(opts, defaultSuccessActionResult, ref actionStepKind);
 
                 if (opts.Validation != null)
                 {
-                    OnBeforeValidation(opts, actionResult, ref actionStepKind);
+                    OnBeforeValidation(opts, defaultSuccessActionResult, ref actionStepKind);
                     actionResult = await opts.Validation();
-                    OnAfterValidation(opts, actionResult, ref actionStepKind);
+                    OnAfterValidation(opts, actionResult.FirstNotNull(defaultErrorActionResult), ref actionStepKind);
                 }
 
-                if (actionResult?.IsSuccess ?? true)
+                if (opts.Validation == null || (actionResult?.IsSuccess ?? false))
                 {
-                    OnBeforeAction(opts, actionResult, ref actionStepKind);
+                    OnBeforeAction(opts, actionResult.FirstNotNull(defaultSuccessActionResult), ref actionStepKind);
                     actionResult = await opts.Action();
-                    OnAfterAction(opts, actionResult, ref actionStepKind);
+                    OnAfterAction(opts, actionResult.FirstNotNull(defaultErrorActionResult), ref actionStepKind);
                 }
 
-                ExecuteAlwaysCallbackIfReq(opts, actionResult, ref actionStepKind);
+                ExecuteAlwaysCallbackIfReq(opts, actionResult.FirstNotNull(defaultErrorActionResult), ref actionStepKind);
             }
             catch (Exception exc)
             {
                 excp = exc;
-                OnUnhandledError(opts, actionResult, actionStepKind, exc);
+                OnUnhandledError(opts, actionResult.FirstNotNull(defaultErrorActionResult), actionStepKind, exc);
             }
 
-            ExecuteFinalCallbackIfReq(opts, actionResult, actionStepKind, excp);
+            ExecuteFinalCallbackIfReq(opts, actionResult.FirstNotNull(defaultErrorActionResult), actionStepKind, excp);
             return actionResult;
         }
 
         protected virtual void ShowUIMessageAlert(
             ShowUIMessageAlertArgs args)
         {
-            bool useUIBlockingMessagePopup = args.MsgTuple.UseUIBlockingMessagePopups == true && args.Opts.EnableUIBlockingMessagePopups && Manager.EnableUIBlockingMessagePopups;
+            bool useUIBlockingMessagePopup = args.MsgTuple.UseUIBlockingMessagePopups != false && args.Opts.EnableUIBlockingMessagePopups && Manager.EnableUIBlockingMessagePopups;
 
             Manager.ShowUIMessageAlert(
                 args,
@@ -131,7 +135,7 @@ namespace Turmerik.TrmrkAction
         {
             string message;
 
-            if (actionResult.IsSuccess)
+            if (actionResult?.IsSuccess ?? false)
             {
                 message = string.Format(
                     DefaultLogMessageTemplate,
@@ -433,7 +437,7 @@ namespace Turmerik.TrmrkAction
             }
             else
             {
-                if (exc == null && (actionResult?.IsSuccess ?? true))
+                if (exc == null && (actionResult?.IsSuccess ?? false))
                 {
                     logLevel = opts.LogLevel ?? Manager.DefaultLogLevel;
                 }

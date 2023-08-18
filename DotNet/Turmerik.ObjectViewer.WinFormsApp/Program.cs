@@ -22,7 +22,10 @@ namespace Turmerik.ObjectViewer.WinFormsApp
         static void Main()
         {
             var services = new ServiceCollection();
-            AppServiceCollectionBuilder.RegisterAll(services);
+
+            AppServiceCollectionBuilder.RegisterAll(
+                services,
+                registerFsExplorerServiceEngineAsDefault: true);
 
             var svcProvContnr = ServiceProviderContainer.Instance.Value;
             svcProvContnr.RegisterServices(services);

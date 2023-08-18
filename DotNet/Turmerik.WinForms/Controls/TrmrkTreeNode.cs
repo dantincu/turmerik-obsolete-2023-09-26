@@ -9,25 +9,24 @@ using Turmerik.DriveExplorerCore;
 
 namespace Turmerik.WinForms.Controls
 {
-    public class FsTreeNode<TDriveItem> : TreeNode
-        where TDriveItem : DriveItem.IClnbl
+    public class TrmrkTreeNode<TValue> : TreeNode
     {
-        public FsTreeNode(
-            TDriveItem data)
+        public TrmrkTreeNode(
+            TValue data)
         {
             this.Data = data;
         }
 
-        public FsTreeNode(
-            TDriveItem data,
+        public TrmrkTreeNode(
+            TValue data,
             string text) : base(
                 text)
         {
             this.Data = data;
         }
 
-        public FsTreeNode(
-            TDriveItem data,
+        public TrmrkTreeNode(
+            TValue data,
             string text,
             TreeNode[] children) : base(
                 text,
@@ -36,8 +35,8 @@ namespace Turmerik.WinForms.Controls
             this.Data = data;
         }
 
-        public FsTreeNode(
-            TDriveItem data,
+        public TrmrkTreeNode(
+            TValue data,
             string text,
             int imageIndex,
             int selectedImageIndex) : base(
@@ -48,8 +47,8 @@ namespace Turmerik.WinForms.Controls
             this.Data = data;
         }
 
-        public FsTreeNode(
-            TDriveItem data,
+        public TrmrkTreeNode(
+            TValue data,
             string text,
             int imageIndex,
             int selectedImageIndex,
@@ -62,8 +61,8 @@ namespace Turmerik.WinForms.Controls
             this.Data = data;
         }
 
-        protected FsTreeNode(
-            TDriveItem data,
+        protected TrmrkTreeNode(
+            TValue data,
             SerializationInfo serializationInfo,
             StreamingContext context) : base(
                 serializationInfo,
@@ -72,6 +71,6 @@ namespace Turmerik.WinForms.Controls
             this.Data = data;
         }
 
-        public TDriveItem Data { get; }
+        public TValue Data { get; }
     }
 }

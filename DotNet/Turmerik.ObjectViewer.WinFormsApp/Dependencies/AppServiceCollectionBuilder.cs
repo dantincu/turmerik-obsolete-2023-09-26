@@ -12,9 +12,17 @@ namespace Turmerik.ObjectViewer.WinFormsApp.Dependencies
     public static class AppServiceCollectionBuilder
     {
         public static void RegisterAll(
-            IServiceCollection services)
+            IServiceCollection services,
+            bool includeNetCoreAppEnv = false,
+            bool registerFsExplorerServiceEngineAsDefault = false,
+            bool useAppProcessIdnfForAppLoggersByDefault = true)
         {
-            WinFormsServiceCollectionBuilder.RegisterAll(services);
+            WinFormsServiceCollectionBuilder.RegisterAll(
+                services,
+                includeNetCoreAppEnv,
+                registerFsExplorerServiceEngineAsDefault,
+                useAppProcessIdnfForAppLoggersByDefault);
+
             WindowsFormsUCLib.Dependencies.ServiceCollectionBuilder.RegisterAll(services);
 
             services.AddTransient<IObjectViewerVM, ObjectViewerVM>();

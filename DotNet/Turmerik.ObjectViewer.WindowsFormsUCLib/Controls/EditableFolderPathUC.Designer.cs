@@ -34,6 +34,9 @@
             this.iconLabelExecuteFolder = new Turmerik.WinForms.Controls.IconLabel();
             this.labelTitle = new System.Windows.Forms.Label();
             this.folderBrowserDialog = new System.Windows.Forms.FolderBrowserDialog();
+            this.iconLabelEdit = new Turmerik.WinForms.Controls.IconLabel();
+            this.iconLabelUndoChanges = new Turmerik.WinForms.Controls.IconLabel();
+            this.iconLabelSubmitChanges = new Turmerik.WinForms.Controls.IconLabel();
             this.SuspendLayout();
             // 
             // textBoxFolderPath
@@ -42,8 +45,10 @@
             this.textBoxFolderPath.Font = new System.Drawing.Font("Consolas", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
             this.textBoxFolderPath.Location = new System.Drawing.Point(67, 0);
             this.textBoxFolderPath.Name = "textBoxFolderPath";
-            this.textBoxFolderPath.Size = new System.Drawing.Size(128, 22);
+            this.textBoxFolderPath.ReadOnly = true;
+            this.textBoxFolderPath.Size = new System.Drawing.Size(23, 22);
             this.textBoxFolderPath.TabIndex = 10;
+            this.textBoxFolderPath.TextChanged += new System.EventHandler(this.TextBoxFolderPath_TextChanged);
             // 
             // iconLabelBrowseFolderPath
             // 
@@ -89,11 +94,49 @@
             this.labelTitle.TabIndex = 9;
             this.labelTitle.Text = "Folder Path";
             // 
+            // iconLabelEdit
+            // 
+            this.iconLabelEdit.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.iconLabelEdit.Dock = System.Windows.Forms.DockStyle.Right;
+            this.iconLabelEdit.FontFamily = null;
+            this.iconLabelEdit.Location = new System.Drawing.Point(160, 0);
+            this.iconLabelEdit.Name = "iconLabelEdit";
+            this.iconLabelEdit.Size = new System.Drawing.Size(35, 21);
+            this.iconLabelEdit.TabIndex = 14;
+            this.iconLabelEdit.Text = "D";
+            // 
+            // iconLabelUndoChanges
+            // 
+            this.iconLabelUndoChanges.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.iconLabelUndoChanges.Dock = System.Windows.Forms.DockStyle.Right;
+            this.iconLabelUndoChanges.FontFamily = null;
+            this.iconLabelUndoChanges.Location = new System.Drawing.Point(125, 0);
+            this.iconLabelUndoChanges.Name = "iconLabelUndoChanges";
+            this.iconLabelUndoChanges.Size = new System.Drawing.Size(35, 21);
+            this.iconLabelUndoChanges.TabIndex = 15;
+            this.iconLabelUndoChanges.Text = "U";
+            this.iconLabelUndoChanges.Visible = false;
+            // 
+            // iconLabelSubmitChanges
+            // 
+            this.iconLabelSubmitChanges.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.iconLabelSubmitChanges.Dock = System.Windows.Forms.DockStyle.Right;
+            this.iconLabelSubmitChanges.FontFamily = null;
+            this.iconLabelSubmitChanges.Location = new System.Drawing.Point(90, 0);
+            this.iconLabelSubmitChanges.Name = "iconLabelSubmitChanges";
+            this.iconLabelSubmitChanges.Size = new System.Drawing.Size(35, 21);
+            this.iconLabelSubmitChanges.TabIndex = 16;
+            this.iconLabelSubmitChanges.Text = "S";
+            this.iconLabelSubmitChanges.Visible = false;
+            // 
             // EditableFolderPathUC
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.textBoxFolderPath);
+            this.Controls.Add(this.iconLabelSubmitChanges);
+            this.Controls.Add(this.iconLabelUndoChanges);
+            this.Controls.Add(this.iconLabelEdit);
             this.Controls.Add(this.iconLabelBrowseFolderPath);
             this.Controls.Add(this.iconLabelRefreshFolder);
             this.Controls.Add(this.iconLabelExecuteFolder);
@@ -113,5 +156,8 @@
         private WinForms.Controls.IconLabel iconLabelExecuteFolder;
         private System.Windows.Forms.Label labelTitle;
         private System.Windows.Forms.FolderBrowserDialog folderBrowserDialog;
+        private WinForms.Controls.IconLabel iconLabelEdit;
+        private WinForms.Controls.IconLabel iconLabelUndoChanges;
+        private WinForms.Controls.IconLabel iconLabelSubmitChanges;
     }
 }

@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Http = System.Web.Http;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -20,7 +19,7 @@ namespace Turmerik.LocalFilesExplorer.AspNetCoreApp.Controllers
     {
         [Route("[action]")]
         [HttpGet]
-        public IEnumerable<string> GetSomethingElse([Http.FromUri] TestNetData data)
+        public IEnumerable<string> GetSomethingElse(TestNetData data)
         {
             return new string[] { "value1", "value2" };
         }

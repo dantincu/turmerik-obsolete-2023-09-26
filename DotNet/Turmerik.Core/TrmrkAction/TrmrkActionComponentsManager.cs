@@ -22,8 +22,8 @@ namespace Turmerik.TrmrkAction
 
     public class TrmrkActionComponentsManager : ITrmrkActionComponentsManager
     {
-        public virtual LogLevel DefaultLogLevel { get; set; }
-        public virtual LogLevel DefaultErrorLogLevel { get; set; }
+        public virtual LogLevel DefaultLogLevel { get; set; } = LogLevel.Information;
+        public virtual LogLevel DefaultErrorLogLevel { get; set; } = LogLevel.Error;
         public virtual bool EnableUIBlockingMessagePopups { get; set; }
 
         public virtual void ShowUIMessageAlert(

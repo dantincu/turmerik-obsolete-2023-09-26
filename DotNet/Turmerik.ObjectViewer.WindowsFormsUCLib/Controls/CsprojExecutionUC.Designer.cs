@@ -29,7 +29,6 @@
         private void InitializeComponent()
         {
             this.splitContainerMain = new System.Windows.Forms.SplitContainer();
-            this.treeViewProjectFiles = new System.Windows.Forms.TreeView();
             this.groupBoxProjectAsssemblies = new System.Windows.Forms.GroupBox();
             this.richTextBoxCodeFileContents = new System.Windows.Forms.RichTextBox();
             this.editableFolderPathUCCsprojFile = new Turmerik.ObjectViewer.WindowsFormsUCLib.Controls.EditableFolderPathUC();
@@ -48,7 +47,6 @@
             // 
             // splitContainerMain.Panel1
             // 
-            this.splitContainerMain.Panel1.Controls.Add(this.treeViewProjectFiles);
             this.splitContainerMain.Panel1.Controls.Add(this.groupBoxProjectAsssemblies);
             this.splitContainerMain.Panel1.Controls.Add(this.editableFolderPathUCCsprojFile);
             // 
@@ -60,14 +58,6 @@
             this.splitContainerMain.SplitterDistance = 896;
             this.splitContainerMain.SplitterWidth = 1;
             this.splitContainerMain.TabIndex = 0;
-            // 
-            // treeViewProjectFiles
-            // 
-            this.treeViewProjectFiles.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.treeViewProjectFiles.Location = new System.Drawing.Point(0, 21);
-            this.treeViewProjectFiles.Name = "treeViewProjectFiles";
-            this.treeViewProjectFiles.Size = new System.Drawing.Size(896, 653);
-            this.treeViewProjectFiles.TabIndex = 9;
             // 
             // groupBoxProjectAsssemblies
             // 
@@ -125,7 +115,6 @@
 
         private System.Windows.Forms.SplitContainer splitContainerMain;
         private EditableFolderPathUC editableFolderPathUCCsprojFile;
-        private System.Windows.Forms.TreeView treeViewProjectFiles;
         private System.Windows.Forms.GroupBox groupBoxProjectAsssemblies;
         private FilePathUC filePathUCCurrentCodeFile;
         private System.Windows.Forms.RichTextBox richTextBoxCodeFileContents;

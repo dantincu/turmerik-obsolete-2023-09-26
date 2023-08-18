@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Turmerik.Collections;
+using Turmerik.MathH;
 
 namespace Turmerik.Utils
 {
@@ -74,6 +75,21 @@ namespace Turmerik.Utils
             }
 
             return matches;
+        }
+
+        public static TFlag SubstractFlagIfReq<TFlag>(
+            TFlag value,
+            TFlag flag)
+            where TFlag : struct, Enum
+        {
+            if (value.HasFlag(flag))
+            {
+                value = MthH.ReduceEnumsToInt(
+                    Tuple.Create(value, flag),
+                    tuple => tuple.Item1 - tuple.Item2).AsEnum<TFlag>();
+            }
+
+            return value;
         }
     }
 }

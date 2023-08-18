@@ -75,14 +75,24 @@
     <Compile Include="ActionComponent\WinFormsActionComponent.cs" />
     <Compile Include="ActionComponent\WinFormsActionComponentFactory.cs" />
     <Compile Include="ActionComponent\WinFormsActionComponentsManager.cs" />
+    <Compile Include="Components\ContextMenuOption.cs" />
+    <Compile Include="Components\ControlStyle.clnbl.cs" />
+    <Compile Include="Components\EditingState.cs" />
+    <Compile Include="Components\MultiStateControlStyle.cs" />
+    <Compile Include="Components\TreeViewDataAdapterAsync.cs" />
+    <Compile Include="Components\TreeViewDataAdapterFactory.cs" />
+    <Compile Include="Components\TreeViewDataAdapterH.cs" />
     <Compile Include="Controls\ClickToggleIconLabel.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="Controls\FsTreeNode.cs" />
-    <Compile Include="Controls\FsTreeView.cs">
+    <Compile Include="Controls\TrmrkTreeNode.cs" />
+    <Compile Include="Controls\TrmrkFsTreeView.cs">
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Controls\IconLabel.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Controls\TrmrkTreeView.cs">
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Dependencies\ServiceProviderContainer.cs" />
@@ -128,7 +138,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Behaviours\" />
-    <Folder Include="Components\" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Forms\UIMessageForm.resx">

@@ -22,6 +22,10 @@ namespace Turmerik.WinForms.Utils
             {
                 control.Invoke(action);
             }
+            else
+            {
+                action();
+            }
         }
 
         /// <summary>

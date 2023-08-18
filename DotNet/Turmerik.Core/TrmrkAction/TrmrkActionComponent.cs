@@ -34,15 +34,35 @@ namespace Turmerik.TrmrkAction
         }
 
         public ITrmrkActionResult Execute(
-            ITrmrkActionComponentOpts opts) => ExecuteCore(opts);
+            ITrmrkActionComponentOpts opts) => ExecuteCore(
+                opts, new TrmrkActionResult(),
+                new TrmrkActionResult
+                {
+                    HasError = true
+                });
 
         public ITrmrkActionResult<TData> Execute<TData>(
-            ITrmrkActionComponentOpts<TData> opts) => ExecuteCore(opts);
+            ITrmrkActionComponentOpts<TData> opts) => ExecuteCore(
+                opts, new TrmrkActionResult<TData>(),
+                new TrmrkActionResult<TData>
+                {
+                    HasError = true
+                });
 
         public Task<ITrmrkActionResult> ExecuteAsync(
-            ITrmrkAsyncActionComponentOpts opts) => ExecuteCoreAsync(opts);
+            ITrmrkAsyncActionComponentOpts opts) => ExecuteCoreAsync(
+                opts, new TrmrkActionResult(),
+                new TrmrkActionResult
+                {
+                    HasError = true
+                });
 
         public Task<ITrmrkActionResult<TData>> ExecuteAsync<TData>(
-            ITrmrkAsyncActionComponentOpts<TData> opts) => ExecuteCoreAsync(opts);
+            ITrmrkAsyncActionComponentOpts<TData> opts) => ExecuteCoreAsync(
+                opts, new TrmrkActionResult<TData>(),
+                new TrmrkActionResult<TData>
+                {
+                    HasError = true
+                });
     }
 }
