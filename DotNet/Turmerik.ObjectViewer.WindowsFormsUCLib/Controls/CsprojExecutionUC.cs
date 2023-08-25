@@ -108,6 +108,11 @@ namespace Turmerik.ObjectViewer.WindowsFormsUCLib.Controls
             var children = parent.SubFolders.ToList();
             children.AddRange(parent.FolderFiles);
 
+            foreach (var child in children)
+            {
+                child.PrIdnf = new DriveItemIdnf.Mtbl(parent);
+            }
+
             return children.ToArray();
         }
 

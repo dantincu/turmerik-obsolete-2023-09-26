@@ -311,6 +311,7 @@ namespace Turmerik.WinForms.Components
                 Items = new ToolStripItemOpts.Mtbl
                 {
                     Text = "Refresh",
+                    ItemType = typeof(ToolStripMenuItem),
                     ClickHandler = (sender, args) => CurrentTreeNode?.ActWithValue(
                         currentTreeNode =>
                         {

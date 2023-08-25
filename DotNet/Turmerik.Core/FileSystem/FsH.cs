@@ -181,7 +181,7 @@ namespace Turmerik.FileSystem
                 retPath = string.Join(dirSep, pathParts);
             }
 
-            if (retPath.EndsWith(":"))
+            if (retPath?.EndsWith(":") ?? false)
             {
                 retPath += dirSep;
             }

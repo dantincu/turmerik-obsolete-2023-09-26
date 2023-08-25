@@ -69,6 +69,7 @@ namespace Turmerik.Collections
                 {
                     retVal = val;
                     found = true;
+                    break;
                 }
                 else
                 {

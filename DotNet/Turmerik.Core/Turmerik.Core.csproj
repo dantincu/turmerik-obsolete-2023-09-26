@@ -6,12 +6,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Utils\ConsoleProgramComponentCoreBase%24not-compiled%24.cs" />
-    <Compile Remove="Utils\ProgramArgsBuilder%24not-compiled%24.cs" />
-    <Compile Remove="Utils\ProgramArgsBuilderOpts.clnbl%24not-compiled%24.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.Configuration" Version="7.0.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="7.0.4" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="7.0.0" />
@@ -22,12 +16,6 @@
 
   <ItemGroup>
     <Folder Include="Text\HtmlH\" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Include="Utils\ConsoleProgramComponentCoreBase$not-compiled$.cs" />
-    <None Include="Utils\ProgramArgsBuilder$not-compiled$.cs" />
-    <None Include="Utils\ProgramArgsBuilderOpts.clnbl$not-compiled$.cs" />
   </ItemGroup>
 
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">

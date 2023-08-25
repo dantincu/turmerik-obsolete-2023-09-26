@@ -19,7 +19,12 @@ namespace Turmerik.Collections
             var node = parentNodes.GetNthVal(idx);
 
             var childPath = path.Skip(1).ToArray();
-            var child = node.FindPath(childPath);
+            var child = node;
+
+            if (childPath.Any())
+            {
+                child = node.FindPath(childPath);
+            }
 
             return child;
         }
@@ -61,6 +66,7 @@ namespace Turmerik.Collections
             Func<TNode, TNode> parentRetriever,
             Func<TNode, IEnumerable<TNode>> childrenRetriever,
             List<int> path,
+            Func<IEnumerable<TNode>> rootNodesRetriever = null,
             Func<TNode, TNode, bool> equalsPredicate = null,
             Func<TNode, bool> isDefaultPredicate = null)
         {
@@ -68,23 +74,36 @@ namespace Turmerik.Collections
             var root = node;
 
             isDefaultPredicate = isDefaultPredicate.FirstNotNull(val => val == null);
+            bool hasParent = !isDefaultPredicate(parent);
 
-            if (parent != null)
+            IEnumerable<TNode> sibblings;
+
+            if (hasParent)
             {
-                var sibblings = childrenRetriever(parent);
+                sibblings = childrenRetriever(parent);
+                root = parent;
+            }
+            else
+            {
+                sibblings = rootNodesRetriever();
+            }
+            
+            AddIdxToPath(
+                node,
+                sibblings,
+                path,
+                equalsPredicate);
 
-                AddIdxToPath(
-                    node,
-                    sibblings,
-                    path,
-                    equalsPredicate);
-
+            if (hasParent)
+            {
                 var newRoot = BuildPath(
-                    parent,
+                    node,
                     parentRetriever,
                     childrenRetriever,
                     path,
-                    equalsPredicate);
+                    null,
+                    equalsPredicate,
+                    isDefaultPredicate);
 
                 if (!isDefaultPredicate(newRoot))
                 {
@@ -92,7 +111,7 @@ namespace Turmerik.Collections
                 }
             }
 
-            return parent;
+            return root;
         }
 
         public static DataTreeNode.IClnbl<TValue> BuildPath<TValue>(
@@ -107,7 +126,9 @@ namespace Turmerik.Collections
             TNode node,
             Func<TNode, TNode> parentRetriever,
             Func<TNode, IEnumerable<TNode>> childrenRetriever,
-            Func<TNode, TNode, bool> equalsPredicate = null)
+            Func<IEnumerable<TNode>> rootNodesRetriever = null,
+            Func<TNode, TNode, bool> equalsPredicate = null,
+            Func<TNode, bool> isDefaultPredicate = null)
         {
             var path = new List<int>();
 
@@ -116,7 +137,9 @@ namespace Turmerik.Collections
                 parentRetriever,
                 childrenRetriever,
                 path,
-                equalsPredicate);
+                rootNodesRetriever,
+                equalsPredicate,
+                isDefaultPredicate);
 
             return path.ToArray();
         }
@@ -126,7 +149,8 @@ namespace Turmerik.Collections
             IEnumerable<TNode> rootNodes,
             Func<TNode, TNode> parentRetriever,
             Func<TNode, IEnumerable<TNode>> childrenRetriever,
-            Func<TNode, TNode, bool> equalsPredicate = null)
+            Func<TNode, TNode, bool> equalsPredicate = null,
+            Func<TNode, bool> isDefaultPredicate = null)
         {
             var path = new List<int>();
 
@@ -135,7 +159,9 @@ namespace Turmerik.Collections
                 parentRetriever,
                 childrenRetriever,
                 new List<int>(),
-                equalsPredicate);
+                () => rootNodes,
+                equalsPredicate,
+                isDefaultPredicate);
 
             AddIdxToPath(
                 root,

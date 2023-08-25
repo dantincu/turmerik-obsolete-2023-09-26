@@ -105,8 +105,8 @@ namespace Turmerik.WinForms.Utils
             TreeView treeView,
             TreeNode treeNode) => DataTreeNodeH.GetPath(
                 treeNode,
-                treeView.Nodes.OfType<TreeNode>(),
                 node => node.Parent,
-                node => node.Nodes.OfType<TreeNode>());
+                node => node.Nodes.OfType<TreeNode>(),
+                () => treeView.Nodes.OfType<TreeNode>());
     }
 }
