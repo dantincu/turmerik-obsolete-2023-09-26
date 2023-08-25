@@ -11,67 +11,58 @@ namespace Turmerik.WinForms.Components
 {
     public interface ITreeViewDataAdapterFactory
     {
-        ITreeViewDataAdapterAsync<TValue> CreateAsyncWithIconFactories<TValue>(
-            TreeView treeView,
-            Func<TValue, KeyValuePair<int, string>> nodeIconKvpFactory = null,
-            Func<TValue, KeyValuePair<int, string>> selectedNodeIconKvpFactory = null,
-            Func<TValue, KeyValuePair<int, string>> stateNodeIconKvpFactory = null,
-            Func<TValue, ContextMenuStrip> contextMenuStripFactory = null);
+        ITreeViewDataAdapterAsync<TValue> Create<TValue>(
+            TreeViewDataAdapterIconFactoriesOpts.IClnbl<TValue> opts,
+            Func<Task<IEnumerable<TValue>>> rootItemsFactory,
+            Func<TValue, Task<IEnumerable<TValue>>> childItemsFactory);
 
-        ITreeViewDataAdapterAsync<TValue> CreateAsyncWithIcons<TValue>(
-            TreeView treeView,
-            KeyValuePair<int, string>? nodeIconKvp = null,
-            KeyValuePair<int, string>? selectedNodeIconKvp = null,
-            KeyValuePair<int, string>? stateNodeIconKvp = null,
-            Func<TValue, ContextMenuStrip> contextMenuStripFactory = null);
+        ITreeViewDataAdapterAsync<TValue> Create<TValue>(
+            TreeViewDataAdapterIconsOpts.IClnbl<TValue> opts,
+            Func<Task<IEnumerable<TValue>>> rootItemsFactory,
+            Func<TValue, Task<IEnumerable<TValue>>> childItemsFactory);
     }
 
     public class TreeViewDataAdapterFactory : ITreeViewDataAdapterFactory
     {
         private readonly IAppLoggerCreator appLoggerCreator;
         private readonly IWinFormsActionComponentFactory winFormsActionComponentFactory;
+        private readonly IContextMenuStripFactory contextMenuStripFactory;
 
         public TreeViewDataAdapterFactory(
             IAppLoggerCreator appLoggerCreator,
-            IWinFormsActionComponentFactory winFormsActionComponentFactory)
+            IWinFormsActionComponentFactory winFormsActionComponentFactory,
+            IContextMenuStripFactory contextMenuStripFactory)
         {
             this.appLoggerCreator = appLoggerCreator ?? throw new ArgumentNullException(
                 nameof(appLoggerCreator));
 
             this.winFormsActionComponentFactory = winFormsActionComponentFactory ?? throw new ArgumentNullException(
                 nameof(winFormsActionComponentFactory));
+
+            this.contextMenuStripFactory = contextMenuStripFactory ?? throw new ArgumentNullException(
+                nameof(contextMenuStripFactory));
         }
 
-        public ITreeViewDataAdapterAsync<TValue> CreateAsyncWithIconFactories<TValue>(
-            TreeView treeView,
-            Func<TValue, KeyValuePair<int, string>> nodeIconKvpFactory = null,
-            Func<TValue, KeyValuePair<int, string>> selectedNodeIconKvpFactory = null,
-            Func<TValue, KeyValuePair<int, string>> stateNodeIconKvpFactory = null,
-            Func<TValue, ContextMenuStrip> contextMenuStripFactory = null) => new TreeViewDataAdapterAsync<TValue>(
+        public ITreeViewDataAdapterAsync<TValue> Create<TValue>(
+            TreeViewDataAdapterIconFactoriesOpts.IClnbl<TValue> opts,
+            Func<Task<IEnumerable<TValue>>> rootItemsFactory,
+            Func<TValue, Task<IEnumerable<TValue>>> childItemsFactory) => new TreeViewDataAdapterAsync<TValue>(
                 appLoggerCreator,
                 winFormsActionComponentFactory,
-                treeView,
-                contextMenuStripFactory)
-            {
-                NodeIconKvpFactory = nodeIconKvpFactory,
-                SelectedNodeIconKvpFactory = selectedNodeIconKvpFactory,
-                StateNodeIconKvpFactory = stateNodeIconKvpFactory
-            };
+                opts,
+                contextMenuStripFactory,
+                rootItemsFactory,
+                childItemsFactory);
 
-        public ITreeViewDataAdapterAsync<TValue> CreateAsyncWithIcons<TValue>(
-            TreeView treeView,
-            KeyValuePair<int, string>? nodeIconKvp = null,
-            KeyValuePair<int, string>? selectedNodeIconKvp = null,
-            KeyValuePair<int, string>? stateNodeIconKvp = null,
-            Func<TValue, ContextMenuStrip> contextMenuStripFactory = null) => new TreeViewDataAdapterAsync<TValue>(
+        public ITreeViewDataAdapterAsync<TValue> Create<TValue>(
+            TreeViewDataAdapterIconsOpts.IClnbl<TValue> opts,
+            Func<Task<IEnumerable<TValue>>> rootItemsFactory,
+            Func<TValue, Task<IEnumerable<TValue>>> childItemsFactory) => new TreeViewDataAdapterAsync<TValue>(
                 appLoggerCreator,
                 winFormsActionComponentFactory,
-                treeView,
-                contextMenuStripFactory)
-            {
-                NodeIconKvp = nodeIconKvp ?? TreeViewDataAdapterH.EmptyNodeIconKvp,
-                SelectedNodeIconKvp = selectedNodeIconKvp ?? TreeViewDataAdapterH.EmptyNodeIconKvp,
-                StateNodeIconKvp = stateNodeIconKvp ?? TreeViewDataAdapterH.EmptyNodeIconKvp
-            };
+                opts,
+                contextMenuStripFactory,
+                rootItemsFactory,
+                childItemsFactory);
     }
 }

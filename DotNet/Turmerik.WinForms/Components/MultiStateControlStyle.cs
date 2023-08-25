@@ -90,7 +90,10 @@ namespace Turmerik.WinForms.Components
         {
             control.BackColor = style.BackColor;
             control.ForeColor = style.ForeColor;
-            control.Font = style.Font;
+
+            control.Font = new Font(
+                style.Font,
+                style.FontStyle);
         }
     }
 }

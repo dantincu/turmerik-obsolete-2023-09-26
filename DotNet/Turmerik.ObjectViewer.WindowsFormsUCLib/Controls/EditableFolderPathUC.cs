@@ -29,6 +29,9 @@ namespace Turmerik.ObjectViewer.WindowsFormsUCLib.Controls
             iconLabelBrowseFolderPath.Text = Unicodes.FolderOpen;
             iconLabelRefreshFolder.Text = Unicodes.Refresh;
             iconLabelExecuteFolder.Text = Unicodes.PlayCircleFilled;
+            iconLabelEdit.Text = Unicodes.Edit;
+            iconLabelSubmitChanges.Text = Unicodes.Done;
+            iconLabelUndoChanges.Text = Unicodes.Cancel;
 
             iconLabelBrowseFolderPath.Click += IconLabelBrowseFolderPath_Click;
             iconLabelEdit.Click += IconLabelEdit_Click;
@@ -45,6 +48,8 @@ namespace Turmerik.ObjectViewer.WindowsFormsUCLib.Controls
 
         public string FolderPath { get; private set; }
 
+        public bool HasChanges { get; private set; }
+
         public event Action<MutableValueWrapper<string>> FolderPathChosen
         {
             add => folderPathChosen += value;
@@ -53,14 +58,46 @@ namespace Turmerik.ObjectViewer.WindowsFormsUCLib.Controls
 
         private void ToggleEditMode(bool edit)
         {
-            textBoxFolderPath.ReadOnly = !edit;
+            bool @readonly = !edit;
+            textBoxFolderPath.ReadOnly = @readonly;
+            textBoxFolderPath.BackColor = edit ? Color.White : SystemColors.Control;
+
+            iconLabelBrowseFolderPath.Visible = @readonly;
+            iconLabelRefreshFolder.Visible = @readonly;
+            iconLabelExecuteFolder.Visible = @readonly;
+            iconLabelEdit.Visible = @readonly;
+
+            iconLabelSubmitChanges.Visible = edit;
             iconLabelUndoChanges.Visible = edit;
 
             var newState = edit.IfTrue(
-                () => EditingState.HasChanges,
+                () => EditingState.HasNoChanges,
                 () => EditingState.None);
 
             textBoxFolderPathMultiStateStyle.SetState(newState);
+        }
+
+        private void StartChanges()
+        {
+            ToggleEditMode(true);
+        }
+
+        private void SubmitChanges()
+        {
+            FolderPath = textBoxFolderPath.Text;
+            ToggleEditMode(false);
+
+            folderPathChosen?.Invoke(
+                new MutableValueWrapper<string>
+                {
+                    Value = FolderPath
+                });
+        }
+
+        private void RevertChanges()
+        {
+            textBoxFolderPath.Text = FolderPath;
+            ToggleEditMode(false);
         }
 
         private MultiStateControlStyle<TextBox, EditingState> GetTextBoxFolderPathMultiStateStyle(
@@ -77,6 +114,8 @@ namespace Turmerik.ObjectViewer.WindowsFormsUCLib.Controls
                                     style.FontStyle = FlagsH.SubstractFlagIfReq(
                                         style.FontStyle,
                                         FontStyle.Italic);
+
+                                    style.BackColor = Color.White;
                                 }).ToImmtbl()
                             },
                             {
@@ -84,6 +123,7 @@ namespace Turmerik.ObjectViewer.WindowsFormsUCLib.Controls
                                 initialStyle.ToMtbl().ActWithValue(style =>
                                 {
                                     style.FontStyle = style.FontStyle | FontStyle.Italic;
+                                    style.BackColor = Color.White;
                                 }).ToImmtbl()
                             }
                         }.WithValue(map => map.ToDictionary<KeyValuePair<EditingState, ControlStyle.Immtbl>, EditingState, Func<TextBox, EditingState, ControlStyle.Immtbl>>(
@@ -101,36 +141,57 @@ namespace Turmerik.ObjectViewer.WindowsFormsUCLib.Controls
                     Value = folderBrowserDialog.SelectedPath
                 };
 
-                folderPathChosen?.Invoke(mtbl);
+                FolderPath = mtbl.Value;
                 textBoxFolderPath.Text = mtbl.Value;
+
+                folderPathChosen?.Invoke(mtbl);
             }
         }
 
         private void IconLabelEdit_Click(object sender, EventArgs e)
         {
-            ToggleEditMode(true);
+            StartChanges();
         }
 
         private void IconLabelSubmitChanges_Click(object sender, EventArgs e)
         {
-            ToggleEditMode(false);
+            SubmitChanges();
         }
 
         private void IconLabelUndoChanges_Click(object sender, EventArgs e)
         {
-            ToggleEditMode(false);
+            RevertChanges();
         }
 
         private void TextBoxFolderPath_TextChanged(object sender, EventArgs e)
         {
-            bool hasChanges = textBoxFolderPath.Text == FolderPath;
-            HasChanges = hasChanges;
+            if (textBoxFolderPathMultiStateStyle.State != EditingState.None)
+            {
+                bool hasChanges = textBoxFolderPath.Text != FolderPath;
+                HasChanges = hasChanges;
 
-            var newState = hasChanges.IfTrue(
-                () => EditingState.HasChanges,
-                () => EditingState.HasNoChanges);
+                var newState = hasChanges.IfTrue(
+                    () => EditingState.HasChanges,
+                    () => EditingState.HasNoChanges);
 
-            textBoxFolderPathMultiStateStyle.SetState(newState);
+                textBoxFolderPathMultiStateStyle.SetState(newState);
+            }
+        }
+
+        private void TextBoxFolderPath_KeyPress(object sender, KeyPressEventArgs e)
+        {
+        }
+
+        private void TextBoxFolderPath_KeyUp(object sender, KeyEventArgs e)
+        {
+            if (e.KeyData == Keys.Enter)
+            {
+                SubmitChanges();
+            }
+            else if (e.KeyData == Keys.Escape)
+            {
+                RevertChanges();
+            }
         }
 
         #endregion Event Handlers

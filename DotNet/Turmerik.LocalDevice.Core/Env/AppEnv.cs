@@ -129,7 +129,7 @@ namespace Turmerik.LocalDevice.Core.Env
 
         public static class DefaultDirNames
         {
-            public const string APP_ENV_DIR_BASE_REL_PATH = "Turmerik/App";
+            public const string APP_ENV_DIR_BASE_REL_PATH = "Turmerik/Apps";
         }
     }
 }

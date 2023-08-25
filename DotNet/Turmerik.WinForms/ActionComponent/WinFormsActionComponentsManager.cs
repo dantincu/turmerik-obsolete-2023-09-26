@@ -1,9 +1,11 @@
 ﻿using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Turmerik.Text;
 using Turmerik.TrmrkAction;
 using Turmerik.Utils;
 using Turmerik.WinForms.Forms;
@@ -17,9 +19,13 @@ namespace Turmerik.WinForms.ActionComponent
 
     public class WinFormsActionComponentsManager : TrmrkActionComponentsManager, IWinFormsActionComponentsManager
     {
+        private readonly ITimeStampHelper timeStampHelper;
+
         public WinFormsActionComponentsManager(
+            ITimeStampHelper timeStampHelper,
             UIMessageForm uIMessageForm)
         {
+            this.timeStampHelper = timeStampHelper ?? throw new ArgumentNullException(nameof(timeStampHelper));
             UIMessageForm = uIMessageForm ?? throw new ArgumentNullException(nameof(uIMessageForm));
         }
 
@@ -29,7 +35,14 @@ namespace Turmerik.WinForms.ActionComponent
             ShowUIMessageAlertArgs args,
             bool useUIBlockingMessagePopup)
         {
-            UIMessageForm.Text = args.MsgTuple.Caption ?? args.LogLevel.ToString();
+            var logLevelStr = args.LogLevel.ToString();
+            UIMessageForm.Text = args.MsgTuple.Caption ?? logLevelStr;
+
+            UIMessageForm.TimeStampTextBox.Text = timeStampHelper.TmStmp(
+                DateTime.Now, true, TimeStamp.Ticks,
+                true, false, false, null);
+
+            UIMessageForm.LogLevelTextBox.Text = logLevelStr;
             UIMessageForm.MessageTextBox.Text = args.MsgTuple.Message ?? string.Empty;
 
             UIMessageForm.InvokeIfReq(() =>

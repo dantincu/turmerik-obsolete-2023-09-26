@@ -75,24 +75,27 @@
     <Compile Include="ActionComponent\WinFormsActionComponent.cs" />
     <Compile Include="ActionComponent\WinFormsActionComponentFactory.cs" />
     <Compile Include="ActionComponent\WinFormsActionComponentsManager.cs" />
-    <Compile Include="Components\ContextMenuOption.cs" />
+    <Compile Include="Components\ContextMenuStripOpts.clnbl.cs" />
+    <Compile Include="Components\ToolStripItemOpts.clnbl.cs" />
+    <Compile Include="Components\ContextMenuStripFactory.cs" />
     <Compile Include="Components\ControlStyle.clnbl.cs" />
     <Compile Include="Components\EditingState.cs" />
     <Compile Include="Components\MultiStateControlStyle.cs" />
+    <Compile Include="Components\ToolStripItemFactory.cs" />
+    <Compile Include="Components\TreeNodeArg.cs" />
+    <Compile Include="Components\TreeNodeArgH.cs" />
     <Compile Include="Components\TreeViewDataAdapterAsync.cs" />
     <Compile Include="Components\TreeViewDataAdapterFactory.cs" />
     <Compile Include="Components\TreeViewDataAdapterH.cs" />
+    <Compile Include="Components\TreeViewDataAdapterIconFactoriesOpts.clnbl.cs" />
+    <Compile Include="Components\TreeViewDataAdapterIconsOpts.clnbl.cs" />
+    <Compile Include="Components\TreeViewDataAdapterIconsOptsCore.clnbl.cs" />
+    <Compile Include="Components\TreeViewDataAdapterOpts.clnbl.cs" />
+    <Compile Include="Components\TreeViewDataAdapterOptsCore.clnbl.cs" />
     <Compile Include="Controls\ClickToggleIconLabel.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="Controls\TrmrkTreeNode.cs" />
-    <Compile Include="Controls\TrmrkFsTreeView.cs">
-      <SubType>Component</SubType>
-    </Compile>
     <Compile Include="Controls\IconLabel.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Controls\TrmrkTreeView.cs">
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Dependencies\ServiceProviderContainer.cs" />

@@ -10,10 +10,12 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Turmerik.DriveExplorerCore;
+using Turmerik.LocalDevice.Core.FileExplorerCore;
 using Turmerik.Logging;
 using Turmerik.TrmrkAction;
 using Turmerik.Utils;
 using Turmerik.WinForms.ActionComponent;
+using Turmerik.WinForms.Components;
 using Turmerik.WinForms.Controls;
 using Turmerik.WinForms.Dependencies;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
@@ -31,8 +33,11 @@ namespace Turmerik.ObjectViewer.WindowsFormsUCLib.Controls
 
         private readonly IAppLogger logger;
         private readonly IWinFormsActionComponent actionComponent;
+        private readonly IFsEntriesRetriever fsEntriesRetriever;
+        private readonly ITreeViewDataAdapterFactory treeViewDataAdapterFactory;
+        private readonly ITreeViewDataAdapterAsync<DriveItem.Mtbl> treeViewDataAdapterFiles;
 
-        private readonly TrmrkFsTreeView fsTreeView;
+        private string csprojFolderPath;
 
         public CsprojExecutionUC()
         {
@@ -46,16 +51,64 @@ namespace Turmerik.ObjectViewer.WindowsFormsUCLib.Controls
                 this.logger = this.appLoggerFactory.GetSharedAppLogger(GetType());
                 this.actionComponentFactory = this.svcProv.GetRequiredService<IWinFormsActionComponentFactory>();
                 this.actionComponent = this.actionComponentFactory.Create(this.logger);
+                this.fsEntriesRetriever = this.svcProv.GetRequiredService<IFsEntriesRetriever>();
+                this.treeViewDataAdapterFactory = this.svcProv.GetRequiredService<ITreeViewDataAdapterFactory>();
             }
 
             InitializeComponent();
 
-            editableFolderPathUCCsprojFile.FolderPathChosen += EditableFolderPathUCCsprojFile_FolderPathChosen;
+            if (this.svcRegistered)
+            {
+                this.treeViewDataAdapterFiles = CreateTreeViewDataAdapterFiles();
+                editableFolderPathUCCsprojFile.FolderPathChosen += EditableFolderPathUCCsprojFile_FolderPathChosen;
+            }
+        }
 
-            fsTreeView = new TrmrkFsTreeView();
-            fsTreeView.Dock = DockStyle.Fill;
-            fsTreeView.DriveItemsRetriever = svcProv.GetRequiredService<IDriveItemsRetriever>();
-            Controls.Add(fsTreeView);
+        private ITreeViewDataAdapterAsync<DriveItem.Mtbl> CreateTreeViewDataAdapterFiles(
+            ) => treeViewDataAdapterFactory.Create(
+                new TreeViewDataAdapterIconFactoriesOpts.Mtbl<DriveItem.Mtbl>
+                {
+                    TreeView = treeViewFiles,
+                    NodeTextFactory = arg => arg.Value.Name,
+                    NodeIcon = GetNodeIcon,
+                    SelectedNodeIcon = GetSelectedNodeIcon,
+                    StateNodeIcon = GetStateNodeIcon
+                },
+                async () =>
+                {
+                    var parent = await fsEntriesRetriever.GetFolderAsync(
+                        DriveItemIdnfH.FromPath(csprojFolderPath));
+
+                    var children = GetChildren(parent);
+                    return children;
+                },
+                async (parent) =>
+                {
+                    parent = await fsEntriesRetriever.GetFolderAsync(parent);
+
+                    var children = GetChildren(parent);
+                    return children;
+                });
+
+        private KeyValuePair<int, string> GetNodeIcon(
+            TreeNodeArg<DriveItem.Mtbl> node) => new KeyValuePair<int, string>(
+                (node.Value.IsFolder ?? false) ? 0 : 1, null);
+
+        private KeyValuePair<int, string> GetSelectedNodeIcon(
+            TreeNodeArg<DriveItem.Mtbl> node) => new KeyValuePair<int, string>(
+                (node.Value.IsFolder ?? false) ? 0 : 1, null);
+
+        private KeyValuePair<int, string> GetStateNodeIcon(
+            TreeNodeArg<DriveItem.Mtbl> node) => new KeyValuePair<int, string>(
+                (node.Value.IsFolder ?? false) ? 0 : 1, null);
+
+        private DriveItem.Mtbl[] GetChildren(
+            DriveItem.Mtbl parent)
+        {
+            var children = parent.SubFolders.ToList();
+            children.AddRange(parent.FolderFiles);
+
+            return children.ToArray();
         }
 
         #region UI Event Handlers
@@ -67,17 +120,10 @@ namespace Turmerik.ObjectViewer.WindowsFormsUCLib.Controls
                     ActionName = nameof(EditableFolderPathUCCsprojFile_FolderPathChosen),
                     Action = async () =>
                     {
-                        await fsTreeView.SetRootItemIdnfAsync(new DriveItemIdnf.Mtbl
-                        {
-                            Name = Path.GetFileName(obj.Value),
-                            PrPath = Path.GetDirectoryName(obj.Value)
-                        });
-
-                        var nodesCount = fsTreeView.Nodes.Count;
-
+                        this.csprojFolderPath = obj.Value;
+                        await treeViewDataAdapterFiles.RefreshRootNodesAsync();
                         return new TrmrkActionResult();
-                    },
-                    LogLevel = Microsoft.Extensions.Logging.LogLevel.Information
+                    }
                 });
 
         #endregion UI Event Handlers

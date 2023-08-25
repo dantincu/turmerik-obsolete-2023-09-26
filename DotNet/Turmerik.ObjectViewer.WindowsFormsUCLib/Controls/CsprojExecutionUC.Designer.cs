@@ -29,9 +29,10 @@
         private void InitializeComponent()
         {
             this.splitContainerMain = new System.Windows.Forms.SplitContainer();
+            this.treeViewFiles = new System.Windows.Forms.TreeView();
             this.groupBoxProjectAsssemblies = new System.Windows.Forms.GroupBox();
-            this.richTextBoxCodeFileContents = new System.Windows.Forms.RichTextBox();
             this.editableFolderPathUCCsprojFile = new Turmerik.ObjectViewer.WindowsFormsUCLib.Controls.EditableFolderPathUC();
+            this.richTextBoxCodeFileContents = new System.Windows.Forms.RichTextBox();
             this.filePathUCCurrentCodeFile = new Turmerik.ObjectViewer.WindowsFormsUCLib.Controls.FilePathUC();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainerMain)).BeginInit();
             this.splitContainerMain.Panel1.SuspendLayout();
@@ -47,6 +48,7 @@
             // 
             // splitContainerMain.Panel1
             // 
+            this.splitContainerMain.Panel1.Controls.Add(this.treeViewFiles);
             this.splitContainerMain.Panel1.Controls.Add(this.groupBoxProjectAsssemblies);
             this.splitContainerMain.Panel1.Controls.Add(this.editableFolderPathUCCsprojFile);
             // 
@@ -59,6 +61,14 @@
             this.splitContainerMain.SplitterWidth = 1;
             this.splitContainerMain.TabIndex = 0;
             // 
+            // treeViewFiles
+            // 
+            this.treeViewFiles.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.treeViewFiles.Location = new System.Drawing.Point(0, 21);
+            this.treeViewFiles.Name = "treeViewFiles";
+            this.treeViewFiles.Size = new System.Drawing.Size(896, 653);
+            this.treeViewFiles.TabIndex = 11;
+            // 
             // groupBoxProjectAsssemblies
             // 
             this.groupBoxProjectAsssemblies.Dock = System.Windows.Forms.DockStyle.Bottom;
@@ -68,6 +78,14 @@
             this.groupBoxProjectAsssemblies.TabIndex = 10;
             this.groupBoxProjectAsssemblies.TabStop = false;
             this.groupBoxProjectAsssemblies.Text = "Script Assemblies";
+            // 
+            // editableFolderPathUCCsprojFile
+            // 
+            this.editableFolderPathUCCsprojFile.Dock = System.Windows.Forms.DockStyle.Top;
+            this.editableFolderPathUCCsprojFile.Location = new System.Drawing.Point(0, 0);
+            this.editableFolderPathUCCsprojFile.Name = "editableFolderPathUCCsprojFile";
+            this.editableFolderPathUCCsprojFile.Size = new System.Drawing.Size(896, 21);
+            this.editableFolderPathUCCsprojFile.TabIndex = 0;
             // 
             // richTextBoxCodeFileContents
             // 
@@ -79,14 +97,6 @@
             this.richTextBoxCodeFileContents.Size = new System.Drawing.Size(895, 853);
             this.richTextBoxCodeFileContents.TabIndex = 2;
             this.richTextBoxCodeFileContents.Text = "";
-            // 
-            // editableFolderPathUCCsprojFile
-            // 
-            this.editableFolderPathUCCsprojFile.Dock = System.Windows.Forms.DockStyle.Top;
-            this.editableFolderPathUCCsprojFile.Location = new System.Drawing.Point(0, 0);
-            this.editableFolderPathUCCsprojFile.Name = "editableFolderPathUCCsprojFile";
-            this.editableFolderPathUCCsprojFile.Size = new System.Drawing.Size(896, 21);
-            this.editableFolderPathUCCsprojFile.TabIndex = 0;
             // 
             // filePathUCCurrentCodeFile
             // 
@@ -118,5 +128,6 @@
         private System.Windows.Forms.GroupBox groupBoxProjectAsssemblies;
         private FilePathUC filePathUCCurrentCodeFile;
         private System.Windows.Forms.RichTextBox richTextBoxCodeFileContents;
+        private System.Windows.Forms.TreeView treeViewFiles;
     }
 }

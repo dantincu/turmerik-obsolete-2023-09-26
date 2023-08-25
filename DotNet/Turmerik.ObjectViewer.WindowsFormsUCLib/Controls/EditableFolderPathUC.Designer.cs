@@ -49,6 +49,8 @@
             this.textBoxFolderPath.Size = new System.Drawing.Size(23, 22);
             this.textBoxFolderPath.TabIndex = 10;
             this.textBoxFolderPath.TextChanged += new System.EventHandler(this.TextBoxFolderPath_TextChanged);
+            this.textBoxFolderPath.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.TextBoxFolderPath_KeyPress);
+            this.textBoxFolderPath.KeyUp += new System.Windows.Forms.KeyEventHandler(this.TextBoxFolderPath_KeyUp);
             // 
             // iconLabelBrowseFolderPath
             // 

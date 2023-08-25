@@ -22,5 +22,24 @@ namespace Turmerik.DriveExplorerCore
             string dirSep) => FsH.CombinePaths(
                 idnf.PrPath.Arr(
                     idnf.Name), dirSep);
+
+        public static DriveItemIdnf.Mtbl FromPath(
+            string path)
+        {
+            var mtbl = new DriveItemIdnf.Mtbl
+            {
+                Name = Path.GetFileName(path),
+                PrPath = Path.GetDirectoryName(path)
+            };
+
+            if (string.IsNullOrWhiteSpace(
+                mtbl.Name) && string.IsNullOrWhiteSpace(
+                    mtbl.PrPath))
+            {
+                mtbl.Name = path;
+            }
+
+            return mtbl;
+        }
     }
 }

@@ -30,12 +30,16 @@
         {
             this.splitContainerMain = new System.Windows.Forms.SplitContainer();
             this.textBoxMessage = new System.Windows.Forms.TextBox();
+            this.panelTop = new System.Windows.Forms.Panel();
+            this.textBoxLogLevel = new System.Windows.Forms.TextBox();
+            this.textBoxTimeStamp = new System.Windows.Forms.TextBox();
             this.checkBoxUseBlockingAlerts = new System.Windows.Forms.CheckBox();
             this.buttonOk = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainerMain)).BeginInit();
             this.splitContainerMain.Panel1.SuspendLayout();
             this.splitContainerMain.Panel2.SuspendLayout();
             this.splitContainerMain.SuspendLayout();
+            this.panelTop.SuspendLayout();
             this.SuspendLayout();
             // 
             // splitContainerMain
@@ -50,6 +54,7 @@
             // splitContainerMain.Panel1
             // 
             this.splitContainerMain.Panel1.Controls.Add(this.textBoxMessage);
+            this.splitContainerMain.Panel1.Controls.Add(this.panelTop);
             // 
             // splitContainerMain.Panel2
             // 
@@ -63,13 +68,41 @@
             // textBoxMessage
             // 
             this.textBoxMessage.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.textBoxMessage.Location = new System.Drawing.Point(0, 0);
+            this.textBoxMessage.Location = new System.Drawing.Point(0, 21);
             this.textBoxMessage.Multiline = true;
             this.textBoxMessage.Name = "textBoxMessage";
             this.textBoxMessage.ReadOnly = true;
             this.textBoxMessage.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.textBoxMessage.Size = new System.Drawing.Size(484, 235);
+            this.textBoxMessage.Size = new System.Drawing.Size(484, 214);
             this.textBoxMessage.TabIndex = 0;
+            // 
+            // panelTop
+            // 
+            this.panelTop.Controls.Add(this.textBoxLogLevel);
+            this.panelTop.Controls.Add(this.textBoxTimeStamp);
+            this.panelTop.Dock = System.Windows.Forms.DockStyle.Top;
+            this.panelTop.Location = new System.Drawing.Point(0, 0);
+            this.panelTop.Name = "panelTop";
+            this.panelTop.Size = new System.Drawing.Size(484, 21);
+            this.panelTop.TabIndex = 1;
+            // 
+            // textBoxLogLevel
+            // 
+            this.textBoxLogLevel.Dock = System.Windows.Forms.DockStyle.Right;
+            this.textBoxLogLevel.Location = new System.Drawing.Point(384, 0);
+            this.textBoxLogLevel.Name = "textBoxLogLevel";
+            this.textBoxLogLevel.ReadOnly = true;
+            this.textBoxLogLevel.Size = new System.Drawing.Size(100, 20);
+            this.textBoxLogLevel.TabIndex = 1;
+            // 
+            // textBoxTimeStamp
+            // 
+            this.textBoxTimeStamp.Dock = System.Windows.Forms.DockStyle.Left;
+            this.textBoxTimeStamp.Location = new System.Drawing.Point(0, 0);
+            this.textBoxTimeStamp.Name = "textBoxTimeStamp";
+            this.textBoxTimeStamp.ReadOnly = true;
+            this.textBoxTimeStamp.Size = new System.Drawing.Size(200, 20);
+            this.textBoxTimeStamp.TabIndex = 0;
             // 
             // checkBoxUseBlockingAlerts
             // 
@@ -111,6 +144,8 @@
             this.splitContainerMain.Panel2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainerMain)).EndInit();
             this.splitContainerMain.ResumeLayout(false);
+            this.panelTop.ResumeLayout(false);
+            this.panelTop.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -121,5 +156,8 @@
         private System.Windows.Forms.Button buttonOk;
         private System.Windows.Forms.TextBox textBoxMessage;
         private System.Windows.Forms.CheckBox checkBoxUseBlockingAlerts;
+        private System.Windows.Forms.Panel panelTop;
+        private System.Windows.Forms.TextBox textBoxTimeStamp;
+        private System.Windows.Forms.TextBox textBoxLogLevel;
     }
 }

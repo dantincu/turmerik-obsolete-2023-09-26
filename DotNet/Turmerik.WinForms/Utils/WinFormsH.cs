@@ -7,6 +7,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Turmerik.Collections;
 using Turmerik.Text;
 using Turmerik.WinForms.Controls;
 
@@ -99,5 +100,13 @@ namespace Turmerik.WinForms.Utils
 
             return control;
         }
+
+        public static int[] GetPath(
+            TreeView treeView,
+            TreeNode treeNode) => DataTreeNodeH.GetPath(
+                treeNode,
+                treeView.Nodes.OfType<TreeNode>(),
+                node => node.Parent,
+                node => node.Nodes.OfType<TreeNode>());
     }
 }

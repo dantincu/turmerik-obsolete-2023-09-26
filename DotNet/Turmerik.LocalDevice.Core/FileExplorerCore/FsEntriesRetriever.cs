@@ -24,8 +24,11 @@ namespace Turmerik.LocalDevice.Core.FileExplorerCore
         public override async Task<DriveItem.Mtbl> GetFolderAsync(
             DriveItemIdnf.IClnbl idnf)
         {
-            var entry = new DirectoryInfo(idnf.GetFullPath(DirSeparator));
+            var folderPath = idnf.GetFullPath(DirSeparator);
+            var entry = new DirectoryInfo(folderPath);
             var folder = GetDriveItem(entry, true);
+
+            folder.PrPath = Path.GetDirectoryName(folderPath);
 
             var driveItemsArr = entry.EnumerateFileSystemInfos(
                 ).Select(fi => GetDriveItem(fi, false)).ToArray();

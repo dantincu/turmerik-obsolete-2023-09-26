@@ -19,6 +19,23 @@ namespace Turmerik.Collections
             return retArr;
         }
 
+        public static List<T> List<T>(
+            this T firstItem,
+            params T[] nextItems)
+        {
+            var list = new List<T>()
+            {
+                firstItem
+            };
+
+            if (nextItems.Any())
+            {
+                list.AddRange(nextItems);
+            }
+
+            return list;
+        }
+
         public static bool IsIdxDiffFromLast<T>(
             this T[] arr,
             int idx,

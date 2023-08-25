@@ -19,7 +19,7 @@ namespace Turmerik.Utils
             {
                 Message = exc.Message,
                 TypeFullName = exc.GetType().FullName,
-                StackTrace = exc.StackTrace?.Split('n'),
+                StackTrace = exc.StackTrace?.Split('\n'),
                 Source = exc.Source
             };
 

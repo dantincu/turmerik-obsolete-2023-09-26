@@ -400,6 +400,8 @@ FodyWeavers.xsd
 *.tsconfig.tsbuildinfo
 *.tsbuildinfo
 
+.github
+
 DotNet/Turmerik.LocalDevice.Core/app-env-locator.json
 DotNet/Turmerik.LocalDevice.Core/app-env-locator.dev.json
 

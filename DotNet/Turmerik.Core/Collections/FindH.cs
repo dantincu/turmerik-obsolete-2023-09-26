@@ -53,5 +53,43 @@ namespace Turmerik.Collections
 
             return retKvp;
         }
+
+        public static T GetNthVal<T>(
+            this IEnumerable<T> nmrbl,
+            int idx,
+            Func<int, T> defaultValueFactory = null)
+        {
+            T retVal = default;
+            int i = 0;
+            bool found = false;
+
+            foreach (var val in nmrbl)
+            {
+                if (i == idx)
+                {
+                    retVal = val;
+                    found = true;
+                }
+                else
+                {
+                    i++;
+                }
+            }
+
+            if (!found)
+            {
+                if (defaultValueFactory == null)
+                {
+                    throw new InvalidOperationException(
+                        $"Sequence contains {i} elements while the required index is {idx}");
+                }
+                else
+                {
+                    retVal = defaultValueFactory(i);
+                }
+            }
+
+            return retVal;
+        }
     }
 }

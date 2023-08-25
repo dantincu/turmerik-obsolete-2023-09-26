@@ -30,6 +30,8 @@ namespace Turmerik.WinForms.Forms
             InitializeComponent();
         }
 
+        public TextBox TimeStampTextBox => this.textBoxTimeStamp;
+        public TextBox LogLevelTextBox => this.textBoxLogLevel;
         public TextBox MessageTextBox => this.textBoxMessage;
 
         #region UI Event Handlers

@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Turmerik.LocalDevice.Core.Dependencies;
 using Turmerik.TrmrkAction;
 using Turmerik.WinForms.ActionComponent;
+using Turmerik.WinForms.Components;
 using Turmerik.WinForms.ViewModels;
 
 namespace Turmerik.WinForms.Dependencies
@@ -34,6 +35,10 @@ namespace Turmerik.WinForms.Dependencies
             services.AddSingleton<IWinFormsActionComponentsManagerRetriever, WinFormsActionComponentsManagerRetriever>();
             services.AddSingleton<IWinFormsActionComponentFactory, WinFormsActionComponentFactory>();
             services.AddSingleton<ITrmrkActionComponentFactory, WinFormsActionComponentFactory>();
+
+            services.AddSingleton<IToolStripItemFactory, ToolStripItemFactory>();
+            services.AddSingleton<IContextMenuStripFactory, ContextMenuStripFactory>();
+            services.AddSingleton<ITreeViewDataAdapterFactory, TreeViewDataAdapterFactory>();
         }
     }
 }

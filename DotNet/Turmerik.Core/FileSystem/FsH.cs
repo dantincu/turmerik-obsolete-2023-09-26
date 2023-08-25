@@ -168,12 +168,22 @@ namespace Turmerik.FileSystem
             string[] pathParts,
             string dirSep)
         {
-            pathParts = pathParts.Where(part => !string.IsNullOrWhiteSpace(part)).ToArray();
+            pathParts = pathParts.Select(
+                part => part?.Trim().Trim('/', '\\')).ToArray();
+
+            pathParts = pathParts.Where(
+                part => !string.IsNullOrWhiteSpace(part)).ToArray();
+
             string retPath = null;
 
             if (pathParts.Any())
             {
                 retPath = string.Join(dirSep, pathParts);
+            }
+
+            if (retPath.EndsWith(":"))
+            {
+                retPath += dirSep;
             }
 
             return retPath;

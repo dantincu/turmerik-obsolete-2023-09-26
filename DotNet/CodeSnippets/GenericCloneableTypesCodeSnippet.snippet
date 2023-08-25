@@ -1,0 +1,100 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<CodeSnippets xmlns="http://schemas.microsoft.com/VisualStudio/2005/CodeSnippet">
+  <CodeSnippet Format="1.0.0">
+    <Header>
+      <Title>Cloneable Types</Title>
+      <Shortcut>glnbl</Shortcut>
+      <Description>Code snippet for Cloneable Types</Description>
+      <Author>Daniel Tincu</Author>
+      <SnippetTypes>
+        <SnippetType>Expansion</SnippetType>
+      </SnippetTypes>
+    </Header>
+    <Snippet>
+      <Declarations>
+        <Literal Editable="true">
+          <ID>type_name</ID>
+          <ToolTip>Type name</ToolTip>
+          <Default>TypeName</Default>
+        </Literal>
+      <Literal Editable="true">
+          <ID>generic_type_args</ID>
+          <ToolTip>Generic type Args</ToolTip>
+        <Default>GenericTypeArgs</Default>
+        </Literal>
+      </Declarations>
+      <Code Language="csharp">
+      <![CDATA[
+    public static class $type_name$
+    {
+        public interface IClnbl<$generic_type_args$>
+        {
+        }
+        
+        public class Immtbl<$generic_type_args$> : IClnbl<$generic_type_args$>
+        {
+            public Immtbl(IClnbl<$generic_type_args$> src)
+            {
+            }
+        }
+        
+        public class Mtbl<$generic_type_args$> : IClnbl<$generic_type_args$>
+        {
+            public Mtbl()
+            {
+            }
+            
+            public Mtbl(IClnbl<$generic_type_args$> src)
+            {
+            }
+        }
+        
+        public static Immtbl<$generic_type_args$> ToImmtbl<$generic_type_args$>(
+            this IClnbl<$generic_type_args$> src) => new Immtbl<$generic_type_args$>(src);
+
+        public static Immtbl<$generic_type_args$> AsImmtbl<$generic_type_args$>(
+            this IClnbl<$generic_type_args$> src) => src as Immtbl<$generic_type_args$> ?? src?.ToImmtbl();
+
+        public static Mtbl<$generic_type_args$> ToMtbl<$generic_type_args$>(
+            this IClnbl<$generic_type_args$> src) => new Mtbl<$generic_type_args$>(src);
+
+        public static Mtbl<$generic_type_args$> AsMtbl<$generic_type_args$>(
+            this IClnbl<$generic_type_args$> src) => src as Mtbl<$generic_type_args$> ?? src?.ToMtbl();
+
+        public static ReadOnlyCollection<Immtbl<$generic_type_args$>> ToImmtblCllctn<$generic_type_args$>(
+            this IEnumerable<IClnbl<$generic_type_args$>> src) => src?.Select(
+                item => item?.AsImmtbl()).RdnlC();
+
+        public static ReadOnlyCollection<Immtbl<$generic_type_args$>> AsImmtblCllctn<$generic_type_args$>(
+            this IEnumerable<IClnbl<$generic_type_args$>> src) =>
+            src as ReadOnlyCollection<Immtbl<$generic_type_args$>> ?? src?.ToImmtblCllctn();
+
+        public static List<Mtbl<$generic_type_args$>> ToMtblList<$generic_type_args$>(
+            this IEnumerable<IClnbl<$generic_type_args$>> src) => src?.Select(
+                item => item?.AsMtbl()).ToList();
+
+        public static List<Mtbl<$generic_type_args$>> AsMtblList<$generic_type_args$>(
+            this IEnumerable<IClnbl<$generic_type_args$>> src) => src as List<Mtbl<$generic_type_args$>> ?? src?.ToMtblList();
+
+        public static ReadOnlyDictionary<TKey, Immtbl<$generic_type_args$>> AsImmtblDictnr<TKey, $generic_type_args$>(
+            IDictionaryCore<TKey, IClnbl<$generic_type_args$>> src) => src as ReadOnlyDictionary<TKey, Immtbl<$generic_type_args$>> ?? (
+            src as Dictionary<TKey, Mtbl<$generic_type_args$>>)?.ToDictionary(
+                kvp => kvp.Key, kvp => kvp.Value.AsImmtbl()).RdnlD();
+
+        public static Dictionary<TKey, Mtbl<$generic_type_args$>> AsMtblDictnr<TKey, $generic_type_args$>(
+            IDictionaryCore<TKey, IClnbl<$generic_type_args$>> src) => src as Dictionary<TKey, Mtbl<$generic_type_args$>> ?? (
+            src as ReadOnlyDictionary<TKey, Immtbl<$generic_type_args$>>)?.ToDictionary(
+                kvp => kvp.Key, kvp => kvp.Value.AsMtbl());
+
+        public static IDictionaryCore<TKey, IClnbl<$generic_type_args$>> ToClnblDictnr<TKey, $generic_type_args$>(
+            this Dictionary<TKey, Mtbl<$generic_type_args$>> src) => (IDictionaryCore<TKey, IClnbl<$generic_type_args$>>)src.ToDictionary(
+                kvp => kvp.Key, kvp => kvp.Value.SafeCast<IClnbl<$generic_type_args$>>());
+
+        public static IDictionaryCore<TKey, IClnbl<$generic_type_args$>> ToClnblDictnr<TKey, $generic_type_args$>(
+            this ReadOnlyDictionary<TKey, Immtbl<$generic_type_args$>> src) => (IDictionaryCore<TKey, IClnbl<$generic_type_args$>>)src.ToDictionary(
+                kvp => kvp.Key, kvp => kvp.Value.SafeCast<IClnbl<$generic_type_args$>>());
+    }]]>
+      </Code>
+    </Snippet>
+  </CodeSnippet>
+</CodeSnippets>

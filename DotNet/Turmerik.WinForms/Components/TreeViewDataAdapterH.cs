@@ -8,6 +8,6 @@ namespace Turmerik.WinForms.Components
 {
     public static class TreeViewDataAdapterH
     {
-        public static KeyValuePair<int, string> EmptyNodeIconKvp { get; } = new KeyValuePair<int, string>(-, null);
+        public static KeyValuePair<int, string> EmptyNodeIconKvp { get; } = new KeyValuePair<int, string>(-1, null);
     }
 }
