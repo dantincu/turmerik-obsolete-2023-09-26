@@ -173,6 +173,8 @@ namespace Turmerik.WinForms.Components
                             contextMenu.Show(
                                 TreeView,
                                 e.Location);
+
+                            TreeView.SelectedNode = node;
                         }
                     }
 

@@ -68,6 +68,10 @@ namespace Turmerik.LocalDevice.Core.Env
         protected abstract TMtblSrlzbl GetDefaultConfigCore();
         protected abstract TMtblSrlzbl SerializeConfig(TImmtbl config);
 
+        protected override string GetJsonDirPath() => AppEnv.GetTypePath(
+            AppEnvDir.Data,
+            GetType());
+
         protected override string GetJsonFilePath() => AppEnv.GetTypePath(
             AppEnvDir.Data,
             GetType(),

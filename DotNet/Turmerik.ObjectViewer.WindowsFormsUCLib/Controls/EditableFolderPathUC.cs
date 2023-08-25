@@ -18,7 +18,7 @@ namespace Turmerik.ObjectViewer.WindowsFormsUCLib.Controls
     {
         private readonly MultiStateControlStyle<TextBox, EditingState> textBoxFolderPathMultiStateStyle;
 
-        private Action<MutableValueWrapper<string>> folderPathChosen;
+        private Action<MutableValueWrapper<string>> folderPathChanged;
 
         public EditableFolderPathUC()
         {
@@ -50,10 +50,35 @@ namespace Turmerik.ObjectViewer.WindowsFormsUCLib.Controls
 
         public bool HasChanges { get; private set; }
 
-        public event Action<MutableValueWrapper<string>> FolderPathChosen
+        public event Action<MutableValueWrapper<string>> FolderPathChanged
         {
-            add => folderPathChosen += value;
-            remove => folderPathChosen -= value;
+            add => folderPathChanged += value;
+            remove => folderPathChanged -= value;
+        }
+
+        public void SetFolderPath(string folderPath)
+        {
+            textBoxFolderPath.Text = folderPath;
+            FolderPath = folderPath;
+
+            OnFolderPathChanged(folderPath);
+        }
+
+        private void OnFolderPathChanged(
+            string newFolderPath)
+        {
+            var mtbl = new MutableValueWrapper<string>
+            {
+                Value = newFolderPath,
+            };
+
+            folderPathChanged?.Invoke(mtbl);
+
+            if (mtbl.Value != FolderPath)
+            {
+                FolderPath = mtbl.Value;
+                textBoxFolderPath.Text = mtbl.Value;
+            }
         }
 
         private void ToggleEditMode(bool edit)
@@ -87,11 +112,7 @@ namespace Turmerik.ObjectViewer.WindowsFormsUCLib.Controls
             FolderPath = textBoxFolderPath.Text;
             ToggleEditMode(false);
 
-            folderPathChosen?.Invoke(
-                new MutableValueWrapper<string>
-                {
-                    Value = FolderPath
-                });
+            OnFolderPathChanged(FolderPath);
         }
 
         private void RevertChanges()
@@ -136,15 +157,7 @@ namespace Turmerik.ObjectViewer.WindowsFormsUCLib.Controls
         {
             if (folderBrowserDialog.ShowDialog() == DialogResult.OK)
             {
-                var mtbl = new MutableValueWrapper<string>
-                {
-                    Value = folderBrowserDialog.SelectedPath
-                };
-
-                FolderPath = mtbl.Value;
-                textBoxFolderPath.Text = mtbl.Value;
-
-                folderPathChosen?.Invoke(mtbl);
+                SetFolderPath(folderBrowserDialog.SelectedPath);
             }
         }
 

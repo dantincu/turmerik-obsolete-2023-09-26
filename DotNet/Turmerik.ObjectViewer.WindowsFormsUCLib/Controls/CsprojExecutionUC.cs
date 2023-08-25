@@ -12,6 +12,7 @@ using System.Windows.Forms;
 using Turmerik.DriveExplorerCore;
 using Turmerik.LocalDevice.Core.FileExplorerCore;
 using Turmerik.Logging;
+using Turmerik.ObjectViewer.Lib.Components;
 using Turmerik.TrmrkAction;
 using Turmerik.Utils;
 using Turmerik.WinForms.ActionComponent;
@@ -37,6 +38,8 @@ namespace Turmerik.ObjectViewer.WindowsFormsUCLib.Controls
         private readonly ITreeViewDataAdapterFactory treeViewDataAdapterFactory;
         private readonly ITreeViewDataAdapterAsync<DriveItem.Mtbl> treeViewDataAdapterFiles;
 
+        private readonly IAppSettings appSettings;
+
         private string csprojFolderPath;
 
         public CsprojExecutionUC()
@@ -53,6 +56,7 @@ namespace Turmerik.ObjectViewer.WindowsFormsUCLib.Controls
                 this.actionComponent = this.actionComponentFactory.Create(this.logger);
                 this.fsEntriesRetriever = this.svcProv.GetRequiredService<IFsEntriesRetriever>();
                 this.treeViewDataAdapterFactory = this.svcProv.GetRequiredService<ITreeViewDataAdapterFactory>();
+                this.appSettings = this.svcProv.GetRequiredService<IAppSettings>();
             }
 
             InitializeComponent();
@@ -60,7 +64,8 @@ namespace Turmerik.ObjectViewer.WindowsFormsUCLib.Controls
             if (this.svcRegistered)
             {
                 this.treeViewDataAdapterFiles = CreateTreeViewDataAdapterFiles();
-                editableFolderPathUCCsprojFile.FolderPathChosen += EditableFolderPathUCCsprojFile_FolderPathChosen;
+                editableFolderPathUCCsprojFile.FolderPathChanged += EditableFolderPathUCCsprojFile_FolderPathChanged;
+                editableFolderPathUCCsprojFile.SetFolderPath(appSettings.Data.CsProjDirPath ?? string.Empty);
             }
         }
 
@@ -118,15 +123,25 @@ namespace Turmerik.ObjectViewer.WindowsFormsUCLib.Controls
 
         #region UI Event Handlers
 
-        private void EditableFolderPathUCCsprojFile_FolderPathChosen(
+        private void EditableFolderPathUCCsprojFile_FolderPathChanged(
             Utils.MutableValueWrapper<string> obj) => actionComponent.ExecuteAsync(
                 new TrmrkAsyncActionComponentOpts
                 {
-                    ActionName = nameof(EditableFolderPathUCCsprojFile_FolderPathChosen),
+                    ActionName = nameof(EditableFolderPathUCCsprojFile_FolderPathChanged),
                     Action = async () =>
                     {
                         this.csprojFolderPath = obj.Value;
-                        await treeViewDataAdapterFiles.RefreshRootNodesAsync();
+                        
+                        this.appSettings.Update((ref AppSettingsData.Mtbl mtbl) =>
+                        {
+                            mtbl.CsProjDirPath = obj.Value;
+                        });
+
+                        if (!string.IsNullOrWhiteSpace(this.csprojFolderPath))
+                        {
+                            await treeViewDataAdapterFiles.RefreshRootNodesAsync();
+                        }
+                        
                         return new TrmrkActionResult();
                     }
                 });

@@ -14,6 +14,7 @@ namespace Turmerik.ObjectViewer.Lib.Dependencies
             IServiceCollection services)
         {
             services.AddSingleton<IObjectsContainer, ObjectsContainer>();
+            services.AddSingleton<IAppSettings, AppSettings>();
         }
     }
 }

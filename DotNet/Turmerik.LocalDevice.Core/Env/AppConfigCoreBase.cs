@@ -10,6 +10,7 @@ namespace Turmerik.LocalDevice.Core.Env
     public interface IAppConfigCore<TImmtbl, TMtblSrlzbl> : IDisposable
         where TImmtbl : class
     {
+        string JsonDirPath { get; }
         string JsonFilePath { get; }
         TImmtbl Data { get; }
 
@@ -30,12 +31,14 @@ namespace Turmerik.LocalDevice.Core.Env
             IInterProcessConcurrentActionComponentFactory concurrentActionComponentFactory)
         {
             AppEnv = appEnv ?? throw new ArgumentNullException(nameof(appEnv));
+            JsonDirPath = GetJsonDirPath();
             JsonFilePath = GetJsonFilePath();
 
             ConcurrentActionComponent = concurrentActionComponentFactory.Create(
                 JsonFilePath, false, true);
         }
 
+        public string JsonDirPath { get; }
         public string JsonFilePath { get; }
 
         public TImmtbl Data => ConcurrentActionComponent.Execute(
@@ -62,6 +65,10 @@ namespace Turmerik.LocalDevice.Core.Env
 
         protected abstract TMtblSrlzbl GetDefaultConfig();
         protected abstract TImmtbl NormalizeConfig(TMtblSrlzbl config);
+
+        protected virtual string GetJsonDirPath() => AppEnv.GetTypePath(
+            AppEnvDir.Config,
+            GetType());
 
         protected virtual string GetJsonFilePath() => AppEnv.GetTypePath(
             AppEnvDir.Config,
@@ -118,6 +125,7 @@ namespace Turmerik.LocalDevice.Core.Env
             string json = JsonH.ToJson(
                 obj, false);
 
+            Directory.CreateDirectory(JsonDirPath);
             File.WriteAllText(jsonFilePath, json);
         }
     }

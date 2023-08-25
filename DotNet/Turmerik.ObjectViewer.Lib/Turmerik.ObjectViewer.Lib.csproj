@@ -6,6 +6,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Turmerik.Core\Turmerik.Core.csproj" />
+    <ProjectReference Include="..\Turmerik.LocalDevice.Core\Turmerik.LocalDevice.Core.csproj" />
   </ItemGroup>
 
 </Project>
