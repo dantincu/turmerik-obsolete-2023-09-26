@@ -52,6 +52,11 @@ namespace Turmerik.WinForms.Forms
             actionComponentsManager.Value.EnableUIBlockingMessagePopups = checkBoxUseBlockingAlerts.Checked;
         }
 
+        private void UIMessageForm_Load(object sender, EventArgs e)
+        {
+            checkBoxUseBlockingAlerts.Checked = actionComponentsManager.Value.EnableUIBlockingMessagePopups;
+        }
+
         #endregion UI Event Handlers
     }
 }

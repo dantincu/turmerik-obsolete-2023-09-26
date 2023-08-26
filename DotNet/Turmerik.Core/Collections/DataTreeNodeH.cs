@@ -76,41 +76,44 @@ namespace Turmerik.Collections
             isDefaultPredicate = isDefaultPredicate.FirstNotNull(val => val == null);
             bool hasParent = !isDefaultPredicate(parent);
 
-            IEnumerable<TNode> sibblings;
+            IEnumerable<TNode> sibblings = null;
 
             if (hasParent)
             {
                 sibblings = childrenRetriever(parent);
                 root = parent;
             }
-            else
+            else if (rootNodesRetriever != null)
             {
                 sibblings = rootNodesRetriever();
             }
-            
-            AddIdxToPath(
+
+            if (sibblings != null)
+            {
+                AddIdxToPath(
                 node,
                 sibblings,
                 path,
                 equalsPredicate);
 
-            if (hasParent)
-            {
-                var newRoot = BuildPath(
-                    node,
-                    parentRetriever,
-                    childrenRetriever,
-                    path,
-                    null,
-                    equalsPredicate,
-                    isDefaultPredicate);
-
-                if (!isDefaultPredicate(newRoot))
+                if (hasParent)
                 {
-                    root = newRoot;
+                    var newRoot = BuildPath(
+                        parent,
+                        parentRetriever,
+                        childrenRetriever,
+                        path,
+                        rootNodesRetriever,
+                        equalsPredicate,
+                        isDefaultPredicate);
+
+                    if (!isDefaultPredicate(newRoot))
+                    {
+                        root = newRoot;
+                    }
                 }
             }
-
+            
             return root;
         }
 

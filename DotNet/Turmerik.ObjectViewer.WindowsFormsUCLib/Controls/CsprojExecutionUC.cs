@@ -19,7 +19,6 @@ using Turmerik.WinForms.ActionComponent;
 using Turmerik.WinForms.Components;
 using Turmerik.WinForms.Controls;
 using Turmerik.WinForms.Dependencies;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace Turmerik.ObjectViewer.WindowsFormsUCLib.Controls
 {
@@ -89,10 +88,23 @@ namespace Turmerik.ObjectViewer.WindowsFormsUCLib.Controls
                 },
                 async (parent) =>
                 {
-                    parent = await fsEntriesRetriever.GetFolderAsync(parent);
+                    DriveItem.Mtbl[] children;
 
-                    var children = GetChildren(parent);
+                    if (parent.IsFolder == true)
+                    {
+                        parent = await fsEntriesRetriever.GetFolderAsync(parent);
+                        children = GetChildren(parent);
+                    }
+                    else
+                    {
+                        children = new DriveItem.Mtbl[0];
+                    }
+                    
                     return children;
+                }).ActWithValue(adapter =>
+                {
+                    adapter.RefreshOnDoubleClick = true;
+                    adapter.ChildrenRefreshDepth = 1;
                 });
 
         private KeyValuePair<int, string> GetNodeIcon(

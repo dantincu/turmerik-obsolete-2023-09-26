@@ -27,7 +27,6 @@ namespace Turmerik.LocalDevice.Core.Logging
         private readonly ITimeStampHelper timeStampHelper;
         private readonly ITrmrkJsonFormatterFactory trmrkJsonFormatterFactory;
         private readonly IStringTemplateParser stringTemplateParser;
-        // private readonly Lazy<IAppLogger> logger;
 
         private volatile int bufferedLoggerDirNameIdx;
         private volatile int appProcessIdnfDumped;
@@ -47,7 +46,6 @@ namespace Turmerik.LocalDevice.Core.Logging
             this.timeStampHelper = timeStampHelper ?? throw new ArgumentNullException(nameof(timeStampHelper));
             this.trmrkJsonFormatterFactory = trmrkJsonFormatterFactory ?? throw new ArgumentNullException(nameof(trmrkJsonFormatterFactory));
             this.stringTemplateParser = stringTemplateParser ?? throw new ArgumentNullException(nameof(stringTemplateParser));
-            // this.logger = LazyH.Lazy(() => GetAppLogger(GetType()));
             this.UseAppProcessIdnfByDefault = useAppProcessIdnfByDefault;
 
             MinLogLevel = appLoggerConfig.Data.MinLogLevel;

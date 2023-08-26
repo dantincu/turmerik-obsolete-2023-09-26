@@ -138,6 +138,7 @@
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Info";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.UIMessageForm_FormClosing);
+            this.Load += new System.EventHandler(this.UIMessageForm_Load);
             this.splitContainerMain.Panel1.ResumeLayout(false);
             this.splitContainerMain.Panel1.PerformLayout();
             this.splitContainerMain.Panel2.ResumeLayout(false);

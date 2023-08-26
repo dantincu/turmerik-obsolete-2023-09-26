@@ -84,7 +84,7 @@
     <Compile Include="Components\ToolStripItemFactory.cs" />
     <Compile Include="Components\TreeNodeArg.cs" />
     <Compile Include="Components\TreeNodeArgH.cs" />
-    <Compile Include="Components\TreeViewDataAdapterAsync.cs" />
+    <Compile Include="Components\TreeViewDataAdapter.cs" />
     <Compile Include="Components\TreeViewDataAdapterFactory.cs" />
     <Compile Include="Components\TreeViewDataAdapterH.cs" />
     <Compile Include="Components\TreeViewDataAdapterIconFactoriesOpts.clnbl.cs" />

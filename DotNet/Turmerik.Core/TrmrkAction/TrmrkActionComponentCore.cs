@@ -118,7 +118,7 @@ namespace Turmerik.TrmrkAction
         protected virtual void ShowUIMessageAlert(
             ShowUIMessageAlertArgs args)
         {
-            bool useUIBlockingMessagePopup = args.MsgTuple.UseUIBlockingMessagePopups != false && args.Opts.EnableUIBlockingMessagePopups && Manager.EnableUIBlockingMessagePopups;
+            bool useUIBlockingMessagePopup = args.MsgTuple.UseUIBlockingMessagePopups != false && args.Opts.EnableUIBlockingMessagePopups != false && Manager.EnableUIBlockingMessagePopups;
 
             Manager.ShowUIMessageAlert(
                 args,

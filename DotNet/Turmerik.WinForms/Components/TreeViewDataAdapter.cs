@@ -22,6 +22,7 @@ namespace Turmerik.WinForms.Components
     {
         TreeView TreeView { get; }
         bool RefreshOnDoubleClick { get; set; }
+        int ChildrenRefreshDepth { get; set; }
 
         TreeViewDataAdapterIconsOptsCore.Immtbl<KeyValuePair<int, string>, TValue> NodeIconKvp { get; }
         TreeViewDataAdapterIconsOptsCore.Immtbl<Func<TreeNodeArg<TValue>, KeyValuePair<int, string>>, TValue> NodeIconKvpFactory { get; }
@@ -29,25 +30,38 @@ namespace Turmerik.WinForms.Components
         event Action<TreeNodeArg<TValue>> NodeCreated;
 
         event Action<TreeNodeArg<TValue>> BeforeNodeRefresh;
+        event Action<TreeNodeArg<TValue>[]> BeforeNodesRefresh;
+
         event Action<ITrmrkActionResult<TreeNodeArg<TValue>>> AfterNodeRefresh;
+        event Action<ITrmrkActionResult<TreeNodeArg<TValue>[]>> AfterNodesRefresh;
 
         event Action<IEnumerable<TValue>> BeforeRootNodesRefresh;
         event Action<ITrmrkActionResult<IEnumerable<TreeNodeArg<TValue>>>> AfterRootNodesRefresh;
+
+        void RefreshRootNodes(
+            int? childrenRefreshDepth = null);
+        void RefreshChildNodes(
+            TreeNodeArg<TValue> arg,
+            int? childrenRefreshDepth = null);
     }
 
     public interface ITreeViewDataAdapterAsync<TValue> : ITreeViewDataAdapterCore<TValue>
     {
-        Task RefreshRootNodesAsync();
+        Task RefreshRootNodesAsync(
+            int? childrenRefreshDepth = null);
 
         Task RefreshChildNodesAsync(
-            TreeNodeArg<TValue> arg);
+            TreeNodeArg<TValue> arg,
+            int? childrenRefreshDepth = null);
     }
 
     public abstract class TreeViewDataAdapterBase<TValue> : ITreeViewDataAdapterCore<TValue>
     {
         private Action<TreeNodeArg<TValue>> nodeCreated;
         private Action<TreeNodeArg<TValue>> beforeNodeRefresh;
+        private Action<TreeNodeArg<TValue>[]> beforeNodesRefresh;
         private Action<ITrmrkActionResult<TreeNodeArg<TValue>>> afterNodeRefresh;
+        private Action<ITrmrkActionResult<TreeNodeArg<TValue>[]>> afterNodesRefresh;
         private Action<IEnumerable<TValue>> beforeRootNodesRefresh;
         private Action<ITrmrkActionResult<IEnumerable<TreeNodeArg<TValue>>>> afterRootNodesRefresh;
 
@@ -79,11 +93,14 @@ namespace Turmerik.WinForms.Components
             this.DataTree = new DataTree.Mtbl<TValue>();
 
             TreeView.NodeMouseClick += TreeView_NodeMouseClick;
+            TreeView.NodeMouseDoubleClick += TreeView_NodeMouseDoubleClick;
+            TreeView.AfterExpand += TreeView_AfterExpand;
         }
 
         public TreeView TreeView { get; }
 
         public bool RefreshOnDoubleClick { get; set; }
+        public int ChildrenRefreshDepth { get; set; }
 
         public TreeViewDataAdapterIconsOptsCore.Immtbl<KeyValuePair<int, string>, TValue> NodeIconKvp { get; }
         public TreeViewDataAdapterIconsOptsCore.Immtbl<Func<TreeNodeArg<TValue>, KeyValuePair<int, string>>, TValue> NodeIconKvpFactory { get; }
@@ -110,10 +127,22 @@ namespace Turmerik.WinForms.Components
             remove => beforeNodeRefresh -= value;
         }
 
+        public event Action<TreeNodeArg<TValue>[]> BeforeNodesRefresh
+        {
+            add => beforeNodesRefresh += value;
+            remove => beforeNodesRefresh -= value;
+        }
+
         public event Action<ITrmrkActionResult<TreeNodeArg<TValue>>> AfterNodeRefresh
         {
             add => afterNodeRefresh += value;
             remove => afterNodeRefresh -= value;
+        }
+
+        public event Action<ITrmrkActionResult<TreeNodeArg<TValue>[]>> AfterNodesRefresh
+        {
+            add => afterNodesRefresh += value;
+            remove => afterNodesRefresh -= value;
         }
 
         public event Action<IEnumerable<TValue>> BeforeRootNodesRefresh
@@ -128,14 +157,26 @@ namespace Turmerik.WinForms.Components
             remove => afterRootNodesRefresh -= value;
         }
 
+        public abstract void RefreshRootNodes(
+            int? childrenRefreshDepth = null);
+        public abstract void RefreshChildNodes(
+            TreeNodeArg<TValue> arg,
+            int? childrenRefreshDepth = null);
+
         protected void OnNodeCreated(
             TreeNodeArg<TValue> value) => nodeCreated?.Invoke(value);
 
         protected void OnBeforeNodeRefresh(
             TreeNodeArg<TValue> value) => beforeNodeRefresh?.Invoke(value);
 
+        protected void OnBeforeNodesRefresh(
+            TreeNodeArg<TValue>[] valuesArr) => beforeNodesRefresh?.Invoke(valuesArr);
+
         protected void OnAfterNodeRefresh(
             ITrmrkActionResult<TreeNodeArg<TValue>> actionResult) => afterNodeRefresh?.Invoke(actionResult);
+
+        protected void OnAfterNodesRefresh(
+            ITrmrkActionResult<TreeNodeArg<TValue>[]> actionResult) => afterNodesRefresh?.Invoke(actionResult);
 
         protected void OnBeforeRootNodesRefresh(
             IEnumerable<TValue> nmrbl) => beforeRootNodesRefresh?.Invoke(nmrbl);
@@ -143,22 +184,42 @@ namespace Turmerik.WinForms.Components
         protected void OnAfterRootNodesRefresh(
             ITrmrkActionResult<IEnumerable<TreeNodeArg<TValue>>> actionResult) => afterRootNodesRefresh?.Invoke(actionResult);
 
-        protected abstract void TreeViewNodeMouseClick(
-            TreeNodeMouseClickEventArgs e,
-            TreeNodeArg<TValue> arg);
-
-        protected virtual void TreeView_NodeMouseClick(
+        protected virtual void TreeView_NodeMouseDoubleClick(
             object sender,
             TreeNodeMouseClickEventArgs e)
         {
-            var node = e.Node;
-            CurrentTreeNode = node;
+            if (e.Button == MouseButtons.Left && RefreshOnDoubleClick)
+            {
+                ActionComponent.Execute(new TrmrkActionComponentOpts
+                {
+                    ActionName = nameof(TreeView_NodeMouseDoubleClick),
+                    Action = () =>
+                    {
+                        var node = e.Node;
+                        CurrentTreeNode = node;
 
-            ActionComponent.Execute(new TrmrkActionComponentOpts
+                        var path = WinFormsH.GetPath(TreeView, node);
+                        var dataNode = DataTree.FindPath(path);
+
+                        var arg = TreeNodeArgH.Arg(e.Node, path, dataNode);
+
+                        TreeNode_Refresh(arg);
+                        return new TrmrkActionResult();
+                    }
+                });
+            }
+        }
+
+        protected virtual void TreeView_NodeMouseClick(
+            object sender,
+            TreeNodeMouseClickEventArgs e) => ActionComponent.Execute(new TrmrkActionComponentOpts
             {
                 ActionName = nameof(TreeView_NodeMouseClick),
                 Action = () =>
                 {
+                    var node = e.Node;
+                    CurrentTreeNode = node;
+
                     var path = WinFormsH.GetPath(TreeView, node);
                     var dataNode = DataTree.FindPath(path);
 
@@ -178,14 +239,44 @@ namespace Turmerik.WinForms.Components
                         }
                     }
 
-                    TreeViewNodeMouseClick(e, arg);
                     return new TrmrkActionResult();
                 }
             });
-        }
+
+        protected virtual void TreeView_AfterExpand(
+            object sender,
+            TreeViewEventArgs e) => ActionComponent.Execute(new TrmrkActionComponentOpts
+            {
+                ActionName = nameof(TreeView_AfterExpand),
+                Action = () =>
+                {
+                    var node = e.Node;
+                    CurrentTreeNode = node;
+
+                    if (ChildrenRefreshDepth > 0)
+                    {
+                        var path = WinFormsH.GetPath(TreeView, node);
+                        var parentDataNode = DataTree.FindPath(path).AsMtbl();
+                        var nodesCllctn = node.Nodes;
+
+                        var argsArr = parentDataNode.Children.Select(
+                            (dataNode, idx) => TreeNodeArgH.Arg(
+                                nodesCllctn[idx],
+                                path.Append(idx).ToArray(),
+                                dataNode)).ToArray();
+
+                        TreeNodes_Refresh(argsArr);
+                    }
+                    
+                    return new TrmrkActionResult();
+                }
+            });
 
         protected abstract void TreeNode_Refresh(
             TreeNodeArg<TValue> value);
+
+        protected abstract void TreeNodes_Refresh(
+            TreeNodeArg<TValue>[] valuesArr);
 
         protected TreeNode CreateTreeNode(
             int[] path,
@@ -367,7 +458,25 @@ namespace Turmerik.WinForms.Components
         protected Func<Task<IEnumerable<TValue>>> RootItemsFactory { get; }
         protected Func<TValue, Task<IEnumerable<TValue>>> ChildItemsFactory { get; }
 
-        public async Task RefreshRootNodesAsync()
+        public override void RefreshRootNodes(
+            int? childrenRefreshDepth = null) => RefreshRootNodesAsync(
+                childrenRefreshDepth);
+        public override void RefreshChildNodes(
+            TreeNodeArg<TValue> arg,
+            int? childrenRefreshDepth = null) => RefreshChildNodesAsync(
+                arg, childrenRefreshDepth);
+
+        public Task RefreshRootNodesAsync(
+            int? childrenRefreshDepth = null) => RefreshRootNodesAsync(
+                childrenRefreshDepth ?? ChildrenRefreshDepth);
+
+        public Task RefreshChildNodesAsync(
+            TreeNodeArg<TValue> arg,
+            int? childrenRefreshDepth = null) => RefreshChildNodesAsync(
+                arg, childrenRefreshDepth ?? ChildrenRefreshDepth);
+
+        protected async Task RefreshRootNodesAsync(
+            int childrenRefreshDepth)
         {
             var rootItems = (await RootItemsFactory()).ToArray();
 
@@ -377,19 +486,39 @@ namespace Turmerik.WinForms.Components
                     Value = value,
                 }).ToList();
 
-            TreeView.Nodes.Clear();
+            var rootNodes = this.DataTree.RootNodes;
+            var nodesList = new List<TreeNode>();
 
-            for (int i = 0; i < this.DataTree.RootNodes.Count; i++)
+            var nodesCllctn = TreeView.Nodes;
+            nodesCllctn.Clear();
+
+            for (int i = 0; i < rootNodes.Count; i++)
             {
-                CreateTreeNode(
+                var treeNode = CreateTreeNode(
                     i.Arr(),
-                    this.DataTree.RootNodes[i],
-                    TreeView.Nodes);
+                    rootNodes[i],
+                    nodesCllctn);
+
+                nodesList.Add(treeNode);
+            }
+
+            if (childrenRefreshDepth > 0)
+            {
+                for (int i = 0; i < rootNodes.Count; i++)
+                {
+                    await RefreshChildNodesAsync(
+                        TreeNodeArgH.Arg(
+                            nodesList[i],
+                            i.Arr(),
+                            rootNodes[i]),
+                        childrenRefreshDepth - 1);
+                }
             }
         }
 
-        public async Task RefreshChildNodesAsync(
-            TreeNodeArg<TValue> arg)
+        protected async Task RefreshChildNodesAsync(
+            TreeNodeArg<TValue> arg,
+            int childrenRefreshDepth)
         {
             var items = await ChildItemsFactory(arg.Value);
 
@@ -403,37 +532,41 @@ namespace Turmerik.WinForms.Components
                     Parent = parentNode
                 }).ToList();
 
-            arg.TreeNode.Nodes.Clear();
+            var childNodes = parentNode.Children;
+            var nodesList = new List<TreeNode>();
+
+            var nodesCllctn = arg.TreeNode.Nodes;
+            nodesCllctn.Clear();
 
             for (int i = 0; i < parentNode.Children.Count; i++)
             {
-                CreateTreeNode(
-                    i.Arr(),
+                var treeNode = CreateTreeNode(
+                    arg.NodePath.Append(i).ToArray(),
                     parentNode.Children[i],
                     arg.TreeNode.Nodes);
-            }
-        }
 
-        protected override void TreeViewNodeMouseClick(
-            TreeNodeMouseClickEventArgs e,
-            TreeNodeArg<TValue> arg)
-        {
-            if (e.Button == MouseButtons.Left && e.Clicks > 1 && RefreshOnDoubleClick)
+                nodesList.Add(treeNode);
+            }
+
+            if (childrenRefreshDepth > 0)
             {
-                ActionComponent.Execute(new TrmrkActionComponentOpts
+                for (int i = 0; i < childNodes.Count; i++)
                 {
-                    ActionName = nameof(TreeViewNodeMouseClick),
-                    Action = () =>
-                    {
-                        TreeNodeRefreshAsync(arg);
-                        return new TrmrkActionResult();
-                    }
-                });
+                    await RefreshChildNodesAsync(
+                        TreeNodeArgH.Arg(
+                            nodesList[i],
+                            arg.NodePath.Append(i).ToArray(),
+                            childNodes[i]),
+                        childrenRefreshDepth - 1);
+                }
             }
         }
 
         protected override void TreeNode_Refresh(
             TreeNodeArg<TValue> value) => TreeNodeRefreshAsync(value);
+
+        protected override void TreeNodes_Refresh(
+            TreeNodeArg<TValue>[] valuesArr) => TreeNodesRefreshAsync(valuesArr);
 
         protected Task<ITrmrkActionResult<TreeNodeArg<TValue>>> TreeNodeRefreshAsync(
             TreeNodeArg<TValue> value) => ActionComponent.ExecuteAsync(
@@ -458,6 +591,38 @@ namespace Turmerik.WinForms.Components
                     TreeView.InvokeIfReq(() =>
                     {
                         OnAfterNodeRefresh(actionResult);
+                    });
+                }
+            });
+
+        protected Task<ITrmrkActionResult<TreeNodeArg<TValue>[]>> TreeNodesRefreshAsync(
+            TreeNodeArg<TValue>[] valuesArr) => ActionComponent.ExecuteAsync(
+            new TrmrkAsyncActionComponentOpts<TreeNodeArg<TValue>[]>
+            {
+                ActionName = nameof(TreeNode_Refresh),
+                BeforeExecute = () =>
+                {
+                    OnBeforeNodesRefresh(valuesArr);
+                },
+                Action = async () =>
+                {
+                    foreach (var value in valuesArr)
+                    {
+                        await RefreshChildNodesAsync(
+                            value,
+                            ChildrenRefreshDepth - 1);
+                    }
+
+                    return new TrmrkActionResult<TreeNodeArg<TValue>[]>
+                    {
+                        Data = valuesArr
+                    };
+                },
+                AlwaysCallback = actionResult =>
+                {
+                    TreeView.InvokeIfReq(() =>
+                    {
+                        OnAfterNodesRefresh(actionResult);
                     });
                 }
             });
