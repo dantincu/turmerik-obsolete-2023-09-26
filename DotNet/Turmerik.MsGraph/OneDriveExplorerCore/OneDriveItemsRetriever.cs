@@ -129,6 +129,7 @@ namespace Turmerik.MsGraph.OneDriveExplorerCore
                 IsRootFolder = isRootFolder,
                 CreationTimeStr = GetTimeStampStr(graphItem.CreatedDateTime?.DateTime),
                 LastWriteTimeStr = GetTimeStampStr(graphItem.LastModifiedDateTime?.DateTime),
+                FileNameExtension = isFolder ? null : Path.GetExtension(graphItem.Name)
             };
 
             return driveItem;

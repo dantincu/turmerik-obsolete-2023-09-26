@@ -71,6 +71,7 @@ namespace Turmerik.PureFuncJs.Core.JintCompnts
         public const string TRMRK_EXP_OBJ_NAME = "exp";
         public const string TRMRK_LIB_OBJ_NAME = "lib";
         public const string TRMRK_IMP_OBJ_NAME = "imp";
+        public const string TRMRK_CFG_OBJ_NAME = "cfg";
 
         public static readonly string TrmrkExpObjPath = string.Join(".",
             TRMRK_ROOT_OBJ_NAME,
@@ -81,6 +82,10 @@ namespace Turmerik.PureFuncJs.Core.JintCompnts
             TRMRK_LIB_OBJ_NAME);
 
         public static readonly string TrmrkImpObjPath = string.Join(".",
+            TRMRK_ROOT_OBJ_NAME,
+            TRMRK_IMP_OBJ_NAME);
+
+        public static readonly string TrmrkCfgObjPath = string.Join(".",
             TRMRK_ROOT_OBJ_NAME,
             TRMRK_IMP_OBJ_NAME);
 

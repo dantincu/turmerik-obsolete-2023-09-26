@@ -68,11 +68,11 @@ namespace Turmerik.LocalDevice.Core.Logging
             this IEnumerable<IClnbl> src) => (src as List<Mtbl>) ?? src?.ToMtblList();
 
         public static ReadOnlyDictionary<TKey, Immtbl> AsImmtblDictnr<TKey>(
-            IDictionaryCore<TKey, IClnbl> src) => (src as ReadOnlyDictionary<TKey, Immtbl>) ?? (src as Dictionary<TKey, Mtbl>)?.ToDictionary(
+            IEnumerable<KeyValuePair<TKey, IClnbl>> src) => (src as ReadOnlyDictionary<TKey, Immtbl>) ?? (src as Dictionary<TKey, Mtbl>)?.ToDictionary(
                 kvp => kvp.Key, kvp => kvp.Value?.AsImmtbl()).RdnlD();
 
         public static Dictionary<TKey, Mtbl> AsMtblDictnr<TKey>(
-            IDictionaryCore<TKey, IClnbl> src) => (src as Dictionary<TKey, Mtbl>) ?? (src as ReadOnlyDictionary<TKey, Immtbl>)?.ToDictionary(
+            IEnumerable<KeyValuePair<TKey, IClnbl>> src) => (src as Dictionary<TKey, Mtbl>) ?? (src as ReadOnlyDictionary<TKey, Immtbl>)?.ToDictionary(
                 kvp => kvp.Key, kvp => kvp.Value?.AsMtbl());
     }
 }

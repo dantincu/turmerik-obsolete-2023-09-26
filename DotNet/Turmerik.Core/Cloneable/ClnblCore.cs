@@ -258,24 +258,6 @@ namespace Turmerik.Cloneable
         }
     } */
 
-    public interface IDictionaryCore<TKey, TValue> : IEnumerable
-    {
-    }
-
-    public static class DictionaryCore
-    {
-        public static Dictionary<TKey, TValue> AsDictnr<TKey, TValue>(
-            this IDictionaryCore<TKey, TValue> src) => src?.Cast<KeyValuePair<TKey, TValue>>().ToDictionary(
-                kvp => kvp.Key, kvp => kvp.Value);
-
-        public static ReadOnlyDictionary<TKey, TValue> AsRdnlDictnr<TKey, TValue>(
-            this IDictionaryCore<TKey, TValue> src) => src?.Cast<KeyValuePair<TKey, TValue>>().ToDictionary(
-                kvp => kvp.Key, kvp => kvp.Value).RdnlD();
-
-        public static IDictionaryCore<TKey, TValue> AsDictnrCore<TKey, TValue>(
-            this IEnumerable<KeyValuePair<TKey, TValue>> src) => src as IDictionaryCore<TKey, TValue>;
-    }
-
     [AttributeUsage(AttributeTargets.Class)]
     public class ClnblNsTypeAttribute : Attribute
     {

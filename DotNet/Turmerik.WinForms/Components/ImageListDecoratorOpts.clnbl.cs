@@ -1,32 +1,40 @@
-﻿using System;
+﻿using Jint.Native;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 using Turmerik.Cloneable;
 using Turmerik.Collections;
 using Turmerik.Utils;
 
 namespace Turmerik.WinForms.Components
 {
-    public static class ContextMenuStripOpts
+    public static class ImageListDecoratorOpts
     {
         public interface IClnbl
         {
-            IEnumerable<ToolStripItemOpts.IClnbl> GetItems();
+            ImageList ImageList { get; }
+
+            IEnumerable<KeyValuePair<string, Image>> GetImageMap();
         }
 
         public class Immtbl : IClnbl
         {
             public Immtbl(IClnbl src)
             {
-                Items = src.GetItems().AsImmtblCllctn();
+                ImageList = src.ImageList;
+                ImageMap = src.GetImageMap()?.ToDictnr().RdnlD();
             }
 
-            public ReadOnlyCollection<ToolStripItemOpts.Immtbl> Items { get; }
+            public ImageList ImageList { get; }
 
-            public IEnumerable<ToolStripItemOpts.IClnbl> GetItems() => Items;
+            public ReadOnlyDictionary<string, Image> ImageMap { get; }
+
+            public IEnumerable<KeyValuePair<string, Image>> GetImageMap() => ImageMap;
         }
 
         public class Mtbl : IClnbl
@@ -37,12 +45,15 @@ namespace Turmerik.WinForms.Components
 
             public Mtbl(IClnbl src)
             {
-                Items = src.GetItems().AsMtblList();
+                ImageList = src.ImageList;
+                ImageMap = src.GetImageMap()?.ToDictnr();
             }
 
-            public List<ToolStripItemOpts.Mtbl> Items { get; set; }
+            public ImageList ImageList { get; set; }
 
-            public IEnumerable<ToolStripItemOpts.IClnbl> GetItems() => Items;
+            public Dictionary<string, Image> ImageMap { get; set; }
+
+            public IEnumerable<KeyValuePair<string, Image>> GetImageMap() => ImageMap;
         }
 
         public static Immtbl ToImmtbl(

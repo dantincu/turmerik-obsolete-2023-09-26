@@ -76,6 +76,9 @@
     <Compile Include="ActionComponent\WinFormsActionComponentFactory.cs" />
     <Compile Include="ActionComponent\WinFormsActionComponentsManager.cs" />
     <Compile Include="Components\ContextMenuStripOpts.clnbl.cs" />
+    <Compile Include="Components\ImageListDecoratorBase.cs" />
+    <Compile Include="Components\ImageListDecoratorFactory.cs" />
+    <Compile Include="Components\ImageListDecoratorOpts.clnbl.cs" />
     <Compile Include="Components\ToolStripItemOpts.clnbl.cs" />
     <Compile Include="Components\ContextMenuStripFactory.cs" />
     <Compile Include="Components\ControlStyle.clnbl.cs" />

@@ -79,21 +79,21 @@ namespace Turmerik.WinForms.Components
             this IEnumerable<IClnbl<TIcons, TValue>> src) => src as List<Mtbl<TIcons, TValue>> ?? src?.ToMtblList();
 
         public static ReadOnlyDictionary<TKey, Immtbl<TIcons, TValue>> AsImmtblDictnr<TKey, TIcons, TValue>(
-            IDictionaryCore<TKey, IClnbl<TIcons, TValue>> src) => src as ReadOnlyDictionary<TKey, Immtbl<TIcons, TValue>> ?? (
+            IEnumerable<KeyValuePair<TKey, IClnbl<TIcons, TValue>>> src) => src as ReadOnlyDictionary<TKey, Immtbl<TIcons, TValue>> ?? (
             src as Dictionary<TKey, Mtbl<TIcons, TValue>>)?.ToDictionary(
                 kvp => kvp.Key, kvp => kvp.Value.AsImmtbl()).RdnlD();
 
         public static Dictionary<TKey, Mtbl<TIcons, TValue>> AsMtblDictnr<TKey, TIcons, TValue>(
-            IDictionaryCore<TKey, IClnbl<TIcons, TValue>> src) => src as Dictionary<TKey, Mtbl<TIcons, TValue>> ?? (
+            IEnumerable<KeyValuePair<TKey, IClnbl<TIcons, TValue>>> src) => src as Dictionary<TKey, Mtbl<TIcons, TValue>> ?? (
             src as ReadOnlyDictionary<TKey, Immtbl<TIcons, TValue>>)?.ToDictionary(
                 kvp => kvp.Key, kvp => kvp.Value.AsMtbl());
 
-        public static IDictionaryCore<TKey, IClnbl<TIcons, TValue>> ToClnblDictnr<TKey, TIcons, TValue>(
-            this Dictionary<TKey, Mtbl<TIcons, TValue>> src) => (IDictionaryCore<TKey, IClnbl<TIcons, TValue>>)src.ToDictionary(
+        public static IEnumerable<KeyValuePair<TKey, IClnbl<TIcons, TValue>>> ToClnblDictnr<TKey, TIcons, TValue>(
+            this Dictionary<TKey, Mtbl<TIcons, TValue>> src) => src.ToDictionary(
                 kvp => kvp.Key, kvp => kvp.Value.SafeCast<IClnbl<TIcons, TValue>>());
 
-        public static IDictionaryCore<TKey, IClnbl<TIcons, TValue>> ToClnblDictnr<TKey, TIcons, TValue>(
-            this ReadOnlyDictionary<TKey, Immtbl<TIcons, TValue>> src) => (IDictionaryCore<TKey, IClnbl<TIcons, TValue>>)src.ToDictionary(
+        public static IEnumerable<KeyValuePair<TKey, IClnbl<TIcons, TValue>>> ToClnblDictnr<TKey, TIcons, TValue>(
+            this ReadOnlyDictionary<TKey, Immtbl<TIcons, TValue>> src) => src.ToDictionary(
                 kvp => kvp.Key, kvp => kvp.Value.SafeCast<IClnbl<TIcons, TValue>>());
     }
 }

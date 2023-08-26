@@ -13,6 +13,8 @@ using Turmerik.DriveExplorerCore;
 using Turmerik.LocalDevice.Core.FileExplorerCore;
 using Turmerik.Logging;
 using Turmerik.ObjectViewer.Lib.Components;
+using Turmerik.ObjectViewer.WindowsFormsUCLib.Components;
+using Turmerik.ObjectViewer.WindowsFormsUCLib.Properties;
 using Turmerik.TrmrkAction;
 using Turmerik.Utils;
 using Turmerik.WinForms.ActionComponent;
@@ -34,7 +36,10 @@ namespace Turmerik.ObjectViewer.WindowsFormsUCLib.Controls
         private readonly IAppLogger logger;
         private readonly IWinFormsActionComponent actionComponent;
         private readonly IFsEntriesRetriever fsEntriesRetriever;
+        private readonly IImageListDecoratorFactory imageListDecoratorFactory;
         private readonly ITreeViewDataAdapterFactory treeViewDataAdapterFactory;
+        private readonly ImageList treeViewFilesImageList;
+        private readonly CsProjTreeViewFilesImageList treeViewFilesImageListDecorator;
         private readonly ITreeViewDataAdapterAsync<DriveItem.Mtbl> treeViewDataAdapterFiles;
 
         private readonly IAppSettings appSettings;
@@ -54,6 +59,7 @@ namespace Turmerik.ObjectViewer.WindowsFormsUCLib.Controls
                 this.actionComponentFactory = this.svcProv.GetRequiredService<IWinFormsActionComponentFactory>();
                 this.actionComponent = this.actionComponentFactory.Create(this.logger);
                 this.fsEntriesRetriever = this.svcProv.GetRequiredService<IFsEntriesRetriever>();
+                this.imageListDecoratorFactory = this.svcProv.GetRequiredService<IImageListDecoratorFactory>();
                 this.treeViewDataAdapterFactory = this.svcProv.GetRequiredService<ITreeViewDataAdapterFactory>();
                 this.appSettings = this.svcProv.GetRequiredService<IAppSettings>();
             }
@@ -62,10 +68,45 @@ namespace Turmerik.ObjectViewer.WindowsFormsUCLib.Controls
 
             if (this.svcRegistered)
             {
+                (this.treeViewFilesImageList,
+                    this.treeViewFilesImageListDecorator) = GetTreeViewFilesImageList();
+
+                this.treeViewFiles.ImageList = treeViewFilesImageList;
                 this.treeViewDataAdapterFiles = CreateTreeViewDataAdapterFiles();
-                editableFolderPathUCCsprojFile.FolderPathChanged += EditableFolderPathUCCsprojFile_FolderPathChanged;
-                editableFolderPathUCCsprojFile.SetFolderPath(appSettings.Data.CsProjDirPath ?? string.Empty);
+
+                this.editableFolderPathUCCsprojFile.FolderPathChanged += EditableFolderPathUCCsprojFile_FolderPathChanged;
+
+                this.editableFolderPathUCCsprojFile.SetFolderPath(
+                    appSettings.Data.CsProjDirPath ?? string.Empty);
             }
+        }
+
+        private Tuple<ImageList, CsProjTreeViewFilesImageList> GetTreeViewFilesImageList()
+        {
+            var imageList = new ImageList();
+            var imageListDecorator = imageListDecoratorFactory.Create<CsProjTreeViewFilesImageList>(
+                new ImageListDecoratorOpts.Mtbl
+                {
+                    ImageList = imageList,
+                    ImageMap = new Dictionary<string, Image>
+                    {
+                        { nameof(CsProjTreeViewFilesImageList.FolderKey), Resources.folder_FILL0_wght400_GRAD0_opsz48 },
+                        { nameof(CsProjTreeViewFilesImageList.FolderOpenKey), Resources.folder_open_FILL0_wght400_GRAD0_opsz48 },
+                        { nameof(CsProjTreeViewFilesImageList.FolderZipKey), Resources.folder_zip_FILL0_wght400_GRAD0_opsz48 },
+                        { nameof(CsProjTreeViewFilesImageList.HardDriveKey), Resources.hard_drive_FILL0_wght400_GRAD0_opsz48 },
+                        { nameof(CsProjTreeViewFilesImageList.NoteKey), Resources.note_FILL0_wght400_GRAD0_opsz48 },
+                        { nameof(CsProjTreeViewFilesImageList.CodeKey), Resources.code_FILL0_wght400_GRAD0_opsz48 },
+                        { nameof(CsProjTreeViewFilesImageList.Package2Key), Resources.package_2_FILL0_wght400_GRAD0_opsz48 },
+                        { nameof(CsProjTreeViewFilesImageList.ImageKey), Resources.image_FILL0_wght400_GRAD0_opsz48 },
+                        { nameof(CsProjTreeViewFilesImageList.AudioFileKey), Resources.audio_file_FILL0_wght400_GRAD0_opsz48 },
+                        { nameof(CsProjTreeViewFilesImageList.VideoFileKey), Resources.video_file_FILL0_wght400_GRAD0_opsz48 },
+                        { nameof(CsProjTreeViewFilesImageList.UnknownDocumentKey), Resources.unknown_document_FILL0_wght400_GRAD0_opsz48 },
+                    }
+                });
+
+            return Tuple.Create(
+                imageList,
+                imageListDecorator);
         }
 
         private ITreeViewDataAdapterAsync<DriveItem.Mtbl> CreateTreeViewDataAdapterFiles(
@@ -75,8 +116,8 @@ namespace Turmerik.ObjectViewer.WindowsFormsUCLib.Controls
                     TreeView = treeViewFiles,
                     NodeTextFactory = arg => arg.Value.Name,
                     NodeIcon = GetNodeIcon,
-                    SelectedNodeIcon = GetSelectedNodeIcon,
-                    StateNodeIcon = GetStateNodeIcon
+                    SelectedNodeIcon = GetNodeIcon,
+                    StateNodeIcon = GetNodeIcon
                 },
                 async () =>
                 {
@@ -109,15 +150,85 @@ namespace Turmerik.ObjectViewer.WindowsFormsUCLib.Controls
 
         private KeyValuePair<int, string> GetNodeIcon(
             TreeNodeArg<DriveItem.Mtbl> node) => new KeyValuePair<int, string>(
-                (node.Value.IsFolder ?? false) ? 0 : 1, null);
+                (node.Value.IsFolder ?? false) ? GetFolderNodeIconIdx(
+                    node) : GetFileNodeIconIdx(
+                        node), null);
 
-        private KeyValuePair<int, string> GetSelectedNodeIcon(
-            TreeNodeArg<DriveItem.Mtbl> node) => new KeyValuePair<int, string>(
-                (node.Value.IsFolder ?? false) ? 0 : 1, null);
+        private int GetFolderNodeIconIdx(
+            TreeNodeArg<DriveItem.Mtbl> node) => treeViewFilesImageListDecorator.FolderKey;
 
-        private KeyValuePair<int, string> GetStateNodeIcon(
-            TreeNodeArg<DriveItem.Mtbl> node) => new KeyValuePair<int, string>(
-                (node.Value.IsFolder ?? false) ? 0 : 1, null);
+        private int GetFileNodeIconIdx(
+            TreeNodeArg<DriveItem.Mtbl> node)
+        {
+            int idx;
+
+            switch (node.Value.FileNameExtension)
+            {
+                case ".txt":
+                case ".md":
+                    idx = treeViewFilesImageListDecorator.NoteKey;
+                    break;
+                case ".cs":
+                case ".js":
+                case ".ts":
+                case ".json":
+                case ".jsx":
+                case ".tsx":
+                case ".csx":
+                case ".cshtml":
+                case ".csproj":
+                case ".sln":
+                case ".xml":
+                case ".yml":
+                case ".xaml":
+                case ".html":
+                case ".c":
+                case ".h":
+                case ".cpp":
+                case ".vb":
+                case ".vbproj":
+                case ".vbx":
+                case ".java":
+                case ".config":
+                    idx = treeViewFilesImageListDecorator.CodeKey;
+                    break;
+                case ".bin":
+                case ".exe":
+                case ".lib":
+                case ".jar":
+                    idx = treeViewFilesImageListDecorator.Package2Key;
+                    break;
+                case ".jpg":
+                case ".jpeg":
+                case ".png":
+                case ".giff":
+                case ".tiff":
+                case ".img":
+                case ".ico":
+                case ".bmp":
+                case ".heic":
+                    idx = treeViewFilesImageListDecorator.ImageKey;
+                    break;
+                case ".mp3":
+                case ".flac":
+                case ".aac":
+                case ".wav":
+                    idx = treeViewFilesImageListDecorator.AudioFileKey;
+                    break;
+                case ".mpg":
+                case ".mpeg":
+                case ".avi":
+                case ".mp4":
+                case ".m4a":
+                    idx = treeViewFilesImageListDecorator.VideoFileKey;
+                    break;
+                default:
+                    idx = treeViewFilesImageListDecorator.UnknownDocumentKey;
+                    break;
+            }
+
+            return idx;
+        }
 
         private DriveItem.Mtbl[] GetChildren(
             DriveItem.Mtbl parent)

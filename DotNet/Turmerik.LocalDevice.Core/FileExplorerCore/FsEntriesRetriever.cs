@@ -100,8 +100,9 @@ namespace Turmerik.LocalDevice.Core.FileExplorerCore
             else if (fSysInfo is FileInfo fInfo)
             {
                 string extn = fInfo.Extension.ToLower();
-                fsItemMtbl.OfficeLikeFileType = GetOfficeLikeFileType(extn);
+                fsItemMtbl.FileNameExtension = extn;
 
+                fsItemMtbl.OfficeLikeFileType = GetOfficeLikeFileType(extn);
                 fsItemMtbl.SizeBytesCount = fInfo.Length;
 
                 if (FsH.CommonTextFileExtensions.Contains(extn))

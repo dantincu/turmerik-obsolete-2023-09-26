@@ -82,21 +82,21 @@ namespace Turmerik.WinForms.Components
             this IEnumerable<IClnbl<TValue>> src) => src as List<Mtbl<TValue>> ?? src?.ToMtblList();
 
         public static ReadOnlyDictionary<TKey, Immtbl<TValue>> AsImmtblDictnr<TKey, TValue>(
-            IDictionaryCore<TKey, IClnbl<TValue>> src) => src as ReadOnlyDictionary<TKey, Immtbl<TValue>> ?? (
+            IEnumerable<KeyValuePair<TKey, IClnbl<TValue>>> src) => src as ReadOnlyDictionary<TKey, Immtbl<TValue>> ?? (
             src as Dictionary<TKey, Mtbl<TValue>>)?.ToDictionary(
                 kvp => kvp.Key, kvp => kvp.Value.AsImmtbl()).RdnlD();
 
         public static Dictionary<TKey, Mtbl<TValue>> AsMtblDictnr<TKey, TValue>(
-            IDictionaryCore<TKey, IClnbl<TValue>> src) => src as Dictionary<TKey, Mtbl<TValue>> ?? (
+            IEnumerable<KeyValuePair<TKey, IClnbl<TValue>>> src) => src as Dictionary<TKey, Mtbl<TValue>> ?? (
             src as ReadOnlyDictionary<TKey, Immtbl<TValue>>)?.ToDictionary(
                 kvp => kvp.Key, kvp => kvp.Value.AsMtbl());
 
-        public static IDictionaryCore<TKey, IClnbl<TValue>> ToClnblDictnr<TKey, TValue>(
-            this Dictionary<TKey, Mtbl<TValue>> src) => (IDictionaryCore<TKey, IClnbl<TValue>>)src.ToDictionary(
+        public static IEnumerable<KeyValuePair<TKey, IClnbl<TValue>>> ToClnblDictnr<TKey, TValue>(
+            this Dictionary<TKey, Mtbl<TValue>> src) => src.ToDictionary(
                 kvp => kvp.Key, kvp => kvp.Value.SafeCast<IClnbl<TValue>>());
 
-        public static IDictionaryCore<TKey, IClnbl<TValue>> ToClnblDictnr<TKey, TValue>(
-            this ReadOnlyDictionary<TKey, Immtbl<TValue>> src) => (IDictionaryCore<TKey, IClnbl<TValue>>)src.ToDictionary(
+        public static IEnumerable<KeyValuePair<TKey, IClnbl<TValue>>> ToClnblDictnr<TKey, TValue>(
+            this ReadOnlyDictionary<TKey, Immtbl<TValue>> src) => src.ToDictionary(
                 kvp => kvp.Key, kvp => kvp.Value.SafeCast<IClnbl<TValue>>());
     }
 }

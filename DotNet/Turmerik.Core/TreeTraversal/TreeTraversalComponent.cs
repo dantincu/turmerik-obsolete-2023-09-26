@@ -125,7 +125,6 @@ namespace Turmerik.TreeTraversal
 
             public void Dispose()
             {
-                // CurrentChildTreeNode?.Dispose();
                 ChildrenNmrtr.Value.Dispose();
             }
         }

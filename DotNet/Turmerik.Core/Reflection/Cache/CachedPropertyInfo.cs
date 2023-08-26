@@ -29,11 +29,11 @@ namespace Turmerik.Reflection.Cache
                 value)
         {
             Getter = new Lazy<ICachedMethodInfo>(
-                () => Data.GetGetMethod()?.WithValue(
+                () => Data.GetMethod?.WithValue(
                     mth => this.ItemsFactory.MethodInfo(mth)));
 
             Setter = new Lazy<ICachedMethodInfo>(
-                () => Data.GetSetMethod()?.WithValue(
+                () => Data.SetMethod?.WithValue(
                     mth => this.ItemsFactory.MethodInfo(mth)));
         }
 

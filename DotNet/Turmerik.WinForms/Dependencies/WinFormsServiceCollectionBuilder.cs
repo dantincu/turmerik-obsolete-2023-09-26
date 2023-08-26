@@ -38,6 +38,7 @@ namespace Turmerik.WinForms.Dependencies
 
             services.AddSingleton<IToolStripItemFactory, ToolStripItemFactory>();
             services.AddSingleton<IContextMenuStripFactory, ContextMenuStripFactory>();
+            services.AddSingleton<IImageListDecoratorFactory, ImageListDecoratorFactory>();
             services.AddSingleton<ITreeViewDataAdapterFactory, TreeViewDataAdapterFactory>();
         }
     }

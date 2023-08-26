@@ -94,6 +94,10 @@ namespace Turmerik.Collections
             return val;
         }
 
+        public static Dictionary<TKey, TValue> ToDictnr<TKey, TValue>(
+            this IEnumerable<KeyValuePair<TKey, TValue>> dictnr) => dictnr.ToDictionary(
+                kvp => kvp.Key, kvp => kvp.Value);
+
         public static Dictionary<TOutKey, TOutVal> ToDictnr<TInKey, TInVal, TOutKey, TOutVal>(
             this IEnumerable<KeyValuePair<TInKey, TInVal>> dictnr,
             Func<KeyValuePair<TInKey, TInVal>, TOutKey> outKeyFactory,
