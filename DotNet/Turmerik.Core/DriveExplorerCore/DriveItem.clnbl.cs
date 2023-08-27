@@ -19,6 +19,18 @@ namespace Turmerik.DriveExplorerCore
         Slides
     }
 
+    public enum FileType
+    {
+        PlainText = 1,
+        Document,
+        Image,
+        Audio,
+        Video,
+        Code,
+        Binary,
+        ZippedFolder
+    }
+
     public static class DriveItemIdnf
     {
         public interface IClnbl
@@ -167,6 +179,7 @@ namespace Turmerik.DriveExplorerCore
             string CreationTimeStr { get; }
             string LastAccessTimeStr { get; }
             string LastWriteTimeStr { get; }
+            FileType? FileType { get; }
             OfficeLikeFileType? OfficeLikeFileType { get; }
             bool? IsTextFile { get; }
             bool? IsImageFile { get; }
@@ -195,6 +208,7 @@ namespace Turmerik.DriveExplorerCore
                 CreationTimeStr = src.CreationTimeStr;
                 LastAccessTimeStr = src.LastAccessTimeStr;
                 LastWriteTimeStr = src.LastWriteTimeStr;
+                FileType = src.FileType;
                 OfficeLikeFileType = src.OfficeLikeFileType;
                 IsTextFile = src.IsTextFile;
                 IsImageFile = src.IsImageFile;
@@ -219,6 +233,7 @@ namespace Turmerik.DriveExplorerCore
             public string CreationTimeStr { get; }
             public string LastAccessTimeStr { get; }
             public string LastWriteTimeStr { get; }
+            public FileType? FileType { get; }
             public OfficeLikeFileType? OfficeLikeFileType { get; }
             public bool? IsTextFile { get; }
             public bool? IsImageFile { get; }
@@ -254,6 +269,7 @@ namespace Turmerik.DriveExplorerCore
                 CreationTimeStr = src.CreationTimeStr;
                 LastAccessTimeStr = src.LastAccessTimeStr;
                 LastWriteTimeStr = src.LastWriteTimeStr;
+                FileType = src.FileType;
                 OfficeLikeFileType = src.OfficeLikeFileType;
                 IsTextFile = src.IsTextFile;
                 IsImageFile = src.IsImageFile;
@@ -278,6 +294,7 @@ namespace Turmerik.DriveExplorerCore
             public string CreationTimeStr { get; set; }
             public string LastAccessTimeStr { get; set; }
             public string LastWriteTimeStr { get; set; }
+            public FileType? FileType { get; set; }
             public OfficeLikeFileType? OfficeLikeFileType { get; set; }
             public bool? IsTextFile { get; set; }
             public bool? IsImageFile { get; set; }

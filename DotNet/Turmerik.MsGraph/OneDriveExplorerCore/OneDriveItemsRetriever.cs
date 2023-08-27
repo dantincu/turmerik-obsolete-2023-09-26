@@ -121,6 +121,8 @@ namespace Turmerik.MsGraph.OneDriveExplorerCore
             bool isFolder,
             bool isRootFolder)
         {
+            var extn = Path.GetExtension(graphItem.Name);
+
             var driveItem = new DrvItm.Mtbl
             {
                 Id = graphItem.Id,
@@ -129,8 +131,13 @@ namespace Turmerik.MsGraph.OneDriveExplorerCore
                 IsRootFolder = isRootFolder,
                 CreationTimeStr = GetTimeStampStr(graphItem.CreatedDateTime?.DateTime),
                 LastWriteTimeStr = GetTimeStampStr(graphItem.LastModifiedDateTime?.DateTime),
-                FileNameExtension = isFolder ? null : Path.GetExtension(graphItem.Name)
+                FileNameExtension = isFolder ? null : extn
             };
+
+            if (!isFolder && (driveItem.FileType = GetFileType(extn)) == FileType.Document)
+            {
+                driveItem.OfficeLikeFileType = GetOfficeLikeFileType(extn);
+            }
 
             return driveItem;
         }

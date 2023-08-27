@@ -102,7 +102,11 @@ namespace Turmerik.LocalDevice.Core.FileExplorerCore
                 string extn = fInfo.Extension.ToLower();
                 fsItemMtbl.FileNameExtension = extn;
 
-                fsItemMtbl.OfficeLikeFileType = GetOfficeLikeFileType(extn);
+                if ((fsItemMtbl.FileType = GetFileType(extn)) == FileType.Document)
+                {
+                    fsItemMtbl.OfficeLikeFileType = GetOfficeLikeFileType(extn);
+                }
+                
                 fsItemMtbl.SizeBytesCount = fInfo.Length;
 
                 if (FsH.CommonTextFileExtensions.Contains(extn))
@@ -124,21 +128,6 @@ namespace Turmerik.LocalDevice.Core.FileExplorerCore
             }
 
             return fsItemMtbl;
-        }
-
-        protected OfficeLikeFileType? GetOfficeLikeFileType(string extn)
-        {
-            var matchKvp = OfficeLikeFileTypesFileNameExtensions.SingleOrDefault(
-                kvp => kvp.Value.Contains(extn));
-
-            OfficeLikeFileType? retVal = null;
-
-            if (matchKvp.Value != null)
-            {
-                retVal = matchKvp.Key;
-            }
-
-            return retVal;
         }
 
         protected override string GetDirSeparator() => Path.DirectorySeparatorChar.ToString();

@@ -160,71 +160,43 @@ namespace Turmerik.ObjectViewer.WindowsFormsUCLib.Controls
         private int GetFileNodeIconIdx(
             TreeNodeArg<DriveItem.Mtbl> node)
         {
-            int idx;
+            int idx = treeViewFilesImageListDecorator.UnknownDocumentKey;
+            var fileTypeNllbl = node.Value.FileType;
 
-            switch (node.Value.FileNameExtension)
+            if (fileTypeNllbl.HasValue)
             {
-                case ".txt":
-                case ".md":
-                    idx = treeViewFilesImageListDecorator.NoteKey;
-                    break;
-                case ".cs":
-                case ".js":
-                case ".ts":
-                case ".json":
-                case ".jsx":
-                case ".tsx":
-                case ".csx":
-                case ".cshtml":
-                case ".csproj":
-                case ".sln":
-                case ".xml":
-                case ".yml":
-                case ".xaml":
-                case ".html":
-                case ".c":
-                case ".h":
-                case ".cpp":
-                case ".vb":
-                case ".vbproj":
-                case ".vbx":
-                case ".java":
-                case ".config":
-                    idx = treeViewFilesImageListDecorator.CodeKey;
-                    break;
-                case ".bin":
-                case ".exe":
-                case ".lib":
-                case ".jar":
-                    idx = treeViewFilesImageListDecorator.Package2Key;
-                    break;
-                case ".jpg":
-                case ".jpeg":
-                case ".png":
-                case ".giff":
-                case ".tiff":
-                case ".img":
-                case ".ico":
-                case ".bmp":
-                case ".heic":
-                    idx = treeViewFilesImageListDecorator.ImageKey;
-                    break;
-                case ".mp3":
-                case ".flac":
-                case ".aac":
-                case ".wav":
-                    idx = treeViewFilesImageListDecorator.AudioFileKey;
-                    break;
-                case ".mpg":
-                case ".mpeg":
-                case ".avi":
-                case ".mp4":
-                case ".m4a":
-                    idx = treeViewFilesImageListDecorator.VideoFileKey;
-                    break;
-                default:
-                    idx = treeViewFilesImageListDecorator.UnknownDocumentKey;
-                    break;
+                var fileType = fileTypeNllbl.Value;
+
+                switch (fileType)
+                {
+                    case FileType.PlainText:
+                        idx = treeViewFilesImageListDecorator.NoteKey;
+                        break;
+                    case FileType.Document:
+                        idx = treeViewFilesImageListDecorator.NoteKey;
+                        break;
+                    case FileType.Image:
+                        idx = treeViewFilesImageListDecorator.ImageKey;
+                        break;
+                    case FileType.Audio:
+                        idx = treeViewFilesImageListDecorator.AudioFileKey;
+                        break;
+                    case FileType.Video:
+                        idx = treeViewFilesImageListDecorator.VideoFileKey;
+                        break;
+                    case FileType.Code:
+                        idx = treeViewFilesImageListDecorator.CodeKey;
+                        break;
+                    case FileType.Binary:
+                        idx = treeViewFilesImageListDecorator.Package2Key;
+                        break;
+                    case FileType.ZippedFolder:
+                        idx = treeViewFilesImageListDecorator.FolderZipKey;
+                        break;
+                    default:
+                        idx = treeViewFilesImageListDecorator.UnknownDocumentKey;
+                        break;
+                }
             }
 
             return idx;
