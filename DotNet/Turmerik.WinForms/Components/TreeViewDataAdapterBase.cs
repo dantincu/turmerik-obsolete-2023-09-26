@@ -43,6 +43,12 @@ namespace Turmerik.WinForms.Components
         void RefreshChildNodes(
             TreeNodeArg<TValue> arg,
             int? childrenRefreshDepth = null);
+
+        void AssureRootNodesLoaded(
+            int? childrenRefreshDepth = null);
+        void AssureChildNodesLoaded(
+            TreeNodeArg<TValue> arg,
+            int? childrenRefreshDepth = null);
     }
 
     public interface ITreeViewDataAdapterAsync<TValue> : ITreeViewDataAdapterCore<TValue>
@@ -51,6 +57,12 @@ namespace Turmerik.WinForms.Components
             int? childrenRefreshDepth = null);
 
         Task RefreshChildNodesAsync(
+            TreeNodeArg<TValue> arg,
+            int? childrenRefreshDepth = null);
+        Task AssureRootNodesLoadedAsync(
+            int? childrenRefreshDepth = null);
+
+        Task AssureChildNodesLoadedAsync(
             TreeNodeArg<TValue> arg,
             int? childrenRefreshDepth = null);
     }
@@ -159,7 +171,15 @@ namespace Turmerik.WinForms.Components
 
         public abstract void RefreshRootNodes(
             int? childrenRefreshDepth = null);
+
         public abstract void RefreshChildNodes(
+            TreeNodeArg<TValue> arg,
+            int? childrenRefreshDepth = null);
+
+        public abstract void AssureRootNodesLoaded(
+            int? childrenRefreshDepth = null);
+
+        public abstract void AssureChildNodesLoaded(
             TreeNodeArg<TValue> arg,
             int? childrenRefreshDepth = null);
 
@@ -265,7 +285,7 @@ namespace Turmerik.WinForms.Components
                                 path.Append(idx).ToArray(),
                                 dataNode)).ToArray();
 
-                        TreeNodes_Refresh(argsArr);
+                        TreeNodes_AssureLoaded(argsArr);
                     }
                     
                     return new TrmrkActionResult();
@@ -276,6 +296,12 @@ namespace Turmerik.WinForms.Components
             TreeNodeArg<TValue> value);
 
         protected abstract void TreeNodes_Refresh(
+            TreeNodeArg<TValue>[] valuesArr);
+
+        protected abstract void TreeNode_AssureLoaded(
+            TreeNodeArg<TValue> value);
+
+        protected abstract void TreeNodes_AssureLoaded(
             TreeNodeArg<TValue>[] valuesArr);
 
         protected TreeNode CreateTreeNode(
@@ -435,196 +461,5 @@ namespace Turmerik.WinForms.Components
                 SelectedNodeIcon = opts?.SelectedNodeIcon,
                 StateNodeIcon = opts?.StateNodeIcon,
             }.ToImmtbl();
-    }
-
-    public class TreeViewDataAdapterAsync<TValue> : TreeViewDataAdapterBase<TValue>, ITreeViewDataAdapterAsync<TValue>
-    {
-        public TreeViewDataAdapterAsync(
-            IAppLoggerCreator appLoggerCreator,
-            IWinFormsActionComponentFactory winFormsActionComponentFactory,
-            TreeViewDataAdapterOptsCore.IClnbl<TValue> opts,
-            IContextMenuStripFactory contextMenuStripFactory,
-            Func<Task<IEnumerable<TValue>>> rootItemsFactory,
-            Func<TValue, Task<IEnumerable<TValue>>> childItemsFactory) : base(
-                appLoggerCreator,
-                winFormsActionComponentFactory,
-                opts,
-                contextMenuStripFactory)
-        {
-            RootItemsFactory = rootItemsFactory ?? throw new ArgumentNullException(nameof(rootItemsFactory));
-            ChildItemsFactory = childItemsFactory ?? throw new ArgumentNullException(nameof(childItemsFactory));
-        }
-
-        protected Func<Task<IEnumerable<TValue>>> RootItemsFactory { get; }
-        protected Func<TValue, Task<IEnumerable<TValue>>> ChildItemsFactory { get; }
-
-        public override void RefreshRootNodes(
-            int? childrenRefreshDepth = null) => RefreshRootNodesAsync(
-                childrenRefreshDepth);
-        public override void RefreshChildNodes(
-            TreeNodeArg<TValue> arg,
-            int? childrenRefreshDepth = null) => RefreshChildNodesAsync(
-                arg, childrenRefreshDepth);
-
-        public Task RefreshRootNodesAsync(
-            int? childrenRefreshDepth = null) => RefreshRootNodesAsync(
-                childrenRefreshDepth ?? ChildrenRefreshDepth);
-
-        public Task RefreshChildNodesAsync(
-            TreeNodeArg<TValue> arg,
-            int? childrenRefreshDepth = null) => RefreshChildNodesAsync(
-                arg, childrenRefreshDepth ?? ChildrenRefreshDepth);
-
-        protected async Task RefreshRootNodesAsync(
-            int childrenRefreshDepth)
-        {
-            var rootItems = (await RootItemsFactory()).ToArray();
-
-            this.DataTree.RootNodes = rootItems.Select(
-                value => new DataTreeNode.Mtbl<TValue>
-                {
-                    Value = value,
-                }).ToList();
-
-            var rootNodes = this.DataTree.RootNodes;
-            var nodesList = new List<TreeNode>();
-
-            var nodesCllctn = TreeView.Nodes;
-            nodesCllctn.Clear();
-
-            for (int i = 0; i < rootNodes.Count; i++)
-            {
-                var treeNode = CreateTreeNode(
-                    i.Arr(),
-                    rootNodes[i],
-                    nodesCllctn);
-
-                nodesList.Add(treeNode);
-            }
-
-            if (childrenRefreshDepth > 0)
-            {
-                for (int i = 0; i < rootNodes.Count; i++)
-                {
-                    await RefreshChildNodesAsync(
-                        TreeNodeArgH.Arg(
-                            nodesList[i],
-                            i.Arr(),
-                            rootNodes[i]),
-                        childrenRefreshDepth - 1);
-                }
-            }
-        }
-
-        protected async Task RefreshChildNodesAsync(
-            TreeNodeArg<TValue> arg,
-            int childrenRefreshDepth)
-        {
-            var items = await ChildItemsFactory(arg.Value);
-
-            var parentNode = DataTree.FindPath(
-                arg.NodePath.ToArray()).AsMtbl();
-
-            parentNode.Children = items.Select(
-                value => new DataTreeNode.Mtbl<TValue>
-                {
-                    Value = value,
-                    Parent = parentNode
-                }).ToList();
-
-            var childNodes = parentNode.Children;
-            var nodesList = new List<TreeNode>();
-
-            var nodesCllctn = arg.TreeNode.Nodes;
-            nodesCllctn.Clear();
-
-            for (int i = 0; i < parentNode.Children.Count; i++)
-            {
-                var treeNode = CreateTreeNode(
-                    arg.NodePath.Append(i).ToArray(),
-                    parentNode.Children[i],
-                    arg.TreeNode.Nodes);
-
-                nodesList.Add(treeNode);
-            }
-
-            if (childrenRefreshDepth > 0)
-            {
-                for (int i = 0; i < childNodes.Count; i++)
-                {
-                    await RefreshChildNodesAsync(
-                        TreeNodeArgH.Arg(
-                            nodesList[i],
-                            arg.NodePath.Append(i).ToArray(),
-                            childNodes[i]),
-                        childrenRefreshDepth - 1);
-                }
-            }
-        }
-
-        protected override void TreeNode_Refresh(
-            TreeNodeArg<TValue> value) => TreeNodeRefreshAsync(value);
-
-        protected override void TreeNodes_Refresh(
-            TreeNodeArg<TValue>[] valuesArr) => TreeNodesRefreshAsync(valuesArr);
-
-        protected Task<ITrmrkActionResult<TreeNodeArg<TValue>>> TreeNodeRefreshAsync(
-            TreeNodeArg<TValue> value) => ActionComponent.ExecuteAsync(
-            new TrmrkAsyncActionComponentOpts<TreeNodeArg<TValue>>
-            {
-                ActionName = nameof(TreeNode_Refresh),
-                BeforeExecute = () =>
-                {
-                    OnBeforeNodeRefresh(value);
-                },
-                Action = async () =>
-                {
-                    await RefreshChildNodesAsync(value);
-
-                    return new TrmrkActionResult<TreeNodeArg<TValue>>
-                    {
-                        Data = value
-                    };
-                },
-                AlwaysCallback = actionResult =>
-                {
-                    TreeView.InvokeIfReq(() =>
-                    {
-                        OnAfterNodeRefresh(actionResult);
-                    });
-                }
-            });
-
-        protected Task<ITrmrkActionResult<TreeNodeArg<TValue>[]>> TreeNodesRefreshAsync(
-            TreeNodeArg<TValue>[] valuesArr) => ActionComponent.ExecuteAsync(
-            new TrmrkAsyncActionComponentOpts<TreeNodeArg<TValue>[]>
-            {
-                ActionName = nameof(TreeNode_Refresh),
-                BeforeExecute = () =>
-                {
-                    OnBeforeNodesRefresh(valuesArr);
-                },
-                Action = async () =>
-                {
-                    foreach (var value in valuesArr)
-                    {
-                        await RefreshChildNodesAsync(
-                            value,
-                            ChildrenRefreshDepth - 1);
-                    }
-
-                    return new TrmrkActionResult<TreeNodeArg<TValue>[]>
-                    {
-                        Data = valuesArr
-                    };
-                },
-                AlwaysCallback = actionResult =>
-                {
-                    TreeView.InvokeIfReq(() =>
-                    {
-                        OnAfterNodesRefresh(actionResult);
-                    });
-                }
-            });
     }
 }
