@@ -35,17 +35,24 @@ namespace Turmerik.WinForms.Components
         event Action<ITrmrkActionResult<TreeNodeArg<TValue>>> AfterNodeRefresh;
         event Action<ITrmrkActionResult<TreeNodeArg<TValue>[]>> AfterNodesRefresh;
 
-        event Action<IEnumerable<TValue>> BeforeRootNodesRefresh;
-        event Action<ITrmrkActionResult<IEnumerable<TreeNodeArg<TValue>>>> AfterRootNodesRefresh;
+        event Action<TreeNodeArg<TValue>> BeforeNodeAssureLoaded;
+        event Action<TreeNodeArg<TValue>[]> BeforeNodesAssureLoaded;
+
+        event Action<ITrmrkActionResult<TreeNodeArg<TValue>>> AfterNodeAssureLoaded;
+        event Action<ITrmrkActionResult<TreeNodeArg<TValue>[]>> AfterNodesAssureLoaded;
+
+        DataTree.Immtbl<TValue> GetDataTree();
 
         void RefreshRootNodes(
             int? childrenRefreshDepth = null);
+
         void RefreshChildNodes(
             TreeNodeArg<TValue> arg,
             int? childrenRefreshDepth = null);
 
         void AssureRootNodesLoaded(
             int? childrenRefreshDepth = null);
+
         void AssureChildNodesLoaded(
             TreeNodeArg<TValue> arg,
             int? childrenRefreshDepth = null);
@@ -70,13 +77,17 @@ namespace Turmerik.WinForms.Components
     public abstract class TreeViewDataAdapterBase<TValue> : ITreeViewDataAdapterCore<TValue>
     {
         private Action<TreeNodeArg<TValue>> nodeCreated;
+
         private Action<TreeNodeArg<TValue>> beforeNodeRefresh;
         private Action<TreeNodeArg<TValue>[]> beforeNodesRefresh;
         private Action<ITrmrkActionResult<TreeNodeArg<TValue>>> afterNodeRefresh;
         private Action<ITrmrkActionResult<TreeNodeArg<TValue>[]>> afterNodesRefresh;
-        private Action<IEnumerable<TValue>> beforeRootNodesRefresh;
-        private Action<ITrmrkActionResult<IEnumerable<TreeNodeArg<TValue>>>> afterRootNodesRefresh;
-
+        
+        private Action<TreeNodeArg<TValue>> beforeNodeAssureLoaded;
+        private Action<TreeNodeArg<TValue>[]> beforeNodesAssureLoaded;
+        private Action<ITrmrkActionResult<TreeNodeArg<TValue>>> afterNodeAssureLoaded;
+        private Action<ITrmrkActionResult<TreeNodeArg<TValue>[]>> afterNodesAssureLoaded;
+        
         public TreeViewDataAdapterBase(
             IAppLoggerCreator appLoggerCreator,
             IWinFormsActionComponentFactory winFormsActionComponentFactory,
@@ -88,6 +99,8 @@ namespace Turmerik.WinForms.Components
 
             ContextMenuStripFactory = contextMenuStripFactory ?? throw new ArgumentNullException(
                 nameof(contextMenuStripFactory));
+
+            IsLeafPredicate = opts.IsLeafPredicate.FirstNotNull(arg => false);
 
             NodeTextFactory = opts.NodeTextFactory ?? throw new ArgumentNullException(
                 nameof(opts.NodeTextFactory));
@@ -120,6 +133,7 @@ namespace Turmerik.WinForms.Components
         protected IAppLogger Logger { get; private set; }
         protected IWinFormsActionComponent ActionComponent { get; private set; }
         protected IContextMenuStripFactory ContextMenuStripFactory { get; }
+        public Func<TreeNodeArg<TValue>, bool> IsLeafPredicate { get; }
         protected Func<TreeNodeArg<TValue>, string> NodeTextFactory { get; }
         protected Lazy<ContextMenuStrip> DefaultContextMenuStrip { get; }
         protected Func<TreeNodeArg<TValue>, ContextMenuStrip> ContextMenuStripRetriever { get; }
@@ -157,17 +171,31 @@ namespace Turmerik.WinForms.Components
             remove => afterNodesRefresh -= value;
         }
 
-        public event Action<IEnumerable<TValue>> BeforeRootNodesRefresh
+        public event Action<TreeNodeArg<TValue>> BeforeNodeAssureLoaded
         {
-            add => beforeRootNodesRefresh += value;
-            remove => beforeRootNodesRefresh -= value;
+            add => beforeNodeAssureLoaded += value;
+            remove => beforeNodeAssureLoaded -= value;
         }
 
-        public event Action<ITrmrkActionResult<IEnumerable<TreeNodeArg<TValue>>>> AfterRootNodesRefresh
+        public event Action<TreeNodeArg<TValue>[]> BeforeNodesAssureLoaded
         {
-            add => afterRootNodesRefresh += value;
-            remove => afterRootNodesRefresh -= value;
+            add => beforeNodesAssureLoaded += value;
+            remove => beforeNodesAssureLoaded -= value;
         }
+
+        public event Action<ITrmrkActionResult<TreeNodeArg<TValue>>> AfterNodeAssureLoaded
+        {
+            add => afterNodeAssureLoaded += value;
+            remove => afterNodeAssureLoaded -= value;
+        }
+
+        public event Action<ITrmrkActionResult<TreeNodeArg<TValue>[]>> AfterNodesAssureLoaded
+        {
+            add => afterNodesAssureLoaded += value;
+            remove => afterNodesAssureLoaded -= value;
+        }
+
+        public DataTree.Immtbl<TValue> GetDataTree() => DataTree.ToImmtbl();
 
         public abstract void RefreshRootNodes(
             int? childrenRefreshDepth = null);
@@ -198,11 +226,17 @@ namespace Turmerik.WinForms.Components
         protected void OnAfterNodesRefresh(
             ITrmrkActionResult<TreeNodeArg<TValue>[]> actionResult) => afterNodesRefresh?.Invoke(actionResult);
 
-        protected void OnBeforeRootNodesRefresh(
-            IEnumerable<TValue> nmrbl) => beforeRootNodesRefresh?.Invoke(nmrbl);
+        protected void OnBeforeNodeAssureLoaded(
+            TreeNodeArg<TValue> value) => beforeNodeAssureLoaded?.Invoke(value);
 
-        protected void OnAfterRootNodesRefresh(
-            ITrmrkActionResult<IEnumerable<TreeNodeArg<TValue>>> actionResult) => afterRootNodesRefresh?.Invoke(actionResult);
+        protected void OnBeforeNodesAssureLoaded(
+            TreeNodeArg<TValue>[] valuesArr) => beforeNodesAssureLoaded?.Invoke(valuesArr);
+
+        protected void OnAfterNodeAssureLoaded(
+            ITrmrkActionResult<TreeNodeArg<TValue>> actionResult) => afterNodeAssureLoaded?.Invoke(actionResult);
+
+        protected void OnAfterNodesAssureLoaded(
+            ITrmrkActionResult<TreeNodeArg<TValue>[]> actionResult) => afterNodesAssureLoaded?.Invoke(actionResult);
 
         protected virtual void TreeView_NodeMouseDoubleClick(
             object sender,

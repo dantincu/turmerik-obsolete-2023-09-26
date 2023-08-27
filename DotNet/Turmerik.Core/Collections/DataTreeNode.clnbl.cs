@@ -12,6 +12,9 @@ namespace Turmerik.Collections
     {
         public interface IClnblCore
         {
+            bool IsLeaf { get; }
+            int LoadedChildrenDepth { get; }
+
             object GetValue();
 
             IClnblCore GetParentCore();
@@ -27,13 +30,23 @@ namespace Turmerik.Collections
 
         public class Immtbl<TValue> : IClnbl<TValue>
         {
-            public Immtbl(IClnbl<TValue> src)
+            public Immtbl(
+                IClnbl<TValue> src,
+                bool omitParent = true)
             {
+                IsLeaf = src.IsLeaf;
+                LoadedChildrenDepth = src.LoadedChildrenDepth;
                 Value = src.Value;
-                Parent = src.GetParent()?.AsImmtbl();
                 Children = src.GetChildren().AsImmtblCllctn();
+
+                if (!omitParent)
+                {
+                    Parent = src.GetParent()?.AsImmtbl();
+                }
             }
 
+            public bool IsLeaf { get; }
+            public int LoadedChildrenDepth { get; }
             public TValue Value { get; }
             public Immtbl<TValue> Parent { get; }
             public ReadOnlyCollection<Immtbl<TValue>> Children { get; }
@@ -52,13 +65,23 @@ namespace Turmerik.Collections
             {
             }
 
-            public Mtbl(IClnbl<TValue> src)
+            public Mtbl(
+                IClnbl<TValue> src,
+                bool omitParent = true)
             {
+                IsLeaf = src.IsLeaf;
+                LoadedChildrenDepth = src.LoadedChildrenDepth;
                 Value = src.Value;
-                Parent = src.GetParent()?.AsMtbl();
                 Children = src.GetChildren().AsMtblList();
+
+                if (!omitParent)
+                {
+                    Parent = src.GetParent()?.AsMtbl();
+                }
             }
 
+            public bool IsLeaf { get; set; }
+            public int LoadedChildrenDepth { get; set; }
             public TValue Value { get; set; }
             public Mtbl<TValue> Parent { get; set; }
             public List<Mtbl<TValue>> Children { get; set; }
@@ -72,41 +95,51 @@ namespace Turmerik.Collections
         }
 
         public static Immtbl<TValue> ToImmtbl<TValue>(
-            this IClnbl<TValue> src) => new Immtbl<TValue>(src);
+            this IClnbl<TValue> src,
+            bool omitParent = true) => new Immtbl<TValue>(src, omitParent);
 
         public static Immtbl<TValue> AsImmtbl<TValue>(
-            this IClnbl<TValue> src) => src as Immtbl<TValue> ?? src?.ToImmtbl();
+            this IClnbl<TValue> src,
+            bool omitParent = true) => src as Immtbl<TValue> ?? src?.ToImmtbl(omitParent);
 
         public static Mtbl<TValue> ToMtbl<TValue>(
-            this IClnbl<TValue> src) => new Mtbl<TValue>(src);
+            this IClnbl<TValue> src,
+            bool omitParent = true) => new Mtbl<TValue>(src, omitParent);
 
         public static Mtbl<TValue> AsMtbl<TValue>(
-            this IClnbl<TValue> src) => src as Mtbl<TValue> ?? src?.ToMtbl();
+            this IClnbl<TValue> src,
+            bool omitParent = true) => src as Mtbl<TValue> ?? src?.ToMtbl(omitParent);
 
         public static ReadOnlyCollection<Immtbl<TValue>> ToImmtblCllctn<TValue>(
-            this IEnumerable<IClnbl<TValue>> src) => src?.Select(
-                item => item?.AsImmtbl()).RdnlC();
+            this IEnumerable<IClnbl<TValue>> src,
+            bool omitParents = true) => src?.Select(
+                item => item?.AsImmtbl(omitParents)).RdnlC();
 
         public static ReadOnlyCollection<Immtbl<TValue>> AsImmtblCllctn<TValue>(
-            this IEnumerable<IClnbl<TValue>> src) =>
-            src as ReadOnlyCollection<Immtbl<TValue>> ?? src?.ToImmtblCllctn();
+            this IEnumerable<IClnbl<TValue>> src,
+            bool omitParents = true) =>
+            src as ReadOnlyCollection<Immtbl<TValue>> ?? src?.ToImmtblCllctn(omitParents);
 
         public static List<Mtbl<TValue>> ToMtblList<TValue>(
-            this IEnumerable<IClnbl<TValue>> src) => src?.Select(
-                item => item?.AsMtbl()).ToList();
+            this IEnumerable<IClnbl<TValue>> src,
+            bool omitParents = true) => src?.Select(
+                item => item?.AsMtbl(omitParents)).ToList();
 
         public static List<Mtbl<TValue>> AsMtblList<TValue>(
-            this IEnumerable<IClnbl<TValue>> src) => src as List<Mtbl<TValue>> ?? src?.ToMtblList();
+            this IEnumerable<IClnbl<TValue>> src,
+            bool omitParents = true) => src as List<Mtbl<TValue>> ?? src?.ToMtblList(omitParents);
 
         public static ReadOnlyDictionary<TKey, Immtbl<TValue>> AsImmtblDictnr<TKey, TValue>(
-            IEnumerable<KeyValuePair<TKey, IClnbl<TValue>>> src) => src as ReadOnlyDictionary<TKey, Immtbl<TValue>> ?? (
+            IEnumerable<KeyValuePair<TKey, IClnbl<TValue>>> src,
+            bool omitParents = true) => src as ReadOnlyDictionary<TKey, Immtbl<TValue>> ?? (
             src as Dictionary<TKey, Mtbl<TValue>>)?.ToDictionary(
-                kvp => kvp.Key, kvp => kvp.Value?.AsImmtbl()).RdnlD();
+                kvp => kvp.Key, kvp => kvp.Value?.AsImmtbl(omitParents)).RdnlD();
 
         public static Dictionary<TKey, Mtbl<TValue>> AsMtblDictnr<TKey, TValue>(
-            IEnumerable<KeyValuePair<TKey, IClnbl<TValue>>> src) => src as Dictionary<TKey, Mtbl<TValue>> ?? (
+            IEnumerable<KeyValuePair<TKey, IClnbl<TValue>>> src,
+            bool omitParents = true) => src as Dictionary<TKey, Mtbl<TValue>> ?? (
             src as ReadOnlyDictionary<TKey, Immtbl<TValue>>)?.ToDictionary(
-                kvp => kvp.Key, kvp => kvp.Value?.AsMtbl());
+                kvp => kvp.Key, kvp => kvp.Value?.AsMtbl(omitParents));
 
         public static IEnumerable<KeyValuePair<TKey, IClnbl<TValue>>> ToClnblDictnr<TKey, TValue>(
             this Dictionary<TKey, Mtbl<TValue>> src) => src.ToDictionary(

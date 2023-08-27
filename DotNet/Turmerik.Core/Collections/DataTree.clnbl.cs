@@ -13,6 +13,8 @@ namespace Turmerik.Collections
     {
         public interface IClnblCore
         {
+            int LoadedChildrenDepth { get; }
+
             IEnumerable<DataTreeNode.IClnblCore> GetRootNodesCore();
         }
 
@@ -25,9 +27,11 @@ namespace Turmerik.Collections
         {
             public Immtbl(IClnbl<TValue> src)
             {
+                LoadedChildrenDepth = src.LoadedChildrenDepth;
                 RootNodes = src.GetRootNodes().AsImmtblCllctn();
             }
 
+            public int LoadedChildrenDepth { get; }
             public ReadOnlyCollection<DataTreeNode.Immtbl<TValue>> RootNodes { get; }
 
             public IEnumerable<DataTreeNode.IClnblCore> GetRootNodesCore() => RootNodes;
@@ -42,9 +46,11 @@ namespace Turmerik.Collections
 
             public Mtbl(IClnbl<TValue> src)
             {
+                LoadedChildrenDepth = src.LoadedChildrenDepth;
                 RootNodes = src.GetRootNodes().AsMtblList();
             }
 
+            public int LoadedChildrenDepth { get; set; }
             public List<DataTreeNode.Mtbl<TValue>> RootNodes { get; set; }
 
             public IEnumerable<DataTreeNode.IClnblCore> GetRootNodesCore() => RootNodes;

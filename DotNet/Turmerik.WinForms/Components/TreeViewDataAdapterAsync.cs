@@ -108,6 +108,8 @@ namespace Turmerik.WinForms.Components
                         childrenRefreshDepth - 1);
                 }
             }
+
+            this.DataTree.LoadedChildrenDepth = childrenRefreshDepth;
         }
 
         protected async Task RefreshChildNodesAsync(
@@ -154,6 +156,8 @@ namespace Turmerik.WinForms.Components
                         childrenRefreshDepth - 1);
                 }
             }
+
+            parentNode.LoadedChildrenDepth = childrenRefreshDepth;
         }
 
         protected async Task AssureRootNodesLoadedAsync(
@@ -174,7 +178,8 @@ namespace Turmerik.WinForms.Components
                         TreeNodeArgH.Arg(
                             rootTreeNodes[i],
                             i.Arr(),
-                            rootNodes[i]));
+                            rootNodes[i]),
+                        childrenRefreshDepth - 1);
                 }
             }
         }
@@ -191,7 +196,7 @@ namespace Turmerik.WinForms.Components
             {
                 await RefreshChildNodesAsync(arg, childrenRefreshDepth);
             }
-            else
+            else if (parentNode.LoadedChildrenDepth < childrenRefreshDepth)
             {
                 var nodesCllctn = parentNode.Children;
                 var treeNodes = parentTreeNode.Nodes;
@@ -202,7 +207,8 @@ namespace Turmerik.WinForms.Components
                         TreeNodeArgH.Arg(
                             treeNodes[i],
                             path.Append(i).ToArray(),
-                            nodesCllctn[i]));
+                            nodesCllctn[i]),
+                        childrenRefreshDepth - 1);
                 }
             }
         }
@@ -285,7 +291,7 @@ namespace Turmerik.WinForms.Components
                 ActionName = nameof(TreeNodeAssureLoadedAsync),
                 BeforeExecute = () =>
                 {
-                    OnBeforeNodeRefresh(value);
+                    OnBeforeNodeAssureLoaded(value);
                 },
                 Action = async () =>
                 {
@@ -300,7 +306,7 @@ namespace Turmerik.WinForms.Components
                 {
                     TreeView.InvokeIfReq(() =>
                     {
-                        OnAfterNodeRefresh(actionResult);
+                        OnAfterNodeAssureLoaded(actionResult);
                     });
                 }
             });
@@ -312,7 +318,7 @@ namespace Turmerik.WinForms.Components
                 ActionName = nameof(TreeNodesAssureLoadedAsync),
                 BeforeExecute = () =>
                 {
-                    OnBeforeNodesRefresh(valuesArr);
+                    OnBeforeNodesAssureLoaded(valuesArr);
                 },
                 Action = async () =>
                 {
@@ -332,7 +338,7 @@ namespace Turmerik.WinForms.Components
                 {
                     TreeView.InvokeIfReq(() =>
                     {
-                        OnAfterNodesRefresh(actionResult);
+                        OnAfterNodesAssureLoaded(actionResult);
                     });
                 }
             });

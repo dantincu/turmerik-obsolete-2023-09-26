@@ -17,6 +17,7 @@ namespace Turmerik.WinForms.Components
         {
             TreeView TreeView { get; }
             Func<TreeNodeArg<TValue>, string> NodeTextFactory { get; }
+            Func<TreeNodeArg<TValue>, bool> IsLeafPredicate { get; }
             Func<TreeNodeArg<TValue>, ContextMenuStrip> ContextMenuStripRetriever { get; }
         }
 
@@ -25,13 +26,13 @@ namespace Turmerik.WinForms.Components
             public Immtbl(IClnbl<TValue> src)
             {
                 TreeView = src.TreeView;
+                IsLeafPredicate = src.IsLeafPredicate;
                 NodeTextFactory = src.NodeTextFactory;
                 ContextMenuStripRetriever = src.ContextMenuStripRetriever;
             }
 
             public TreeView TreeView { get; }
-            public Func<Task<IEnumerable<TValue>>> RootItemsFactory { get; }
-            public Func<TValue, Task<IEnumerable<TValue>>> ChildItemsFactory { get; }
+            public Func<TreeNodeArg<TValue>, bool> IsLeafPredicate { get; }
             public Func<TreeNodeArg<TValue>, string> NodeTextFactory { get; }
             public Func<TreeNodeArg<TValue>, ContextMenuStrip> ContextMenuStripRetriever { get; }
         }
@@ -45,11 +46,13 @@ namespace Turmerik.WinForms.Components
             public Mtbl(IClnbl<TValue> src)
             {
                 TreeView = src.TreeView;
+                IsLeafPredicate = src.IsLeafPredicate;
                 NodeTextFactory = src.NodeTextFactory;
                 ContextMenuStripRetriever = src.ContextMenuStripRetriever;
             }
 
             public TreeView TreeView { get; set; }
+            public Func<TreeNodeArg<TValue>, bool> IsLeafPredicate { get; set; }
             public Func<TreeNodeArg<TValue>, string> NodeTextFactory { get; set; }
             public Func<TreeNodeArg<TValue>, ContextMenuStrip> ContextMenuStripRetriever { get; set; }
         }
