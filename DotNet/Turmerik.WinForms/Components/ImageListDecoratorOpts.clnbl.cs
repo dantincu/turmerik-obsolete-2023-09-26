@@ -17,6 +17,7 @@ namespace Turmerik.WinForms.Components
     {
         public interface IClnbl
         {
+            Type DecoratorType { get; }
             ImageList ImageList { get; }
 
             IEnumerable<KeyValuePair<string, Image>> GetImageMap();
@@ -26,10 +27,12 @@ namespace Turmerik.WinForms.Components
         {
             public Immtbl(IClnbl src)
             {
+                DecoratorType = src.DecoratorType;
                 ImageList = src.ImageList;
                 ImageMap = src.GetImageMap()?.ToDictnr().RdnlD();
             }
 
+            public Type DecoratorType { get; }
             public ImageList ImageList { get; }
 
             public ReadOnlyDictionary<string, Image> ImageMap { get; }
@@ -45,10 +48,12 @@ namespace Turmerik.WinForms.Components
 
             public Mtbl(IClnbl src)
             {
+                DecoratorType = src.DecoratorType;
                 ImageList = src.ImageList;
                 ImageMap = src.GetImageMap()?.ToDictnr();
             }
 
+            public Type DecoratorType { get; set; }
             public ImageList ImageList { get; set; }
 
             public Dictionary<string, Image> ImageMap { get; set; }

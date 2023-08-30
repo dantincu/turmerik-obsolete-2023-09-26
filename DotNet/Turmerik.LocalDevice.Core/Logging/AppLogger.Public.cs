@@ -13,12 +13,12 @@ namespace Turmerik.LocalDevice.Core.Logging
     {
         public void Write(LogLevel logLevel, string messageTemplate, params object[] propertyValues)
         {
-            this.Logger.Write(logLevel.GetLogLevel(), messageTemplate, propertyValues);
+            this.Logger.Write(logLevel.ToLogEventLevel(), messageTemplate, propertyValues);
         }
 
         public void Write(LogLevel logLevel, Exception ex, string messageTemplate, params object[] propertyValues)
         {
-            this.Logger.Write(logLevel.GetLogLevel(), ex, messageTemplate, propertyValues);
+            this.Logger.Write(logLevel.ToLogEventLevel(), ex, messageTemplate, propertyValues);
         }
 
         public void Verbose(string messageTemplate, params object[] propertyValues)
@@ -185,7 +185,7 @@ namespace Turmerik.LocalDevice.Core.Logging
 
             var trmrkLogEvent = new TrmrkLogEvent(
                 DateTimeOffset.UtcNow,
-                logLevel.GetLogLevel(),
+                logLevel.ToLogEventLevel(),
                 exc,
                 msgTemplateObj,
                 propValuesArr,

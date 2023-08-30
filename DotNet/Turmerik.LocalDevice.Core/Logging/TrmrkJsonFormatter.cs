@@ -15,7 +15,7 @@ using System.Linq;
 using System.Text;
 using Turmerik.Text;
 using Turmerik.Utils;
-using LE = Turmerik.LocalDevice.Core.Logging.SerializedLogEvent;
+using LE = Turmerik.LocalDevice.Core.Logging.SerializableLogEventDateTimeOffset.Immtbl;
 
 namespace Turmerik.LocalDevice.Core.Logging
 {

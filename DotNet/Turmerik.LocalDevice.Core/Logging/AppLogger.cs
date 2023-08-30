@@ -37,7 +37,7 @@ namespace Turmerik.LocalDevice.Core.Logging
             AppProcessIdentifier = opts.AppProcessIdentifier;
             TextFormatter = opts.TextFormatter;
             StringTemplateParser = opts.StringTemplateParser;
-            LogEventLevel = opts.LogLevel.GetLogLevel();
+            LogEventLevel = opts.LogLevel.ToLogEventLevel();
             IsLoggerBuffered = opts.IsLoggerBuffered;
             IsLoggerShared = opts.IsLoggerShared;
 

@@ -34,11 +34,11 @@ namespace Turmerik.WinForms.Components
             TDecoratorOpts opts)
             where TDecorator : ImageListDecoratorBase
             where TDecoratorOpts : ImageListDecoratorOpts.IClnbl => CachedTypesMap.CreateInstance<TDecorator>(
-                null, opts);
+                opts.DecoratorType, opts);
 
         public virtual TDecorator Create<TDecorator>(
             ImageListDecoratorOpts.IClnbl opts)
             where TDecorator : ImageListDecoratorBase => CachedTypesMap.CreateInstance<TDecorator>(
-                null, opts);
+                opts.DecoratorType, opts);
     }
 }

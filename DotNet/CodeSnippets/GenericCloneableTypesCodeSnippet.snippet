@@ -77,21 +77,21 @@
             this IEnumerable<IClnbl<$generic_type_args$>> src) => src as List<Mtbl<$generic_type_args$>> ?? src?.ToMtblList();
 
         public static ReadOnlyDictionary<TKey, Immtbl<$generic_type_args$>> AsImmtblDictnr<TKey, $generic_type_args$>(
-            IDictionaryCore<TKey, IClnbl<$generic_type_args$>> src) => src as ReadOnlyDictionary<TKey, Immtbl<$generic_type_args$>> ?? (
+            IEnumerable<KeyValuePair<TKey, IClnbl<$generic_type_args$>>> src) => src as ReadOnlyDictionary<TKey, Immtbl<$generic_type_args$>> ?? (
             src as Dictionary<TKey, Mtbl<$generic_type_args$>>)?.ToDictionary(
                 kvp => kvp.Key, kvp => kvp.Value.AsImmtbl()).RdnlD();
 
         public static Dictionary<TKey, Mtbl<$generic_type_args$>> AsMtblDictnr<TKey, $generic_type_args$>(
-            IDictionaryCore<TKey, IClnbl<$generic_type_args$>> src) => src as Dictionary<TKey, Mtbl<$generic_type_args$>> ?? (
+            IEnumerable<KeyValuePair<TKey, IClnbl<$generic_type_args$>>> src) => src as Dictionary<TKey, Mtbl<$generic_type_args$>> ?? (
             src as ReadOnlyDictionary<TKey, Immtbl<$generic_type_args$>>)?.ToDictionary(
                 kvp => kvp.Key, kvp => kvp.Value.AsMtbl());
 
-        public static IDictionaryCore<TKey, IClnbl<$generic_type_args$>> ToClnblDictnr<TKey, $generic_type_args$>(
-            this Dictionary<TKey, Mtbl<$generic_type_args$>> src) => (IDictionaryCore<TKey, IClnbl<$generic_type_args$>>)src.ToDictionary(
+        public static IEnumerable<KeyValuePair<TKey, IClnbl<$generic_type_args$>>> ToClnblDictnr<TKey, $generic_type_args$>(
+            this Dictionary<TKey, Mtbl<$generic_type_args$>> src) => src.ToDictionary(
                 kvp => kvp.Key, kvp => kvp.Value.SafeCast<IClnbl<$generic_type_args$>>());
 
-        public static IDictionaryCore<TKey, IClnbl<$generic_type_args$>> ToClnblDictnr<TKey, $generic_type_args$>(
-            this ReadOnlyDictionary<TKey, Immtbl<$generic_type_args$>> src) => (IDictionaryCore<TKey, IClnbl<$generic_type_args$>>)src.ToDictionary(
+        public static IEnumerable<KeyValuePair<TKey, IClnbl<$generic_type_args$>>> ToClnblDictnr<TKey, $generic_type_args$>(
+            this ReadOnlyDictionary<TKey, Immtbl<$generic_type_args$>> src) => src.ToDictionary(
                 kvp => kvp.Key, kvp => kvp.Value.SafeCast<IClnbl<$generic_type_args$>>());
     }]]>
       </Code>

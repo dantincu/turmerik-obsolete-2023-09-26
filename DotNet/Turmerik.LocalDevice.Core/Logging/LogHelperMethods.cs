@@ -14,11 +14,11 @@ namespace Turmerik.LocalDevice.Core.Logging
         public const string LOG_FILE_NAME_TIME_STAMP_TPL = "yyyyMMdd";
         public const string LOG_FILE_NAME_UNIQUIFIER_IDX_TPL = "D3";
 
-        public static LogEventLevel GetLogLevel(this LogLevel logLevel)
-        {
-            LogEventLevel retVal = (LogEventLevel)((int)logLevel);
-            return retVal;
-        }
+        public static LogEventLevel ToLogEventLevel(
+            this LogLevel logLevel) => (LogEventLevel)((int)logLevel);
+
+        public static LogLevel ToLogLevel(
+            this LogEventLevel logLevel) => (LogLevel)((int)logLevel);
 
         public static IAppLogger GetAppLogger(
             this IServiceProvider serviceProvider,

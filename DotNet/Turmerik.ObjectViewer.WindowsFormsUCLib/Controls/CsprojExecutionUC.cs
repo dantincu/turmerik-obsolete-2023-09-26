@@ -219,7 +219,7 @@ namespace Turmerik.ObjectViewer.WindowsFormsUCLib.Controls
         #region UI Event Handlers
 
         private void EditableFolderPathUCCsprojFile_FolderPathChanged(
-            Utils.MutableValueWrapper<string> obj) => actionComponent.ExecuteAsync(
+            Utils.MutableValueWrapper<string> obj) => actionComponent?.ExecuteAsync(
                 new TrmrkAsyncActionComponentOpts
                 {
                     ActionName = nameof(EditableFolderPathUCCsprojFile_FolderPathChanged),

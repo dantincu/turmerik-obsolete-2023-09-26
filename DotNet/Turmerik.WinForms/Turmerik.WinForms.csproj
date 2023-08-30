@@ -43,6 +43,9 @@
     <Reference Include="Microsoft.Extensions.Logging.Abstractions, Version=7.0.0.1, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.Extensions.Logging.Abstractions.7.0.1\lib\net462\Microsoft.Extensions.Logging.Abstractions.dll</HintPath>
     </Reference>
+    <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.13.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Buffers, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Buffers.4.5.1\lib\net461\System.Buffers.dll</HintPath>
@@ -71,6 +74,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ActionComponent\TrmrkWinFormsActionComponent.cs" />
+    <Compile Include="ActionComponent\TrmrkWinFormsActionComponentFactory.cs" />
+    <Compile Include="ActionComponent\TrmrkWinFormsActionComponentsManager.cs" />
+    <Compile Include="ActionComponent\TrmrkWinFormsActionComponentsManagerRetriever.cs" />
     <Compile Include="ActionComponent\WinFormsActionComponentsManagerRetriever.cs" />
     <Compile Include="ActionComponent\WinFormsActionComponent.cs" />
     <Compile Include="ActionComponent\WinFormsActionComponentFactory.cs" />
@@ -110,12 +117,24 @@
     <Compile Include="Forms\UIMessageForm.Designer.cs">
       <DependentUpon>UIMessageForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\TrmrkUIMessagesForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\TrmrkUIMessagesForm.Designer.cs">
+      <DependentUpon>TrmrkUIMessagesForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="Utils\DgvCellOptsCore.clnbl.cs" />
+    <Compile Include="Utils\DgvButtonCellOpts.clnbl.cs" />
+    <Compile Include="Utils\DgvComboBoxCellOpts.clnbl.cs" />
+    <Compile Include="Utils\DgvRowsH.cs" />
+    <Compile Include="Utils\DgvCheckBoxCellOpts.clnbl.cs" />
+    <Compile Include="Utils\DgvTextBoxCellOpts.clnbl.cs" />
     <Compile Include="Utils\WinFormsH.cs" />
     <Compile Include="ViewModels\PureFuncJsPlaygroundVM.cs" />
     <Compile Include="ViewModels\TextReplacerVM.cs" />
@@ -147,6 +166,9 @@
     <Folder Include="Behaviours\" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Forms\TrmrkUIMessagesForm.resx">
+      <DependentUpon>TrmrkUIMessagesForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Forms\UIMessageForm.resx">
       <DependentUpon>UIMessageForm.cs</DependentUpon>
     </EmbeddedResource>
