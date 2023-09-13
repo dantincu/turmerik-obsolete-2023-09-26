@@ -65,14 +65,23 @@ namespace Turmerik.PureFuncJs.Core.JintCompnts
     public class JintComponent : IJintComponent
     {
         public const string CONSOLE_VAR_NAME = "console";
+        public const string GLOBAL_THIS_VAR_NAME = "globalThis";
+
+        public static readonly string ScriptTemplate = string.Join("\n",
+            "(function({0}) {",
+            "{1}",
+            "}(this);");
 
         public JintComponent(
             string jsCode,
             string cfgObjRetrieverCode,
+            string globalThisObjName = null,
             IJintConsole console = null)
         {
-            JsCode = jsCode ?? throw new ArgumentNullException(
-                nameof(jsCode));
+            JsCode = GetJsCode(
+                jsCode ?? throw new ArgumentNullException(
+                    nameof(jsCode)),
+                globalThisObjName ?? GLOBAL_THIS_VAR_NAME);
 
             CfgObjRetrieverCode = cfgObjRetrieverCode ?? throw new ArgumentNullException(
                 nameof(cfgObjRetrieverCode));
@@ -261,6 +270,13 @@ namespace Turmerik.PureFuncJs.Core.JintCompnts
             return rdnlMap;
         } */
 
+        private string GetJsCode(
+            string jsCode,
+            string globalThisObjName) => string.Format(
+                ScriptTemplate,
+                globalThisObjName,
+                jsCode);
+
         private JsObject GetConsoleObject(
             Engine engine,
             IJintConsole console)
@@ -316,10 +332,12 @@ namespace Turmerik.PureFuncJs.Core.JintCompnts
         public JintComponent(
             string jsCode,
             string cfgObjRetrieverCode,
+            string globalThisObjName = null,
             IJintConsole jintConsole = null,
             Func<IJintComponent<TCfg>, ObjectInstance, TCfg> cfgFactory = null) : base(
                 jsCode,
                 cfgObjRetrieverCode,
+                globalThisObjName,
                 jintConsole)
         {
             cfgFactory = cfgFactory.FirstNotNull(

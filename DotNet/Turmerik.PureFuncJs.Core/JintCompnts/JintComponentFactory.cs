@@ -9,27 +9,10 @@ namespace Turmerik.PureFuncJs.Core.JintCompnts
 {
     public interface IJintComponentFactory
     {
-        IJintComponent Create(
-            string jsCode,
-            string cfgObjRetrieverCode,
-            bool includeConsoleObj = true);
-
-        IJintComponent Create(
-            string jsCode,
-            string cfgObjRetrieverCode,
-            IJintConsole jintConsole);
+        IJintComponent Create(JintComponentOpts.IClnbl opts);
 
         IJintComponent<TCfg> Create<TCfg>(
-            string jsCode,
-            string cfgObjRetrieverCode,
-            bool includeConsoleObj = true,
-            Func<IJintComponent<TCfg>, ObjectInstance, TCfg> cfgFactory = null);
-
-        IJintComponent<TCfg> Create<TCfg>(
-            string jsCode,
-            string cfgObjRetrieverCode,
-            IJintConsole jintConsole,
-            Func<IJintComponent<TCfg>, ObjectInstance, TCfg> cfgFactory = null);
+            JintComponentOpts.IClnbl<TCfg> opts);
     }
 
     public class JintComponentFactory : IJintComponentFactory
@@ -43,39 +26,18 @@ namespace Turmerik.PureFuncJs.Core.JintCompnts
         }
 
         public IJintComponent Create(
-            string jsCode,
-            string cfgObjRetrieverCode,
-            bool includeConsoleObj = true) => new JintComponent(
-                jsCode,
-                cfgObjRetrieverCode,
-                includeConsoleObj ? consoleFactory.Create() : null);
-
-        public IJintComponent Create(
-            string jsCode,
-            string cfgObjRetrieverCode,
-            IJintConsole jintConsole) => new JintComponent(
-                jsCode,
-                cfgObjRetrieverCode,
-                jintConsole);
+            JintComponentOpts.IClnbl opts) => new JintComponent(
+                opts.JsCode,
+                opts.CfgObjRetrieverCode,
+                opts.GlobalThisObjName,
+                opts.JintConsole ?? (opts.IncludeDefaultConsoleObj ? consoleFactory.Create() : null));
 
         public IJintComponent<TCfg> Create<TCfg>(
-            string jsCode,
-            string cfgObjRetrieverCode,
-            bool includeConsoleObj = true,
-            Func<IJintComponent<TCfg>, ObjectInstance, TCfg> cfgFactory = null) => new JintComponent<TCfg>(
-                jsCode,
-                cfgObjRetrieverCode,
-                includeConsoleObj ? consoleFactory.Create() : null,
-                cfgFactory);
-
-        public IJintComponent<TCfg> Create<TCfg>(
-            string jsCode,
-            string cfgObjRetrieverCode,
-            IJintConsole jintConsole,
-            Func<IJintComponent<TCfg>, ObjectInstance, TCfg> cfgFactory = null) => new JintComponent<TCfg>(
-                jsCode,
-                cfgObjRetrieverCode,
-                jintConsole,
-                cfgFactory);
+            JintComponentOpts.IClnbl<TCfg> opts) => new JintComponent<TCfg>(
+                opts.JsCode,
+                opts.CfgObjRetrieverCode,
+                opts.GlobalThisObjName,
+                opts.JintConsole ?? (opts.IncludeDefaultConsoleObj ? consoleFactory.Create() : null),
+                opts.CfgFactory);
     }
 }

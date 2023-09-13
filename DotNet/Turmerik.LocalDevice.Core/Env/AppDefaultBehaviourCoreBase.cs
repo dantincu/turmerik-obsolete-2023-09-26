@@ -80,9 +80,12 @@ namespace Turmerik.LocalDevice.Core.Env
                 JsFilePath,
                 GetDefaultBehaviourJsCode);
 
-            var behaviour = ComponentFactory.Create<TCfg>(
-                behaviourJsCode,
-                CFG_OBJ_NAME);
+            var behaviour = ComponentFactory.Create(
+                new JintComponentOpts.Mtbl<TCfg>
+                {
+                    JsCode = behaviourJsCode,
+                    CfgObjRetrieverCode = CFG_OBJ_NAME
+                });
 
             return behaviour;
         }
@@ -123,9 +126,12 @@ namespace Turmerik.LocalDevice.Core.Env
             string jsCode,
             string jsFilePath)
         {
-            var behaviour = ComponentFactory.Create<TCfg>(
-                jsCode,
-                CFG_OBJ_NAME);
+            var behaviour = ComponentFactory.Create(
+                new JintComponentOpts.Mtbl<TCfg>
+                {
+                    JsCode = jsCode,
+                    CfgObjRetrieverCode = CFG_OBJ_NAME
+                });
 
             File.WriteAllText(
                 jsFilePath,
