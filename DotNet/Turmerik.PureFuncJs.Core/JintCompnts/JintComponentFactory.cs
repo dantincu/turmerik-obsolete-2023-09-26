@@ -1,4 +1,5 @@
 ﻿using Jint;
+using Jint.Native.Object;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -9,11 +10,26 @@ namespace Turmerik.PureFuncJs.Core.JintCompnts
     public interface IJintComponentFactory
     {
         IJintComponent Create(
-            string jsCode);
-
-        IJintComponent<TBehaviour> Create<TBehaviour>(
             string jsCode,
-            Func<IJintComponent<TBehaviour>, ReadOnlyDictionary<string, ReadOnlyDictionary<string, string>>, TBehaviour> behaviourFactory);
+            string cfgObjRetrieverCode,
+            bool includeConsoleObj = true);
+
+        IJintComponent Create(
+            string jsCode,
+            string cfgObjRetrieverCode,
+            IJintConsole jintConsole);
+
+        IJintComponent<TCfg> Create<TCfg>(
+            string jsCode,
+            string cfgObjRetrieverCode,
+            bool includeConsoleObj = true,
+            Func<IJintComponent<TCfg>, ObjectInstance, TCfg> cfgFactory = null);
+
+        IJintComponent<TCfg> Create<TCfg>(
+            string jsCode,
+            string cfgObjRetrieverCode,
+            IJintConsole jintConsole,
+            Func<IJintComponent<TCfg>, ObjectInstance, TCfg> cfgFactory = null);
     }
 
     public class JintComponentFactory : IJintComponentFactory
@@ -27,15 +43,39 @@ namespace Turmerik.PureFuncJs.Core.JintCompnts
         }
 
         public IJintComponent Create(
-            string jsCode) => new JintComponent(
-                consoleFactory.Create(),
-                jsCode);
-
-        public IJintComponent<TBehaviour> Create<TBehaviour>(
             string jsCode,
-            Func<IJintComponent<TBehaviour>, ReadOnlyDictionary<string, ReadOnlyDictionary<string, string>>, TBehaviour> behaviourFactory) => new JintComponent<TBehaviour>(
-                consoleFactory.Create(),
+            string cfgObjRetrieverCode,
+            bool includeConsoleObj = true) => new JintComponent(
                 jsCode,
-                behaviourFactory);
+                cfgObjRetrieverCode,
+                includeConsoleObj ? consoleFactory.Create() : null);
+
+        public IJintComponent Create(
+            string jsCode,
+            string cfgObjRetrieverCode,
+            IJintConsole jintConsole) => new JintComponent(
+                jsCode,
+                cfgObjRetrieverCode,
+                jintConsole);
+
+        public IJintComponent<TCfg> Create<TCfg>(
+            string jsCode,
+            string cfgObjRetrieverCode,
+            bool includeConsoleObj = true,
+            Func<IJintComponent<TCfg>, ObjectInstance, TCfg> cfgFactory = null) => new JintComponent<TCfg>(
+                jsCode,
+                cfgObjRetrieverCode,
+                includeConsoleObj ? consoleFactory.Create() : null,
+                cfgFactory);
+
+        public IJintComponent<TCfg> Create<TCfg>(
+            string jsCode,
+            string cfgObjRetrieverCode,
+            IJintConsole jintConsole,
+            Func<IJintComponent<TCfg>, ObjectInstance, TCfg> cfgFactory = null) => new JintComponent<TCfg>(
+                jsCode,
+                cfgObjRetrieverCode,
+                jintConsole,
+                cfgFactory);
     }
 }

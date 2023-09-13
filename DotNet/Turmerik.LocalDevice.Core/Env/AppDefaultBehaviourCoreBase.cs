@@ -11,21 +11,22 @@ using Turmerik.Text;
 
 namespace Turmerik.LocalDevice.Core.Env
 {
-    public interface IAppDefaultBehaviourCore<TBehaviour> : IDisposable
+    public interface IAppDefaultBehaviourCore<TCfg> : IDisposable
     {
         string JsFilePath { get; }
-        TBehaviour Behaviour { get; }
+        TCfg Config { get; }
 
-        event Action<TBehaviour> BehaviourLoaded;
+        event Action<TCfg> BehaviourLoaded;
 
-        TBehaviour LoadBehaviour();
+        TCfg LoadBehaviour();
     }
 
-    public abstract class AppDefaultBehaviourCoreBase<TBehaviour> : IAppDefaultBehaviourCore<TBehaviour>
+    public abstract class AppDefaultBehaviourCoreBase<TCfg> : IAppDefaultBehaviourCore<TCfg>
     {
         public const string JS_FILE_NAME = "behaviour.js";
+        public const string CFG_OBJ_NAME = "bhvCfg";
 
-        private Action<TBehaviour> behaviourLoaded;
+        private Action<TCfg> behaviourLoaded;
 
         protected AppDefaultBehaviourCoreBase(
             IAppEnv appEnv,
@@ -43,22 +44,22 @@ namespace Turmerik.LocalDevice.Core.Env
 
         public string JsFilePath { get; }
 
-        public TBehaviour Behaviour => ConcurrentActionComponent.Execute(
-            () => (Component ?? LoadBehaviourNotSync()).Behaviour);
+        public TCfg Config => ConcurrentActionComponent.Execute(
+            () => (Component ?? LoadBehaviourNotSync()).Config);
 
         protected IAppEnv AppEnv { get; }
         protected IInterProcessConcurrentActionComponent ConcurrentActionComponent { get; }
         protected IJintComponentFactory ComponentFactory { get; }
-        protected IJintComponent<TBehaviour> Component { get; set; }
+        protected IJintComponent<TCfg> Component { get; set; }
 
-        public event Action<TBehaviour> BehaviourLoaded
+        public event Action<TCfg> BehaviourLoaded
         {
             add => behaviourLoaded += value;
             remove => behaviourLoaded -= value;
         }
 
-        public TBehaviour LoadBehaviour() => ConcurrentActionComponent.Execute(
-            () => LoadBehaviourNotSync().Behaviour);
+        public TCfg LoadBehaviour() => ConcurrentActionComponent.Execute(
+            () => LoadBehaviourNotSync().Config);
 
         public void Dispose()
         {
@@ -68,33 +69,29 @@ namespace Turmerik.LocalDevice.Core.Env
 
         protected abstract string GetDefaultBehaviourJsCode();
 
-        protected abstract TBehaviour CreateBehaviour(
-            IJintComponent<TBehaviour> component,
-            ReadOnlyDictionary<string, ReadOnlyDictionary<string, string>> exportedMemberNames);
-
         protected virtual string GetJsFilePath() => AppEnv.GetTypePath(
             AppEnvDir.Config,
             GetType(),
             JS_FILE_NAME);
 
-        protected virtual IJintComponent<TBehaviour> LoadDataNotSyncCore()
+        protected virtual IJintComponent<TCfg> LoadDataNotSyncCore()
         {
             string behaviourJsCode = LoadJsCore(
                 JsFilePath,
                 GetDefaultBehaviourJsCode);
 
-            var behaviour = ComponentFactory.Create<TBehaviour>(
+            var behaviour = ComponentFactory.Create<TCfg>(
                 behaviourJsCode,
-                CreateBehaviour);
+                CFG_OBJ_NAME);
 
             return behaviour;
         }
 
         protected void OnBehaviourLoaded(
-            IJintComponent<TBehaviour> component) => behaviourLoaded?.Invoke(
-                component.Behaviour);
+            IJintComponent<TCfg> component) => behaviourLoaded?.Invoke(
+                component.Config);
 
-        protected IJintComponent<TBehaviour> LoadBehaviourNotSync()
+        protected IJintComponent<TCfg> LoadBehaviourNotSync()
         {
             var data = LoadDataNotSyncCore();
 
@@ -122,15 +119,17 @@ namespace Turmerik.LocalDevice.Core.Env
             return jsCode;
         }
 
-        protected IJintComponent<TBehaviour> SaveJsCore(
+        protected IJintComponent<TCfg> SaveJsCore(
             string jsCode,
             string jsFilePath)
         {
-            var behaviour = ComponentFactory.Create<TBehaviour>(
+            var behaviour = ComponentFactory.Create<TCfg>(
                 jsCode,
-                CreateBehaviour);
+                CFG_OBJ_NAME);
 
-            File.WriteAllText(jsFilePath, jsCode);
+            File.WriteAllText(
+                jsFilePath,
+                jsCode);
 
             return behaviour;
         }

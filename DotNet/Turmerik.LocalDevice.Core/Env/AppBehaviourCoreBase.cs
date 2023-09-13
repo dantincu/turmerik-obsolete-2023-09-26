@@ -53,7 +53,7 @@ namespace Turmerik.LocalDevice.Core.Env
                 Component = component;
                 OnDataSaved(component);
 
-                return component.Behaviour;
+                return component.Config;
             });
 
         public TBehaviour ResetToDefault() => Update(
@@ -74,6 +74,6 @@ namespace Turmerik.LocalDevice.Core.Env
 
         protected void OnDataSaved(
             IJintComponent<TBehaviour> component) => behaviourSaved?.Invoke(
-                component.Behaviour);
+                component.Config);
     }
 }

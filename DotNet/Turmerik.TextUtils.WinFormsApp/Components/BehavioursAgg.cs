@@ -13,12 +13,7 @@ namespace Turmerik.TextUtils.WinFormsApp.Components
     {
     }
 
-    public class BehavioursAgg : BehavioursAggBase, IBehavioursAgg
+    public class BehavioursAgg : IBehavioursAgg
     {
-        public BehavioursAgg(
-            IJintComponent<IBehavioursAgg> component,
-            ReadOnlyDictionary<string, ReadOnlyDictionary<string, string>> exportedMemberNames) : base(component)
-        {
-        }
     }
 }

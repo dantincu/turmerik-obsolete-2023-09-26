@@ -23,7 +23,7 @@ namespace Turmerik.WinForms.ActionComponent
     {
         private readonly Lazy<ITrmrkWinFormsActionComponentsManager> actionComponentsManager;
         private readonly ITimeStampHelper timeStampHelper;
-        private readonly IThreadSafeActionComponent threadSafeActionComponent;,
+        private readonly IThreadSafeActionComponent threadSafeActionComponent;
         private readonly IAppLoggerCreator appLoggerCreator;
         private readonly IAppEnv appEnv;
 

@@ -19,7 +19,6 @@ namespace Turmerik.PureFuncJs.Core.JintCompnts
     public interface IJintComponent : IDisposable
     {
         IJintConsole JintConsole { get; }
-        ReadOnlyDictionary<string, ReadOnlyDictionary<string, string>> ExportedMemberNames { get; }
 
         string Execute(string jsCode);
 
@@ -60,56 +59,37 @@ namespace Turmerik.PureFuncJs.Core.JintCompnts
 
     public interface IJintComponent<TBehaviour> : IJintComponent
     {
-        TBehaviour Behaviour { get; }
+        TBehaviour Config { get; }
     }
 
     public class JintComponent : IJintComponent
     {
         public const string CONSOLE_VAR_NAME = "console";
-        public const string TRMRK_ROOT_OBJ_NAME = "trmrk";
-
-        public const string TRMRK_EXP_OBJ_NAME = "exp";
-        public const string TRMRK_LIB_OBJ_NAME = "lib";
-        public const string TRMRK_IMP_OBJ_NAME = "imp";
-        public const string TRMRK_CFG_OBJ_NAME = "cfg";
-
-        public static readonly string TrmrkExpObjPath = string.Join(".",
-            TRMRK_ROOT_OBJ_NAME,
-            TRMRK_EXP_OBJ_NAME);
-
-        public static readonly string TrmrkLibObjPath = string.Join(".",
-            TRMRK_ROOT_OBJ_NAME,
-            TRMRK_LIB_OBJ_NAME);
-
-        public static readonly string TrmrkImpObjPath = string.Join(".",
-            TRMRK_ROOT_OBJ_NAME,
-            TRMRK_IMP_OBJ_NAME);
-
-        public static readonly string TrmrkCfgObjPath = string.Join(".",
-            TRMRK_ROOT_OBJ_NAME,
-            TRMRK_IMP_OBJ_NAME);
 
         public JintComponent(
-            IJintConsole console,
-            string jsCode)
+            string jsCode,
+            string cfgObjRetrieverCode,
+            IJintConsole console = null)
         {
-            JintConsole = console ?? throw new ArgumentNullException(nameof(console));
-            JsCode = jsCode;
+            JsCode = jsCode ?? throw new ArgumentNullException(
+                nameof(jsCode));
+
+            CfgObjRetrieverCode = cfgObjRetrieverCode ?? throw new ArgumentNullException(
+                nameof(cfgObjRetrieverCode));
+
+            JintConsole = console;
             Engine = GetEngine(console).Execute(JsCode);
 
-            ExportedMembers = Engine.Evaluate(
-                TrmrkExpObjPath).AsObject();
-
-            ExportedMemberNames = GetExportedMemberNames(
-                ExportedMembers);
+            CfgObj = Engine.Evaluate(
+                CfgObjRetrieverCode).AsObject();
         }
 
         public IJintConsole JintConsole { get; }
-        public ReadOnlyDictionary<string, ReadOnlyDictionary<string, string>> ExportedMemberNames { get; }
 
         protected string JsCode { get; }
+        protected string CfgObjRetrieverCode { get; }
         protected Engine Engine { get; }
-        protected ObjectInstance ExportedMembers { get; }
+        protected ObjectInstance CfgObj { get; }
 
         public string Execute(string jsCode) => Engine.Evaluate(jsCode).ToString();
 
@@ -126,7 +106,8 @@ namespace Turmerik.PureFuncJs.Core.JintCompnts
             return result;
         }
 
-        public string Call(string jsCode,
+        public string Call(
+            string jsCode,
             bool useCamelCase = true,
             params object[] argsArr)
         {
@@ -245,7 +226,7 @@ namespace Turmerik.PureFuncJs.Core.JintCompnts
             bool useCamelCase,
             object arg) => arg.ToJson(useCamelCase);
 
-        private ReadOnlyDictionary<string, ReadOnlyDictionary<string, string>> GetExportedMemberNames(
+        /* private ReadOnlyDictionary<string, ReadOnlyDictionary<string, string>> GetExportedMemberNames(
             ObjectInstance exportedMembers)
         {
             var mtblMap = new Dictionary<string, Dictionary<string, string>>();
@@ -278,31 +259,36 @@ namespace Turmerik.PureFuncJs.Core.JintCompnts
                 kvp => kvp.Value.RdnlD()).RdnlD();
 
             return rdnlMap;
-        }
+        } */
 
         private JsObject GetConsoleObject(
             Engine engine,
             IJintConsole console)
         {
-            var obj = new JsObject(engine);
+            JsObject obj = null;
 
-            var propsMap = new Dictionary<string, ParamsAction>()
+            if (console != null)
             {
-                { nameof(console.Log), console.Log },
-                { nameof(console.Trace), console.Trace },
-                { nameof(console.Debug), console.Debug },
-                { nameof(console.Info), console.Info },
-                { nameof(console.Warn), console.Warn },
-                { nameof(console.Error), console.Error },
-                { nameof(console.Fatal), console.Fatal },
-            };
+                obj = new JsObject(engine);
 
-            foreach (var kvp in propsMap)
-            {
-                obj[kvp.Key.DecapitalizeFirstLetter()] = 
-                    new DelegateWrapper(
-                        engine,
-                        kvp.Value);
+                var propsMap = new Dictionary<string, ParamsAction>()
+                {
+                    { nameof(console.Log), console.Log },
+                    { nameof(console.Trace), console.Trace },
+                    { nameof(console.Debug), console.Debug },
+                    { nameof(console.Info), console.Info },
+                    { nameof(console.Warn), console.Warn },
+                    { nameof(console.Error), console.Error },
+                    { nameof(console.Fatal), console.Fatal },
+                };
+
+                foreach (var kvp in propsMap)
+                {
+                    obj[kvp.Key.DecapitalizeFirstLetter()] =
+                        new DelegateWrapper(
+                            engine,
+                            kvp.Value);
+                }
             }
 
             return obj;
@@ -314,28 +300,37 @@ namespace Turmerik.PureFuncJs.Core.JintCompnts
             var engine = new Engine();
             var consoleObj = GetConsoleObject(engine, console);
 
-            engine = engine.SetValue(
-                CONSOLE_VAR_NAME,
-                consoleObj);
+            if (consoleObj != null)
+            {
+                engine = engine.SetValue(
+                    CONSOLE_VAR_NAME,
+                    consoleObj);
+            }
 
             return engine;
         }
     }
 
-    public class JintComponent<TBehaviour> : JintComponent, IJintComponent<TBehaviour>
+    public class JintComponent<TCfg> : JintComponent, IJintComponent<TCfg>
     {
         public JintComponent(
-            IJintConsole jintConsole,
             string jsCode,
-            Func<IJintComponent<TBehaviour>, ReadOnlyDictionary<string, ReadOnlyDictionary<string, string>>, TBehaviour> behaviourFactory) : base(
-                jintConsole,
-                jsCode)
+            string cfgObjRetrieverCode,
+            IJintConsole jintConsole = null,
+            Func<IJintComponent<TCfg>, ObjectInstance, TCfg> cfgFactory = null) : base(
+                jsCode,
+                cfgObjRetrieverCode,
+                jintConsole)
         {
-            Behaviour = behaviourFactory(
+            cfgFactory = cfgFactory.FirstNotNull(
+                (compnt, cfg) => JsonH.FromJson<TCfg>(
+                    cfg.ToString()));
+
+            Config = cfgFactory(
                 this,
-                ExportedMemberNames);
+                CfgObj);
         }
 
-        public TBehaviour Behaviour { get; }
+        public TCfg Config { get; }
     }
 }

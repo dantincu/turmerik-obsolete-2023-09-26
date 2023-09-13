@@ -27,12 +27,6 @@ namespace Turmerik.TextUtils.WinFormsApp.Components
         {
         }
 
-        protected override IBehavioursAgg CreateBehaviour(
-            IJintComponent<IBehavioursAgg> component,
-            ReadOnlyDictionary<string, ReadOnlyDictionary<string, string>> exportedMemberNames) => new BehavioursAgg(
-                component,
-                exportedMemberNames);
-
         protected override string GetDefaultBehaviourJsCodeCore(
             ) => throw new NotSupportedException("No default js code availlable");
     }
