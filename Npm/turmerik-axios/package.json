@@ -1,0 +1,22 @@
+{
+  "name": "@turmerik/axios",
+  "version": "0.1.0",
+  "description": "Axios-related Typescript code shared by all Typescript Turmerik Apps",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "transpile": "sucrase ./src -d ./build --transforms typescript",
+    "bundle": "rollup ./build/index.js --file ./dist/bundle.js"
+  },
+  "author": "Daniel Tincu",
+  "license": "MIT",
+  "devDependencies": {
+    "sucrase": "^3.34.0",
+    "ts-node": "^10.9.1",
+    "typescript": "^5.2.2"
+  },
+  "dependencies": {
+    "@turmerik/core": "file:../turmerik-core",
+    "axios": "^1.4.0"
+  }
+}
