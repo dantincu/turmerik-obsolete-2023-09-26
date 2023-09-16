@@ -148,7 +148,7 @@ namespace Turmerik.MkFsDirsPair.ConsoleApp
         private string NormalizeArg(
             string arg)
         {
-            arg = arg.Replace(':', ' ');
+            arg = arg.Replace(':', ' ').Replace("/", "%").Replace("\\", "%");
             arg = string.Join("", arg.Split(invalidFileNameChars));
             arg = string.Join(" ", arg.Split(miscWsChars));
             return arg;
