@@ -31,9 +31,9 @@ namespace Turmerik.WinForms.ActionComponent
 
         protected UIMessageForm UIMessageForm { get; }
 
-        public override void ShowUIMessageAlert(
-            ShowUIMessageAlertArgs args,
-            bool useUIBlockingMessagePopup)
+        public override void ShowUIMessage(
+            ShowUIMessageArgs args,
+            bool showUIMessage)
         {
             var logLevelStr = args.LogLevel.ToString();
             UIMessageForm.Text = args.MsgTuple.Caption ?? logLevelStr;
@@ -47,19 +47,15 @@ namespace Turmerik.WinForms.ActionComponent
 
             UIMessageForm.InvokeIfReq(() =>
             {
-                ShowUIMessageAlertCore(args, useUIBlockingMessagePopup);
+                ShowUIMessageAlertCore(args, showUIMessage);
             });
         }
 
         protected virtual void ShowUIMessageAlertCore(
-            ShowUIMessageAlertArgs args,
-            bool useUIBlockingMessagePopup)
+            ShowUIMessageArgs args,
+            bool showUIMessage)
         {
-            if (useUIBlockingMessagePopup)
-            {
-                UIMessageForm.ShowDialog();
-            }
-            else
+            if (showUIMessage)
             {
                 UIMessageForm.Show();
             }

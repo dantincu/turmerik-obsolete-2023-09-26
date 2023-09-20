@@ -16,16 +16,19 @@ namespace Turmerik.WinForms.ActionComponent
 
     public class TrmrkWinFormsActionComponentFactory : ITrmrkWinFormsActionComponentFactory
     {
-        private readonly ITrmrkWinFormsActionComponentsManager manager;
-
         public TrmrkWinFormsActionComponentFactory(
             ITrmrkWinFormsActionComponentsManagerRetriever actionComponentManagerRetriever)
         {
-            this.manager = actionComponentManagerRetriever.Retrieve();
+            this.ActionComponentManagerRetriever = actionComponentManagerRetriever ?? throw new ArgumentNullException(
+                nameof(actionComponentManagerRetriever));
         }
 
+        protected ITrmrkWinFormsActionComponentsManagerRetriever ActionComponentManagerRetriever { get; }
+
         public ITrmrkWinFormsActionComponent Create(
-            IAppLogger logger) => new TrmrkWinFormsActionComponent(manager, logger);
+            IAppLogger logger) => new TrmrkWinFormsActionComponent(
+                ActionComponentManagerRetriever.Retrieve(),
+                logger);
 
         public ITrmrkActionComponent CreateCore(
             IAppLogger logger) => Create(logger);

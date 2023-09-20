@@ -6,9 +6,9 @@ using Turmerik.Utils;
 
 namespace Turmerik.TrmrkAction
 {
-    public readonly struct ShowUIMessageAlertArgs
+    public readonly struct ShowUIMessageArgs
     {
-        public ShowUIMessageAlertArgs(
+        public ShowUIMessageArgs(
             ITrmrkActionComponentOptsCore opts,
             ITrmrkActionResult actionResult,
             Exception exc,

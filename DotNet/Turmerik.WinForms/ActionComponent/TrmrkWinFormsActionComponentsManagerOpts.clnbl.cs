@@ -1,41 +1,48 @@
-﻿using System;
+﻿using Microsoft.Extensions.Logging;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 using Turmerik.Cloneable;
 using Turmerik.Collections;
 using Turmerik.Utils;
+using Turmerik.WinForms.Forms;
 
-namespace Turmerik.Logging
+namespace Turmerik.WinForms.ActionComponent
 {
-    public static class SerializableExcp
+    public static class TrmrkWinFormsActionComponentsManagerOpts
     {
         public interface IClnbl
         {
-            string Message { get; }
-            string StackTrace { get; }
+            TrmrkUIMessagesForm UIMessagesListForm { get; }
+            ToolStripStatusLabel ToolStripStatusLabel { get; }
 
-            IClnbl GetInnerExcp();
-
+            Color StatusLabelDefaultForeColor { get; }
+            Color StatusLabelErrorForeColor { get; }
+            LogLevel MinLogLevel { get; }
         }
 
         public class Immtbl : IClnbl
         {
             public Immtbl(IClnbl src)
             {
-                Message = src.Message;
-                StackTrace = src.StackTrace;
-                InnerExcp = src.GetInnerExcp().AsImmtbl();
+                UIMessagesListForm = src.UIMessagesListForm;
+                ToolStripStatusLabel = src.ToolStripStatusLabel;
+                StatusLabelDefaultForeColor = src.StatusLabelDefaultForeColor;
+                StatusLabelErrorForeColor = src.StatusLabelErrorForeColor;
+                MinLogLevel = src.MinLogLevel;
             }
 
-            public string Message { get; }
-            public string StackTrace { get; }
+            public TrmrkUIMessagesForm UIMessagesListForm { get; }
+            public ToolStripStatusLabel ToolStripStatusLabel { get; }
 
-            public Immtbl InnerExcp { get; }
-
-            public IClnbl GetInnerExcp() => InnerExcp;
+            public Color StatusLabelDefaultForeColor { get; }
+            public Color StatusLabelErrorForeColor { get; }
+            public LogLevel MinLogLevel { get; }
         }
 
         public class Mtbl : IClnbl
@@ -46,32 +53,20 @@ namespace Turmerik.Logging
 
             public Mtbl(IClnbl src)
             {
-                Message = src.Message;
-                StackTrace = src.StackTrace;
-                InnerExcp = src.GetInnerExcp().AsMtbl();
+                UIMessagesListForm = src.UIMessagesListForm;
+                ToolStripStatusLabel = src.ToolStripStatusLabel;
+                StatusLabelDefaultForeColor = src.StatusLabelDefaultForeColor;
+                StatusLabelErrorForeColor = src.StatusLabelErrorForeColor;
+                MinLogLevel = src.MinLogLevel;
             }
 
-            public string Message { get; set; }
-            public string StackTrace { get; set; }
+            public TrmrkUIMessagesForm UIMessagesListForm { get; set; }
+            public ToolStripStatusLabel ToolStripStatusLabel { get; set; }
 
-            public Mtbl InnerExcp { get; set; }
-
-            public IClnbl GetInnerExcp() => InnerExcp;
+            public Color StatusLabelDefaultForeColor { get; set; }
+            public Color StatusLabelErrorForeColor { get; set; }
+            public LogLevel MinLogLevel { get; set; }
         }
-
-        public static Mtbl FromExcp(
-            Exception exc) => (
-                exc is AggregateException aggExc) ? SerializableAggExcp.FromAggExcp(
-                    aggExc) : exc != null ? FromExcpCore(exc) : null;
-
-        public static Mtbl FromExcpCore(
-            Exception exc) => new Mtbl
-            {
-                Message = exc.Message,
-                StackTrace = exc.StackTrace,
-                InnerExcp = exc.InnerException?.WithValue(
-                    FromExcp)
-            };
 
         public static Immtbl ToImmtbl(
             this IClnbl src) => new Immtbl(src);

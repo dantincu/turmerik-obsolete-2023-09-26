@@ -224,6 +224,7 @@
             this.ClientSize = new System.Drawing.Size(1800, 900);
             this.Controls.Add(this.splitContainerMain);
             this.Name = "TrmrkUIMessagesForm";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "UIMessagesListForm";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.TrmrkUIMessagesForm_FormClosing);
             this.splitContainerMain.Panel1.ResumeLayout(false);

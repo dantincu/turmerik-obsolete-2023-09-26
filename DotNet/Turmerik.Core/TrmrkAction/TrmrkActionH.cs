@@ -1,9 +1,11 @@
 ﻿using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
+using Turmerik.Collections;
 using Turmerik.Utils;
 
 namespace Turmerik.TrmrkAction
@@ -21,7 +23,7 @@ namespace Turmerik.TrmrkAction
             {
                 Message = message,
                 Caption = caption,
-                UseUIBlockingMessagePopups = showBlockingUIMessage,
+                ShowUIMessage = showBlockingUIMessage,
                 LogLevel = logLevel
             };
 
@@ -114,6 +116,158 @@ namespace Turmerik.TrmrkAction
             }
 
             return retActRslt;
+        }
+
+        public static TOpts LogMsgFactory<TOpts, TResult, TActionResult>(
+            TOpts options,
+            Action<Dictionary<TrmrkUnhandledErrorActionStepKind, Func<ITrmrkActionComponentOptsCore, ITrmrkActionResult, Exception, TrmrkUnhandledErrorActionStepKind, ITrmrkActionMessageTuple>>> mapBuilder)
+            where TOpts : TrmrkActionComponentOptsCore<TResult, TActionResult>
+            where TActionResult : ITrmrkActionResult
+        {
+            var map = new Dictionary<TrmrkUnhandledErrorActionStepKind, Func<ITrmrkActionComponentOptsCore, ITrmrkActionResult, Exception, TrmrkUnhandledErrorActionStepKind, ITrmrkActionMessageTuple>>().ActWithValue(mapBuilder);
+
+            options.LogMessageFactory = (opts, result, excp, step) =>
+            {
+                ITrmrkActionMessageTuple msgTuple = null;
+
+                if (map.TryGetValue(step, out var callback))
+                {
+                    msgTuple = callback?.Invoke(opts, result, excp, step);
+                }
+
+                return msgTuple;
+            };
+
+            return options;
+        }
+
+        public static TrmrkActionComponentOpts LogMsgFactory(
+            this TrmrkActionComponentOpts opts,
+            Action<Dictionary<
+                TrmrkUnhandledErrorActionStepKind,
+                Func<ITrmrkActionComponentOptsCore,
+                    ITrmrkActionResult,
+                    Exception,
+                    TrmrkUnhandledErrorActionStepKind,
+                    ITrmrkActionMessageTuple>>> mapBuilder) => LogMsgFactory<
+                        TrmrkActionComponentOpts,
+                        ITrmrkActionResult,
+                        ITrmrkActionResult>(opts, mapBuilder);
+
+        public static TrmrkActionComponentOpts<TData> LogMsgFactory<TData>(
+            this TrmrkActionComponentOpts<TData> opts,
+            Action<Dictionary<
+                TrmrkUnhandledErrorActionStepKind,
+                Func<ITrmrkActionComponentOptsCore,
+                    ITrmrkActionResult,
+                    Exception,
+                    TrmrkUnhandledErrorActionStepKind,
+                    ITrmrkActionMessageTuple>>> mapBuilder) => LogMsgFactory<
+                        TrmrkActionComponentOpts<TData>,
+                        ITrmrkActionResult<TData>,
+                        ITrmrkActionResult<TData>>(opts, mapBuilder);
+
+        public static TrmrkAsyncActionComponentOpts LogMsgFactory(
+            this TrmrkAsyncActionComponentOpts opts,
+            Action<Dictionary<
+                TrmrkUnhandledErrorActionStepKind,
+                Func<ITrmrkActionComponentOptsCore,
+                    ITrmrkActionResult,
+                    Exception,
+                    TrmrkUnhandledErrorActionStepKind,
+                    ITrmrkActionMessageTuple>>> mapBuilder) => LogMsgFactory<
+                        TrmrkAsyncActionComponentOpts,
+                        Task<ITrmrkActionResult>,
+                        ITrmrkActionResult>(opts, mapBuilder);
+
+        public static TrmrkAsyncActionComponentOpts<TData> LogMsgFactory<TData>(
+            this TrmrkAsyncActionComponentOpts<TData> opts,
+            Action<Dictionary<
+                TrmrkUnhandledErrorActionStepKind,
+                Func<ITrmrkActionComponentOptsCore,
+                    ITrmrkActionResult,
+                    Exception,
+                    TrmrkUnhandledErrorActionStepKind,
+                    ITrmrkActionMessageTuple>>> mapBuilder) => LogMsgFactory<
+                        TrmrkAsyncActionComponentOpts<TData>,
+                        Task<ITrmrkActionResult<TData>>,
+                        ITrmrkActionResult<TData>>(opts, mapBuilder);
+
+        public static Dictionary<TrmrkUnhandledErrorActionStepKind, Func<ITrmrkActionComponentOptsCore, ITrmrkActionResult, Exception, TrmrkUnhandledErrorActionStepKind, ITrmrkActionMessageTuple>> AddBeforeExecution(
+            this Dictionary<TrmrkUnhandledErrorActionStepKind, Func<ITrmrkActionComponentOptsCore, ITrmrkActionResult, Exception, TrmrkUnhandledErrorActionStepKind, ITrmrkActionMessageTuple>> map,
+            Func<ITrmrkActionComponentOptsCore, ITrmrkActionResult, Exception, TrmrkUnhandledErrorActionStepKind, ITrmrkActionMessageTuple> callback)
+        {
+            map[TrmrkUnhandledErrorActionStepKind.BeforeExecution] = callback;
+            return map;
+        }
+
+        public static Dictionary<TrmrkUnhandledErrorActionStepKind, Func<ITrmrkActionComponentOptsCore, ITrmrkActionResult, Exception, TrmrkUnhandledErrorActionStepKind, ITrmrkActionMessageTuple>> AddBeforeValidation(
+            this Dictionary<TrmrkUnhandledErrorActionStepKind, Func<ITrmrkActionComponentOptsCore, ITrmrkActionResult, Exception, TrmrkUnhandledErrorActionStepKind, ITrmrkActionMessageTuple>> map,
+            Func<ITrmrkActionComponentOptsCore, ITrmrkActionResult, Exception, TrmrkUnhandledErrorActionStepKind, ITrmrkActionMessageTuple> callback)
+        {
+            map[TrmrkUnhandledErrorActionStepKind.BeforeValidation] = callback;
+            return map;
+        }
+
+        public static Dictionary<TrmrkUnhandledErrorActionStepKind, Func<ITrmrkActionComponentOptsCore, ITrmrkActionResult, Exception, TrmrkUnhandledErrorActionStepKind, ITrmrkActionMessageTuple>> AddAfterValidation(
+            this Dictionary<TrmrkUnhandledErrorActionStepKind, Func<ITrmrkActionComponentOptsCore, ITrmrkActionResult, Exception, TrmrkUnhandledErrorActionStepKind, ITrmrkActionMessageTuple>> map,
+            Func<ITrmrkActionComponentOptsCore, ITrmrkActionResult, Exception, TrmrkUnhandledErrorActionStepKind, ITrmrkActionMessageTuple> callback)
+        {
+            map[TrmrkUnhandledErrorActionStepKind.AfterValidation] = callback;
+            return map;
+        }
+
+        public static Dictionary<TrmrkUnhandledErrorActionStepKind, Func<ITrmrkActionComponentOptsCore, ITrmrkActionResult, Exception, TrmrkUnhandledErrorActionStepKind, ITrmrkActionMessageTuple>> AddBeforeAction(
+            this Dictionary<TrmrkUnhandledErrorActionStepKind, Func<ITrmrkActionComponentOptsCore, ITrmrkActionResult, Exception, TrmrkUnhandledErrorActionStepKind, ITrmrkActionMessageTuple>> map,
+            Func<ITrmrkActionComponentOptsCore, ITrmrkActionResult, Exception, TrmrkUnhandledErrorActionStepKind, ITrmrkActionMessageTuple> callback)
+        {
+            map[TrmrkUnhandledErrorActionStepKind.BeforeAction] = callback;
+            return map;
+        }
+
+        public static Dictionary<TrmrkUnhandledErrorActionStepKind, Func<ITrmrkActionComponentOptsCore, ITrmrkActionResult, Exception, TrmrkUnhandledErrorActionStepKind, ITrmrkActionMessageTuple>> AddAfterAction(
+            this Dictionary<TrmrkUnhandledErrorActionStepKind, Func<ITrmrkActionComponentOptsCore, ITrmrkActionResult, Exception, TrmrkUnhandledErrorActionStepKind, ITrmrkActionMessageTuple>> map,
+            Func<ITrmrkActionComponentOptsCore, ITrmrkActionResult, Exception, TrmrkUnhandledErrorActionStepKind, ITrmrkActionMessageTuple> callback)
+        {
+            map[TrmrkUnhandledErrorActionStepKind.AfterAction] = callback;
+            return map;
+        }
+
+        public static Dictionary<TrmrkUnhandledErrorActionStepKind, Func<ITrmrkActionComponentOptsCore, ITrmrkActionResult, Exception, TrmrkUnhandledErrorActionStepKind, ITrmrkActionMessageTuple>> AddBeforeAlwaysCallback(
+            this Dictionary<TrmrkUnhandledErrorActionStepKind, Func<ITrmrkActionComponentOptsCore, ITrmrkActionResult, Exception, TrmrkUnhandledErrorActionStepKind, ITrmrkActionMessageTuple>> map,
+            Func<ITrmrkActionComponentOptsCore, ITrmrkActionResult, Exception, TrmrkUnhandledErrorActionStepKind, ITrmrkActionMessageTuple> callback)
+        {
+            map[TrmrkUnhandledErrorActionStepKind.BeforeAlwaysCallback] = callback;
+            return map;
+        }
+
+        public static Dictionary<TrmrkUnhandledErrorActionStepKind, Func<ITrmrkActionComponentOptsCore, ITrmrkActionResult, Exception, TrmrkUnhandledErrorActionStepKind, ITrmrkActionMessageTuple>> AddAfterAlwaysCallback(
+            this Dictionary<TrmrkUnhandledErrorActionStepKind, Func<ITrmrkActionComponentOptsCore, ITrmrkActionResult, Exception, TrmrkUnhandledErrorActionStepKind, ITrmrkActionMessageTuple>> map,
+            Func<ITrmrkActionComponentOptsCore, ITrmrkActionResult, Exception, TrmrkUnhandledErrorActionStepKind, ITrmrkActionMessageTuple> callback)
+        {
+            map[TrmrkUnhandledErrorActionStepKind.AfterAlwaysCallback] = callback;
+            return map;
+        }
+
+        public static Dictionary<TrmrkUnhandledErrorActionStepKind, Func<ITrmrkActionComponentOptsCore, ITrmrkActionResult, Exception, TrmrkUnhandledErrorActionStepKind, ITrmrkActionMessageTuple>> AddFromActionResult(
+            this Dictionary<TrmrkUnhandledErrorActionStepKind, Func<ITrmrkActionComponentOptsCore, ITrmrkActionResult, Exception, TrmrkUnhandledErrorActionStepKind, ITrmrkActionMessageTuple>> map,
+            string logMsg = null,
+            LogLevel? logLevel = null,
+            TrmrkUnhandledErrorActionStepKind? step = null,
+            Action<TrmrkActionMessageTuple> callback = null)
+        {
+            map[step ?? TrmrkUnhandledErrorActionStepKind.AfterAction] = (opts, result, excp, stp) => new TrmrkActionMessageTuple
+            {
+                Caption = result.ResponseCaption,
+                Message = result.ResponseMessage,
+                LogMessage = logMsg ?? string.Join(
+                    ": ",
+                    result.ResponseCaption.Arr(
+                    result.ResponseMessage).NotNull().ToArray()),
+                LogLevel = logLevel,
+            }.ActWithValue(callback);
+
+            return map;
         }
     }
 }

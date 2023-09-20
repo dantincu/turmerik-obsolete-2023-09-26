@@ -16,11 +16,11 @@ namespace Turmerik.LocalFilesExplorer.WinFormsApp.ViewModels
     {
     }
 
-    public class MainFormVM : ViewModelBase<MainFormState>, IMainFormVM
+    public class MainFormVM : TrmrkViewModelBase<MainFormState>, IMainFormVM
     {
         public MainFormVM(
             IAppLoggerCreator appLoggerFactory,
-            IWinFormsActionComponentFactory actionComponentFactory) : base(
+            ITrmrkWinFormsActionComponentFactory actionComponentFactory) : base(
                 appLoggerFactory,
                 actionComponentFactory)
         {

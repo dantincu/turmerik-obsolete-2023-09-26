@@ -1,10 +1,13 @@
 ﻿using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
+using Turmerik.Logging;
 using Turmerik.Text;
 using Turmerik.TrmrkAction;
 using Turmerik.Utils;
@@ -15,6 +18,12 @@ namespace Turmerik.WinForms.ActionComponent
 {
     public interface ITrmrkWinFormsActionComponentsManager : ITrmrkActionComponentsManager
     {
+        TrmrkUIMessagesForm UIMessagesListForm { get; }
+        ToolStripStatusLabel ToolStripStatusLabel { get; }
+
+        Color StatusLabelDefaultForeColor { get; }
+        Color StatusLabelErrorForeColor { get; }
+        LogLevel MinLogLevel { get; set; }
     }
 
     public class TrmrkWinFormsActionComponentsManager : TrmrkActionComponentsManager, ITrmrkWinFormsActionComponentsManager
@@ -23,45 +32,61 @@ namespace Turmerik.WinForms.ActionComponent
 
         public TrmrkWinFormsActionComponentsManager(
             ITimeStampHelper timeStampHelper,
-            TrmrkUIMessagesForm uIMessagesListForm)
+            TrmrkWinFormsActionComponentsManagerOpts.IClnbl opts)
         {
             this.timeStampHelper = timeStampHelper ?? throw new ArgumentNullException(nameof(timeStampHelper));
-            UIMessagesListForm = uIMessagesListForm ?? throw new ArgumentNullException(nameof(uIMessagesListForm));
+            UIMessagesListForm = opts.UIMessagesListForm ?? throw new ArgumentNullException(nameof(opts.UIMessagesListForm));
+            ToolStripStatusLabel = opts.ToolStripStatusLabel ?? throw new ArgumentNullException(nameof(opts.ToolStripStatusLabel));
+            StatusLabelDefaultForeColor = opts.StatusLabelDefaultForeColor;
+            StatusLabelErrorForeColor = opts.StatusLabelErrorForeColor;
+            MinLogLevel = opts.MinLogLevel;
         }
 
-        protected TrmrkUIMessagesForm UIMessagesListForm { get; }
+        public TrmrkUIMessagesForm UIMessagesListForm { get; }
+        public ToolStripStatusLabel ToolStripStatusLabel { get; }
 
-        public override void ShowUIMessageAlert(
-            ShowUIMessageAlertArgs args,
-            bool useUIBlockingMessagePopup)
+        public Color StatusLabelDefaultForeColor { get; }
+        public Color StatusLabelErrorForeColor { get; }
+
+        public LogLevel MinLogLevel { get; set; }
+
+        public override void ShowUIMessage(
+            ShowUIMessageArgs args,
+            bool showUIMessage)
         {
-            var logLevelStr = args.LogLevel.ToString();
-            UIMessagesListForm.Text = args.MsgTuple.Caption ?? logLevelStr;
-
-            /* UIMessagesListForm.TimeStampTextBox.Text = timeStampHelper.TmStmp(
-                DateTime.Now, true, TimeStamp.Ticks,
-                true, false, false, null);
-
-            UIMessagesListForm.LogLevelTextBox.Text = logLevelStr;
-            UIMessagesListForm.MessageTextBox.Text = args.MsgTuple.Message ?? string.Empty;
-
-            UIMessagesListForm.InvokeIfReq(() =>
+            if (MinLogLevel <= args.LogLevel)
             {
-                ShowUIMessageAlertCore(args, useUIBlockingMessagePopup);
-            }); */
-        }
+                var msg = new UIMessageLogCoreDateTime.Mtbl
+                {
+                    Level = args.LogLevel,
+                    Message = args.MsgTuple.Message,
+                    RenderedMsg = args.MsgTuple.Caption != null ? string.Join(
+                    ": ",
+                    args.MsgTuple.Caption,
+                    args.MsgTuple.Message) : args.MsgTuple.Message,
+                    Exception = SerializableExcp.FromExcp(args.Exc),
+                    TimeStamp = DateTime.Now,
+                };
 
-        protected virtual void ShowUIMessageAlertCore(
-            ShowUIMessageAlertArgs args,
-            bool useUIBlockingMessagePopup)
-        {
-            if (useUIBlockingMessagePopup)
-            {
-                UIMessagesListForm.ShowDialog();
-            }
-            else
-            {
-                UIMessagesListForm.Show();
+                UIMessagesListForm.InvokeIfReq(() =>
+                {
+                    UIMessagesListForm.AddMessage(msg);
+                    ToolStripStatusLabel.Text = args.MsgTuple.Message;
+
+                    if (args.ActionResult.IsSuccess)
+                    {
+                        ToolStripStatusLabel.ForeColor = StatusLabelDefaultForeColor;
+                    }
+                    else
+                    {
+                        ToolStripStatusLabel.ForeColor = StatusLabelErrorForeColor;
+                    }
+
+                    if (showUIMessage)
+                    {
+                        UIMessagesListForm.ShowDialog();
+                    }
+                });
             }
         }
     }

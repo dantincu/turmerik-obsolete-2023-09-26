@@ -1,9 +1,12 @@
-﻿using System;
+﻿using Microsoft.Extensions.Logging;
+using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 using Turmerik.LocalDevice.Core.Env;
 using Turmerik.Logging;
 using Turmerik.Synchronized;
@@ -16,6 +19,11 @@ namespace Turmerik.WinForms.ActionComponent
 {
     public interface ITrmrkWinFormsActionComponentsManagerRetriever
     {
+        Color StatusLabelDefaultForeColor { get; }
+        Color StatusLabelErrorForeColor { get; }
+        LogLevel MinLogLevel { get; set; }
+        ToolStripStatusLabel ToolStripStatusLabel { get; set; }
+
         ITrmrkWinFormsActionComponentsManager Retrieve();
     }
 
@@ -47,14 +55,27 @@ namespace Turmerik.WinForms.ActionComponent
             actionComponentsManager = new Lazy<ITrmrkWinFormsActionComponentsManager>(
                 () => new TrmrkWinFormsActionComponentsManager(
                     timeStampHelper,
-                    new TrmrkUIMessagesForm(
-                        actionComponentsManager,
-                        threadSafeActionComponent,
-                        timeStampHelper,
-                        appLoggerCreator,
-                        appEnv)),
+                    new TrmrkWinFormsActionComponentsManagerOpts.Mtbl
+                    {
+                        UIMessagesListForm = new TrmrkUIMessagesForm(
+                            actionComponentsManager,
+                            threadSafeActionComponent,
+                            timeStampHelper,
+                            appLoggerCreator,
+                            appEnv),
+                        ToolStripStatusLabel = ToolStripStatusLabel,
+                        StatusLabelDefaultForeColor = StatusLabelDefaultForeColor,
+                        StatusLabelErrorForeColor = StatusLabelErrorForeColor,
+                        MinLogLevel = MinLogLevel
+                    }),
                 LazyThreadSafetyMode.ExecutionAndPublication);
         }
+
+        public Color StatusLabelDefaultForeColor { get; set; } = Color.Black;
+        public Color StatusLabelErrorForeColor { get; set; } = Color.Red;
+        public LogLevel MinLogLevel { get; set; } = LogLevel.Information;
+
+        public ToolStripStatusLabel ToolStripStatusLabel { get; set; }
 
         public ITrmrkWinFormsActionComponentsManager Retrieve() => actionComponentsManager.Value;
     }

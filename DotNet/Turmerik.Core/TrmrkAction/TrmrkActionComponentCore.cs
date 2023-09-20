@@ -115,14 +115,17 @@ namespace Turmerik.TrmrkAction
             return actionResult;
         }
 
-        protected virtual void ShowUIMessageAlert(
-            ShowUIMessageAlertArgs args)
+        protected virtual void ShowUIMessageIfReq(
+            ShowUIMessageArgs args)
         {
-            bool useUIBlockingMessagePopup = args.MsgTuple.UseUIBlockingMessagePopups != false && args.Opts.EnableUIBlockingMessagePopups != false && Manager.EnableUIBlockingMessagePopups;
+            if (args.MsgTuple.ShowUIMessage != false && args.Opts.ShowUIMessage != false && Manager.EnableUIMessages)
+            {
+                bool showUIMessage = args.MsgTuple.ShowUIMessage == true && args.Opts.ShowUIMessage == true;
 
-            Manager.ShowUIMessageAlert(
-                args,
-                useUIBlockingMessagePopup);
+                Manager.ShowUIMessage(
+                    args,
+                    showUIMessage);
+            }
         }
 
         protected virtual ITrmrkActionMessageTuple GetDefaultLogMessage<TResult, TActionResult, TMsgTuple>(
@@ -369,7 +372,7 @@ namespace Turmerik.TrmrkAction
 
             LogMessageIfReqCore(excp, msgTuple, logLevel);
 
-            ShowUIMessageAlertIfReq(
+            ShowUIMessageIfReq(
                 opts,
                 actionResult,
                 excp,
@@ -385,20 +388,23 @@ namespace Turmerik.TrmrkAction
         {
             if (Logger != null)
             {
-                string message = string.Join(
+                string message = msgTuple.LogMessage ?? string.Join(
                     ": ",
                     msgTuple.Caption.Arr(
                         msgTuple.Message).NotNull(
                         ).ToArray());
 
-                Logger.Write(
-                    logLevel,
-                    excp,
-                    message);
+                if (!string.IsNullOrEmpty(message))
+                {
+                    Logger.Write(
+                        logLevel,
+                        excp,
+                        message);
+                }
             }
         }
 
-        private void ShowUIMessageAlertIfReq<TResult, TActionResult, TMsgTuple>(
+        private void ShowUIMessageIfReq<TResult, TActionResult, TMsgTuple>(
             ITrmrkActionComponentOptsCore<TResult, TActionResult, TMsgTuple> opts,
             TActionResult actionResult,
             Exception excp,
@@ -408,17 +414,14 @@ namespace Turmerik.TrmrkAction
             where TActionResult : ITrmrkActionResult
             where TMsgTuple : ITrmrkActionMessageTuple
         {
-            if (msgTuple.UseUIBlockingMessagePopups.HasValue || excp != null || (actionResult?.HasError ?? false))
-            {
-                ShowUIMessageAlert(
-                    new ShowUIMessageAlertArgs(
-                        opts,
-                        actionResult,
-                        excp,
-                        actionStepKind,
-                        msgTuple,
-                        logLevel));
-            }
+            ShowUIMessageIfReq(
+                new ShowUIMessageArgs(
+                    opts,
+                    actionResult,
+                    excp,
+                    actionStepKind,
+                    msgTuple,
+                    logLevel));
         }
 
         private LogLevel GetLogLevel<TResult, TActionResult, TMsgTuple>(

@@ -77,6 +77,7 @@
     <Compile Include="ActionComponent\TrmrkWinFormsActionComponent.cs" />
     <Compile Include="ActionComponent\TrmrkWinFormsActionComponentFactory.cs" />
     <Compile Include="ActionComponent\TrmrkWinFormsActionComponentsManager.cs" />
+    <Compile Include="ActionComponent\TrmrkWinFormsActionComponentsManagerOpts.clnbl.cs" />
     <Compile Include="ActionComponent\TrmrkWinFormsActionComponentsManagerRetriever.cs" />
     <Compile Include="ActionComponent\WinFormsActionComponentsManagerRetriever.cs" />
     <Compile Include="ActionComponent\WinFormsActionComponent.cs" />
@@ -138,6 +139,7 @@
     <Compile Include="Utils\WinFormsH.cs" />
     <Compile Include="ViewModels\PureFuncJsPlaygroundVM.cs" />
     <Compile Include="ViewModels\TextReplacerVM.cs" />
+    <Compile Include="ViewModels\TrmrkViewModelBase.cs" />
     <Compile Include="ViewModels\ViewModelBase.cs" />
     <Service Include="{94E38DFF-614B-4cbd-B67C-F211BB35CE8B}" />
   </ItemGroup>

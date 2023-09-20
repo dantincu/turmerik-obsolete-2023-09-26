@@ -198,6 +198,9 @@ namespace Turmerik.WinForms.Forms
             logsDirPath = Path.GetDirectoryName(
                 logsDirPath);
 
+            logsDirPath = Path.GetDirectoryName(
+                logsDirPath);
+
             return logsDirPath;
         }
 
