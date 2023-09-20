@@ -49,6 +49,7 @@ namespace Turmerik.Logging
             AggregateException excp) => new Mtbl
             {
                 Message = excp.Message,
+                TypeName = excp.GetType().FullName,
                 StackTrace = excp.StackTrace,
                 InnerExcps = excp.InnerExceptions?.Select(
                     exc => exc?.WithValue(

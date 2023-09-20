@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Turmerik.Collections;
 using Turmerik.Logging;
 using Turmerik.Text;
 using Turmerik.TrmrkAction;
@@ -60,10 +61,9 @@ namespace Turmerik.WinForms.ActionComponent
                 {
                     Level = args.LogLevel,
                     Message = args.MsgTuple.Message,
-                    RenderedMsg = args.MsgTuple.Caption != null ? string.Join(
-                    ": ",
-                    args.MsgTuple.Caption,
-                    args.MsgTuple.Message) : args.MsgTuple.Message,
+                    RenderedMsg = ": ".JoinNotNullStr(
+                        args.MsgTuple.Caption.Arr(
+                            args.MsgTuple.Message)),
                     Exception = SerializableExcp.FromExcp(args.Exc),
                     TimeStamp = DateTime.Now,
                 };

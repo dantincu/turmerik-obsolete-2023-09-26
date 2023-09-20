@@ -68,14 +68,13 @@ namespace Turmerik.LocalFilesExplorer.WinFormsApp
         private void MainForm_Load(object sender, EventArgs e) => actionComponent?.Execute(
             new TrmrkActionComponentOpts
             {
-                Action = () => new TrmrkActionResult
+                Action = () => throw new Exception("asdfasdf")  /*  new TrmrkActionResult
                 {
                     ResponseMessage = "Welcome",
-                },
+                }*/,
                 ActionName = nameof(MainForm_Load),
             }.LogMsgFactory(map => map.AddFromActionResult(
-                "The main window opened",
-                MsLogLevel.Information)));
+                "The main window opened")));
 
         private void StatusStripMain_MouseUp(object sender, MouseEventArgs e) => actionComponent?.Execute(
             new TrmrkActionComponentOpts

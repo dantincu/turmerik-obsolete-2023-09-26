@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Turmerik.Collections;
 using Turmerik.Utils;
 
 namespace Turmerik.Text
@@ -112,5 +113,45 @@ namespace Turmerik.Text
             this string str,
             int idx,
             int offset = 0) => idx == str.Length - 1 - offset;
+
+        public static string Nullify(
+            this string str,
+            bool ignoreWhitespaces = false)
+        {
+            if (str != null)
+            {
+                string checkStr = str;
+
+                if (ignoreWhitespaces)
+                {
+                    checkStr = checkStr.Trim();
+                }
+
+                if (string.IsNullOrEmpty(checkStr))
+                {
+                    str = null;
+                }
+            }
+
+            return str;
+        }
+
+        public static string JoinNotNullStr(
+            this string joinStr,
+            string[] strArr,
+            bool excludeAllWhitespaces = true)
+        {
+            strArr = strArr.Where(str => str.Nullify(
+                excludeAllWhitespaces) != null).ToArray();
+
+            string retStr = string.Empty;
+
+            if (strArr.Any())
+            {
+                retStr = string.Join(joinStr, strArr);
+            }
+
+            return retStr;
+        }
     }
 }

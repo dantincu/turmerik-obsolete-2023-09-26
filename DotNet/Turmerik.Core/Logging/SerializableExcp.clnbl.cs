@@ -16,6 +16,7 @@ namespace Turmerik.Logging
         {
             string Message { get; }
             string StackTrace { get; }
+            string TypeName { get; }
 
             IClnbl GetInnerExcp();
 
@@ -26,11 +27,13 @@ namespace Turmerik.Logging
             public Immtbl(IClnbl src)
             {
                 Message = src.Message;
+                TypeName = src.TypeName;
                 StackTrace = src.StackTrace;
                 InnerExcp = src.GetInnerExcp().AsImmtbl();
             }
 
             public string Message { get; }
+            public string TypeName { get; }
             public string StackTrace { get; }
 
             public Immtbl InnerExcp { get; }
@@ -47,11 +50,13 @@ namespace Turmerik.Logging
             public Mtbl(IClnbl src)
             {
                 Message = src.Message;
+                TypeName = src.TypeName;
                 StackTrace = src.StackTrace;
                 InnerExcp = src.GetInnerExcp().AsMtbl();
             }
 
             public string Message { get; set; }
+            public string TypeName { get; set; }
             public string StackTrace { get; set; }
 
             public Mtbl InnerExcp { get; set; }
@@ -68,6 +73,7 @@ namespace Turmerik.Logging
             Exception exc) => new Mtbl
             {
                 Message = exc.Message,
+                TypeName = exc.GetType().FullName,
                 StackTrace = exc.StackTrace,
                 InnerExcp = exc.InnerException?.WithValue(
                     FromExcp)

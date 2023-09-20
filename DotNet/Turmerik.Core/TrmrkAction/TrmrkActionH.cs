@@ -205,7 +205,7 @@ namespace Turmerik.TrmrkAction
             this Dictionary<TrmrkUnhandledErrorActionStepKind, Func<ITrmrkActionComponentOptsCore, ITrmrkActionResult, Exception, TrmrkUnhandledErrorActionStepKind, ITrmrkActionMessageTuple>> map,
             Func<ITrmrkActionComponentOptsCore, ITrmrkActionResult, Exception, TrmrkUnhandledErrorActionStepKind, ITrmrkActionMessageTuple> callback)
         {
-            map[TrmrkUnhandledErrorActionStepKind.BeforeValidation] = callback;
+            map[TrmrkUnhandledErrorActionStepKind.Validation] = callback;
             return map;
         }
 
@@ -221,7 +221,7 @@ namespace Turmerik.TrmrkAction
             this Dictionary<TrmrkUnhandledErrorActionStepKind, Func<ITrmrkActionComponentOptsCore, ITrmrkActionResult, Exception, TrmrkUnhandledErrorActionStepKind, ITrmrkActionMessageTuple>> map,
             Func<ITrmrkActionComponentOptsCore, ITrmrkActionResult, Exception, TrmrkUnhandledErrorActionStepKind, ITrmrkActionMessageTuple> callback)
         {
-            map[TrmrkUnhandledErrorActionStepKind.BeforeAction] = callback;
+            map[TrmrkUnhandledErrorActionStepKind.Action] = callback;
             return map;
         }
 
@@ -237,7 +237,7 @@ namespace Turmerik.TrmrkAction
             this Dictionary<TrmrkUnhandledErrorActionStepKind, Func<ITrmrkActionComponentOptsCore, ITrmrkActionResult, Exception, TrmrkUnhandledErrorActionStepKind, ITrmrkActionMessageTuple>> map,
             Func<ITrmrkActionComponentOptsCore, ITrmrkActionResult, Exception, TrmrkUnhandledErrorActionStepKind, ITrmrkActionMessageTuple> callback)
         {
-            map[TrmrkUnhandledErrorActionStepKind.BeforeAlwaysCallback] = callback;
+            map[TrmrkUnhandledErrorActionStepKind.AlwaysCallback] = callback;
             return map;
         }
 
@@ -260,11 +260,8 @@ namespace Turmerik.TrmrkAction
             {
                 Caption = result.ResponseCaption,
                 Message = result.ResponseMessage,
-                LogMessage = logMsg ?? string.Join(
-                    ": ",
-                    result.ResponseCaption.Arr(
-                    result.ResponseMessage).NotNull().ToArray()),
-                LogLevel = logLevel,
+                LogMessage = logMsg,
+                LogLevel = logLevel ?? LogLevel.Information,
             }.ActWithValue(callback);
 
             return map;

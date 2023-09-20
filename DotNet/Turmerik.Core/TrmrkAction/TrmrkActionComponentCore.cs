@@ -7,6 +7,8 @@ using System.Text;
 using System.Threading.Tasks;
 using Turmerik.Collections;
 using Turmerik.Logging;
+using Turmerik.Reflection;
+using Turmerik.Text;
 using Turmerik.Utils;
 
 namespace Turmerik.TrmrkAction
@@ -14,9 +16,9 @@ namespace Turmerik.TrmrkAction
     public class TrmrkActionComponentCore<TManager>
         where TManager : class, ITrmrkActionComponentsManager
     {
-        protected const string DEFAULT_LOG_MESSAGE_TEMPLATE = "{0} for action {1}";
-        protected const string DEFAULT_ERROR_LOG_MESSAGE_TEMPLATE = "Error at {0} for action {1}: {2}";
-        protected const string DEFAULT_UNHANDLED_ERROR_LOG_MESSAGE_TEMPLATE = "Unhandled error at {0} for action {1}: {2}";
+        protected const string DEFAULT_LOG_MESSAGE_TEMPLATE = "{0} action {1}";
+        protected const string DEFAULT_ERROR_LOG_MESSAGE_TEMPLATE = "Error {0} action {1}";
+        protected const string DEFAULT_UNHANDLED_ERROR_LOG_MESSAGE_TEMPLATE = "Unhandled error {0} action {1}";
 
         public TrmrkActionComponentCore(
             TManager manager,
@@ -136,31 +138,31 @@ namespace Turmerik.TrmrkAction
             where TActionResult : ITrmrkActionResult
             where TMsgTuple : ITrmrkActionMessageTuple
         {
-            string message;
+            string adverb = GetActionStepStr(actionStepKind);
+            string msgTemplate = GetMessageTemplate(actionResult, exc);
 
-            if (actionResult?.IsSuccess ?? false)
+            string message = string.Format(
+                msgTemplate,
+                adverb,
+                opts.ActionName);
+
+            if (actionResult != null)
             {
-                message = string.Format(
-                    DefaultLogMessageTemplate,
-                    actionStepKind,
-                    opts.ActionName);
+                message = "; ".JoinNotNullStr(
+                    message.Arr(
+                        ": ".JoinNotNullStr(
+                            actionResult.ResponseCaption.Arr(
+                                actionResult.ResponseMessage))));
             }
-            else if (exc != null)
+
+            /* if (exc != null)
             {
-                message = string.Format(
-                    DefaultUnhandledErrorLogMessageTemplate,
-                    actionStepKind,
-                    opts.ActionName,
-                    GetErrorMessage(actionResult, exc));
-            }
-            else
-            {
-                message = string.Format(
-                    DefaultErrorLogMessageTemplate,
-                    actionStepKind,
-                    opts.ActionName,
-                    GetErrorMessage(actionResult, exc));
-            }
+                message = "; ".JoinNotNullStr(
+                    message.Arr(
+                        ": ".JoinNotNullStr(
+                            exc.GetType().FullName.Arr(
+                                exc.Message))));
+            } */
 
             return new TrmrkActionMessageTuple
             {
@@ -168,31 +170,70 @@ namespace Turmerik.TrmrkAction
             };
         }
 
-        protected virtual string GetErrorMessage(
+        private string GetErrorMessage(
             ITrmrkActionResult actionResult,
-            Exception exc)
-        {
-            var msgParts = new List<string>();
-
-            if (actionResult != null)
-            {
-                msgParts.AddRange(
-                    actionResult.ResponseCaption,
+            Exception exc) => ": ".JoinNotNullStr(
+                actionResult.ResponseCaption.Arr(
                     actionResult.ResponseMessage,
-                    actionResult.Exception?.Message);
-            }
+                    actionResult.Exception?.Message));
 
-            msgParts.Add(exc?.Message);
-            var msgPartsArr = msgParts.NotNull().ToArray();
+        private string GetActionStepStr(
+            TrmrkUnhandledErrorActionStepKind actionStepKind)
+        {
+            string adverb;
 
-            string msg = null;
-
-            if (msgPartsArr.Any())
+            switch (actionStepKind)
             {
-                msg = string.Join(": ", msgPartsArr);
+                case TrmrkUnhandledErrorActionStepKind.BeforeExecution:
+                    adverb = "before";
+                    break;
+                case TrmrkUnhandledErrorActionStepKind.Validation:
+                    adverb = "at validation of";
+                    break;
+                case TrmrkUnhandledErrorActionStepKind.AfterValidation:
+                    adverb = "after validation of";
+                    break;
+                case TrmrkUnhandledErrorActionStepKind.Action:
+                    adverb = "at";
+                    break;
+                case TrmrkUnhandledErrorActionStepKind.AfterAction:
+                    adverb = "after";
+                    break;
+                case TrmrkUnhandledErrorActionStepKind.AlwaysCallback:
+                    adverb = "at always callback of";
+                    break;
+                case TrmrkUnhandledErrorActionStepKind.AfterAlwaysCallback:
+                    adverb = "after always callback of";
+                    break;
+                default:
+                    throw new NotSupportedException();
             }
 
-            return msg;
+            return adverb;
+        }
+
+        private string GetMessageTemplate<TActionResult>(
+            TActionResult actionResult,
+            Exception exc)
+            where TActionResult : ITrmrkActionResult
+        {
+            string msgTemplate;
+
+            if (actionResult?.IsSuccess ?? false)
+            {
+                msgTemplate = DefaultLogMessageTemplate;
+            }
+            else
+            {
+                msgTemplate = DefaultErrorLogMessageTemplate;
+
+                if (exc != null)
+                {
+                    msgTemplate = DefaultUnhandledErrorLogMessageTemplate;
+                }
+            }
+
+            return msgTemplate;
         }
 
         private void OnBeforeExecute<TResult, TActionResult, TMsgTuple>(
@@ -213,7 +254,7 @@ namespace Turmerik.TrmrkAction
             where TActionResult : ITrmrkActionResult
             where TMsgTuple : ITrmrkActionMessageTuple
         {
-            actionStepKind = TrmrkUnhandledErrorActionStepKind.BeforeValidation;
+            actionStepKind = TrmrkUnhandledErrorActionStepKind.Validation;
             LogMessageIfReq(opts, actionResult, null, actionStepKind);
         }
 
@@ -241,7 +282,7 @@ namespace Turmerik.TrmrkAction
             where TActionResult : ITrmrkActionResult
             where TMsgTuple : ITrmrkActionMessageTuple
         {
-            actionStepKind = TrmrkUnhandledErrorActionStepKind.BeforeAction;
+            actionStepKind = TrmrkUnhandledErrorActionStepKind.Action;
             LogMessageIfReq(opts, actionResult, null, actionStepKind);
         }
 
@@ -275,7 +316,7 @@ namespace Turmerik.TrmrkAction
         {
             if (opts.AlwaysCallback != null)
             {
-                actionStepKind = TrmrkUnhandledErrorActionStepKind.BeforeAlwaysCallback;
+                actionStepKind = TrmrkUnhandledErrorActionStepKind.AlwaysCallback;
                 LogMessageIfReq(opts, actionResult, null, actionStepKind);
 
                 opts.AlwaysCallback.Invoke(actionResult);
@@ -323,7 +364,7 @@ namespace Turmerik.TrmrkAction
             where TActionResult : ITrmrkActionResult
             where TMsgTuple : ITrmrkActionMessageTuple
         {
-            ITrmrkActionMessageTuple msgTuple;
+            ITrmrkActionMessageTuple msgTuple = null;
 
             if (opts.LogMessageFactory != null)
             {
@@ -333,24 +374,19 @@ namespace Turmerik.TrmrkAction
                     exc,
                     actionStepKind);
             }
-            else
-            {
-                msgTuple = GetDefaultLogMessage(
-                    opts,
-                    actionResult,
-                    exc,
-                    actionStepKind);
-            }
 
-            if (msgTuple != null)
-            {
-                LogMessageIfReqCore(
-                    opts,
-                    actionResult,
-                    exc,
-                    actionStepKind,
-                    msgTuple);
-            }
+            msgTuple = msgTuple ?? GetDefaultLogMessage(
+                opts,
+                actionResult,
+                exc,
+                actionStepKind);
+
+            LogMessageIfReqCore(
+                opts,
+                actionResult,
+                exc,
+                actionStepKind,
+                msgTuple);
         }
 
         private void LogMessageIfReqCore<TResult, TActionResult, TMsgTuple>(
@@ -388,11 +424,8 @@ namespace Turmerik.TrmrkAction
         {
             if (Logger != null)
             {
-                string message = msgTuple.LogMessage ?? string.Join(
-                    ": ",
-                    msgTuple.Caption.Arr(
-                        msgTuple.Message).NotNull(
-                        ).ToArray());
+                string message = msgTuple.LogMessage ?? ": ".JoinNotNullStr(
+                    msgTuple.Caption.Arr(msgTuple.Message));
 
                 if (!string.IsNullOrEmpty(message))
                 {

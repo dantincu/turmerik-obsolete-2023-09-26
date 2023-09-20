@@ -7,11 +7,11 @@ namespace Turmerik.TrmrkAction
     public enum TrmrkUnhandledErrorActionStepKind
     {
         BeforeExecution = 0,
-        BeforeValidation,
+        Validation,
         AfterValidation,
-        BeforeAction,
+        Action,
         AfterAction,
-        BeforeAlwaysCallback,
+        AlwaysCallback,
         AfterAlwaysCallback
     }
 }
