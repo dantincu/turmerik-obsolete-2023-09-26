@@ -9,6 +9,7 @@
     <RootNamespace>Turmerik.TextUtils.WinFormsApp</RootNamespace>
     <AssemblyName>Turmerik.TextUtils.WinFormsApp</AssemblyName>
     <TargetFrameworkVersion>v4.8.1</TargetFrameworkVersion>
+    <LangVersion>11.0</LangVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <Deterministic>true</Deterministic>

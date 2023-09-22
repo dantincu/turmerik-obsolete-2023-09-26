@@ -9,6 +9,7 @@
     <RootNamespace>Turmerik.DriveExplorerCore.WinFormsUCLib</RootNamespace>
     <AssemblyName>Turmerik.DriveExplorerCore.WinFormsUCLib</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <LangVersion>11.0</LangVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
   </PropertyGroup>
