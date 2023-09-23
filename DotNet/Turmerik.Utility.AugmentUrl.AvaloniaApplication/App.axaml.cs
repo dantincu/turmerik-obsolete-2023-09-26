@@ -20,20 +20,20 @@ public partial class App : Application
     {
         var services = new ServiceCollection();
         AugmentUrlServiceCollectionBuilder.RegisterAll(services);
-        var svcProv = ServiceProviderContainer.Instance.Value.AssureServicesRegisteredCore(services);
+        ServiceProviderContainer.Instance.Value.AssureServicesRegisteredCore(services);
 
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
             desktop.MainWindow = new MainWindow
             {
-                DataContext = svcProv.GetRequiredService<IMainViewModel>()
+                DataContext = new MainViewModel()
             };
         }
         else if (ApplicationLifetime is ISingleViewApplicationLifetime singleViewPlatform)
         {
             singleViewPlatform.MainView = new MainView
             {
-                DataContext = svcProv.GetRequiredService<IMainViewModel>()
+                DataContext = new MainViewModel()
             };
         }
 

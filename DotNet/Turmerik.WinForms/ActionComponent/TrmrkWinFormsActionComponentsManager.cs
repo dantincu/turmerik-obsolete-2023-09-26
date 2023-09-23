@@ -52,18 +52,15 @@ namespace Turmerik.WinForms.ActionComponent
         public LogLevel MinLogLevel { get; set; }
 
         public override void ShowUIMessage(
-            ShowUIMessageArgs args,
-            bool showUIMessage)
+            ShowUIMessageArgs args)
         {
             if (MinLogLevel <= args.LogLevel)
             {
                 var msg = new UIMessageLogCoreDateTime.Mtbl
                 {
                     Level = args.LogLevel,
-                    Message = args.MsgTuple.Message,
-                    RenderedMsg = ": ".JoinNotNullStr(
-                        args.MsgTuple.Caption.Arr(
-                            args.MsgTuple.Message)),
+                    Message = args.MsgTuple.UIMessage,
+                    RenderedMsg = args.MsgTuple.UIMessage,
                     Exception = SerializableExcp.FromExcp(args.Exc),
                     TimeStamp = DateTime.Now,
                 };
@@ -71,7 +68,7 @@ namespace Turmerik.WinForms.ActionComponent
                 UIMessagesListForm.InvokeIfReq(() =>
                 {
                     UIMessagesListForm.AddMessage(msg);
-                    ToolStripStatusLabel.Text = args.MsgTuple.Message;
+                    ToolStripStatusLabel.Text = args.MsgTuple.UIMessage;
 
                     if (args.ActionResult.IsSuccess)
                     {
@@ -80,11 +77,6 @@ namespace Turmerik.WinForms.ActionComponent
                     else
                     {
                         ToolStripStatusLabel.ForeColor = StatusLabelErrorForeColor;
-                    }
-
-                    if (showUIMessage)
-                    {
-                        UIMessagesListForm.ShowDialog();
                     }
                 });
             }

@@ -13,22 +13,16 @@ namespace Turmerik.TrmrkAction
     {
         LogLevel DefaultLogLevel { get; set; }
         LogLevel DefaultErrorLogLevel { get; set; }
-        bool EnableUIMessages { get; set; }
 
-        void ShowUIMessage(
-            ShowUIMessageArgs args,
-            bool showUIMessage);
+        void ShowUIMessage(ShowUIMessageArgs args);
     }
 
     public class TrmrkActionComponentsManager : ITrmrkActionComponentsManager
     {
         public virtual LogLevel DefaultLogLevel { get; set; } = LogLevel.Trace;
         public virtual LogLevel DefaultErrorLogLevel { get; set; } = LogLevel.Error;
-        public virtual bool EnableUIMessages { get; set; } = true;
 
-        public virtual void ShowUIMessage(
-            ShowUIMessageArgs args,
-            bool useUIBlockingMessagePopup)
+        public virtual void ShowUIMessage(ShowUIMessageArgs args)
         {
         }
     }

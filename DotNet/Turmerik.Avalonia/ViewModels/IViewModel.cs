@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Turmerik.Utility.AugmentUrl.AvaloniaApplication.ViewModels
+namespace Turmerik.Avalonia.ViewModels
 {
     public interface IViewModel : IReactiveNotifyPropertyChanged<IReactiveObject>, IHandleObservableErrors, IReactiveObject
     {

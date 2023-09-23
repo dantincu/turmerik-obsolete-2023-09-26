@@ -52,7 +52,6 @@ namespace Turmerik.LocalFilesExplorer.WinFormsApp
                 this.trmrkWinFormsActionComponentsManagerRetriever.ToolStripStatusLabel = this.toolStripStatusLabelMain;
 
                 this.trmrkWinFormsActionComponentsManager = this.trmrkWinFormsActionComponentsManagerRetriever.Retrieve();
-                this.trmrkWinFormsActionComponentsManager.EnableUIMessages = true;
 
                 this.viewModel = this.svcProv.GetRequiredService<IMainFormVM>();
 

@@ -4,14 +4,17 @@ using System.Text;
 
 namespace Turmerik.TrmrkAction
 {
-    public enum TrmrkUnhandledErrorActionStepKind
+    public enum TrmrkActionStepKind
     {
         BeforeExecution = 0,
+        BeforeValidation,
         Validation,
         AfterValidation,
+        BeforeAction,
         Action,
         AfterAction,
-        AlwaysCallback,
-        AfterAlwaysCallback
+        BeforeAlways,
+        Always,
+        AfterAlways
     }
 }

@@ -32,33 +32,22 @@ namespace Turmerik.WinForms.ActionComponent
         protected UIMessageForm UIMessageForm { get; }
 
         public override void ShowUIMessage(
-            ShowUIMessageArgs args,
-            bool showUIMessage)
+            ShowUIMessageArgs args)
         {
-            var logLevelStr = args.LogLevel.ToString();
-            UIMessageForm.Text = args.MsgTuple.Caption ?? logLevelStr;
-
-            UIMessageForm.TimeStampTextBox.Text = timeStampHelper.TmStmp(
-                DateTime.Now, true, TimeStamp.Ticks,
-                true, false, false, null);
-
-            UIMessageForm.LogLevelTextBox.Text = logLevelStr;
-            UIMessageForm.MessageTextBox.Text = args.MsgTuple.Message ?? string.Empty;
-
             UIMessageForm.InvokeIfReq(() =>
             {
-                ShowUIMessageAlertCore(args, showUIMessage);
-            });
-        }
+                var logLevelStr = args.LogLevel.ToString();
+                UIMessageForm.Text = args.MsgTuple.UIMessage;
 
-        protected virtual void ShowUIMessageAlertCore(
-            ShowUIMessageArgs args,
-            bool showUIMessage)
-        {
-            if (showUIMessage)
-            {
+                UIMessageForm.TimeStampTextBox.Text = timeStampHelper.TmStmp(
+                    DateTime.Now, true, TimeStamp.Ticks,
+                    true, false, false, null);
+
+                UIMessageForm.LogLevelTextBox.Text = logLevelStr;
+                UIMessageForm.MessageTextBox.Text = args.MsgTuple.UIMessage ?? string.Empty;
+
                 UIMessageForm.Show();
-            }
+            });
         }
     }
 }

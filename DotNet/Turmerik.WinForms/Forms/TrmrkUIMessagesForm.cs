@@ -228,18 +228,7 @@ namespace Turmerik.WinForms.Forms
             return mtblEvt;
         }
 
-        private DataGridViewCellStyle GetReadMsgUICellStyle()
-        {
-            /* var readMsgUICellStyle = new DataGridViewCellStyle(
-                dataGridViewMessages.DefaultCellStyle);
-
-            readMsgUICellStyle.Font = new Font(
-                readMsgUICellStyle.Font,
-                FontStyle.Regular); */
-
-            var readMsgUICellStyle = dataGridViewMessages.DefaultCellStyle;
-            return readMsgUICellStyle;
-        }
+        private DataGridViewCellStyle GetReadMsgUICellStyle() => dataGridViewMessages.DefaultCellStyle;
 
         #region UI Event Handlers
 

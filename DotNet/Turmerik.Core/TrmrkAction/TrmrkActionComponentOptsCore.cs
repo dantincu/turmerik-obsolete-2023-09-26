@@ -20,7 +20,7 @@ namespace Turmerik.TrmrkAction
         where TActionResult : ITrmrkActionResult
         where TMsgTuple : ITrmrkActionMessageTuple
     {
-        Func<ITrmrkActionComponentOptsCore, ITrmrkActionResult, Exception, TrmrkUnhandledErrorActionStepKind, TMsgTuple> LogMessageFactory { get; set; }
+        Func<LogMsgFactoryArgs, TMsgTuple> LogMessageFactory { get; set; }
 
         Func<TResult> Validation { get; set; }
         Func<TResult> Action { get; set; }
@@ -28,8 +28,8 @@ namespace Turmerik.TrmrkAction
         Action<TActionResult> ActionErrorCallback { get; set; }
         Action<TActionResult> ValidationErrorCallback { get; set; }
         Action<TActionResult> AlwaysCallback { get; set; }
-        Action<TActionResult, Exception, TrmrkUnhandledErrorActionStepKind> UnhandledErrorCallback { get; set; }
-        Action<TActionResult, Exception, TrmrkUnhandledErrorActionStepKind> FinalCallback { get; set; }
+        Action<TActionResult, Exception, TrmrkActionStepKind> UnhandledErrorCallback { get; set; }
+        Action<TActionResult, Exception, TrmrkActionStepKind> FinalCallback { get; set; }
     }
 
     public interface ITrmrkActionComponentOpts : ITrmrkActionComponentOptsCore<ITrmrkActionResult, ITrmrkActionResult, ITrmrkActionMessageTuple>
@@ -57,7 +57,7 @@ namespace Turmerik.TrmrkAction
         public LogLevel? LogLevel { get; set; }
         public LogLevel? ErrorLogLevel { get; set; }
 
-        public Func<ITrmrkActionComponentOptsCore, ITrmrkActionResult, Exception, TrmrkUnhandledErrorActionStepKind, ITrmrkActionMessageTuple> LogMessageFactory { get; set; }
+        public Func<LogMsgFactoryArgs, ITrmrkActionMessageTuple> LogMessageFactory { get; set; }
 
         public Func<TResult> Validation { get; set; }
         public Func<TResult> Action { get; set; }
@@ -65,8 +65,8 @@ namespace Turmerik.TrmrkAction
         public Action<TActionResult> ActionErrorCallback { get; set; }
         public Action<TActionResult> ValidationErrorCallback { get; set; }
         public Action<TActionResult> AlwaysCallback { get; set; }
-        public Action<TActionResult, Exception, TrmrkUnhandledErrorActionStepKind> UnhandledErrorCallback { get; set; }
-        public Action<TActionResult, Exception, TrmrkUnhandledErrorActionStepKind> FinalCallback { get; set; }
+        public Action<TActionResult, Exception, TrmrkActionStepKind> UnhandledErrorCallback { get; set; }
+        public Action<TActionResult, Exception, TrmrkActionStepKind> FinalCallback { get; set; }
     }
 
     public class TrmrkActionComponentOpts : TrmrkActionComponentOptsCore<ITrmrkActionResult, ITrmrkActionResult>, ITrmrkActionComponentOpts

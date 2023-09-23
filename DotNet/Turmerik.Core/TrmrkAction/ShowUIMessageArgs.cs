@@ -12,7 +12,7 @@ namespace Turmerik.TrmrkAction
             ITrmrkActionComponentOptsCore opts,
             ITrmrkActionResult actionResult,
             Exception exc,
-            TrmrkUnhandledErrorActionStepKind actionStepKind,
+            TrmrkActionStepKind actionStepKind,
             ITrmrkActionMessageTuple msgTuple,
             LogLevel logLevel)
         {
@@ -27,7 +27,7 @@ namespace Turmerik.TrmrkAction
         public ITrmrkActionComponentOptsCore Opts { get; }
         public ITrmrkActionResult ActionResult { get; }
         public Exception Exc { get; }
-        public TrmrkUnhandledErrorActionStepKind ActionStepKind { get; }
+        public TrmrkActionStepKind ActionStepKind { get; }
         public ITrmrkActionMessageTuple MsgTuple { get; }
         public LogLevel LogLevel { get; }
     }

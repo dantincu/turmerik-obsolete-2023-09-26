@@ -16,10 +16,6 @@ namespace Turmerik.TrmrkAction
     public class TrmrkActionComponentCore<TManager>
         where TManager : class, ITrmrkActionComponentsManager
     {
-        protected const string DEFAULT_LOG_MESSAGE_TEMPLATE = "{0} action {1}";
-        protected const string DEFAULT_ERROR_LOG_MESSAGE_TEMPLATE = "Error {0} action {1}";
-        protected const string DEFAULT_UNHANDLED_ERROR_LOG_MESSAGE_TEMPLATE = "Unhandled error {0} action {1}";
-
         public TrmrkActionComponentCore(
             TManager manager,
             IAppLogger logger)
@@ -31,215 +27,104 @@ namespace Turmerik.TrmrkAction
         protected TManager Manager { get; }
         protected IAppLogger Logger { get; }
 
-        protected virtual string DefaultLogMessageTemplate => DEFAULT_LOG_MESSAGE_TEMPLATE;
-        protected virtual string DefaultErrorLogMessageTemplate => DEFAULT_ERROR_LOG_MESSAGE_TEMPLATE;
-        protected virtual string DefaultUnhandledErrorLogMessageTemplate => DEFAULT_UNHANDLED_ERROR_LOG_MESSAGE_TEMPLATE;
-
         protected TActionResult ExecuteCore<TActionResult, TMsgTuple>(
-            ITrmrkActionComponentOptsCore<TActionResult, TActionResult, TMsgTuple> opts,
-            TActionResult defaultSuccessActionResult,
-            TActionResult defaultErrorActionResult)
+            ITrmrkActionComponentOptsCore<TActionResult, TActionResult, TMsgTuple> opts)
             where TActionResult : ITrmrkActionResult
             where TMsgTuple : ITrmrkActionMessageTuple
         {
-            var actionStepKind = TrmrkUnhandledErrorActionStepKind.BeforeExecution;
+            var actionStepKind = TrmrkActionStepKind.BeforeExecution;
             TActionResult actionResult = default;
             Exception excp = null;
 
             try
             {
-                OnBeforeExecute(opts, defaultSuccessActionResult, ref actionStepKind);
+                OnBeforeExecute(opts, actionResult, ref actionStepKind);
 
                 if (opts.Validation != null)
                 {
-                    OnBeforeValidation(opts, defaultSuccessActionResult, ref actionStepKind);
+                    OnBeforeValidation(opts, actionResult, ref actionStepKind);
                     actionResult = opts.Validation();
-                    OnAfterValidation(opts, actionResult.FirstNotNull(defaultErrorActionResult), ref actionStepKind);
+                    OnAfterValidation(opts, actionResult, ref actionStepKind);
                 }
 
                 if (opts.Validation == null || (actionResult?.IsSuccess ?? false))
                 {
-                    OnBeforeAction(opts, actionResult.FirstNotNull(defaultSuccessActionResult), ref actionStepKind);
+                    OnBeforeAction(opts, actionResult, ref actionStepKind);
                     actionResult = opts.Action();
-                    OnAfterAction(opts, actionResult.FirstNotNull(defaultErrorActionResult), ref actionStepKind);
+                    OnAfterAction(opts, actionResult, ref actionStepKind);
                 }
-
-                ExecuteAlwaysCallbackIfReq(opts, actionResult.FirstNotNull(defaultErrorActionResult), ref actionStepKind);
             }
             catch (Exception exc)
             {
                 excp = exc;
-                OnUnhandledError(opts, actionResult.FirstNotNull(defaultErrorActionResult), actionStepKind, exc);
+                OnUnhandledError(opts, actionResult, actionStepKind, exc);
             }
 
-            ExecuteFinalCallbackIfReq(opts, actionResult.FirstNotNull(defaultErrorActionResult), actionStepKind, excp);
+            try
+            {
+                ExecuteAlwaysCallbackIfReq(opts, actionResult, ref actionStepKind, excp);
+            }
+            catch (Exception exc)
+            {
+                excp = exc;
+                OnUnhandledError(opts, actionResult, actionStepKind, exc);
+            }
+
+            ExecuteFinalCallbackIfReq(opts, actionResult, actionStepKind, excp);
             return actionResult;
         }
 
         protected async Task<TActionResult> ExecuteCoreAsync<TActionResult, TMsgTuple>(
-            ITrmrkActionComponentOptsCore<Task<TActionResult>, TActionResult, TMsgTuple> opts,
-            TActionResult defaultSuccessActionResult,
-            TActionResult defaultErrorActionResult)
+            ITrmrkActionComponentOptsCore<Task<TActionResult>, TActionResult, TMsgTuple> opts)
             where TActionResult : ITrmrkActionResult
             where TMsgTuple : ITrmrkActionMessageTuple
         {
-            var actionStepKind = TrmrkUnhandledErrorActionStepKind.BeforeExecution;
+            var actionStepKind = TrmrkActionStepKind.BeforeExecution;
             TActionResult actionResult = default;
             Exception excp = null;
 
             try
             {
-                OnBeforeExecute(opts, defaultSuccessActionResult, ref actionStepKind);
+                OnBeforeExecute(opts, actionResult, ref actionStepKind);
 
                 if (opts.Validation != null)
                 {
-                    OnBeforeValidation(opts, defaultSuccessActionResult, ref actionStepKind);
+                    OnBeforeValidation(opts, actionResult, ref actionStepKind);
                     actionResult = await opts.Validation();
-                    OnAfterValidation(opts, actionResult.FirstNotNull(defaultErrorActionResult), ref actionStepKind);
+                    OnAfterValidation(opts, actionResult, ref actionStepKind);
                 }
 
                 if (opts.Validation == null || (actionResult?.IsSuccess ?? false))
                 {
-                    OnBeforeAction(opts, actionResult.FirstNotNull(defaultSuccessActionResult), ref actionStepKind);
+                    OnBeforeAction(opts, actionResult, ref actionStepKind);
                     actionResult = await opts.Action();
-                    OnAfterAction(opts, actionResult.FirstNotNull(defaultErrorActionResult), ref actionStepKind);
+                    OnAfterAction(opts, actionResult, ref actionStepKind);
                 }
-
-                ExecuteAlwaysCallbackIfReq(opts, actionResult.FirstNotNull(defaultErrorActionResult), ref actionStepKind);
             }
             catch (Exception exc)
             {
                 excp = exc;
-                OnUnhandledError(opts, actionResult.FirstNotNull(defaultErrorActionResult), actionStepKind, exc);
+                OnUnhandledError(opts, actionResult, actionStepKind, exc);
             }
 
-            ExecuteFinalCallbackIfReq(opts, actionResult.FirstNotNull(defaultErrorActionResult), actionStepKind, excp);
+            try
+            {
+                ExecuteAlwaysCallbackIfReq(opts, actionResult, ref actionStepKind, excp);
+            }
+            catch (Exception exc)
+            {
+                excp = exc;
+                OnUnhandledError(opts, actionResult, actionStepKind, exc);
+            }
+
+            ExecuteFinalCallbackIfReq(opts, actionResult, actionStepKind, excp);
             return actionResult;
-        }
-
-        protected virtual void ShowUIMessageIfReq(
-            ShowUIMessageArgs args)
-        {
-            if (args.MsgTuple.ShowUIMessage != false && args.Opts.ShowUIMessage != false && Manager.EnableUIMessages)
-            {
-                bool showUIMessage = args.MsgTuple.ShowUIMessage == true && args.Opts.ShowUIMessage == true;
-
-                Manager.ShowUIMessage(
-                    args,
-                    showUIMessage);
-            }
-        }
-
-        protected virtual ITrmrkActionMessageTuple GetDefaultLogMessage<TResult, TActionResult, TMsgTuple>(
-            ITrmrkActionComponentOptsCore<TResult, TActionResult, TMsgTuple> opts,
-            TActionResult actionResult,
-            Exception exc,
-            TrmrkUnhandledErrorActionStepKind actionStepKind)
-            where TActionResult : ITrmrkActionResult
-            where TMsgTuple : ITrmrkActionMessageTuple
-        {
-            string adverb = GetActionStepStr(actionStepKind);
-            string msgTemplate = GetMessageTemplate(actionResult, exc);
-
-            string message = string.Format(
-                msgTemplate,
-                adverb,
-                opts.ActionName);
-
-            if (actionResult != null)
-            {
-                message = "; ".JoinNotNullStr(
-                    message.Arr(
-                        ": ".JoinNotNullStr(
-                            actionResult.ResponseCaption.Arr(
-                                actionResult.ResponseMessage))));
-            }
-
-            /* if (exc != null)
-            {
-                message = "; ".JoinNotNullStr(
-                    message.Arr(
-                        ": ".JoinNotNullStr(
-                            exc.GetType().FullName.Arr(
-                                exc.Message))));
-            } */
-
-            return new TrmrkActionMessageTuple
-            {
-                Message = message,
-            };
-        }
-
-        private string GetErrorMessage(
-            ITrmrkActionResult actionResult,
-            Exception exc) => ": ".JoinNotNullStr(
-                actionResult.ResponseCaption.Arr(
-                    actionResult.ResponseMessage,
-                    actionResult.Exception?.Message));
-
-        private string GetActionStepStr(
-            TrmrkUnhandledErrorActionStepKind actionStepKind)
-        {
-            string adverb;
-
-            switch (actionStepKind)
-            {
-                case TrmrkUnhandledErrorActionStepKind.BeforeExecution:
-                    adverb = "before";
-                    break;
-                case TrmrkUnhandledErrorActionStepKind.Validation:
-                    adverb = "at validation of";
-                    break;
-                case TrmrkUnhandledErrorActionStepKind.AfterValidation:
-                    adverb = "after validation of";
-                    break;
-                case TrmrkUnhandledErrorActionStepKind.Action:
-                    adverb = "at";
-                    break;
-                case TrmrkUnhandledErrorActionStepKind.AfterAction:
-                    adverb = "after";
-                    break;
-                case TrmrkUnhandledErrorActionStepKind.AlwaysCallback:
-                    adverb = "at always callback of";
-                    break;
-                case TrmrkUnhandledErrorActionStepKind.AfterAlwaysCallback:
-                    adverb = "after always callback of";
-                    break;
-                default:
-                    throw new NotSupportedException();
-            }
-
-            return adverb;
-        }
-
-        private string GetMessageTemplate<TActionResult>(
-            TActionResult actionResult,
-            Exception exc)
-            where TActionResult : ITrmrkActionResult
-        {
-            string msgTemplate;
-
-            if (actionResult?.IsSuccess ?? false)
-            {
-                msgTemplate = DefaultLogMessageTemplate;
-            }
-            else
-            {
-                msgTemplate = DefaultErrorLogMessageTemplate;
-
-                if (exc != null)
-                {
-                    msgTemplate = DefaultUnhandledErrorLogMessageTemplate;
-                }
-            }
-
-            return msgTemplate;
         }
 
         private void OnBeforeExecute<TResult, TActionResult, TMsgTuple>(
             ITrmrkActionComponentOptsCore<TResult, TActionResult, TMsgTuple> opts,
             TActionResult actionResult,
-            ref TrmrkUnhandledErrorActionStepKind actionStepKind)
+            ref TrmrkActionStepKind actionStepKind)
             where TActionResult : ITrmrkActionResult
             where TMsgTuple : ITrmrkActionMessageTuple
         {
@@ -250,22 +135,23 @@ namespace Turmerik.TrmrkAction
         private void OnBeforeValidation<TResult, TActionResult, TMsgTuple>(
             ITrmrkActionComponentOptsCore<TResult, TActionResult, TMsgTuple> opts,
             TActionResult actionResult,
-            ref TrmrkUnhandledErrorActionStepKind actionStepKind)
+            ref TrmrkActionStepKind actionStepKind)
             where TActionResult : ITrmrkActionResult
             where TMsgTuple : ITrmrkActionMessageTuple
         {
-            actionStepKind = TrmrkUnhandledErrorActionStepKind.Validation;
+            actionStepKind = TrmrkActionStepKind.BeforeValidation;
             LogMessageIfReq(opts, actionResult, null, actionStepKind);
+            actionStepKind = TrmrkActionStepKind.Validation;
         }
 
         private void OnAfterValidation<TResult, TActionResult, TMsgTuple>(
             ITrmrkActionComponentOptsCore<TResult, TActionResult, TMsgTuple> opts,
             TActionResult actionResult,
-            ref TrmrkUnhandledErrorActionStepKind actionStepKind)
+            ref TrmrkActionStepKind actionStepKind)
             where TActionResult : ITrmrkActionResult
             where TMsgTuple : ITrmrkActionMessageTuple
         {
-            actionStepKind = TrmrkUnhandledErrorActionStepKind.AfterValidation;
+            actionStepKind = TrmrkActionStepKind.AfterValidation;
 
             if (actionResult.HasError)
             {
@@ -278,22 +164,23 @@ namespace Turmerik.TrmrkAction
         private void OnBeforeAction<TResult, TActionResult, TMsgTuple>(
             ITrmrkActionComponentOptsCore<TResult, TActionResult, TMsgTuple> opts,
             TActionResult actionResult,
-            ref TrmrkUnhandledErrorActionStepKind actionStepKind)
+            ref TrmrkActionStepKind actionStepKind)
             where TActionResult : ITrmrkActionResult
             where TMsgTuple : ITrmrkActionMessageTuple
         {
-            actionStepKind = TrmrkUnhandledErrorActionStepKind.Action;
+            actionStepKind = TrmrkActionStepKind.BeforeAction;
             LogMessageIfReq(opts, actionResult, null, actionStepKind);
+            actionStepKind = TrmrkActionStepKind.Action;
         }
 
         private void OnAfterAction<TResult, TActionResult, TMsgTuple>(
             ITrmrkActionComponentOptsCore<TResult, TActionResult, TMsgTuple> opts,
             TActionResult actionResult,
-            ref TrmrkUnhandledErrorActionStepKind actionStepKind)
+            ref TrmrkActionStepKind actionStepKind)
             where TActionResult : ITrmrkActionResult
             where TMsgTuple : ITrmrkActionMessageTuple
         {
-            actionStepKind = TrmrkUnhandledErrorActionStepKind.AfterAction;
+            actionStepKind = TrmrkActionStepKind.AfterAction;
 
             if (actionResult.HasError)
             {
@@ -310,26 +197,25 @@ namespace Turmerik.TrmrkAction
         private void ExecuteAlwaysCallbackIfReq<TResult, TActionResult, TMsgTuple>(
             ITrmrkActionComponentOptsCore<TResult, TActionResult, TMsgTuple> opts,
             TActionResult actionResult,
-            ref TrmrkUnhandledErrorActionStepKind actionStepKind)
+            ref TrmrkActionStepKind actionStepKind,
+            Exception excp)
             where TActionResult : ITrmrkActionResult
             where TMsgTuple : ITrmrkActionMessageTuple
         {
-            if (opts.AlwaysCallback != null)
-            {
-                actionStepKind = TrmrkUnhandledErrorActionStepKind.AlwaysCallback;
-                LogMessageIfReq(opts, actionResult, null, actionStepKind);
+            actionStepKind = TrmrkActionStepKind.BeforeAlways;
+            LogMessageIfReq(opts, actionResult, excp, actionStepKind);
+            actionStepKind = TrmrkActionStepKind.Always;
 
-                opts.AlwaysCallback.Invoke(actionResult);
+            opts.AlwaysCallback?.Invoke(actionResult);
 
-                actionStepKind = TrmrkUnhandledErrorActionStepKind.AfterAlwaysCallback;
-                LogMessageIfReq(opts, actionResult, null, actionStepKind);
-            }
+            actionStepKind = TrmrkActionStepKind.AfterAlways;
+            LogMessageIfReq(opts, actionResult, excp, actionStepKind);
         }
 
         private void OnUnhandledError<TResult, TActionResult, TMsgTuple>(
             ITrmrkActionComponentOptsCore<TResult, TActionResult, TMsgTuple> opts,
             TActionResult actionResult,
-            TrmrkUnhandledErrorActionStepKind actionStepKind,
+            TrmrkActionStepKind actionStepKind,
             Exception exc)
             where TActionResult : ITrmrkActionResult
             where TMsgTuple : ITrmrkActionMessageTuple
@@ -345,7 +231,7 @@ namespace Turmerik.TrmrkAction
         private void ExecuteFinalCallbackIfReq<TResult, TActionResult, TMsgTuple>(
             ITrmrkActionComponentOptsCore<TResult, TActionResult, TMsgTuple> opts,
             TActionResult actionResult,
-            TrmrkUnhandledErrorActionStepKind actionStepKind,
+            TrmrkActionStepKind actionStepKind,
             Exception exc)
             where TActionResult : ITrmrkActionResult
             where TMsgTuple : ITrmrkActionMessageTuple
@@ -360,116 +246,67 @@ namespace Turmerik.TrmrkAction
             ITrmrkActionComponentOptsCore<TResult, TActionResult, TMsgTuple> opts,
             TActionResult actionResult,
             Exception exc,
-            TrmrkUnhandledErrorActionStepKind actionStepKind)
+            TrmrkActionStepKind actionStepKind)
             where TActionResult : ITrmrkActionResult
             where TMsgTuple : ITrmrkActionMessageTuple
         {
-            ITrmrkActionMessageTuple msgTuple = null;
-
             if (opts.LogMessageFactory != null)
             {
-                msgTuple = opts.LogMessageFactory(
-                    opts,
-                    actionResult,
-                    exc,
-                    actionStepKind);
-            }
+                var msgTuple = opts.LogMessageFactory(
+                    new LogMsgFactoryArgs(
+                        opts,
+                        actionResult,
+                        exc,
+                        actionStepKind));
 
-            msgTuple = msgTuple ?? GetDefaultLogMessage(
-                opts,
-                actionResult,
-                exc,
-                actionStepKind);
-
-            LogMessageIfReqCore(
-                opts,
-                actionResult,
-                exc,
-                actionStepKind,
-                msgTuple);
-        }
-
-        private void LogMessageIfReqCore<TResult, TActionResult, TMsgTuple>(
-            ITrmrkActionComponentOptsCore<TResult, TActionResult, TMsgTuple> opts,
-            TActionResult actionResult,
-            Exception exc,
-            TrmrkUnhandledErrorActionStepKind actionStepKind,
-            ITrmrkActionMessageTuple msgTuple)
-            where TActionResult : ITrmrkActionResult
-            where TMsgTuple : ITrmrkActionMessageTuple
-        {
-            var excp = exc ?? actionResult?.Exception;
-
-            var logLevel = GetLogLevel(
-                opts,
-                actionResult,
-                excp,
-                msgTuple);
-
-            LogMessageIfReqCore(excp, msgTuple, logLevel);
-
-            ShowUIMessageIfReq(
-                opts,
-                actionResult,
-                excp,
-                actionStepKind,
-                msgTuple,
-                logLevel);
-        }
-
-        private void LogMessageIfReqCore(
-            Exception excp,
-            ITrmrkActionMessageTuple msgTuple,
-            LogLevel logLevel)
-        {
-            if (Logger != null)
-            {
-                string message = msgTuple.LogMessage ?? ": ".JoinNotNullStr(
-                    msgTuple.Caption.Arr(msgTuple.Message));
-
-                if (!string.IsNullOrEmpty(message))
+                if (msgTuple != null)
                 {
-                    Logger.Write(
-                        logLevel,
-                        excp,
-                        message);
+                    var excp = exc ?? actionResult?.Exception;
+
+                    if (Logger != null && msgTuple.LogMessage != null)
+                    {
+                        Logger.Write(
+                            GetLogLevel(
+                                opts,
+                                actionResult,
+                                excp,
+                                msgTuple.LogLevel),
+                            excp,
+                            msgTuple.LogMessage);
+                    }
+
+                    if (msgTuple.UIMessage != null)
+                    {
+                        Manager.ShowUIMessage(
+                            new ShowUIMessageArgs(
+                                opts,
+                                actionResult,
+                                excp,
+                                actionStepKind,
+                                msgTuple,
+                                GetLogLevel(
+                                    opts,
+                                    actionResult,
+                                    excp,
+                                    msgTuple.UILogLevel)));
+                    }
                 }
             }
-        }
-
-        private void ShowUIMessageIfReq<TResult, TActionResult, TMsgTuple>(
-            ITrmrkActionComponentOptsCore<TResult, TActionResult, TMsgTuple> opts,
-            TActionResult actionResult,
-            Exception excp,
-            TrmrkUnhandledErrorActionStepKind actionStepKind,
-            ITrmrkActionMessageTuple msgTuple,
-            LogLevel logLevel)
-            where TActionResult : ITrmrkActionResult
-            where TMsgTuple : ITrmrkActionMessageTuple
-        {
-            ShowUIMessageIfReq(
-                new ShowUIMessageArgs(
-                    opts,
-                    actionResult,
-                    excp,
-                    actionStepKind,
-                    msgTuple,
-                    logLevel));
         }
 
         private LogLevel GetLogLevel<TResult, TActionResult, TMsgTuple>(
             ITrmrkActionComponentOptsCore<TResult, TActionResult, TMsgTuple> opts,
             ITrmrkActionResult actionResult,
             Exception exc,
-            ITrmrkActionMessageTuple msgTuple)
+            LogLevel? nllblLogLevel)
             where TActionResult : ITrmrkActionResult
             where TMsgTuple : ITrmrkActionMessageTuple
         {
             LogLevel logLevel;
 
-            if (msgTuple.LogLevel.HasValue)
+            if (nllblLogLevel.HasValue)
             {
-                logLevel = msgTuple.LogLevel.Value;
+                logLevel = nllblLogLevel.Value;
             }
             else
             {

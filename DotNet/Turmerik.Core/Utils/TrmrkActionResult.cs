@@ -13,7 +13,7 @@ namespace Turmerik.Utils
     {
         bool IsSuccess { get; }
         bool HasError { get; set; }
-        string ResponseCaption { get; set; }
+        bool HasValidationError { get; set; }
         string ResponseMessage { get; set; }
         Exception Exception { get; set; }
 
@@ -43,6 +43,7 @@ namespace Turmerik.Utils
     {
         public bool IsSuccess => !HasError;
         public bool HasError { get; set; }
+        public bool HasValidationError { get; set; }
         public string ResponseCaption { get; set; }
         public string ResponseMessage { get; set; }
         public Exception Exception { get; set; }

@@ -15,9 +15,10 @@
   <StackPanel>
     <Panel>
       <TextBlock Text="Raw Url" Margin="10" />
-      <Button Command="{Binding FromClipboardAsync}" Content="From Clipboard" Margin="75 0 0 0"></Button>
+      <Button Command="{Binding RawUrlFromClipboard}" Content="From Clipboard" Margin="75 0 0 0"></Button>
+      <Button Command="{Binding RawUrlToClipboard}" Content="To Clipboard" Margin="200 0 0 0"></Button>
     </Panel>
-    <TextBox Text="{Binding RawUrl}" />
-    <TextBox Text="{Binding OutputText}" Foreground="{Binding OutputTextForeground}" Height="100" IsReadOnly="True" />
+    <TextBox Text="{Binding RawUrl}" x:Name="textBoxRawUrl" />
+    <TextBox Text="{Binding OutputText}" Foreground="{Binding OutputTextForeground}" Height="100" IsReadOnly="True" x:Name="textBoxOutput" />
   </StackPanel>
 </UserControl>
