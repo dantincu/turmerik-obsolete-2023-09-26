@@ -9,9 +9,7 @@ using System.Windows.Forms;
 using System.Xml.Linq;
 using Turmerik.Collections;
 using Turmerik.Logging;
-using Turmerik.TrmrkAction;
 using Turmerik.Utils;
-using Turmerik.WinForms.ActionComponent;
 using Turmerik.WinForms.Controls;
 using Turmerik.WinForms.Dependencies;
 using Turmerik.WinForms.Utils;
@@ -90,7 +88,7 @@ namespace Turmerik.WinForms.Components
         
         public TreeViewDataAdapterBase(
             IAppLoggerCreator appLoggerCreator,
-            IWinFormsActionComponentFactory winFormsActionComponentFactory,
+            // IWinFormsActionComponentFactory winFormsActionComponentFactory,
             TreeViewDataAdapterOptsCore.IClnbl<TValue> opts,
             IContextMenuStripFactory contextMenuStripFactory)
         {
@@ -114,7 +112,7 @@ namespace Turmerik.WinForms.Components
             NodeIconKvpFactory = GetIconProps(opts as TreeViewDataAdapterIconFactoriesOpts.IClnbl<TValue>);
 
             this.Logger = appLoggerCreator.GetSharedAppLogger(GetType());
-            this.ActionComponent = winFormsActionComponentFactory.Create(this.Logger);
+            // this.ActionComponent = winFormsActionComponentFactory.Create(this.Logger);
             this.DataTree = new DataTree.Mtbl<TValue>();
 
             TreeView.NodeMouseClick += TreeView_NodeMouseClick;
@@ -131,7 +129,7 @@ namespace Turmerik.WinForms.Components
         public TreeViewDataAdapterIconsOptsCore.Immtbl<Func<TreeNodeArg<TValue>, KeyValuePair<int, string>>, TValue> NodeIconKvpFactory { get; }
 
         protected IAppLogger Logger { get; private set; }
-        protected IWinFormsActionComponent ActionComponent { get; private set; }
+        // protected IWinFormsActionComponent ActionComponent { get; private set; }
         protected IContextMenuStripFactory ContextMenuStripFactory { get; }
         public Func<TreeNodeArg<TValue>, bool> IsLeafPredicate { get; }
         protected Func<TreeNodeArg<TValue>, string> NodeTextFactory { get; }
@@ -244,7 +242,7 @@ namespace Turmerik.WinForms.Components
         {
             if (e.Button == MouseButtons.Left && RefreshOnDoubleClick)
             {
-                ActionComponent.Execute(new TrmrkActionComponentOpts
+                /* ActionComponent.Execute(new TrmrkActionComponentOpts
                 {
                     ActionName = nameof(TreeView_NodeMouseDoubleClick),
                     Action = () =>
@@ -260,13 +258,16 @@ namespace Turmerik.WinForms.Components
                         TreeNode_Refresh(arg);
                         return new TrmrkActionResult();
                     }
-                });
+                }); */
             }
         }
 
         protected virtual void TreeView_NodeMouseClick(
             object sender,
-            TreeNodeMouseClickEventArgs e) => ActionComponent.Execute(new TrmrkActionComponentOpts
+            TreeNodeMouseClickEventArgs e)
+        {
+            throw new NotImplementedException();
+        } /* => ActionComponent.Execute(new TrmrkActionComponentOpts
             {
                 ActionName = nameof(TreeView_NodeMouseClick),
                 Action = () =>
@@ -295,11 +296,14 @@ namespace Turmerik.WinForms.Components
 
                     return new TrmrkActionResult();
                 }
-            });
+            }); */
 
         protected virtual void TreeView_AfterExpand(
             object sender,
-            TreeViewEventArgs e) => ActionComponent.Execute(new TrmrkActionComponentOpts
+            TreeViewEventArgs e)
+        {
+            throw new NotImplementedException();
+        } /* => ActionComponent.Execute(new TrmrkActionComponentOpts
             {
                 ActionName = nameof(TreeView_AfterExpand),
                 Action = () =>
@@ -324,7 +328,7 @@ namespace Turmerik.WinForms.Components
                     
                     return new TrmrkActionResult();
                 }
-            });
+            }); */
 
         protected abstract void TreeNode_Refresh(
             TreeNodeArg<TValue> value);

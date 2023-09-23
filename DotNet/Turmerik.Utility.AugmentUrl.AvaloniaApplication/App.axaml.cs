@@ -1,7 +1,10 @@
 ﻿using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
+using Avalonia.Media;
 using Microsoft.Extensions.DependencyInjection;
+using System;
+using System.Linq;
 using Turmerik.Avalonia.Dependencies;
 using Turmerik.Utility.AugmentUrl.AvaloniaApplication.Dependencies;
 using Turmerik.Utility.AugmentUrl.AvaloniaApplication.ViewModels;

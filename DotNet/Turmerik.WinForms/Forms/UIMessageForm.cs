@@ -7,28 +7,26 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using Turmerik.TrmrkAction;
-using Turmerik.WinForms.ActionComponent;
 
 namespace Turmerik.WinForms.Forms
 {
     public partial class UIMessageForm : Form
     {
-        private readonly Lazy<IWinFormsActionComponentsManager> actionComponentsManager;
+        // private readonly Lazy<IWinFormsActionComponentsManager> actionComponentsManager;
 
         public UIMessageForm()
         {
             InitializeComponent();
         }
 
-        public UIMessageForm(
+        /* public UIMessageForm(
             Lazy<IWinFormsActionComponentsManager> actionComponentsManager)
         {
             this.actionComponentsManager = actionComponentsManager ?? throw new ArgumentNullException(
-                nameof(actionComponentsManager));
+                nameof(actionComponentsManager)); 
 
             InitializeComponent();
-        }
+        }*/
 
         public TextBox TimeStampTextBox => this.textBoxTimeStamp;
         public TextBox LogLevelTextBox => this.textBoxLogLevel;

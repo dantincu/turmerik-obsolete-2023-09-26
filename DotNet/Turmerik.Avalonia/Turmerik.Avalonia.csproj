@@ -8,6 +8,14 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="ActionComponent%24not-compiled%24\TrmrkAvlnActionComponent.cs" />
+    <Compile Remove="ActionComponent%24not-compiled%24\TrmrkAvlnActionComponentFactory.cs" />
+    <Compile Remove="ActionComponent%24not-compiled%24\TrmrkAvlnActionComponentsManager.cs" />
+    <Compile Remove="ActionComponent%24not-compiled%24\TrmrkAvlnActionComponentsManagerOpts.clnbl.cs" />
+    <Compile Remove="ActionComponent%24not-compiled%24\TrmrkAvlnActionComponentsManagerRetriever.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Avalonia" Version="11.0.4" />
     <PackageReference Include="Avalonia.ReactiveUI" Version="11.0.4" />
   </ItemGroup>
@@ -18,6 +26,14 @@
 
   <ItemGroup>
     <Folder Include="Utils\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="ActionComponent$not-compiled$\TrmrkAvlnActionComponent.cs" />
+    <None Include="ActionComponent$not-compiled$\TrmrkAvlnActionComponentFactory.cs" />
+    <None Include="ActionComponent$not-compiled$\TrmrkAvlnActionComponentsManager.cs" />
+    <None Include="ActionComponent$not-compiled$\TrmrkAvlnActionComponentsManagerOpts.clnbl.cs" />
+    <None Include="ActionComponent$not-compiled$\TrmrkAvlnActionComponentsManagerRetriever.cs" />
   </ItemGroup>
 
 </Project>

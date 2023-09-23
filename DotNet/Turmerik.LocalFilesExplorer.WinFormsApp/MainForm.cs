@@ -12,9 +12,7 @@ using System.Windows.Forms;
 using Turmerik.LocalDevice.Core.Logging;
 using Turmerik.LocalFilesExplorer.WinFormsApp.ViewModels;
 using Turmerik.Logging;
-using Turmerik.TrmrkAction;
 using Turmerik.Utils;
-using Turmerik.WinForms.ActionComponent;
 using Turmerik.WinForms.Dependencies;
 using MsLogLevel = Microsoft.Extensions.Logging.LogLevel;
 
@@ -27,12 +25,12 @@ namespace Turmerik.LocalFilesExplorer.WinFormsApp
         private readonly IServiceProvider svcProv;
         private readonly IMainFormVM viewModel;
 
-        private readonly ITrmrkWinFormsActionComponentsManagerRetriever trmrkWinFormsActionComponentsManagerRetriever;
+        /* private readonly ITrmrkWinFormsActionComponentsManagerRetriever trmrkWinFormsActionComponentsManagerRetriever;
         private readonly ITrmrkWinFormsActionComponentsManager trmrkWinFormsActionComponentsManager;
+        private readonly ITrmrkWinFormsActionComponentFactory trmrkWinFormsActionComponentFactory;
+        private readonly ITrmrkWinFormsActionComponent actionComponent; */
         private readonly IAppLogger logger;
         private readonly IAppLoggerCreator appLoggerCreator;
-        private readonly ITrmrkWinFormsActionComponentFactory trmrkWinFormsActionComponentFactory;
-        private readonly ITrmrkWinFormsActionComponent actionComponent;
 
         public MainForm()
         {
@@ -48,47 +46,22 @@ namespace Turmerik.LocalFilesExplorer.WinFormsApp
 
             if (this.svcRegistered)
             {
-                this.trmrkWinFormsActionComponentsManagerRetriever = this.svcProv.GetRequiredService<ITrmrkWinFormsActionComponentsManagerRetriever>();
+                /* this.trmrkWinFormsActionComponentsManagerRetriever = this.svcProv.GetRequiredService<ITrmrkWinFormsActionComponentsManagerRetriever>();
                 this.trmrkWinFormsActionComponentsManagerRetriever.ToolStripStatusLabel = this.toolStripStatusLabelMain;
 
-                this.trmrkWinFormsActionComponentsManager = this.trmrkWinFormsActionComponentsManagerRetriever.Retrieve();
+                this.trmrkWinFormsActionComponentsManager = this.trmrkWinFormsActionComponentsManagerRetriever.Retrieve();*/
 
                 this.viewModel = this.svcProv.GetRequiredService<IMainFormVM>();
 
                 this.appLoggerCreator = this.svcProv.GetRequiredService<IAppLoggerCreator>();
                 this.logger = this.appLoggerCreator.GetSharedAppLogger(GetType());
-                this.trmrkWinFormsActionComponentFactory = this.svcProv.GetRequiredService<ITrmrkWinFormsActionComponentFactory>();
-                this.actionComponent = this.trmrkWinFormsActionComponentFactory.Create(this.logger);
+
+                /* this.trmrkWinFormsActionComponentFactory = this.svcProv.GetRequiredService<ITrmrkWinFormsActionComponentFactory>();
+                this.actionComponent = this.trmrkWinFormsActionComponentFactory.Create(this.logger); */
             }
         }
 
         #region UI Event Handlers
-
-        private void MainForm_Load(object sender, EventArgs e) => actionComponent?.Execute(
-            new TrmrkActionComponentOpts
-            {
-                Action = () => throw new Exception("asdfasdf")  /*  new TrmrkActionResult
-                {
-                    ResponseMessage = "Welcome",
-                }*/,
-                ActionName = nameof(MainForm_Load),
-            }.LogMsgFactory(map => map.AddFromActionResult(
-                "The main window opened")));
-
-        private void StatusStripMain_MouseUp(object sender, MouseEventArgs e) => actionComponent?.Execute(
-            new TrmrkActionComponentOpts
-            {
-                Action = () =>
-                {
-                    if (e.Button == MouseButtons.Right)
-                    {
-                        this.trmrkWinFormsActionComponentsManager.UIMessagesListForm.Show();
-                    }
-
-                    return new TrmrkActionResult();
-                },
-                ActionName = nameof(MainForm_Load),
-            });
 
         #endregion UI Event Handlers
     }

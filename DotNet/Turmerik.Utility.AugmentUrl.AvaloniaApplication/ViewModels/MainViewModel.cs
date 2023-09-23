@@ -8,9 +8,7 @@ using System;
 using System.Reactive;
 using System.Threading.Tasks;
 using System.Windows.Input;
-using Turmerik.Avalonia.ActionComponent;
 using Turmerik.Avalonia.ViewModels;
-using Turmerik.TrmrkAction;
 using Turmerik.Utils;
 using MsLogLevel = Microsoft.Extensions.Logging.LogLevel;
 
@@ -18,16 +16,14 @@ namespace Turmerik.Utility.AugmentUrl.AvaloniaApplication.ViewModels;
 
 public class MainViewModel : ViewModelBase, IMainViewModel
 {
-    private ITrmrkAvlnActionComponentsManagerRetriever actionComponentsManagerRetriever;
-
     private string rawUrl;
     private string outputText;
     private IBrush outputTextForeground;
 
-    private ITrmrkAvlnActionComponent actionComponent;
-
     public MainViewModel()
     {
+        TitleAndUrlTemplate = "[{0}]({1})";
+
         RawUrlToClipboard = ReactiveCommand.Create(
             () =>
             {
@@ -37,7 +33,11 @@ public class MainViewModel : ViewModelBase, IMainViewModel
         RawUrlFromClipboard = ReactiveCommand.Create(
             () =>
             {
-                RawUrlFromClipboardAsync();
+                FetchResourceAsync(
+                    TopLevel.Clipboard.GetTextAsync,
+                    "Retrieving the url from clipboard...",
+                    exc => $"Could not the url from clipboard: {exc.Message}",
+                    true);
             });
     }
 
@@ -77,50 +77,101 @@ public class MainViewModel : ViewModelBase, IMainViewModel
     public IBrush SuccessOutputTextForeground { get; set; }
     public IBrush ErrorOutputTextForeground { get; set; }
 
-    public ITrmrkAvlnActionComponentsManagerRetriever ActionComponentsManagerRetriever
-    {
-        get => actionComponentsManagerRetriever;
-
-        set
-        {
-            actionComponentsManagerRetriever = value;
-            actionComponent = ActionComponentFactory.Create(null);
-        }
-    }
-
+    public string TitleAndUrlTemplate { get; set; }
+    public ReactiveCommand<Unit, Unit> Fetch { get; }
+    public ReactiveCommand<Unit, Unit> TitleToClipboard { get; }
+    public ReactiveCommand<Unit, Unit> AllToClipboard { get; }
     public ReactiveCommand<Unit, Unit> RawUrlToClipboard { get; }
     public ReactiveCommand<Unit, Unit> RawUrlFromClipboard { get; }
 
-    private Task RawUrlToClipboardAsync() => actionComponent.ExecuteAsync(new TrmrkAsyncActionComponentOpts
+    private void ShowUserMsg(string text, bool? isSuccess)
     {
-        Action = async() =>
-        {
-            await TopLevel.Clipboard.SetTextAsync(RawUrl);
-            return new TrmrkActionResult();
-        },
-    }.LogMsgFactory(map => "the raw url to clipboard".ActWithValue(
-        actionName => map.AddBeforeExecution(
-            $"Copying {actionName}...").AddBeforeAlways(
-            args => string.Join(": ", $"Trying to copy {actionName} failed", args.Exc?.Message),
-            args => $"Copied {actionName}"))));
+        OutputText = text;
 
-    private async Task RawUrlFromClipboardAsync()
+        if (isSuccess.HasValue)
+        {
+            if (isSuccess.Value)
+            {
+                OutputTextForeground = SuccessOutputTextForeground;
+            }
+            else
+            {
+                OutputTextForeground = ErrorOutputTextForeground;
+            }
+        }
+        else
+        {
+            OutputTextForeground = DefaultOutputTextForeground;
+        }
+    }
+
+    private async Task RawUrlToClipboardAsync()
+    {
+        try
+        {
+            ShowUserMsg("Copying the provided url to clipboard...", null);
+            await TopLevel.Clipboard.SetTextAsync(RawUrl);
+            ShowUserMsg("Copyied the provided url to clipboard", true);
+        }
+        catch (Exception exc)
+        {
+            ShowUserMsg($"Something went wrong while copying the provided url to clipboard: {exc.Message}", false);
+        }
+    }
+
+    private async Task AllToClipboardAsync(string titleAndUrl)
+    {
+        try
+        {
+            ShowUserMsg("Copying the title and url to clipboard...", null);
+            await TopLevel.Clipboard.SetTextAsync(titleAndUrl);
+            ShowUserMsg("Copied the title and url to clipboard", true);
+        }
+        catch (Exception exc)
+        {
+            ShowUserMsg($"Could not copy the title and url to clipboard: {exc.Message}", false);
+        }
+    }
+
+    private async Task FetchResourceAsync(
+        Func<Task<string>> rawUrlRetriever,
+        string initMsg,
+        Func<Exception, string> retrieveUrlErrMsgFactory,
+        bool copyResultToClipboard)
     {
         Uri uri = null;
+        string rawUrl = null;
+        string title = null;
 
-        await actionComponent.ExecuteAsync(new TrmrkAsyncActionComponentOpts
+        try
         {
-            Validation = async() =>
-            {
-                string rawUrl = await TopLevel.Clipboard.GetTextAsync();
+            ShowUserMsg(initMsg, null);
+            rawUrl = await rawUrlRetriever();
+        }
+        catch (Exception exc)
+        {
+            ShowUserMsg(retrieveUrlErrMsgFactory(exc), false);
+        }
 
-                RawUrl = rawUrl;
+        if (rawUrl != null)
+        {
+            try
+            {
+                ShowUserMsg("Validating the provided url...", null);
                 uri = new Uri(rawUrl);
-
-                return new TrmrkActionResult();
-            },
-            Action = async () =>
+            }
+            catch (Exception exc)
             {
+                ShowUserMsg($"The provided url is invalid: {exc.Message}", false);
+            }
+        }
+
+        if (uri != null)
+        {
+            try
+            {
+                ShowUserMsg("Retrieving the resource from url...", null);
+
                 var web = new HtmlWeb();
                 var doc = web.Load(uri);
 
@@ -128,13 +179,27 @@ public class MainViewModel : ViewModelBase, IMainViewModel
                 {
 
                 }
+            }
+            catch (Exception exc)
+            {
+                ShowUserMsg($"Could not retrieve the resource from url: {exc.Message}", false);
+            }
+        }
 
-                return new TrmrkActionResult();
-            },
-        }.LogMsgFactory(map => map.AddBeforeExecution(
-            "Retrieving the url from clipboard...").AddValidation(
-            args => string.Join(": ", "The clipboard does not contain a valid url", args.Exc?.Message)).AddAfterAlways(
-            args => string.Join(": ", "Trying to fetch the resource from the provided url failed", args.Exc?.Message),
-            args => "Fetched the resource from the provided url and copied to clipboard the resource's title and the raw url")));
+        if (title != null)
+        {
+            string titleAndUrl = string.Format(
+                TitleAndUrlTemplate,
+                title);
+
+            if (copyResultToClipboard)
+            {
+                await AllToClipboardAsync(titleAndUrl);
+            }
+            else
+            {
+                ShowUserMsg("Retrieved the resource from url", true);
+            }
+        }
     }
 }

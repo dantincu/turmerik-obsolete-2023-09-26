@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Text;
 using Turmerik.Logging;
-using Turmerik.TrmrkAction;
 
 namespace Turmerik.Ux.MvvmH
 {
@@ -33,24 +32,24 @@ namespace Turmerik.Ux.MvvmH
     public abstract class ViewModelCoreBase
     {
         protected ViewModelCoreBase(
-            IAppLoggerCreator appLoggerFactory,
-            ITrmrkActionComponentFactory actionComponentFactory)
+            IAppLoggerCreator appLoggerFactory/* ,
+            ITrmrkActionComponentFactory actionComponentFactory*/)
         {
             Logger = appLoggerFactory.GetSharedAppLogger(GetType());
-            ActionComponentCore = actionComponentFactory.CreateCore(Logger);
+            // ActionComponentCore = actionComponentFactory.CreateCore(Logger);
         }
 
         protected IAppLogger Logger { get; }
-        protected ITrmrkActionComponent ActionComponentCore { get; }
+        // protected ITrmrkActionComponent ActionComponentCore { get; }
     }
 
     public abstract class ViewModelCoreBase<TState> : ViewModelCoreBase, IViewModelCore<TState>
     {
         protected ViewModelCoreBase(
-            IAppLoggerCreator appLoggerFactory,
-            ITrmrkActionComponentFactory actionComponentFactory) : base(
-                appLoggerFactory,
-                actionComponentFactory)
+            IAppLoggerCreator appLoggerFactory/* ,
+            ITrmrkActionComponentFactory actionComponentFactory*/) : base(
+                appLoggerFactory/* ,
+                actionComponentFactory*/)
         {
         }
 

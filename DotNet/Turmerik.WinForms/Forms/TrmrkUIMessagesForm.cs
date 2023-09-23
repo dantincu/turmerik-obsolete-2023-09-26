@@ -13,14 +13,13 @@ using Turmerik.LocalDevice.Core.Logging;
 using Turmerik.Logging;
 using Turmerik.Synchronized;
 using Turmerik.Text;
-using Turmerik.WinForms.ActionComponent;
 using Turmerik.WinForms.Utils;
 
 namespace Turmerik.WinForms.Forms
 {
     public partial class TrmrkUIMessagesForm : Form
     {
-        private readonly Lazy<ITrmrkWinFormsActionComponentsManager> actionComponentsManager;
+        // private readonly Lazy<ITrmrkWinFormsActionComponentsManager> actionComponentsManager;
         private readonly IThreadSafeActionComponent threadSafeActionComponent;
         private readonly ITimeStampHelper timeStampHelper;
         private readonly IAppLoggerCreator appLoggerCreator;
@@ -40,14 +39,14 @@ namespace Turmerik.WinForms.Forms
         }
 
         public TrmrkUIMessagesForm(
-            Lazy<ITrmrkWinFormsActionComponentsManager> actionComponentsManager,
+            // Lazy<ITrmrkWinFormsActionComponentsManager> actionComponentsManager,
             IThreadSafeActionComponent threadSafeActionComponent,
             ITimeStampHelper timeStampHelper,
             IAppLoggerCreator appLoggerCreator,
             IAppEnv appEnv)
         {
-            this.actionComponentsManager = actionComponentsManager ?? throw new ArgumentNullException(
-                nameof(actionComponentsManager));
+            /* this.actionComponentsManager = actionComponentsManager ?? throw new ArgumentNullException(
+                nameof(actionComponentsManager)); */
 
             this.threadSafeActionComponent = threadSafeActionComponent ?? throw new ArgumentNullException(
                 nameof(threadSafeActionComponent));

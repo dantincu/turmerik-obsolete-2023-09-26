@@ -5,9 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Turmerik.Logging;
 using Turmerik.PureFuncJs.Core.JintCompnts;
-using Turmerik.TrmrkAction;
 using Turmerik.Utils;
-using Turmerik.WinForms.ActionComponent;
 
 namespace Turmerik.WinForms.ViewModels
 {
@@ -26,10 +24,10 @@ namespace Turmerik.WinForms.ViewModels
     public class PureFuncJsPlaygroundVM : ViewModelBase, IPureFuncJsPlaygroundVM
     {
         public PureFuncJsPlaygroundVM(
-            IAppLoggerCreator appLoggerFactory,
-            IWinFormsActionComponentFactory actionComponentFactory) : base(
-                appLoggerFactory,
-                actionComponentFactory)
+            IAppLoggerCreator appLoggerFactory/* ,
+            IWinFormsActionComponentFactory actionComponentFactory*/) : base(
+                appLoggerFactory/* ,
+                actionComponentFactory*/)
         {
         }
 
@@ -43,7 +41,10 @@ namespace Turmerik.WinForms.ViewModels
         public ITrmrkActionResult<string> CallJs(
             string jsCode,
             string[] jsonArgsArr,
-            bool useCamelCase = true) => ActionComponent.Execute(
+            bool useCamelCase = true)
+        {
+            throw new NotImplementedException();
+        } /* => ActionComponent.Execute(
                 new TrmrkActionComponentOpts<string>
                 {
                     Action = () =>
@@ -60,6 +61,6 @@ namespace Turmerik.WinForms.ViewModels
                         };
                     },
                     ActionName = nameof(CallJs)
-                });
+                }); */
     }
 }

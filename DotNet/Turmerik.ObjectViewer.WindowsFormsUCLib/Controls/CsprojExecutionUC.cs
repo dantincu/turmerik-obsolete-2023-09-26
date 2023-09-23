@@ -15,9 +15,7 @@ using Turmerik.Logging;
 using Turmerik.ObjectViewer.Lib.Components;
 using Turmerik.ObjectViewer.WindowsFormsUCLib.Components;
 using Turmerik.ObjectViewer.WindowsFormsUCLib.Properties;
-using Turmerik.TrmrkAction;
 using Turmerik.Utils;
-using Turmerik.WinForms.ActionComponent;
 using Turmerik.WinForms.Components;
 using Turmerik.WinForms.Controls;
 using Turmerik.WinForms.Dependencies;
@@ -31,10 +29,10 @@ namespace Turmerik.ObjectViewer.WindowsFormsUCLib.Controls
         private readonly IServiceProvider svcProv;
 
         private readonly IAppLoggerCreator appLoggerFactory;
-        private readonly IWinFormsActionComponentFactory actionComponentFactory;
+        // private readonly IWinFormsActionComponentFactory actionComponentFactory;
 
         private readonly IAppLogger logger;
-        private readonly IWinFormsActionComponent actionComponent;
+        // private readonly IWinFormsActionComponent actionComponent;
         private readonly IFsEntriesRetriever fsEntriesRetriever;
         private readonly IImageListDecoratorFactory imageListDecoratorFactory;
         private readonly ITreeViewDataAdapterFactory treeViewDataAdapterFactory;
@@ -56,8 +54,8 @@ namespace Turmerik.ObjectViewer.WindowsFormsUCLib.Controls
                 this.svcProv = this.svcProvContnr.Services;
                 this.appLoggerFactory = this.svcProv.GetRequiredService<IAppLoggerCreator>();
                 this.logger = this.appLoggerFactory.GetSharedAppLogger(GetType());
-                this.actionComponentFactory = this.svcProv.GetRequiredService<IWinFormsActionComponentFactory>();
-                this.actionComponent = this.actionComponentFactory.Create(this.logger);
+                // this.actionComponentFactory = this.svcProv.GetRequiredService<IWinFormsActionComponentFactory>();
+                // this.actionComponent = this.actionComponentFactory.Create(this.logger);
                 this.fsEntriesRetriever = this.svcProv.GetRequiredService<IFsEntriesRetriever>();
                 this.imageListDecoratorFactory = this.svcProv.GetRequiredService<IImageListDecoratorFactory>();
                 this.treeViewDataAdapterFactory = this.svcProv.GetRequiredService<ITreeViewDataAdapterFactory>();
@@ -219,7 +217,10 @@ namespace Turmerik.ObjectViewer.WindowsFormsUCLib.Controls
         #region UI Event Handlers
 
         private void EditableFolderPathUCCsprojFile_FolderPathChanged(
-            Utils.MutableValueWrapper<string> obj) => actionComponent?.ExecuteAsync(
+            Utils.MutableValueWrapper<string> obj)
+        {
+            throw new NotImplementedException();
+        } /* => actionComponent?.ExecuteAsync(
                 new TrmrkAsyncActionComponentOpts
                 {
                     ActionName = nameof(EditableFolderPathUCCsprojFile_FolderPathChanged),
@@ -239,7 +240,7 @@ namespace Turmerik.ObjectViewer.WindowsFormsUCLib.Controls
                         
                         return new TrmrkActionResult();
                     }
-                });
+                }); */
 
         #endregion UI Event Handlers
     }

@@ -3,6 +3,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="clr-namespace:Turmerik.Utility.AugmentUrl.AvaloniaApplication.ViewModels"
+             xmlns:materialIcons="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="Turmerik.Utility.AugmentUrl.AvaloniaApplication.Views.MainView"
              x:DataType="vm:MainViewModel">
@@ -14,9 +15,11 @@
 
   <StackPanel>
     <Panel>
-      <TextBlock Text="Raw Url" Margin="10" />
-      <Button Command="{Binding RawUrlFromClipboard}" Content="From Clipboard" Margin="75 0 0 0"></Button>
-      <Button Command="{Binding RawUrlToClipboard}" Content="To Clipboard" Margin="200 0 0 0"></Button>
+      <TextBlock Text="Raw Url" Margin="5 10 0 10" />
+      <Button Command="{Binding RawUrlFromClipboard}" Content="Fetch" Margin="60 0 0 0"></Button>
+      <Button Command="{Binding RawUrlFromClipboard}" Content="From" Margin="120 0 0 0"></Button>
+      <materialIcons:MaterialIcon Kind="ContentPaste" Margin="175 0 0 0" HorizontalAlignment="Left" />
+      <Button Command="{Binding RawUrlToClipboard}" Content="To" Margin="195 0 0 0"></Button>
     </Panel>
     <TextBox Text="{Binding RawUrl}" x:Name="textBoxRawUrl" />
     <TextBox Text="{Binding OutputText}" Foreground="{Binding OutputTextForeground}" Height="100" IsReadOnly="True" x:Name="textBoxOutput" />

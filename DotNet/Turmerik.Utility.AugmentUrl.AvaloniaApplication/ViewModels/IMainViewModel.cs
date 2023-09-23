@@ -7,7 +7,6 @@ using System.Linq;
 using System.Reactive;
 using System.Text;
 using System.Threading.Tasks;
-using Turmerik.Avalonia.ActionComponent;
 using Turmerik.Avalonia.ViewModels;
 
 namespace Turmerik.Utility.AugmentUrl.AvaloniaApplication.ViewModels
@@ -21,8 +20,11 @@ namespace Turmerik.Utility.AugmentUrl.AvaloniaApplication.ViewModels
         IBrush SuccessOutputTextForeground { get; set; }
         IBrush ErrorOutputTextForeground { get; set; }
         IBrush OutputTextForeground { get; set; }
-        ITrmrkAvlnActionComponentsManagerRetriever ActionComponentsManagerRetriever { get; set; }
 
+        string TitleAndUrlTemplate { get; set; }
+        ReactiveCommand<Unit, Unit> Fetch { get; }
+        ReactiveCommand<Unit, Unit> TitleToClipboard { get; }
+        ReactiveCommand<Unit, Unit> AllToClipboard { get; }
         ReactiveCommand<Unit, Unit> RawUrlToClipboard { get; }
         ReactiveCommand<Unit, Unit> RawUrlFromClipboard { get; }
     }

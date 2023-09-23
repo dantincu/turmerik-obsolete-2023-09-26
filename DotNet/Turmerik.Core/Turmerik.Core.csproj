@@ -7,6 +7,18 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="TrmrkAction%24not-compiled%24\ITrmrkActionComponentFactory.cs" />
+    <Compile Remove="TrmrkAction%24not-compiled%24\ShowUIMessageArgs.cs" />
+    <Compile Remove="TrmrkAction%24not-compiled%24\TrmrkActionComponent.cs" />
+    <Compile Remove="TrmrkAction%24not-compiled%24\TrmrkActionComponentCore.cs" />
+    <Compile Remove="TrmrkAction%24not-compiled%24\TrmrkActionComponentOptsCore.cs" />
+    <Compile Remove="TrmrkAction%24not-compiled%24\TrmrkActionComponentsManager.cs" />
+    <Compile Remove="TrmrkAction%24not-compiled%24\TrmrkActionH.cs" />
+    <Compile Remove="TrmrkAction%24not-compiled%24\TrmrkActionMessageTuple.cs" />
+    <Compile Remove="TrmrkAction%24not-compiled%24\TrmrkActionStepKind.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.Configuration" Version="7.0.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="7.0.4" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="7.0.0" />
@@ -17,6 +29,18 @@
 
   <ItemGroup>
     <Folder Include="Text\HtmlH\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="TrmrkAction%24not-compiled%24\ITrmrkActionComponentFactory.cs" />
+    <None Include="TrmrkAction%24not-compiled%24\ShowUIMessageArgs.cs" />
+    <None Include="TrmrkAction%24not-compiled%24\TrmrkActionComponent.cs" />
+    <None Include="TrmrkAction%24not-compiled%24\TrmrkActionComponentCore.cs" />
+    <None Include="TrmrkAction%24not-compiled%24\TrmrkActionComponentOptsCore.cs" />
+    <None Include="TrmrkAction%24not-compiled%24\TrmrkActionComponentsManager.cs" />
+    <None Include="TrmrkAction%24not-compiled%24\TrmrkActionH.cs" />
+    <None Include="TrmrkAction%24not-compiled%24\TrmrkActionMessageTuple.cs" />
+    <None Include="TrmrkAction%24not-compiled%24\TrmrkActionStepKind.cs" />
   </ItemGroup>
 
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">

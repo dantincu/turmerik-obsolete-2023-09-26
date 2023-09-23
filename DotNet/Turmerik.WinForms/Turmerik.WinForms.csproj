@@ -75,15 +75,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ActionComponent\TrmrkWinFormsActionComponent.cs" />
-    <Compile Include="ActionComponent\TrmrkWinFormsActionComponentFactory.cs" />
-    <Compile Include="ActionComponent\TrmrkWinFormsActionComponentsManager.cs" />
-    <Compile Include="ActionComponent\TrmrkWinFormsActionComponentsManagerOpts.clnbl.cs" />
-    <Compile Include="ActionComponent\TrmrkWinFormsActionComponentsManagerRetriever.cs" />
-    <Compile Include="ActionComponent\WinFormsActionComponentsManagerRetriever.cs" />
-    <Compile Include="ActionComponent\WinFormsActionComponent.cs" />
-    <Compile Include="ActionComponent\WinFormsActionComponentFactory.cs" />
-    <Compile Include="ActionComponent\WinFormsActionComponentsManager.cs" />
+    <None Include="ActionComponent%24not-compiled%24\TrmrkWinFormsActionComponent.cs" />
+    <None Include="ActionComponent%24not-compiled%24\TrmrkWinFormsActionComponentFactory.cs" />
+    <None Include="ActionComponent%24not-compiled%24\TrmrkWinFormsActionComponentsManager.cs" />
+    <None Include="ActionComponent%24not-compiled%24\TrmrkWinFormsActionComponentsManagerOpts.clnbl.cs" />
+    <None Include="ActionComponent%24not-compiled%24\TrmrkWinFormsActionComponentsManagerRetriever.cs" />
+    <None Include="ActionComponent%24not-compiled%24\WinFormsActionComponentsManagerRetriever.cs" />
+    <None Include="ActionComponent%24not-compiled%24\WinFormsActionComponent.cs" />
+    <None Include="ActionComponent%24not-compiled%24\WinFormsActionComponentFactory.cs" />
+    <None Include="ActionComponent%24not-compiled%24\WinFormsActionComponentsManager.cs" />
     <Compile Include="Components\ContextMenuStripOpts.clnbl.cs" />
     <Compile Include="Components\ImageListDecoratorBase.cs" />
     <Compile Include="Components\ImageListDecoratorFactory.cs" />

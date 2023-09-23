@@ -19,10 +19,15 @@
     <!--Condition below is needed to remove Avalonia.Diagnostics package from build output in Release configuration.-->
     <PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" Version="11.0.4" />
     <PackageReference Include="HtmlAgilityPack" Version="1.11.53" />
+    <PackageReference Include="Material.Icons.Avalonia" Version="2.0.1" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="7.0.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Turmerik.Avalonia\Turmerik.Avalonia.csproj" />
   </ItemGroup>
+
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="if '$(ConfigurationName)' == 'Debug' ( copy /y $(SolutionDir)app-env-locator.dev.json $(ProjectDir)$(OutDir)app-env-locator.json ) ELSE (copy /y $(SolutionDir)app-env-locator.json $(ProjectDir)$(OutDir)app-env-locator.json )" />
+  </Target>
 </Project>

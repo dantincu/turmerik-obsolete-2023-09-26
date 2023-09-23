@@ -5,7 +5,6 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Turmerik.Logging;
-using Turmerik.WinForms.ActionComponent;
 
 namespace Turmerik.WinForms.Components
 {
@@ -25,19 +24,19 @@ namespace Turmerik.WinForms.Components
     public class TreeViewDataAdapterFactory : ITreeViewDataAdapterFactory
     {
         private readonly IAppLoggerCreator appLoggerCreator;
-        private readonly IWinFormsActionComponentFactory winFormsActionComponentFactory;
+        // private readonly IWinFormsActionComponentFactory winFormsActionComponentFactory;
         private readonly IContextMenuStripFactory contextMenuStripFactory;
 
         public TreeViewDataAdapterFactory(
             IAppLoggerCreator appLoggerCreator,
-            IWinFormsActionComponentFactory winFormsActionComponentFactory,
+            // IWinFormsActionComponentFactory winFormsActionComponentFactory,
             IContextMenuStripFactory contextMenuStripFactory)
         {
             this.appLoggerCreator = appLoggerCreator ?? throw new ArgumentNullException(
                 nameof(appLoggerCreator));
 
-            this.winFormsActionComponentFactory = winFormsActionComponentFactory ?? throw new ArgumentNullException(
-                nameof(winFormsActionComponentFactory));
+            /* this.winFormsActionComponentFactory = winFormsActionComponentFactory ?? throw new ArgumentNullException(
+                nameof(winFormsActionComponentFactory)); */
 
             this.contextMenuStripFactory = contextMenuStripFactory ?? throw new ArgumentNullException(
                 nameof(contextMenuStripFactory));
@@ -48,7 +47,7 @@ namespace Turmerik.WinForms.Components
             Func<Task<IEnumerable<TValue>>> rootItemsFactory,
             Func<TValue, Task<IEnumerable<TValue>>> childItemsFactory) => new TreeViewDataAdapterAsync<TValue>(
                 appLoggerCreator,
-                winFormsActionComponentFactory,
+                // winFormsActionComponentFactory,
                 opts,
                 contextMenuStripFactory,
                 rootItemsFactory,
@@ -59,7 +58,7 @@ namespace Turmerik.WinForms.Components
             Func<Task<IEnumerable<TValue>>> rootItemsFactory,
             Func<TValue, Task<IEnumerable<TValue>>> childItemsFactory) => new TreeViewDataAdapterAsync<TValue>(
                 appLoggerCreator,
-                winFormsActionComponentFactory,
+                // winFormsActionComponentFactory,
                 opts,
                 contextMenuStripFactory,
                 rootItemsFactory,

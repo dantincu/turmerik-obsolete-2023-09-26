@@ -62,7 +62,6 @@ namespace Turmerik.LocalFilesExplorer.WinFormsApp
             this.statusStripMain.Name = "statusStripMain";
             this.statusStripMain.Size = new System.Drawing.Size(1800, 22);
             this.statusStripMain.TabIndex = 1;
-            this.statusStripMain.MouseUp += new System.Windows.Forms.MouseEventHandler(this.StatusStripMain_MouseUp);
             // 
             // toolStripStatusLabelMain
             // 
@@ -109,7 +108,6 @@ namespace Turmerik.LocalFilesExplorer.WinFormsApp
             this.Name = "MainForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Turmerik Local Files Explorer";
-            this.Load += new System.EventHandler(this.MainForm_Load);
             this.statusStripMain.ResumeLayout(false);
             this.statusStripMain.PerformLayout();
             this.splitContainerMain.Panel2.ResumeLayout(false);

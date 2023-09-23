@@ -6,9 +6,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using Turmerik.Collections;
 using Turmerik.Logging;
-using Turmerik.TrmrkAction;
 using Turmerik.Utils;
-using Turmerik.WinForms.ActionComponent;
 using Turmerik.WinForms.Utils;
 
 namespace Turmerik.WinForms.Components
@@ -17,13 +15,13 @@ namespace Turmerik.WinForms.Components
     {
         public TreeViewDataAdapterAsync(
             IAppLoggerCreator appLoggerCreator,
-            IWinFormsActionComponentFactory winFormsActionComponentFactory,
+            // IWinFormsActionComponentFactory winFormsActionComponentFactory,
             TreeViewDataAdapterOptsCore.IClnbl<TValue> opts,
             IContextMenuStripFactory contextMenuStripFactory,
             Func<Task<IEnumerable<TValue>>> rootItemsFactory,
             Func<TValue, Task<IEnumerable<TValue>>> childItemsFactory) : base(
                 appLoggerCreator,
-                winFormsActionComponentFactory,
+                // winFormsActionComponentFactory,
                 opts,
                 contextMenuStripFactory)
         {
@@ -226,7 +224,10 @@ namespace Turmerik.WinForms.Components
             TreeNodeArg<TValue>[] valuesArr) => TreeNodesAssureLoadedAsync(valuesArr);
 
         protected Task<ITrmrkActionResult<TreeNodeArg<TValue>>> TreeNodeRefreshAsync(
-            TreeNodeArg<TValue> value) => ActionComponent.ExecuteAsync(
+            TreeNodeArg<TValue> value)
+        {
+            throw new NotImplementedException();
+        } /* => ActionComponent.ExecuteAsync(
             new TrmrkAsyncActionComponentOpts<TreeNodeArg<TValue>>
             {
                 ActionName = nameof(TreeNodeRefreshAsync),
@@ -250,10 +251,13 @@ namespace Turmerik.WinForms.Components
                         OnAfterNodeRefresh(actionResult);
                     });
                 }
-            });
+            }); */
 
         protected Task<ITrmrkActionResult<TreeNodeArg<TValue>[]>> TreeNodesRefreshAsync(
-            TreeNodeArg<TValue>[] valuesArr) => ActionComponent.ExecuteAsync(
+            TreeNodeArg<TValue>[] valuesArr)
+        {
+            throw new NotImplementedException();
+        }/* => ActionComponent.ExecuteAsync(
             new TrmrkAsyncActionComponentOpts<TreeNodeArg<TValue>[]>
             {
                 ActionName = nameof(TreeNodesRefreshAsync),
@@ -282,10 +286,13 @@ namespace Turmerik.WinForms.Components
                         OnAfterNodesRefresh(actionResult);
                     });
                 }
-            });
+            });*/
 
         protected Task<ITrmrkActionResult<TreeNodeArg<TValue>>> TreeNodeAssureLoadedAsync(
-            TreeNodeArg<TValue> value) => ActionComponent.ExecuteAsync(
+            TreeNodeArg<TValue> value)
+        {
+            throw new NotImplementedException();
+        }/* => ActionComponent.ExecuteAsync(
             new TrmrkAsyncActionComponentOpts<TreeNodeArg<TValue>>
             {
                 ActionName = nameof(TreeNodeAssureLoadedAsync),
@@ -309,10 +316,13 @@ namespace Turmerik.WinForms.Components
                         OnAfterNodeAssureLoaded(actionResult);
                     });
                 }
-            });
+            }); */
 
         protected Task<ITrmrkActionResult<TreeNodeArg<TValue>[]>> TreeNodesAssureLoadedAsync(
-            TreeNodeArg<TValue>[] valuesArr) => ActionComponent.ExecuteAsync(
+            TreeNodeArg<TValue>[] valuesArr)
+        {
+            throw new NotImplementedException();
+        } /* => ActionComponent.ExecuteAsync(
             new TrmrkAsyncActionComponentOpts<TreeNodeArg<TValue>[]>
             {
                 ActionName = nameof(TreeNodesAssureLoadedAsync),
@@ -341,6 +351,6 @@ namespace Turmerik.WinForms.Components
                         OnAfterNodesAssureLoaded(actionResult);
                     });
                 }
-            });
+            });*/
     }
 }

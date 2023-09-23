@@ -4,9 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Turmerik.Avalonia.ActionComponent;
 using Turmerik.Dependencies;
-using Turmerik.TrmrkAction;
 
 namespace Turmerik.Avalonia.Dependencies
 {
@@ -20,9 +18,9 @@ namespace Turmerik.Avalonia.Dependencies
                 services,
                 addCurrentProcessInfo);
 
-            services.AddSingleton<ITrmrkAvlnActionComponentsManagerRetriever, TrmrkAvlnActionComponentsManagerRetriever>();
+            /* services.AddSingleton<ITrmrkAvlnActionComponentsManagerRetriever, TrmrkAvlnActionComponentsManagerRetriever>();
             services.AddSingleton<ITrmrkAvlnActionComponentFactory, TrmrkAvlnActionComponentFactory>();
-            services.AddSingleton<ITrmrkActionComponentFactory, TrmrkAvlnActionComponentFactory>();
+            services.AddSingleton<ITrmrkActionComponentFactory, TrmrkAvlnActionComponentFactory>(); */
         }
     }
 }

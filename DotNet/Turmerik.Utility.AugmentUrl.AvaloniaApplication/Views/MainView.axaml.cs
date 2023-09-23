@@ -1,5 +1,4 @@
 ﻿using Avalonia.Controls;
-using Turmerik.Avalonia.ActionComponent;
 using Turmerik.Utility.AugmentUrl.AvaloniaApplication.ViewModels;
 using Turmerik.Avalonia.Dependencies;
 using Microsoft.Extensions.DependencyInjection;
@@ -14,7 +13,6 @@ public partial class MainView : UserControl
 {
     private readonly IServiceProvider svcProv;
 
-    private ITrmrkAvlnActionComponentsManagerRetriever actionComponentsManagerRetriever;
     private IMainViewModel viewModel;
 
     public MainView()
@@ -31,32 +29,12 @@ public partial class MainView : UserControl
     {
         if (viewModel == null)
         {
-            actionComponentsManagerRetriever = svcProv.GetRequiredService<ITrmrkAvlnActionComponentsManagerRetriever>();
-
-            actionComponentsManagerRetriever.MsgTextBoxDefaultForeground = new SolidColorBrush(
-                Color.FromArgb(255, 0, 0, 255));
-
-            actionComponentsManagerRetriever.MsgTextBoxSuccessForeground = new SolidColorBrush(
-                Color.FromArgb(255, 0, 255, 0));
-
-            actionComponentsManagerRetriever.MsgTextBoxErrorForeground = new SolidColorBrush(
-                Color.FromArgb(255, 255, 0, 0));
-
-            actionComponentsManagerRetriever.MsgTextBoxContentGetter = () => viewModel.OutputText;
-            actionComponentsManagerRetriever.MsgTextBoxContentSetter = value => viewModel.OutputText = value;
-
-            actionComponentsManagerRetriever.MsgTextBoxForegroundGetter = () => viewModel.OutputTextForeground;
-            actionComponentsManagerRetriever.MsgTextBoxForegroundSetter = value => viewModel.OutputTextForeground = value;
-
             viewModel = DataContext as IMainViewModel;
             viewModel.TopLevel = TopLevel.GetTopLevel(this);
 
-            viewModel.DefaultOutputTextForeground = actionComponentsManagerRetriever.MsgTextBoxDefaultForeground;
-            viewModel.SuccessOutputTextForeground = actionComponentsManagerRetriever.MsgTextBoxSuccessForeground;
-            viewModel.ErrorOutputTextForeground = actionComponentsManagerRetriever.MsgTextBoxErrorForeground;
-
-            viewModel.OutputTextForeground = actionComponentsManagerRetriever.MsgTextBoxDefaultForeground;
-            viewModel.ActionComponentsManagerRetriever = actionComponentsManagerRetriever;
+            viewModel.DefaultOutputTextForeground = new SolidColorBrush(Color.FromArgb(255, 0, 0, 255));
+            viewModel.SuccessOutputTextForeground = new SolidColorBrush(Color.FromArgb(255, 0, 255, 0));
+            viewModel.ErrorOutputTextForeground = new SolidColorBrush(Color.FromArgb(255, 255, 0, 0));
         }
     }
 
