@@ -22,6 +22,7 @@
       <Button Command="{Binding RawUrlToClipboard}" Content="To" Margin="195 0 0 0"></Button>
     </Panel>
     <TextBox Text="{Binding RawUrl}" x:Name="textBoxRawUrl" />
+    <TextBox Text="{Binding RawUrl}" x:Name="textBoxTitleAndUrl" />
     <TextBox Text="{Binding OutputText}" Foreground="{Binding OutputTextForeground}" Height="100" IsReadOnly="True" x:Name="textBoxOutput" />
   </StackPanel>
 </UserControl>

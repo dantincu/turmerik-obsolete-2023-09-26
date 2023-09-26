@@ -15,17 +15,20 @@ namespace Turmerik.Utility.AugmentUrl.AvaloniaApplication.ViewModels
     {
         TopLevel TopLevel { get; set; }
         string RawUrl { get; set; }
+        string ResourceTitle { get; set; }
+        string TitleAndUrl { get; set; }
+        string TitleAndUrlTemplate { get; set; }
         string OutputText { get; set; }
         IBrush DefaultOutputTextForeground { get; set; }
         IBrush SuccessOutputTextForeground { get; set; }
         IBrush ErrorOutputTextForeground { get; set; }
         IBrush OutputTextForeground { get; set; }
 
-        string TitleAndUrlTemplate { get; set; }
+        
         ReactiveCommand<Unit, Unit> Fetch { get; }
-        ReactiveCommand<Unit, Unit> TitleToClipboard { get; }
-        ReactiveCommand<Unit, Unit> AllToClipboard { get; }
         ReactiveCommand<Unit, Unit> RawUrlToClipboard { get; }
+        ReactiveCommand<Unit, Unit> ResourceTitleToClipboard { get; }
+        ReactiveCommand<Unit, Unit> TitleAndUrlToClipboard { get; }
         ReactiveCommand<Unit, Unit> RawUrlFromClipboard { get; }
     }
 }

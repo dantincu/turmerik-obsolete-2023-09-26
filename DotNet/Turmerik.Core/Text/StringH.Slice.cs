@@ -166,9 +166,9 @@ namespace Turmerik.Text
                     args.InputStr.StartsWithStr(
                         args.Idx, str), str.Length),
                 (args, stIdx) => new IncIdxAnswer(true, strLen - args.Idx),
-                startIdx,
-                retIdxesOnly,
-                callback);
+                    startIdx,
+                    retIdxesOnly,
+                    callback);
 
             return result;
         }

@@ -17,28 +17,19 @@ namespace Turmerik.Utility.AugmentUrl.AvaloniaApplication.ViewModels;
 public class MainViewModel : ViewModelBase, IMainViewModel
 {
     private string rawUrl;
+    private string resourceTitle;
+    private string titleAndUrl;
     private string outputText;
     private IBrush outputTextForeground;
 
     public MainViewModel()
     {
         TitleAndUrlTemplate = "[{0}]({1})";
-
-        RawUrlToClipboard = ReactiveCommand.Create(
-            () =>
-            {
-                RawUrlToClipboardAsync();
-            });
-
-        RawUrlFromClipboard = ReactiveCommand.Create(
-            () =>
-            {
-                FetchResourceAsync(
-                    TopLevel.Clipboard.GetTextAsync,
-                    "Retrieving the url from clipboard...",
-                    exc => $"Could not the url from clipboard: {exc.Message}",
-                    true);
-            });
+        Fetch = GetFetchCommand();
+        RawUrlToClipboard = GetRawUrlToClipboardCommand();
+        ResourceTitleToClipboard = GetResourceTitleToClipboardCommand();
+        TitleAndUrlToClipboard = GetTitleAndUrlToClipboardCommand();
+        RawUrlFromClipboard = GetRawUrlFromClipboardCommand();
     }
 
     public TopLevel TopLevel { get; set; }
@@ -51,6 +42,26 @@ public class MainViewModel : ViewModelBase, IMainViewModel
             ref rawUrl,
             value);
     }
+
+    public string ResourceTitle
+    {
+        get => resourceTitle;
+
+        set => this.RaiseAndSetIfChanged(
+            ref resourceTitle,
+            value);
+    }
+
+    public string TitleAndUrl
+    {
+        get => titleAndUrl;
+
+        set => this.RaiseAndSetIfChanged(
+            ref titleAndUrl,
+            value);
+    }
+
+    public string TitleAndUrlTemplate { get; set; }
 
     public string OutputText
     {
@@ -77,12 +88,40 @@ public class MainViewModel : ViewModelBase, IMainViewModel
     public IBrush SuccessOutputTextForeground { get; set; }
     public IBrush ErrorOutputTextForeground { get; set; }
 
-    public string TitleAndUrlTemplate { get; set; }
     public ReactiveCommand<Unit, Unit> Fetch { get; }
-    public ReactiveCommand<Unit, Unit> TitleToClipboard { get; }
-    public ReactiveCommand<Unit, Unit> AllToClipboard { get; }
     public ReactiveCommand<Unit, Unit> RawUrlToClipboard { get; }
+    public ReactiveCommand<Unit, Unit> ResourceTitleToClipboard { get; }
+    public ReactiveCommand<Unit, Unit> TitleAndUrlToClipboard { get; }
     public ReactiveCommand<Unit, Unit> RawUrlFromClipboard { get; }
+
+    private ReactiveCommand<Unit, Unit> GetFetchCommand() => ReactiveCommand.Create(
+        () =>
+        {
+            FetchResourceAsync(
+                async () => RawUrl,
+                string.Empty,
+                exc => $"Something went wrong: {exc.Message}",
+                false);
+        });
+
+    private ReactiveCommand<Unit, Unit> GetRawUrlToClipboardCommand() => ReactiveCommand.Create(
+        () => { RawUrlToClipboardAsync(); });
+
+    private ReactiveCommand<Unit, Unit> GetResourceTitleToClipboardCommand() => ReactiveCommand.Create(
+        () => { ResourceTitleToClipboardAsync(); });
+
+    private ReactiveCommand<Unit, Unit> GetTitleAndUrlToClipboardCommand() => ReactiveCommand.Create(
+        () => { TitleAndUrlToClipboardAsync(); });
+
+    private ReactiveCommand<Unit, Unit> GetRawUrlFromClipboardCommand() => ReactiveCommand.Create(
+        () =>
+        {
+            FetchResourceAsync(
+                TopLevel.Clipboard.GetTextAsync,
+                "Retrieving the url from clipboard...",
+                exc => $"Could not the url from clipboard: {exc.Message}",
+                true);
+        });
 
     private void ShowUserMsg(string text, bool? isSuccess)
     {
@@ -105,43 +144,32 @@ public class MainViewModel : ViewModelBase, IMainViewModel
         }
     }
 
-    private async Task RawUrlToClipboardAsync()
+    private Task RawUrlToClipboardAsync() => CopyToClipboardAsync("provided url", TitleAndUrl);
+    private Task ResourceTitleToClipboardAsync() => CopyToClipboardAsync("title", ResourceTitle);
+    private Task TitleAndUrlToClipboardAsync() => CopyToClipboardAsync("title and url", TitleAndUrl);
+
+    private async Task CopyToClipboardAsync(
+        string objectName,
+        string objectText)
     {
         try
         {
-            ShowUserMsg("Copying the provided url to clipboard...", null);
-            await TopLevel.Clipboard.SetTextAsync(RawUrl);
-            ShowUserMsg("Copyied the provided url to clipboard", true);
+            ShowUserMsg($"Copying the {objectName} to clipboard...", null);
+            await TopLevel.Clipboard.SetTextAsync(objectText);
+            ShowUserMsg($"Copied the {objectName} to clipboard", true);
         }
         catch (Exception exc)
         {
-            ShowUserMsg($"Something went wrong while copying the provided url to clipboard: {exc.Message}", false);
+            ShowUserMsg($"Could not copy the {objectName} to clipboard: {exc.Message}", false);
         }
     }
 
-    private async Task AllToClipboardAsync(string titleAndUrl)
-    {
-        try
-        {
-            ShowUserMsg("Copying the title and url to clipboard...", null);
-            await TopLevel.Clipboard.SetTextAsync(titleAndUrl);
-            ShowUserMsg("Copied the title and url to clipboard", true);
-        }
-        catch (Exception exc)
-        {
-            ShowUserMsg($"Could not copy the title and url to clipboard: {exc.Message}", false);
-        }
-    }
-
-    private async Task FetchResourceAsync(
+    private async Task<string> TryGetRawUrl(
         Func<Task<string>> rawUrlRetriever,
         string initMsg,
-        Func<Exception, string> retrieveUrlErrMsgFactory,
-        bool copyResultToClipboard)
+        Func<Exception, string> retrieveUrlErrMsgFactory)
     {
-        Uri uri = null;
         string rawUrl = null;
-        string title = null;
 
         try
         {
@@ -152,6 +180,13 @@ public class MainViewModel : ViewModelBase, IMainViewModel
         {
             ShowUserMsg(retrieveUrlErrMsgFactory(exc), false);
         }
+
+        return rawUrl;
+    }
+
+    private Uri TryGetUriIfReq(string rawUrl)
+    {
+        Uri uri = null;
 
         if (rawUrl != null)
         {
@@ -166,6 +201,13 @@ public class MainViewModel : ViewModelBase, IMainViewModel
             }
         }
 
+        return uri;
+    }
+
+    private async Task<string> FetchResourceIfReqCoreAsync(Uri uri)
+    {
+        string title = null;
+
         if (uri != null)
         {
             try
@@ -175,10 +217,7 @@ public class MainViewModel : ViewModelBase, IMainViewModel
                 var web = new HtmlWeb();
                 var doc = web.Load(uri);
 
-                foreach (var node in doc.DocumentNode.ChildNodes)
-                {
-
-                }
+                title = GetResourceTitle(doc);
             }
             catch (Exception exc)
             {
@@ -186,20 +225,65 @@ public class MainViewModel : ViewModelBase, IMainViewModel
             }
         }
 
+        return title;
+    }
+
+    private string GetResourceTitle(HtmlDocument doc)
+    {
+        string title = null;
+
+        foreach (var node in doc.DocumentNode.ChildNodes)
+        {
+
+        }
+
+        return title;
+    }
+
+    private async Task FetchResourceAsync(
+        Func<Task<string>> rawUrlRetriever,
+        string initMsg,
+        Func<Exception, string> retrieveUrlErrMsgFactory,
+        bool copyResultToClipboard)
+    {
+        string rawUrl = await TryGetRawUrl(
+            rawUrlRetriever,
+            initMsg,
+            retrieveUrlErrMsgFactory);
+
+        Uri uri = TryGetUriIfReq(rawUrl);
+        string title = await FetchResourceIfReqCoreAsync(uri);
+
+        await SetResourceTitleIfReqAsync(
+            title,
+            copyResultToClipboard);
+    }
+
+    private async Task SetResourceTitleIfReqAsync(
+        string title,
+        bool copyResultToClipboard)
+    {
         if (title != null)
         {
-            string titleAndUrl = string.Format(
-                TitleAndUrlTemplate,
-                title);
+            SetResourceTitleCore(title);
 
             if (copyResultToClipboard)
             {
-                await AllToClipboardAsync(titleAndUrl);
+                await TitleAndUrlToClipboardAsync();
             }
             else
             {
                 ShowUserMsg("Retrieved the resource from url", true);
             }
         }
+    }
+
+    private void SetResourceTitleCore(string title)
+    {
+        ResourceTitle = title;
+
+        TitleAndUrl = string.Format(
+            TitleAndUrlTemplate,
+            ResourceTitle);
     }
 }
