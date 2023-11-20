@@ -1,0 +1,43 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.8.34309.116
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Turmerik.Core", "Turmerik.Core.csproj", "{2F559FBE-AFDB-4656-8CE7-9BB6195B8EDC}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Turmerik", "..\Turmerik\Turmerik.csproj", "{F452CBAD-7014-4E5A-B5B7-0587C530FA44}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Turmerik.LocalDevice.Core", "..\Turmerik.LocalDevice.Core\Turmerik.LocalDevice.Core.csproj", "{1FC94097-B288-4A8C-A6E7-C4A7788A180D}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Turmerik.LocalDevice", "..\Turmerik.LocalDevice\Turmerik.LocalDevice.csproj", "{6B8D5A83-FBB0-490B-AD2A-F61C0A1356EB}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{2F559FBE-AFDB-4656-8CE7-9BB6195B8EDC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2F559FBE-AFDB-4656-8CE7-9BB6195B8EDC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2F559FBE-AFDB-4656-8CE7-9BB6195B8EDC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2F559FBE-AFDB-4656-8CE7-9BB6195B8EDC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F452CBAD-7014-4E5A-B5B7-0587C530FA44}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F452CBAD-7014-4E5A-B5B7-0587C530FA44}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F452CBAD-7014-4E5A-B5B7-0587C530FA44}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F452CBAD-7014-4E5A-B5B7-0587C530FA44}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1FC94097-B288-4A8C-A6E7-C4A7788A180D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1FC94097-B288-4A8C-A6E7-C4A7788A180D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1FC94097-B288-4A8C-A6E7-C4A7788A180D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1FC94097-B288-4A8C-A6E7-C4A7788A180D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6B8D5A83-FBB0-490B-AD2A-F61C0A1356EB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6B8D5A83-FBB0-490B-AD2A-F61C0A1356EB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6B8D5A83-FBB0-490B-AD2A-F61C0A1356EB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6B8D5A83-FBB0-490B-AD2A-F61C0A1356EB}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {EA1BD5FC-0B18-4526-BE54-470572D92FB0}
+	EndGlobalSection
+EndGlobal
