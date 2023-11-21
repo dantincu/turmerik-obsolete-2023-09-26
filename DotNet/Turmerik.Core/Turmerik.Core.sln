@@ -11,6 +11,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Turmerik.LocalDevice.Core",
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Turmerik.LocalDevice", "..\Turmerik.LocalDevice\Turmerik.LocalDevice.csproj", "{6B8D5A83-FBB0-490B-AD2A-F61C0A1356EB}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Turmerik.WinForms", "..\Turmerik.WinForms\Turmerik.WinForms.csproj", "{8E3A7878-69F3-4AC1-AE28-77920AD3E60A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,10 @@ Global
 		{6B8D5A83-FBB0-490B-AD2A-F61C0A1356EB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6B8D5A83-FBB0-490B-AD2A-F61C0A1356EB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6B8D5A83-FBB0-490B-AD2A-F61C0A1356EB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8E3A7878-69F3-4AC1-AE28-77920AD3E60A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8E3A7878-69F3-4AC1-AE28-77920AD3E60A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8E3A7878-69F3-4AC1-AE28-77920AD3E60A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8E3A7878-69F3-4AC1-AE28-77920AD3E60A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
